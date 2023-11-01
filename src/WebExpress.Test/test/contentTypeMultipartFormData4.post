@@ -1,0 +1,83 @@
+POST /ix/manufacturers/f9b28160-42d6-4b76-8c61-1f591780576a/media HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Content-Length: 1940
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundarynEaBs46wK8BWblOG
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost/ix/manufacturers/f9b28160-42d6-4b76-8c61-1f591780576a/media
+Accept-Encoding: gzip, deflate, br
+Accept-Language: de,en;q=0.9,en-GB;q=0.8,de-DE;q=0.7,en-US;q=0.6
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="name"
+
+121 PD Plus
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-manufacturer"
+
+1913467d-037c-4d13-bf4a-50a2e1496da8
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-location"
+
+b725cb6a-f3b7-4164-ac90-51f2ef09b2b5
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-supplier"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-ledgeraccount"
+
+2ca06694-84e0-410d-997a-f71c5c95336b
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-costcenter"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-condition"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-parent"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="selection-template"
+
+c827d356-7ea4-4bbd-86f2-127fa786a279
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="attribute_184cc9de-91ed-4bba-b10f-07225c33fcfd"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="attribute_dbdab181-bd64-4328-98e6-7ff2f47b3842"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="costvalue"
+
+10
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="purchasedate"
+
+01.05.2017
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="derecognitiondate"
+
+
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="description"
+
+SN: 80093116
+------WebKitFormBoundarynEaBs46wK8BWblOG
+Content-Disposition: form-data; name="submit-formular-inventory"
+
+1
+------WebKitFormBoundarynEaBs46wK8BWblOG--
