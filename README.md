@@ -1,4 +1,4 @@
-![WebExpress logo](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress/icon.png)
+![WebExpress logo](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress.Doc/main/icon.png)
 
 # WebExpress
 WebExpress is a lightweight web server optimized for use in low-performance environments (e.g. Rasperry PI). By providing 
@@ -16,5 +16,5 @@ language (e.g. C#). Some advantages of WebExpress are:
 # Establish 
 see https://github.com/ReneSchwarzer/WebExpress.Doc/blob/main/doc/installation_guide.md and https://github.com/ReneSchwarzer/WebExpress.Doc/blob/main/doc/development_guide.md
 
-#Tags
+# Tags
 #Raspberry #Raspbian #IoT #NETCore #WebExpress
