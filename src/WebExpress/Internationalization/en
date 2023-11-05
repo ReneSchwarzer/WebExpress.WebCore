@@ -1,0 +1,130 @@
+﻿# Englisch
+
+app.startup=Startup
+app.version=Version: {0}
+app.arguments=Arguments: {0}
+app.workingdirectory=Working directory: {0}
+app.packagebase=Package directory: {0}
+app.assetbase=Asset directory: {0}
+app.database=Data directory: {0}
+app.configurationdirectory=Configuration directory: {0}
+app.configuration=Configuration: {0}
+app.logdirectory=Log directory: {0}
+app.log=Log: {0}
+app.uri=Uri: {0}
+app.errors={0} Errors
+app.warnings={0} Warnings
+app.done=End of program
+
+httpserver.run=Run HttpServer.
+httpserver.notsupported=The operating system on which WebExpress is to be run is not supported.
+httpserver.start=The HttpServer was started on {0} at {1} o'clock.
+httpserver.connected={0}: Client has been connected.
+httpserver.rejected={0}: Client rejected.
+httpserver.request={0}: Request '{1}'
+httpserver.unexpected.request={0}: Unexpected request '{1}'
+httpserver.request.done={0}: Request has been processed in {1} ms. Status = {2}
+httpserver.connectionlimit=The limit for concurrent requests has been exceeded.
+httpserver.endpoint=Endpoint '{0}' is registered.
+httpserver.listen=The web server listens for the endpoint {0}.
+httpserver.listen.exeption=Failed to set up an endpoint for the Uri {0}.
+httpserver.listener.try=If you do not have access rights follow the instruction as an administrator in the console: 
+httpserver.listener.windows=netsh http add urlacl url={0} user=everyone listen=yes
+
+componentmanager.initialization=The component manager has been initialized.
+componentmanager.register=The component '{0}' has been registered in the component manager.
+componentmanager.execute=Starts the component manager.
+componentmanager.shutdown=Shutting down the component manager.
+componentmanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
+componentmanager.duplicate=The component '{0}' has already been registered.
+componentmanager.remove=The component '{0}' has been removed.
+componentmanager.component=Components:
+
+internationalizationmanager.initialization=The internationalization manager has been initialized.
+internationalizationmanager.register=The plugin '{0}' is registered in the internationalization manager.
+
+packagemanager.initialization=The package manager has been initialized.
+packagemanager.existing=The package '{0}' is registered in the catalog.
+packagemanager.add=Package '{0}' is added to the catalog.
+packagemanager.remove=The existing package '{0}' is removed from the catalog.
+packagemanager.scan=The directory '{0}' is scanned for new packages.
+packagemanager.save=The catalog is saved.
+packagemanager.packagenotfound=The package '{0}' was not found in the file system.
+packagemanager.boot.notfound=The plugin '{0}' is unknown.
+
+pluginmanager.initialization=The plugin manager has been initialized.
+pluginmanager.load={0}.dll is loading. Version = '{1}'
+pluginmanager.created=The plugin '{0}' was created and registered in the plugin manager.
+pluginmanager.duplicate=The plugin '{0}' has already been registered in plugin manager.
+pluginmanager.notavailable=The plugin '{0}' does not exist in plugin manager.
+pluginmanager.plugin=Plugin: '{0}'
+pluginmanager.pluginmanager.label=Plugin manager:
+pluginmanager.pluginmanager.system=System plugin: '{0}'
+pluginmanager.pluginmanager.custom=custom plugin: '{0}'
+pluginmanager.pluginmanager.unfulfilleddependencies=Plugin with unfulfilled dependencies: '{0}'
+pluginmanager.plugin.initialization=The plugin '{0}' has been initialized.
+pluginmanager.plugin.processing.start=The plugin '{0}' is running.
+pluginmanager.plugin.processing.end=The running of the plugin '{0}' has been stopped.
+pluginmanager.fulfilleddependencies=The plugin '{0}' fulfills all dependencies.
+pluginmanager.unfulfilleddependencies=The plugin '{0}' does not fulfill a dependency on the plugin '{1}'.
+
+applicationmanager.initialization=The application manager has been initialized.
+applicationmanager.registerapplication=The application '{0}' has been created and registered in the application manager.
+applicationmanager.duplicateapplication=The application '{0}' has already been registered in the application manager.
+applicationmanager.application=Application: '{0}'
+applicationmanager.application.initialization=The application'{0}' has been initialized.
+applicationmanager.application.processing.start=The application '{0}' is running.
+applicationmanager.application.processing.end=The running of the application '{0}' has been stopped.
+applicationmanager.application.boot.notfound=The plugin '{0}' is unknown.
+
+modulemanager.initialization=The module manager has been initialized.
+modulemanager.register=The module '{0}' has been assigned to the application '{1}' and registered in the module manager.
+modulemanager.duplicate=The module '{0}' has already been registered in the application '{1}'.
+modulemanager.applicationless=The module '{0}' does not have any information about the application.
+modulemanager.module=Module: '{0}' for application(s) '{1}'
+pluginmanager.module.initialization=The module '{1}' of the application '{0}' has been initialized.
+pluginmanager.module.processing.start=The module '{1}' of the application '{0}' is running.
+pluginmanager.module.processing.end=The running of the module '{1}' of the application '{0}' has been stopped.
+
+resourcemanager.initialization=The resource manager has been initialized.
+resourcemanager.register={0} resource(s) have been assigned to the module '{1}'.
+resourcemanager.modulenotfound=The module '{1}' could not be found, which was specified in the resource '{0}'.
+resourcemanager.moduleless=The resource '{0}' does not have any information about the module.
+resourcemanager.addresource=The resource '{0}' has been registered in the module '{1}'.
+resourcemanager.addresource.duplicate=The resource '{0}' of module '{1}' has already been added.
+resourcemanager.addresource.error=The resource '{0}' of the module '{1}' could not be added.
+resourcemanager.sitemap=Sitemap content resource '{0}' application:
+resourcemanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
+resourcemanager.statuspage=Resource: '{0}' for module '{1}'
+
+responsemanager.initialization=The response manager has been initialized.
+responsemanager.register=Status {0} has been registered in the module '{1}' and assigned to the status page '{2}'.
+responsemanager.duplicat=The status {0} has already been registered in the module '{1}'. Therefore, the status page '{2}' is not used.
+responsemanager.statuscode=A status code has not been assigned to the  resource '{1}' for the module '{0}'.
+responsemanager.resource=Status code: '{0}'
+
+sitemapmanager.initialization=The sitemap manager has been initialized.
+sitemapmanager.refresh=The sitemap will be rebuilt.
+sitemapmanager.alreadyassigned=The node of the sitemap '{0}' is already assigned. The resource '{1}' is not included in the sitemap.
+sitemapmanager.addresource=The resource '{0}' has been registered in the sitemap.
+sitemapmanager.addresource.error=Could not add resource '{0}' in the sitemap.
+sitemapmanager.preorder={0} => {1}
+sitemapmanager.sitemap=Sitemap:
+sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
+
+sessionmanager.initialization=The session manager has been initialized.
+
+eventmanager.initialization=The event manager has been initialized.
+
+jobmanager.initialization=The schedule manager has been initialized.
+jobmanager.register=The plugin '{0}' is registered in the schedule manager manager.
+jobmanager.job.register=The job '{1}' have been assigned to the module '{0}'.
+jobmanager.moduleless=The job '{0}' does not have any information about the module.
+jobmanager.wrongmodule=The '{1}' job is not part of the module {0}.
+jobmanager.job=Job: '{0}' for module '{1}'
+jobmanager.job.process=The job '{0}' is executed.
+jobmanager.cron.parseerror=Syntax error in the timing of a job. The value '{0}' cannot be processed.
+jobmanager.cron.range=Syntax error in the timing of a job. The value '{0}' is outside the valid range.
+
+resource.variable.duplicate=Variable '{0}' already exists!
+resource.file={0}: File '{1}' has been loaded.

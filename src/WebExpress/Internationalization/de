@@ -1,0 +1,131 @@
+﻿# Deutsch
+
+app.startup=Programmstart
+app.version=Programmversion: {0}
+app.arguments=Argumente: {0}
+app.workingdirectory=Arbeitsverzeichnis: {0}
+app.packagebase=Paketverzeichnis: {0}
+app.assetbase=Assetverzeichnis: {0}
+app.database=Datenverzeichnis: {0}
+app.configurationdirectory=Konfigurationsverzeichnis: {0}
+app.configuration=Konfiguration: {0}
+app.logdirectory=Logverzeichnis: {0}
+app.log=Log: {0}
+app.uri=Uri: {0}
+app.errors={0} Fehler
+app.warnings={0} Warnung(en)
+app.done=Programmende
+
+httpserver.run=Starte HttpServer.
+httpserver.notsupported=Das Betriebssystem auf dem WebExpress ausgeführt werden soll wird nicht unterstützt.
+httpserver.start=Der HttpServer wurde am {0} um {1} Uhr gestartet.
+httpserver.connected={0}: Client wurde verbunden.
+httpserver.rejected={0}: Client wurde abgelehnt.
+httpserver.request={0}: Anfrage #{1} '{2}'
+httpserver.request.unexpected={0}: Unerwartete Anfrage '{1}'
+httpserver.request.done={0}: Anfrage #{1} wurde in {2} ms bearbeitet. Status = {3}
+httpserver.connectionlimit=Das Limit für gleichzeitige Anfragen wurde überschritten.
+httpserver.endpoint=Endpunkt '{0}' wird registriert.
+httpserver.listen=Der Webserver lauscht auf den Endpunkt {0}.
+httpserver.listen.exeption=Fehler beim Einrichten eines Endpunktes für die Uri {0}.
+httpserver.listener.try=Falls Ihnen Zugriffsrechte fehlen, führen Sie unter Windows folgende Anweisung als Administrator aus:
+httpserver.listener.windows=netsh http add urlacl url={0} user=Jeder listen=yes
+
+componentmanager.initialization=Der Komponentenmanager wurde initialisiert.
+componentmanager.register=Die Komponente '{0}' wurde im Komponentenmanager registriert. 
+componentmanager.execute=Startet den Komponenten-Manager.
+componentmanager.shutdown=Herunterfahren des Komponentenmanagers.
+componentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' nicht.
+componentmanager.duplicate=Die Komponente '{0}' wurde bereits registriert.
+componentmanager.remove=Die Komponente '{0}' wurde entfernt.
+componentmanager.component=Komponenten:
+
+internationalizationmanager.initialization=Der Internationalisierungsmanager wurde initialisiert.
+internationalizationmanager.register=Das Plugin '{0}' wurde im Internationalizationmanager registriert.
+
+packagemanager.initialization=Der Paketmanager wurde initialisiert.
+packagemanager.existing=Das Paket '{0}' ist im Katalog registriert.
+packagemanager.add=Das Paket '{0}' wird im Katalog neu aufgenommen.
+packagemanager.remove=Das bestehende Paket '{0}' wird aus dem Katalog entfernt.
+packagemanager.scan=Das Verzeichnis '{0}' wird auf neue Pakete gescannt.
+packagemanager.save=Der Katalog wird gespeichert.
+packagemanager.packagenotfound=Das Paket '{0}' wurde nicht im Dateisystem gefunden.
+packagemanager.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
+
+pluginmanager.initialization=Der Pluginmanager wurde initialisiert.
+pluginmanager.load={0}.dll wird geladen. Version = '{1}'
+pluginmanager.created=Das Plugin '{0}' wurde erstellt und im PluginManager registriert.
+pluginmanager.duplicate=Das Plugin '{0}' wurde bereits im PluginManager registriert.
+pluginmanager.notavailable=Das Plugin '{0}' ist im PluginManager nicht vorhanden.
+pluginmanager.plugin=Plugin: '{0}'
+pluginmanager.pluginmanager.label=Plugin Manager:
+pluginmanager.pluginmanager.system=Systemplugin: '{0}'
+pluginmanager.pluginmanager.custom=Benutzerdefiniertes Plugin: '{0}'
+pluginmanager.pluginmanager.unfulfilleddependencies=Plugin mit unerfüllten Abhängigkeiten: '{0}'
+pluginmanager.plugin.initialization=Das Plugin '{0}' wurde initialisiert.
+pluginmanager.plugin.processing.start=Das Plugin '{0}' wird ausgeführt.
+pluginmanager.plugin.processing.end=Die Ausführung des Plugin '{0}' wurde beendet.
+pluginmanager.fulfilleddependencies=Das Plugin '{0}' erfüllt alle Abhängigkeiten.
+pluginmanager.unfulfilleddependencies=Das Plugin '{0}' erfüllt eine Abhängigkeit zu dem Plugin '{1}' nicht.
+
+applicationmanager.initialization=Der Anwendungsmanager wurde initialisiert.
+applicationmanager.register=Die Anwendung '{0}' wurde erstellt und im Anwendungsmanager registriert.
+applicationmanager.duplicate=Die Anwendung '{0}' wurde bereits im Anwendungsmanager registriert.
+applicationmanager.application=Anwendung: '{0}'
+applicationmanager.application.initialization=Die Anwendung '{0}' wurde initialisiert.
+applicationmanager.application.processing.start=Die Anwendung '{0}' wird ausgeführt.
+applicationmanager.application.processing.end=Die Ausführung der Anwendung '{0}' wurde beendet.
+applicationmanager.application.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
+
+modulemanager.initialization=Der Modulmanager wurde initialisiert.
+modulemanager.register=Das Modul '{0}' wurde der Anwendung '{1}' zugewiesen und im Modulmanager registriert.
+modulemanager.duplicat=Das Modul '{0}' wurde bereits in der Anwendung '{1}' registriert.
+modulemanager.applicationless=Das Modul '{0}' besitzt keine Angaben zur Anwendung.
+modulemanager.module=Module: '{0}' für die Anwendung(n) '{1}'
+modulemanager.module.initialization=Das Modul '{1}' der Anwendung {0} wurde initialisiert.
+modulemanager.module.processing.start=Das Modul '{1}' der Anwendung {0} wird ausgeführt.
+modulemanager.module.processing.end=Die Ausführung des Modul '{1}' der Anwendung {0} wurde beendet.
+
+resourcemanager.initialization=Der Ressourcenmanager wurde initialisiert.
+resourcemanager.register={0} Ressource(n) wurden dem Modul '{1}' zugewiesen.
+resourcemanager.modulenotfound=Das Modul '{1}' wurde nicht gefunden, welches in der Ressource '{0}' angegeben wurde.
+resourcemanager.moduleless=Die Ressource '{0}' besitzt keine Angaben zum Modul.
+resourcemanager.addresource=Die Ressource '{0}' wurde in dem Modul '{1}' registiert.
+resourcemanager.addresource.duplicate=Die Ressource '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
+resourcemanager.addresource.error=Die Ressource '{0}' des Moduls '{1}' konnte nicht hinzugefügt werden.
+resourcemanager.sitemap=Inhalt der Sitemap für das Modul '{0}':
+resourcemanager.wrongtype=Der Type '{0}' implementiert die Schnittstelle '{1}' nicht.
+resourcemanager.resource=Ressource: '{0}' für das Modul '{1}'
+
+responsemanager.initialization=Der Responsemanagermanager wurde initialisiert.
+responsemanager.register=Status {0} wurde im Module '{1}' registriert und der Statusseite '{2}' zugewiesen.
+responsemanager.duplicat=Der Status {0} wurde bereits im Module '{1}' registriert registriert. Die Statusseite '{2}' wird daher nicht verwendet.
+responsemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für das Modul '{0}' nicht zugewiesen.
+responsemanager.statuspage=Statuscode: '{0}'
+
+sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
+sitemapmanager.refresh=Die Sitemap wird neu aufgebaut.
+sitemapmanager.alreadyassigned=Der Knoten der Sitemap '{0}' ist bereits zugewiesen. Die Ressource '{1}' wird nicht in die Sitemap aufgenommen.
+sitemapmanager.addresource=Die Ressource '{0}' wurde in der Sitemap registriert.
+sitemapmanager.addresource.error=Die Ressource '{0}' konnte nicht in der Sitemap hinzugefügt werden.
+sitemapmanager.preorder={0} => {1}
+sitemapmanager.sitemap=Sitemap:
+sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gemerdged werden.
+
+sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
+
+eventmanager.initialization=Der Eventmanager wurde initialisiert.
+
+jobmanager.initialization=Der Schedulemanager wurde initialisiert.
+jobmanager.register=Das Plugin '{0}' wurde im Schedulemanager registriert.
+jobmanager.job.register=Der Job '{1}' wurden dem Modul '{0}' zugewiesen.
+jobmanager.moduleless=Der Job '{0}' besitzt keine Angaben zum Modul.
+jobmanager.wrongmodule=Der Job '{1}' ist kein Teil des Moduls {0}.
+jobmanager.job=Job: '{0}' für Modul '{1}'
+jobmanager.job.process=Der Job '{0}' wird ausgeführt.
+jobmanager.cron.parseerror=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' kann nicht verarbeitet werden.
+jobmanager.cron.range=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' ist außerhalb des gültigen Bereiches.
+
+resource.variable.duplicate=Variable '{0}' bereits vorhanden!
+resource.file={0}: Datei '{1}' wurde geladen.
+

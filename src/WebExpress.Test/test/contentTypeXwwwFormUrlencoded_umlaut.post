@@ -1,0 +1,19 @@
+﻿POST /ix/manufactors/67d35a0f-7e94-4bfd-a309-36e9162a67ff HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Content-Length: 36
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.60
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost/ix/manufactors/67d35a0f-7e94-4bfd-a309-36e9162a67ff
+Accept-Encoding: gzip, deflate, br
+Accept-Language: de,en;q=0.9,en-GB;q=0.8,de-DE;q=0.7,en-US;q=0.6
+
+a=%C3%A4&b=%C3%B6+%C3%BC&submit_=1

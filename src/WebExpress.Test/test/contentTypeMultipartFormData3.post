@@ -1,0 +1,23 @@
+POST /ix/manufacturers/f9b28160-42d6-4b76-8c61-1f591780576a/media HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Content-Length: 142
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+Origin: http://localhost
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryLutwupO79tSZKWVN
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Referer: http://localhost/ix/manufacturers/f9b28160-42d6-4b76-8c61-1f591780576a/media
+Accept-Encoding: gzip, deflate, br
+Accept-Language: de,en;q=0.9,en-GB;q=0.8,de-DE;q=0.7,en-US;q=0.6
+
+------WebKitFormBoundaryLutwupO79tSZKWVN
+Content-Disposition: form-data; name="submit_del"
+
+1
+------WebKitFormBoundaryLutwupO79tSZKWVN--
