@@ -384,7 +384,7 @@ namespace WebExpress.WebSitemap
                         Instance = CreateInstance(node, new UriResource(outPathSegments.ToArray()), searchContext),
                     };
                 }
-                else if (node.IsLeaf && nextPathSegment != null && node.ResourceItem.IncludeSubPaths && node.ResourceItem != null)
+                else if (node.IsLeaf && nextPathSegment != null && node.ResourceItem != null && node.ResourceItem.IncludeSubPaths)
                 {
                     return new SearchResult()
                     {

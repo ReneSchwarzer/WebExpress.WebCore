@@ -481,6 +481,11 @@ namespace WebExpress
                     searchResult?.ApplicationContext?.PluginContext
                 );
 
+                if (statusPage == null)
+                {
+                    return response;
+                }
+
                 if (statusPage is II18N i18n)
                 {
                     i18n.Culture = culture;
