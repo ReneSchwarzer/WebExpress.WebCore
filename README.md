@@ -1,4 +1,4 @@
-![WebExpress](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress.Doc/main/assets/banner.png)
+![WebExpress](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress/main/assets/banner.png)
 
 # WebExpress
 WebExpress is a lightweight web server optimized for use in low-performance environments (e.g. Rasperry PI). By providing 
@@ -21,8 +21,8 @@ The WebExpress family includes the following projects:
 # Start
 To get started with WebExpress, use the following links and tutorials.
 
-- [installation guide](https://github.com/ReneSchwarzer/WebExpress.Doc/blob/main/doc/installation_guide.md) 
-- [development guide](https://github.com/ReneSchwarzer/WebExpress.Doc/blob/main/doc/development_guide.md)
+- [installation guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/installation_guide.md) 
+- [development guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/development_guide.md)
 
 ## Tutorials
 - [HelloWorld](https://github.com/ReneSchwarzer/WebExpress.Tutorial.HelloWorld#readme)
