@@ -18,7 +18,7 @@ The WebExpress family includes the following projects:
 - [WebExpress.WebIndex](https://github.com/ReneSchwarzer/WebExpress.WebIndex#readme) - Reverse index for WebExpress applications.
 - [WebExpress.WebApp](https://github.com/ReneSchwarzer/WebExpress.WebApp#readme) - Business application template for WebExpress applications.
 
-# WebExpress.Core
+# WebExpress.WebCore
 WebCore is part of the Webexpres family and includes the basic elements of a WebExpress application.
 
 # Download 
