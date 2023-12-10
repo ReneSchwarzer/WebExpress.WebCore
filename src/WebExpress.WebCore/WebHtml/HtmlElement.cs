@@ -17,15 +17,15 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected List<IHtmlAttribute> Attributes { get; private set; }
+        protected List<IHtmlAttribute> Attributes { get; } = new List<IHtmlAttribute>();
 
         /// <summary>
-        /// Returns or sets the attributes.
+        /// Returns or sets the elements.
         /// </summary>
-        protected List<IHtmlNode> Elements { get; private set; }
+        protected List<IHtmlNode> Elements { get; } = new List<IHtmlNode>();
 
         /// <summary>
-        /// Returns or sets Returns or sets the id.
+        /// Returns or sets the id.
         /// </summary>
         public string Id
         {
@@ -105,8 +105,6 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElement(string name, bool closeTag = true)
         {
             ElementName = name;
-            Attributes = new List<IHtmlAttribute>();
-            Elements = new List<IHtmlNode>();
             CloseTag = closeTag;
         }
 
@@ -119,17 +117,17 @@ namespace WebExpress.WebCore.WebHtml
         {
             foreach (var v in nodes)
             {
-                if (v is HtmlAttribute)
+                if (v is HtmlAttribute attr)
                 {
-                    Attributes.Add(v as HtmlAttribute);
+                    Attributes.Add(attr);
                 }
-                else if (v is HtmlElement)
+                else if (v is HtmlElement element)
                 {
-                    Elements.Add(v as HtmlElement);
+                    Elements.Add(element);
                 }
-                else if (v is HtmlText)
+                else if (v is HtmlText text)
                 {
-                    Elements.Add(v as HtmlText);
+                    Elements.Add(text);
                 }
             }
         }
@@ -331,7 +329,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Convert to a string using a StringBuilder.
+        /// Convert to a string using a string builder.
         /// </summary>
         /// <param name="builder">The string builder.</param>
         /// <param name="deep">The call depth.</param>
