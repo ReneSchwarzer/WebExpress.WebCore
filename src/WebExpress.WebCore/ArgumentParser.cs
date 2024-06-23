@@ -20,6 +20,22 @@ namespace WebExpress.WebCore
         private List<ArgumentParserCommand> Commands { get; set; }
 
         /// <summary>
+        /// Returns the current ArgumentParser object.
+        /// </summary>
+        public static ArgumentParser Current
+        {
+            get
+            {
+                if (m_this == null)
+                {
+                    m_this = new ArgumentParser();
+                }
+
+                return m_this;
+            }
+        }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public ArgumentParser()
@@ -112,19 +128,21 @@ namespace WebExpress.WebCore
         }
 
         /// <summary>
-        /// Returns the current ArgumentParser object.
+        /// Returns a help string.
         /// </summary>
-        public static ArgumentParser Current
+        /// <returns>A string that represents the help tret of the commands, separated by commas.</returns>
+        public string GetHelp()
         {
-            get
-            {
-                if (m_this == null)
-                {
-                    m_this = new ArgumentParser();
-                }
+            return string.Join(Environment.NewLine, Commands.Select(x => string.Join(" ", $"-{x.FullName} ({x.ShortName}) {x.ParameterDescription}".Trim(), $": {x.Description}")));
+        }
 
-                return m_this;
-            }
+        /// <summary>
+        /// Converts the commands to a help string.
+        /// </summary>
+        /// <returns>A string that represents the help tret of the commands, separated by commas.</returns>
+        public override string ToString()
+        {
+            return string.Join(" | ", Commands.Select(x => $"-{(x.ShortName + x.ParameterDescription).Trim()}"));
         }
     }
 }
