@@ -35,6 +35,7 @@ namespace WebExpress.WebCore
         /// Entry point of application.
         /// </summary>
         /// <param name="args">Call arguments.</param>
+        /// <returns>The return code. 0 on success. A number greater than 0 for errors.</returns>
         public static int Main(string[] args)
         {
             var app = new WebEx()
@@ -49,6 +50,7 @@ namespace WebExpress.WebCore
         /// Running the application.
         /// </summary>
         /// <param name="args">Call arguments.</param>
+        /// <returns>The return code. 0 on success. A number greater than 0 for errors.</returns>
         public int Execution(string[] args)
         {
             // prepare call arguments

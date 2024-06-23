@@ -14,5 +14,20 @@
         /// The short name of the command.
         /// </summary>
         public string ShortName { get; set; }
+
+        /// <summary>
+        /// The description of the command.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The description of the parameter.
+        /// </summary>
+        public string ParameterDescription { get; set; }
+
+        /// <summary>
+        /// Returns or sets whether the command is mandatory.
+        /// </summary>
+        public bool Mandatory { get; set; } = false;
     }
 }

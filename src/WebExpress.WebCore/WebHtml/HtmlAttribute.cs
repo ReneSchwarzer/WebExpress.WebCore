@@ -5,7 +5,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlAttribute : IHtmlAttribute
     {
         /// <summary>
-        /// Returns or sets the name. des Attributes
+        /// Returns or sets the name of the attribute.
         /// </summary>
         public string Name { get; set; }
 
@@ -43,7 +43,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Convert to a string using a StringBuilder.
+        /// Convert to a string using a string builder.
         /// </summary>
         /// <param name="builder">The string builder.</param>
         /// <param name="deep">The call depth.</param>

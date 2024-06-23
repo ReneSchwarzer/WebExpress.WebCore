@@ -34,6 +34,25 @@ namespace WebExpress.WebCore.WebMessage
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <param name="scope">The scope of the parameter.</param>
+        public Parameter(string key, Guid value, ParameterScope scope)
+        {
+            Key = key.ToLower();
+            Value = value.ToString();
+            Scope = scope;
+
+            if (scope == ParameterScope.Parameter)
+            {
+                var decode = System.Web.HttpUtility.UrlDecode(value.ToString());
+                Value = decode;
+            }
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="scope">The scope of the parameter.</param>
         public Parameter(string key, string value, ParameterScope scope)
         {
             Key = key.ToLower();
