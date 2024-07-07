@@ -6,6 +6,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebJob;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPlugin;
@@ -59,6 +60,12 @@ namespace WebExpress.WebCore.WebComponent
                 SessionManager,
                 TaskManager
             }.Concat(Dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
+
+        /// <summary>
+        /// Returns the log manager.
+        /// </summary>
+        /// <returns>The instance of the log manager or null.</returns>
+        public static LogManager LogManager { get; private set; }
 
         /// <summary>
         /// Returns the package manager.
@@ -148,6 +155,7 @@ namespace WebExpress.WebCore.WebComponent
             );
 
             // order is relevant
+            LogManager = CreateInstance(typeof(LogManager)) as LogManager;
             PackageManager = CreateInstance(typeof(PackageManager)) as PackageManager;
             PluginManager = CreateInstance(typeof(PluginManager)) as PluginManager;
             InternationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
@@ -210,8 +218,6 @@ namespace WebExpress.WebCore.WebComponent
                     null,
                     null
                 ) as IComponent;
-
-                //var component = Activator.CreateInstance(componentType, flags) as IComponent;
 
                 component.Initialization(HttpServerContext);
 

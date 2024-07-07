@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebUri;
 
@@ -94,7 +95,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the log to write status messages to the console and to a log file.
         /// </summary>
-        public Log Log { get; internal set; }
+        public ILog Log { get; internal set; }
 
         /// <summary>
         /// Returns the directory where the module instances are listed.

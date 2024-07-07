@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]

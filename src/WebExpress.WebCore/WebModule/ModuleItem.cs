@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -75,7 +76,7 @@ namespace WebExpress.WebCore.WebModule
         /// <summary>
         /// Returns the log to write status messages to the console and to a log file.
         /// </summary>
-        public Log Log { get; internal set; }
+        public ILog Log { get; internal set; }
 
         /// <summary>
         /// Returns the directory where the module instances are listed.

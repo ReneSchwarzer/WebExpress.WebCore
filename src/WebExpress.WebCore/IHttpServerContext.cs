@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using WebExpress.WebCore.Config;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore
@@ -58,7 +59,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the log for writing status messages to the console and to a log file.
         /// </summary>
-        Log Log { get; }
+        ILog Log { get; }
 
         /// <summary>
         /// Returns the host.

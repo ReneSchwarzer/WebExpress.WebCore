@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 

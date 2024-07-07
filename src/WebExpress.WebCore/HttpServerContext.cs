@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 using WebExpress.WebCore.Config;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore
@@ -59,7 +60,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the log for writing status messages to the console and to a log file.
         /// </summary>
-        public Log Log { get; protected set; }
+        public ILog Log { get; protected set; }
 
         /// <summary>
         /// Returns the host.
@@ -89,7 +90,7 @@ namespace WebExpress.WebCore
             string configBaseFolder,
             UriResource contextPath,
             CultureInfo culture,
-            Log log,
+            ILog log,
             IHost host
         )
         {

@@ -1,7 +1,6 @@
 ﻿using System;
-using static WebExpress.WebCore.Log;
 
-namespace WebExpress.WebCore
+namespace WebExpress.WebCore.WebLog
 {
     /// <summary>
     /// Log entry
@@ -11,7 +10,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Level of the entry.
         /// </summary>
-        private readonly Level m_level;
+        private readonly LogLevel m_level;
 
         /// <summary>
         /// The instance (location).
@@ -34,7 +33,7 @@ namespace WebExpress.WebCore
         /// <param name="level">The level.</param>
         /// <param name="instance">The modul/funktion.</param>
         /// <param name="message">The log message.</param>
-        public LogItem(Level level, string instance, string message, string timePattern)
+        public LogItem(LogLevel level, string instance, string message, string timePattern)
         {
             m_level = level;
             m_instance = instance;
@@ -49,7 +48,7 @@ namespace WebExpress.WebCore
         /// <returns>The log entry as a string</returns>
         public override string ToString()
         {
-            if (m_level != Level.Seperartor)
+            if (m_level != LogLevel.Seperartor)
             {
                 return m_timestamp.ToString(TimePattern) + " " + m_level.ToString().PadRight(9, ' ') + " " + m_instance.PadRight(19, ' ').Substring(0, 19) + " " + m_message;
             }
@@ -62,7 +61,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the level of the entry.
         /// </summary>
-        public Level Level => m_level;
+        public LogLevel Level => m_level;
 
         /// <summary>
         /// Returns the instance (location).

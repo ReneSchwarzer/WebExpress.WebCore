@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace WebExpress.WebCore
+namespace WebExpress.WebCore.WebLog
 {
     /// <summary>
     /// Creates a frame of log entries.
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// The log entry.
         /// </summary>
-        protected Log Log { get; set; }
+        protected ILog Log { get; set; }
 
         /// <summary>
         /// Constructor
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore
         /// <param name="instance">Method that wants to log.</param>
         /// <param name="line">The line number.</param>
         /// <param name="file">The source file.</param>
-        public LogFrameSimple(Log log, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
+        public LogFrameSimple(ILog log, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
             Instance = instance;
             Log = log;

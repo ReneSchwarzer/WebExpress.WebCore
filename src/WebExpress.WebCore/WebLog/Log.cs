@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using WebExpress.WebCore.Setting;
 
-namespace WebExpress.WebCore
+namespace WebExpress.WebCore.WebLog
 {
     /// <summary>
     /// Class for logging events to your log file
@@ -31,18 +31,8 @@ namespace WebExpress.WebCore
     /// 08:26:30 Info      Program.Main                   Configuration version: V1<br>
     /// 08:26:30 Info      Program.Main                   Processing: sequentiell<br>
     /// </example>
-    public class Log : ILogger
+    public class Log : ILog
     {
-        /// <summary>
-        /// Enumeration defines the different log levels.
-        /// </summary>
-        public enum Level { Info, Warning, FatalError, Error, Exception, Debug, Seperartor };
-
-        /// <summary>
-        /// Enumerations of the log mode.
-        /// </summary>
-        public enum Mode { Off, Append, Override };
-
         /// <summary>
         /// Returns or sets the encoding.
         /// </summary>
@@ -81,12 +71,22 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the log mode.
         /// </summary>
-        public Mode LogMode { get; set; }
+        public LogMode LogMode { get; set; }
 
         /// <summary>
         /// The default instance of the logger.
         /// </summary>
         public static Log Current { get; } = new Log();
+
+        /// <summary>
+        /// Set file name time patterns.
+        /// </summary>
+        public string FilePattern { set; get; }
+
+        /// <summary>
+        /// Time patternsspecifying log entries.
+        /// </summary>
+        public string TimePattern { set; get; }
 
         /// <summary>
         /// The directory where the log is created.
@@ -140,7 +140,7 @@ namespace WebExpress.WebCore
             Encoding = Encoding.UTF8;
             FilePattern = "yyyyMMdd";
             TimePattern = "yyyMMddHHmmss";
-            LogMode = Log.Mode.Append;
+            LogMode = LogMode.Append;
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace WebExpress.WebCore
             }
 
             // Delete existing log file when overwrite mode is active
-            if (LogMode == Mode.Override)
+            if (LogMode == LogMode.Override)
             {
                 try
                 {
@@ -199,7 +199,7 @@ namespace WebExpress.WebCore
         public void Begin(SettingLogItem settings)
         {
             Filename = settings.Filename;
-            LogMode = (Mode)Enum.Parse(typeof(Mode), settings.Modus);
+            LogMode = (LogMode)Enum.Parse(typeof(LogMode), settings.Modus);
             Encoding = Encoding.GetEncoding(settings.Encoding);
             TimePattern = settings.Timepattern;
             DebugMode = settings.Debug;
@@ -215,7 +215,7 @@ namespace WebExpress.WebCore
         /// <param name="instance">Method/ function that wants to log.</param>
         /// <param name="line">The line number.</param>
         /// <param name="file">The source file.</param>
-        protected virtual void Add(Level level, string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
+        protected virtual void Add(LogLevel level, string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
             foreach (var l in message?.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
             {
@@ -224,12 +224,12 @@ namespace WebExpress.WebCore
                     var item = new LogItem(level, instance, l, TimePattern);
                     switch (level)
                     {
-                        case Level.Error:
-                        case Level.FatalError:
-                        case Level.Exception:
+                        case LogLevel.Error:
+                        case LogLevel.FatalError:
+                        case LogLevel.Exception:
                             Console.ForegroundColor = ConsoleColor.Red;
                             break;
-                        case Level.Warning:
+                        case LogLevel.Warning:
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             break;
                         default:
@@ -258,7 +258,7 @@ namespace WebExpress.WebCore
         /// <param name="sepChar">The separator.</param>
         public void Seperator(char sepChar)
         {
-            Add(Level.Seperartor, "".PadRight(_seperatorWidth, sepChar));
+            Add(LogLevel.Seperartor, "".PadRight(_seperatorWidth, sepChar));
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Info, message, $"{className}.{instance}", line, file);
+            Add(LogLevel.Info, message, $"{className}.{instance}", line, file);
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Info, string.Format(message, args), $"{className}.{instance}", line, file);
+            Add(LogLevel.Info, string.Format(message, args), $"{className}.{instance}", line, file);
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Warning, message, $"{className}.{instance}", line, file);
+            Add(LogLevel.Warning, message, $"{className}.{instance}", line, file);
 
             WarningCount++;
         }
@@ -322,7 +322,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Warning, string.Format(message, args), $"{className}.{instance}", line, file);
+            Add(LogLevel.Warning, string.Format(message, args), $"{className}.{instance}", line, file);
 
             WarningCount++;
         }
@@ -339,7 +339,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Error, message, $"{className}.{instance}", line, file);
+            Add(LogLevel.Error, message, $"{className}.{instance}", line, file);
 
             ErrorCount++;
         }
@@ -357,7 +357,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.Error, string.Format(message, args), $"{className}.{instance}", line, file);
+            Add(LogLevel.Error, string.Format(message, args), $"{className}.{instance}", line, file);
 
             ErrorCount++;
         }
@@ -374,7 +374,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.FatalError, message, $"{className}.{instance}", line, file);
+            Add(LogLevel.FatalError, message, $"{className}.{instance}", line, file);
 
             ErrorCount++;
         }
@@ -392,7 +392,7 @@ namespace WebExpress.WebCore
             var methodInfo = new StackTrace().GetFrame(1).GetMethod();
             var className = methodInfo.ReflectedType.Name;
 
-            Add(Level.FatalError, string.Format(message, args), $"{className}.{instance}", line, file);
+            Add(LogLevel.FatalError, string.Format(message, args), $"{className}.{instance}", line, file);
 
             ErrorCount++;
         }
@@ -411,8 +411,8 @@ namespace WebExpress.WebCore
 
             lock (_queue)
             {
-                Add(Level.Exception, ex?.Message.Trim(), $"{className}.{instance}", line, file);
-                Add(Level.Exception, ex?.StackTrace != null ? ex?.StackTrace.Trim() : ex?.Message.Trim(), $"{className}.{instance}", line, file);
+                Add(LogLevel.Exception, ex?.Message.Trim(), $"{className}.{instance}", line, file);
+                Add(LogLevel.Exception, ex?.StackTrace != null ? ex?.StackTrace.Trim() : ex?.Message.Trim(), $"{className}.{instance}", line, file);
 
                 ExceptionCount++;
                 ErrorCount++;
@@ -433,7 +433,7 @@ namespace WebExpress.WebCore
 
             if (DebugMode)
             {
-                Add(Level.Debug, message, $"{className}.{instance}", line, file);
+                Add(LogLevel.Debug, message, $"{className}.{instance}", line, file);
             }
         }
 
@@ -452,7 +452,7 @@ namespace WebExpress.WebCore
 
             if (DebugMode)
             {
-                Add(Level.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
+                Add(LogLevel.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
             }
         }
 
@@ -495,7 +495,7 @@ namespace WebExpress.WebCore
             }
 
             // protect file writing from concurrent access
-            if (list.Count > 0 && LogMode != Mode.Off)
+            if (list.Count > 0 && LogMode != LogMode.Off)
             {
                 lock (_path)
                 {
@@ -538,9 +538,9 @@ namespace WebExpress.WebCore
         /// <param name="state">The entry to write. Can also be an object.</param>
         /// <param name="exception">The exception that applies to this entry.</param>
         /// <param name="formatter">Function to create a string message of the state and exception parameters.</param>
-        void ILogger.Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        void ILogger.Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (logLevel == LogLevel.Error)
+            if (logLevel == Microsoft.Extensions.Logging.LogLevel.Error)
             {
                 var message = exception?.Message ?? formatter.Invoke(state, exception);
                 Error(message, "Kestrel", null, null);
@@ -553,7 +553,7 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="logLevel">Level to be checked.</param>
         /// <returns>True in the enabled state, false otherwise.</returns>
-        public bool IsEnabled(LogLevel logLevel)
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
         {
             return true;
         }
@@ -568,15 +568,5 @@ namespace WebExpress.WebCore
         {
             return null;
         }
-
-        /// <summary>
-        /// Set file name time patterns.
-        /// </summary>
-        public string FilePattern { set; get; }
-
-        /// <summary>
-        /// Time patternsspecifying log entries.
-        /// </summary>
-        public string TimePattern { set; get; }
     }
 }

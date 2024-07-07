@@ -1,8 +1,7 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebJob;
-using Xunit;
+using WebExpress.WebCore.WebLog;
 
 namespace WebExpress.WebCore.Test.Schedule
 {

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;

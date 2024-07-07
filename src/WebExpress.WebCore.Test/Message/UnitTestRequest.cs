@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.Test.Message
     public class UnitTestRequest
     {
         /// <summary>
-        /// Creates the fFeature collection.
+        /// Creates the feature collection.
         /// </summary>
         /// <param name="reader">The reader.</param>
         /// <param name="method">The request method.</param>

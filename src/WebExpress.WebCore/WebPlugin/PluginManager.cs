@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPlugin

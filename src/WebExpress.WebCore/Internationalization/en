@@ -40,6 +40,9 @@ componentmanager.duplicate=The component '{0}' has already been registered.
 componentmanager.remove=The component '{0}' has been removed.
 componentmanager.component=Components:
 
+logmanager.initialization:The log manager has been initialized.
+logmanager.titel:Log manager
+
 internationalizationmanager.initialization=The internationalization manager has been initialized.
 internationalizationmanager.register=The plugin '{0}' is registered in the internationalization manager.
 

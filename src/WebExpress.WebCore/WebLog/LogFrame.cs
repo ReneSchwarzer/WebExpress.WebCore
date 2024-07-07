@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace WebExpress.WebCore
+namespace WebExpress.WebCore.WebLog
 {
     /// <summary>
     /// Creates a frame of log entries.

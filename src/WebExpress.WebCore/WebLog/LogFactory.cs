@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace WebExpress.WebCore
+namespace WebExpress.WebCore.WebLog
 {
     public class LogFactory : ILoggerFactory, ILoggerProvider
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;

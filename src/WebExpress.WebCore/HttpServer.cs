@@ -20,6 +20,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
@@ -122,7 +123,7 @@ namespace WebExpress.WebCore
             serviceCollection.AddMemoryCache();
             serviceCollection.AddLogging(x =>
             {
-                x.SetMinimumLevel(LogLevel.Trace);
+                x.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 x.AddProvider(logger);
             });
             serviceCollection.AddHttpLogging(x =>
@@ -151,7 +152,7 @@ namespace WebExpress.WebCore
 
             Kestrel.StartAsync(this, ServerToken);
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.start"), args: new object[] { ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString() });
+            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
 
             Started?.Invoke(this, new EventArgs());
         }
@@ -171,7 +172,7 @@ namespace WebExpress.WebCore
                 var port = uri.Port;
                 var host = asterisk ? Dns.GetHostEntry(Dns.GetHostName()) : Dns.GetHostEntry(uri.Host);
                 var addressList = host.AddressList
-                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : Array.Empty<IPAddress>())
+                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
                 HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.endpoint"), args: endPoint.Uri);
@@ -273,11 +274,13 @@ namespace WebExpress.WebCore
             if (searchResult != null)
             {
                 var resourceUri = new UriResource(request.Uri, searchResult.Uri.PathSegments);
-                resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count())?.PathSegments);
-                resourceUri.ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments);
-                resourceUri.ApplicationRoot = new UriResource(request.Uri, searchResult.ApplicationContext?.ContextPath.PathSegments);
-                resourceUri.ModuleRoot = new UriResource(request.Uri, searchResult.ModuleContext?.ContextPath.PathSegments);
-                resourceUri.ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments);
+                resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count)?.PathSegments)
+                {
+                    ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments),
+                    ApplicationRoot = new UriResource(request.Uri, searchResult.ApplicationContext?.ContextPath.PathSegments),
+                    ModuleRoot = new UriResource(request.Uri, searchResult.ModuleContext?.ContextPath.PathSegments),
+                    ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
+                };
 
                 request.Uri = resourceUri;
 
@@ -393,7 +396,6 @@ namespace WebExpress.WebCore
                 responseFeature.StatusCode = response.Status;
                 responseFeature.ReasonPhrase = response.Reason;
                 responseFeature.Headers.KeepAlive = "true";
-                responseFeature.Headers.Add("PageID", "Test");
 
                 if (response.Header.Location != null)
                 {
@@ -415,7 +417,7 @@ namespace WebExpress.WebCore
                     responseFeature.Headers.WWWAuthenticate = "Basic realm=\"Bereich\"";
                 }
 
-                if (response.Header.Cookies.Any())
+                if (response.Header.Cookies.Count != 0)
                 {
                     responseFeature.Headers.SetCookie = string.Join(" ", response.Header.Cookies);
                 }
