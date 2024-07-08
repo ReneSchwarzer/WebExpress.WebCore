@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns the directory where the components are listed.
         /// </summary>
-        private static ComponentDictionary Dictionary { get; } = new ComponentDictionary();
+        private static ComponentDictionary Dictionary { get; } = [];
 
         /// <summary>
         /// Returns all registered components.
@@ -264,7 +264,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Discovers and registers the components from the specified plugin.
         /// </summary>
         /// <param name="pluginContexts">A plugin context that contain the components.</param>
-        public static void Register(IPluginContext pluginContext)
+        internal static void Register(IPluginContext pluginContext)
         {
             // the plugin has already been registered
             if (Dictionary.ContainsKey(pluginContext))
@@ -274,7 +274,7 @@ namespace WebExpress.WebCore.WebComponent
 
             var assembly = pluginContext.Assembly;
 
-            Dictionary.Add(pluginContext, new List<ComponentItem>());
+            Dictionary.Add(pluginContext, []);
             var componentItems = Dictionary[pluginContext];
 
             foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponent).Name) != null))

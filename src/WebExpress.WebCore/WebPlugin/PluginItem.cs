@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// The dependencies of the plugin.
         /// </summary>
-        public IEnumerable<string> Dependencies { get; internal set; } = new List<string>();
+        public IEnumerable<string> Dependencies { get; internal set; } = [];
 
         /// <summary>
         /// Thread termination token.

@@ -3,7 +3,6 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
@@ -77,7 +76,7 @@ namespace WebExpress.WebCore.WebPage
             Page = page;
             Request = request;
             VisualTree = visualTree;
-            Culture = (Page as Resource).Culture;
+            Culture = Page.Culture;
         }
 
         /// <summary>

@@ -35,12 +35,12 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the directory where the plugins are listed.
         /// </summary>
-        private PluginDictionary Dictionary { get; } = new PluginDictionary();
+        private PluginDictionary Dictionary { get; } = [];
 
         /// <summary>
         /// Plugins that do not meet the dependencies.
         /// </summary>
-        private PluginDictionary UnfulfilledDependencies { get; } = new PluginDictionary();
+        private PluginDictionary UnfulfilledDependencies { get; } = [];
 
         /// <summary>
         /// Returns all plugins.
@@ -392,7 +392,7 @@ namespace WebExpress.WebCore.WebPlugin
         {
             var pluginId = pluginContext?.PluginId?.ToLower();
 
-            if (pluginId == null || !Dictionary.ContainsKey(pluginId))
+            if (pluginId == null || !Dictionary.TryGetValue(pluginId, out PluginItem value))
             {
                 HttpServerContext.Log.Warning
                 (
@@ -406,7 +406,7 @@ namespace WebExpress.WebCore.WebPlugin
                 return null;
             }
 
-            return Dictionary[pluginId];
+            return value;
         }
 
         /// <summary>
@@ -477,7 +477,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// Shut down the plugin.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin to shut down.</param>
-        public void ShutDown(IPluginContext pluginContext)
+        internal void ShutDown(IPluginContext pluginContext)
         {
             var plugin = GetPluginItem(pluginContext);
 
@@ -489,7 +489,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// Shut down the plugins.
         /// </summary>
         /// <param name="contexts">A list of contexts of plugins to shut down.</param>
-        public void ShutDown(IEnumerable<IPluginContext> contexts)
+        internal void ShutDown(IEnumerable<IPluginContext> contexts)
         {
             foreach (var context in contexts)
             {
