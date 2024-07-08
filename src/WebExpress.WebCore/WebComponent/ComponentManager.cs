@@ -48,6 +48,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public static IEnumerable<IComponent> Components => new IComponent[]
             {
+                LogManager,
                 PackageManager,
                 PluginManager,
                 ApplicationManager,
@@ -369,7 +370,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Shutting down the component manager.
         /// </summary>
-        public static void ShutDown()
+        internal static void ShutDown()
         {
             HttpServerContext.Log.Debug
             (
@@ -381,7 +382,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Shutting down the component.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        public static void ShutDownComponent(IPluginContext pluginContext)
+        internal static void ShutDownComponent(IPluginContext pluginContext)
         {
             PluginManager.ShutDown(pluginContext);
             ApplicationManager.ShutDown(pluginContext);
@@ -451,7 +452,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Output of the components to the log.
         /// </summary>
-        public static void LogStatus()
+        internal static void LogStatus()
         {
             using var frame = new LogFrameSimple(HttpServerContext.Log);
             var output = new List<string>

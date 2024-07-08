@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns all plugins.
         /// </summary>
-        public ICollection<IPluginContext> Plugins => Dictionary.Values.Select(x => x.PluginContext).ToList();
+        public IEnumerable<IPluginContext> Plugins => Dictionary.Values.Select(x => x.PluginContext).ToList();
 
         /// <summary>
         /// Constructor
@@ -369,15 +369,15 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns a plugin context based on its id.
         /// </summary>
-        /// <param name="id">The id of the plugin.</param>
+        /// <param name="pluginId">The id of the plugin.</param>
         /// <returns>The plugin context.</returns>
-        public IPluginContext GetPlugin(string id)
+        public IPluginContext GetPlugin(string pluginId)
         {
             return Dictionary.Values
                 .Where
                 (
                     x => x.PluginContext != null &&
-                    x.PluginContext.PluginId.Equals(id, StringComparison.OrdinalIgnoreCase)
+                    x.PluginContext.PluginId.Equals(pluginId, StringComparison.OrdinalIgnoreCase)
                 )
                 .Select(x => x.PluginContext)
                 .FirstOrDefault();

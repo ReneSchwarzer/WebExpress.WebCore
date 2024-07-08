@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using WebExpress.WebCore.WebUri;
-using Xunit;
+﻿using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
@@ -16,20 +13,17 @@ namespace WebExpress.WebCore.Test.Uri
             var str = "http://user@example.com:8080/abc#a?b=1&c=2";
             var uri = new UriResource(str);
 
-            Assert.True
-            (
-                uri.ToString() == str &&
-                uri.Scheme == UriScheme.Http &&
-                uri.Authority.User == "user" &&
-                uri.Authority.Host == "example.com" &&
-                uri.Authority.Port == 8080 &&
-                uri.Fragment == "a" &&
-                uri.Query.FirstOrDefault()?.Key == "b" &&
-                uri.Query.FirstOrDefault()?.Value == "1" &&
-                uri.Query.LastOrDefault()?.Key == "c" &&
-                uri.Query.LastOrDefault()?.Value == "2" &&
-                uri.IsRelative == false
-            );
+            Assert.Equal(uri.ToString(), str);
+            Assert.Equal(UriScheme.Http, uri.Scheme);
+            Assert.Equal("user", uri.Authority.User);
+            Assert.Equal("example.com", uri.Authority.Host);
+            Assert.Equal(8080, uri.Authority.Port);
+            Assert.Equal("a", uri.Fragment);
+            Assert.Equal("b", uri.Query.FirstOrDefault()?.Key);
+            Assert.Equal("1", uri.Query.FirstOrDefault()?.Value);
+            Assert.Equal("c", uri.Query.LastOrDefault()?.Key);
+            Assert.Equal("2", uri.Query.LastOrDefault()?.Value);
+            Assert.False(uri.IsRelative);
         }
 
         [Fact]

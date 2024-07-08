@@ -16,8 +16,8 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Initialization
         /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        void Initialization(IHttpServerContext context);
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        void Initialization(IHttpServerContext httpServerContext);
 
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.

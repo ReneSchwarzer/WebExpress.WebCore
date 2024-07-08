@@ -3,8 +3,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Internationalization
@@ -192,11 +192,17 @@ namespace WebExpress.WebCore.Internationalization
                 language = DefaultCulture?.TwoLetterISOLanguageName;
             }
 
-            var item = Dictionary[language];
-
-            if (item.ContainsKey(k))
+            if (string.IsNullOrWhiteSpace(language))
             {
-                return item[k];
+                return key;
+            }
+
+            if (Dictionary.TryGetValue(language, out InternationalizationItem item))
+            {
+                if (item.TryGetValue(k, out string value))
+                {
+                    return value;
+                }
             }
 
             return key;
