@@ -94,7 +94,7 @@ namespace WebExpress.WebCore.WebHtml
 
         /// <summary>
         /// Determines whether the element needs an end tag.
-        /// e.g.: true = <div></div> false = <br>
+        /// e.g.: true = <div></div> false = <br/>
         /// </summary>
         public bool CloseTag { get; protected set; }
 
