@@ -451,9 +451,9 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         private void ParseSessionParams()
         {
-            Session = ComponentManager.SessionManager.GetSession(this);
+            Session = ComponentManager.SessionManager?.GetSession(this);
 
-            var property = Session.GetProperty<SessionPropertyParameter>();
+            var property = Session?.GetProperty<SessionPropertyParameter>();
             if (property != null && property.Params != null)
             {
                 foreach (var param in property.Params)
