@@ -8,10 +8,15 @@ namespace WebExpress.WebCore.WebApplication
     public interface IApplication : IDisposable
     {
         /// <summary>
+        /// Returns the context of the application.
+        /// </summary>
+        IApplicationContext ApplicationContext { get; }
+
+        /// <summary>
         /// Initialization of the application .
         /// </summary>
-        /// <param name="context">The context.</param>
-        void Initialization(IApplicationContext context);
+        /// <param name="applicationContext">The context.</param>
+        void Initialization(IApplicationContext applicationContext);
 
         /// <summary>
         /// Called when the application starts working. The call is concurrent.

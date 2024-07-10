@@ -1,6 +1,4 @@
-﻿using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
+﻿using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
@@ -12,19 +10,9 @@ namespace WebExpress.WebCore.WebStatusPage
     public interface IStatusPage
     {
         /// <summary>
-        /// Returns the resource Id.
+        /// Returns the resource context where the resource exists.
         /// </summary>
-        string Id { get; }
-
-        /// <summary>
-        /// Returns the context of the application.
-        /// </summary>
-        IApplicationContext ApplicationContext { get; }
-
-        /// <summary>
-        /// Returns the context of the module.
-        /// </summary>
-        IModuleContext ModuleContext { get; }
+        IResourceContext ResourceContext { get; }
 
         /// <summary>
         /// Returns or sets the status code.

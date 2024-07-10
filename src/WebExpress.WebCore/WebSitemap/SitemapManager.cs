@@ -443,12 +443,12 @@ namespace WebExpress.WebCore.WebSitemap
                 i18n.Culture = context.Culture;
             }
 
-            if (instance is Resource resorce)
-            {
-                resorce.Id = node.ResourceItem?.ResourceId;
-                resorce.ApplicationContext = node.ResourceContext?.ModuleContext?.ApplicationContext;
-                resorce.ModuleContext = node.ResourceContext?.ModuleContext;
-            }
+            //if (instance is Resource resorce)
+            //{
+            //resorce.Id = node.ResourceItem?.ResourceId;
+            //resorce.ApplicationContext = node.ResourceContext?.ModuleContext?.ApplicationContext;
+            //resorce.ModuleContext = node.ResourceContext?.ModuleContext;
+            //}
 
             if (instance is IPage page)
             {

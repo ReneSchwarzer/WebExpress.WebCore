@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
@@ -29,10 +28,10 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         public UriResource Uri => Request.Uri;
 
-        /// <summary>
-        /// Returns the context path.
-        /// </summary>
-        public UriResource ContextPath => Page?.ResourceContext?.ContextPath;
+        ///// <summary>
+        ///// Returns the context path.
+        ///// </summary>
+        //public UriResource ContextPath => Page?.ResourceContext?.ContextPath;
 
         /// <summary>
         /// Returns the culture.
@@ -46,17 +45,17 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Provides the context of the associated application.
         /// </summary>
-        public IApplicationContext ApplicationContext => Page?.ApplicationContext;
+        public IApplicationContext ApplicationContext => Page?.ResourceContext.ApplicationContext;
 
         /// <summary>
         /// Returns the contents of a page.
         /// </summary>
         public IVisualTree VisualTree { get; protected set; }
 
-        /// <summary>
-        /// Returns the log for writing status messages to the console and to a log file.
-        /// </summary>
-        public Log Log { get; private set; }
+        ///// <summary>
+        ///// Returns the log for writing status messages to the console and to a log file.
+        ///// </summary>
+        //public Log Log { get; private set; }
 
         /// <summary>
         /// Constructor

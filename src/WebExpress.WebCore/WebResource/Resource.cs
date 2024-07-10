@@ -7,23 +7,23 @@ namespace WebExpress.WebCore.WebResource
 {
     public abstract class Resource : IResource
     {
-        /// <summary>
-        /// Returns the resource id.
-        /// </summary>
-        public string Id { get; internal set; }
+        ///// <summary>
+        ///// Returns the resource id.
+        ///// </summary>
+        //public string Id { get; internal set; }
 
         /// <summary>
         /// Returns the context of the application.
         /// </summary>
-        public IApplicationContext ApplicationContext { get; internal set; }
+        public IApplicationContext ApplicationContext => ResourceContext?.ApplicationContext;
 
         /// <summary>
         /// Returns the context of the module.
         /// </summary>
-        public IModuleContext ModuleContext { get; internal set; }
+        public IModuleContext ModuleContext => ResourceContext?.ModuleContext;
 
         /// <summary>
-        /// Returns the module context where the resource exists.
+        /// Returns the resource context where the resource exists.
         /// </summary>
         public IResourceContext ResourceContext { get; private set; }
 

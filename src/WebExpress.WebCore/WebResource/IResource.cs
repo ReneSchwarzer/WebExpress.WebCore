@@ -1,27 +1,10 @@
 ﻿using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
 
 namespace WebExpress.WebCore.WebResource
 {
     public interface IResource : II18N
     {
-        /// <summary>
-        /// Returns the resource Id.
-        /// </summary>
-        string Id { get; }
-
-        /// <summary>
-        /// Returns the context of the application.
-        /// </summary>
-        IApplicationContext ApplicationContext { get; }
-
-        /// <summary>
-        /// Returns the context of the module.
-        /// </summary>
-        IModuleContext ModuleContext { get; }
-
         /// <summary>
         /// Returns the module context where the resource exists.
         /// </summary>

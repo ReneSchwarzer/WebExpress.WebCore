@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns all resource contexts.
         /// </summary>
-        internal IEnumerable<IResourceContext> Resources => Dictionary.Values
+        public IEnumerable<IResourceContext> Resources => Dictionary.Values
             .SelectMany(x => x.Values)
             .SelectMany(x => x.ResourceContexts);
 

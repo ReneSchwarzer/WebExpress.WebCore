@@ -17,12 +17,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebSitemap;
@@ -495,24 +493,24 @@ namespace WebExpress.WebCore
 
                 if (statusPage is Resource resource)
                 {
-                    resource.ApplicationContext = searchResult?.ApplicationContext ?? new ApplicationContext()
-                    {
-                        PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                        searchResult?.ApplicationContext?.PluginContext,
-                        ApplicationId = "webex",
-                        ApplicationName = "WebExpress",
-                        ContextPath = new UriResource()
-                    };
+                    //resource.ApplicationContext = searchResult?.ApplicationContext ?? new ApplicationContext()
+                    //{
+                    //    PluginContext = searchResult?.ModuleContext?.PluginContext ??
+                    //    searchResult?.ApplicationContext?.PluginContext,
+                    //    ApplicationId = "webex",
+                    //    ApplicationName = "WebExpress",
+                    //    ContextPath = new UriResource()
+                    //};
 
-                    resource.ModuleContext = searchResult?.ModuleContext ?? new ModuleContext()
-                    {
-                        ApplicationContext = resource.ApplicationContext,
-                        PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                        searchResult?.ApplicationContext?.PluginContext,
-                        ModuleId = "webex",
-                        ModuleName = "WebExpress",
-                        ContextPath = new UriResource()
-                    };
+                    //resource.ModuleContext = searchResult?.ModuleContext ?? new ModuleContext()
+                    //{
+                    //    ApplicationContext = resource.ApplicationContext,
+                    //    PluginContext = searchResult?.ModuleContext?.PluginContext ??
+                    //    searchResult?.ApplicationContext?.PluginContext,
+                    //    ModuleId = "webex",
+                    //    ModuleName = "WebExpress",
+                    //    ContextPath = new UriResource()
+                    //};
 
                     resource.Initialization(new ResourceContext(resource.ModuleContext));
                 }
