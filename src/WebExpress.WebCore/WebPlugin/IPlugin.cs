@@ -8,10 +8,15 @@ namespace WebExpress.WebCore.WebPlugin
     public interface IPlugin : IDisposable
     {
         /// <summary>
+        /// Returns the context of the plugin.
+        /// </summary>
+        IPluginContext PluginContext { get; }
+
+        /// <summary>
         /// Initialization of the plugin.
         /// </summary>
-        /// <param name="context">The context.</param>
-        void Initialization(IPluginContext context);
+        /// <param name="pluginContext">The context.</param>
+        void Initialization(IPluginContext pluginContext);
 
         /// <summary>
         /// Called when the plugin starts working. The call is concurrent.
