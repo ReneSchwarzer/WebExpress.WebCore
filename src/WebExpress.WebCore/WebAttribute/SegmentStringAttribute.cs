@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="variableName">The name of the variable.</param>
         /// <param name="display">The display string.</param>

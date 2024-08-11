@@ -11,7 +11,7 @@
         public IPluginContext PluginContext { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Plugin"/> class.
+        /// Initializes a new instance of the class.
         /// </summary>
         public Plugin()
         {

@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebHtml
     /// Represents a field for user input of a specific type. The type (radio button, checkbox, 
     /// text input, etc.) is specified using the type attribute.
     /// </summary>
-    public class HtmlElementFieldInput : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFieldInput : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -181,7 +181,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldInput()
             : base("input")
@@ -190,7 +190,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldInput(params IHtmlNode[] nodes)

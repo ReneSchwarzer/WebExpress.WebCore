@@ -5,10 +5,10 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// Represents the result of a calculation.
     /// </summary>
-    public class HtmlElementFormOutput : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormOutput : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOutput()
             : base("output")
@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormOutput(params IHtmlNode[] nodes)

@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebStatusPage
     /// key = plugin context
     /// value = ResponseDictionaryItem
     /// </summary>
-    public class ResponseDictionary : Dictionary<IPluginContext, ResponseDictionaryItem>
+    public class StatusPageDictionary : Dictionary<IPluginContext, StatusPageDictionaryItem>
     {
     }
 }

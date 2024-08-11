@@ -6,7 +6,7 @@
     public class HtmlElementMultimediaMap : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMultimediaMap()
             : base("map", false)

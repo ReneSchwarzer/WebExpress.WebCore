@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ContextPathAttribute : Attribute, IApplicationAttribute, IModuleAttribute, IResourceAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contetxPath">The context path.</param>
         public ContextPathAttribute(string contetxPath)

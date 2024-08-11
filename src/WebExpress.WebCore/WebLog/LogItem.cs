@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebLog
         private readonly DateTime m_timestamp;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="level">The level.</param>
         /// <param name="instance">The modul/funktion.</param>

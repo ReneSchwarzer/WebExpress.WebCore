@@ -3,7 +3,7 @@
     public class IconAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="icon">The icon.</param>
         public IconAttribute(string icon)

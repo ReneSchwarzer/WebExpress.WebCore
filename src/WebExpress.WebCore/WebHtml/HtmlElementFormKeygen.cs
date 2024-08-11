@@ -5,10 +5,10 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// Represents a control element for generating a pair of public and private keys and sending the public key.
     /// </summary>
-    public class HtmlElementFormKeygen : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormKeygen : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormKeygen()
             : base("keygen")
@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormKeygen(params IHtmlNode[] nodes)

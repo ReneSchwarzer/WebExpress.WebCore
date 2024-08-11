@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class StatusCodeAttribute : System.Attribute, IApplicationAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="status">The status code.</param>
         public StatusCodeAttribute(int status)

@@ -8,14 +8,9 @@ namespace WebExpress.WebCore.WebApplication
     public interface IApplication : IDisposable
     {
         /// <summary>
-        /// Returns the context of the application.
+        /// Initialization of the application. Here, for example, managed resources can be loaded. 
         /// </summary>
-        IApplicationContext ApplicationContext { get; }
-
-        /// <summary>
-        /// Initialization of the application .
-        /// </summary>
-        /// <param name="applicationContext">The context.</param>
+        /// <param name="applicationContext">The application context.</param>
         void Initialization(IApplicationContext applicationContext);
 
         /// <summary>

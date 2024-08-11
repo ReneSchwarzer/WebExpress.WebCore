@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMultimediaSvg()
             : base("svg")
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementMultimediaSvg(params IHtmlNode[] nodes)
@@ -59,7 +59,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementMultimediaSvg(IEnumerable<IHtmlNode> nodes)

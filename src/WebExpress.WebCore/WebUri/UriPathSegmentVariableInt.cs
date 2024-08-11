@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebUri
     public class UriPathSegmentVariableInt : UriPathSegmentVariable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The path text.</param>
         /// <param name="tag">The tag or null</param>
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The path text.</param>
         /// <param name="display">The display text.</param>
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
         public UriPathSegmentVariableInt(UriPathSegmentVariableInt segment)

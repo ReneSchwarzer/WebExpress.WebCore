@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebHtml
         public new List<HtmlElementTextContentLi> Elements { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTextContentOl()
             : base("ol")
@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTextContentOl(params HtmlElementTextContentLi[] nodes)

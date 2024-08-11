@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableTd : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTd()
             : base("td")
@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="node">The content of the html element.</param>
         public HtmlElementTableTd(IHtmlNode node)
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTd(params IHtmlNode[] nodes)
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTd(IEnumerable<IHtmlNode> nodes)

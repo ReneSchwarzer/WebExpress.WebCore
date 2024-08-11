@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebHtml
         public new List<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTextContentBlockquote()
             : base("blockquote")
@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTextContentBlockquote(params IHtmlNode[] nodes)
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTextContentBlockquote(IEnumerable<IHtmlNode> nodes)

@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => string.IsNullOrWhiteSpace(Value) || Value.Equals("/");
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The name.</param>
         /// <param name="tag">The tag or null</param>
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The name.</param>
         /// <param name="display">The display text.</param>

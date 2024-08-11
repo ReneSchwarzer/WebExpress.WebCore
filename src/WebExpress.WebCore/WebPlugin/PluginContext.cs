@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebPlugin
         public IHttpServerContext Host { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public PluginContext()
         {

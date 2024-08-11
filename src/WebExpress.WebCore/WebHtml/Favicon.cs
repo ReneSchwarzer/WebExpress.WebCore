@@ -13,7 +13,7 @@
         public TypeFavicon Mediatype { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
         /// <param name="mediatype">The media type.</param>
@@ -24,7 +24,7 @@
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
         /// <param name="mediatype">The media type.</param>
@@ -34,7 +34,7 @@
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
         /// <param name="mediatype">The media type.</param>

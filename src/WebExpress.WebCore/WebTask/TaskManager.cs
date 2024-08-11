@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebTask
         private TaskDictionary Dictionary { get; } = new TaskDictionary();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal TaskManager()
         {

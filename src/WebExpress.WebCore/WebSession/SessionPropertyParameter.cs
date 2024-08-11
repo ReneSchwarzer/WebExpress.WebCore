@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebSession
         public Dictionary<string, Parameter> Params { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public SessionPropertyParameter()
         {
@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebSession
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="param">The parameters</param>
         public SessionPropertyParameter(Dictionary<string, Parameter> param)

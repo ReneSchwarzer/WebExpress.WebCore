@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebResource
     public abstract class ResourceRest : Resource
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResourceRest()
         {

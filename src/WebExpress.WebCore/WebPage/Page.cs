@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebPage
         public string Title { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public Page()
         {

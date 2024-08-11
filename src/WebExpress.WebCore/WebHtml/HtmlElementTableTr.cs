@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableTr : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTr()
             : base("tr")
@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTr(params IHtmlNode[] nodes)
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTr(IEnumerable<IHtmlNode> nodes)

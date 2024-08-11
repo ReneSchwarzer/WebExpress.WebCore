@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebMessage
         public string Referer { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         internal RequestHeaderFields(IFeatureCollection contextFeatures)

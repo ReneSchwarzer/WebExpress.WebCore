@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Value { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlEmpty()
         {

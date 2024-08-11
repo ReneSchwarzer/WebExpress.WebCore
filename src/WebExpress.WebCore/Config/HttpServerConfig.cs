@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.Config
         public SettingLogItem Log { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HttpServerConfig()
         {

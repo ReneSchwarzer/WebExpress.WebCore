@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ParentAttribute<T> : Attribute, IResourceAttribute where T : class, IResource
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ParentAttribute()
         {

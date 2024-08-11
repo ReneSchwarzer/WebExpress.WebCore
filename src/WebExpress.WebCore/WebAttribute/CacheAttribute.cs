@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class CacheAttribute : System.Attribute, IResourceAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public CacheAttribute()
         {

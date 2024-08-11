@@ -147,7 +147,7 @@ namespace WebExpress.WebCore.WebHtml
         private List<HtmlElementMetadataMeta> ElementMeta { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMetadataHead()
             : base("head")

@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebJob
         public int Weekday => (int)DateTime.DayOfWeek;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public Clock()
         {
@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebJob
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="dateTime">The time to copy.</param>
         public Clock(DateTime dateTime)

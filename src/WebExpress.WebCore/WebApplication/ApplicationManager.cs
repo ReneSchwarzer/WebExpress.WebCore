@@ -43,7 +43,7 @@ namespace WebExpress.WebCore.WebApplication
         public IEnumerable<IApplicationContext> Applications => Dictionary.Values.SelectMany(x => x.Values).Select(x => x.ApplicationContext);
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal ApplicationManager()
         {

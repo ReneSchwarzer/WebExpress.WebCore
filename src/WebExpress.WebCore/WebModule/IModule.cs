@@ -5,14 +5,9 @@ namespace WebExpress.WebCore.WebModule
     public interface IModule : IDisposable
     {
         /// <summary>
-        /// Returns the context of the module.
+        /// Instillation of the module. Here, for example, managed resources can be loaded. 
         /// </summary>
-        IModuleContext ModuleContext { get; }
-
-        /// <summary>
-        /// Initialization of the module.
-        /// </summary>
-        /// <param name="moduleContext">The context.</param>
+        /// <param name="moduleContext">The module context.</param>
         void Initialization(IModuleContext moduleContext);
 
         /// <summary>

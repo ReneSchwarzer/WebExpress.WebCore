@@ -3,7 +3,7 @@
     public class JobAttribute : System.Attribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="minute">The minute 0-59 or * for any. Comma-separated values or ranges (-) are also possible.</param>
         /// <param name="hour">The hour 0-23 or * for arbitrary. Comma-separated values or ranges (-) are also possible.</param>

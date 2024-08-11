@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebJob
         private List<int> Weekday { get; } = new List<int>();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The reference to the host's context.</param>
         /// <param name="minute">The minute 0-59 or * for any. Comma seperated values or ranges (-) are also possible.</param>

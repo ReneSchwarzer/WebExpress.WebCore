@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebSession
         public Dictionary<Type, ISessionProperty> Properties { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public Session()
             : this(Guid.NewGuid())
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.WebSession
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="id">The session id.</param>
         public Session(Guid id)

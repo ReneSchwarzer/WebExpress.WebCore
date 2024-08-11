@@ -7,7 +7,7 @@
     public class HtmlElementEmbeddedSource : HtmlElement, IHtmlElementEmbedded
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementEmbeddedSource()
             : base("source", false)

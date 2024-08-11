@@ -7,7 +7,7 @@
     public class HtmlElementEmbeddedParam : HtmlElement, IHtmlElementEmbedded
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementEmbeddedParam()
             : base("param", false)

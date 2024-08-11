@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebMessage
         public Exception Exception { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="exception">An exception that prevented the creation of the context.</param>
         /// <param name="contextFeatures">Initial set of features.</param>

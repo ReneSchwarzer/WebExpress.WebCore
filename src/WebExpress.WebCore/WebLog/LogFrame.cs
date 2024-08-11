@@ -34,7 +34,7 @@ namespace WebExpress.WebCore.WebLog
         protected Log Log { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="log">The log entry.</param>
         /// <param name="name">The name.</param>
@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebLog
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="additionalHeading">The additional heading or zero.</param>

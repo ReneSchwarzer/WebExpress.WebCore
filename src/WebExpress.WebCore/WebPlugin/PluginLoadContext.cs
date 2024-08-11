@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebPlugin
         private AssemblyDependencyResolver Resolver { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="pluginPath">The base path of the plugin.</param>
         public PluginLoadContext(string pluginPath)

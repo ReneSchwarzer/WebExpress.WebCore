@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.Config
         public long UploadLimit { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public LimitConfig()
         {

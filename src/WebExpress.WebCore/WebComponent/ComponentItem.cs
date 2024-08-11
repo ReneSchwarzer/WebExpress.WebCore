@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebComponent
         public IComponent ComponentInstance { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal ComponentItem()
         {

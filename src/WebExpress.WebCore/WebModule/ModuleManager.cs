@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebModule
             .Select(x => x.ModuleContext);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModuleManager"/> class.
+        /// Initializes a new instance of the class.
         /// </summary>
         internal ModuleManager()
         {

@@ -100,11 +100,11 @@ resourcemanager.sitemap=Sitemap content resource '{0}' application:
 resourcemanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
 resourcemanager.statuspage=Resource: '{0}' for module '{1}'
 
-responsemanager.initialization=The response manager has been initialized.
-responsemanager.register=Status {0} has been registered in the module '{1}' and assigned to the status page '{2}'.
-responsemanager.duplicat=The status {0} has already been registered in the module '{1}'. Therefore, the status page '{2}' is not used.
-responsemanager.statuscode=A status code has not been assigned to the  resource '{1}' for the module '{0}'.
-responsemanager.resource=Status code: '{0}'
+statuspagemanager.initialization=The status page manager has been initialized.
+statuspagemanager.register=Status {0} has been registered and assigned to the status page '{1}'.
+statuspagemanager.duplicat=The status {0} has already been registered. Therefore, the status page '{1}' is not used.
+statuspagemanager.statuscode=A status code has not been assigned to the  resource '{1}' for the module '{0}'.
+statuspagemanager.resource=Status code: '{0}'
 
 sitemapmanager.initialization=The sitemap manager has been initialized.
 sitemapmanager.refresh=The sitemap will be rebuilt.

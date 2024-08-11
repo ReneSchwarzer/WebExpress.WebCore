@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Text { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlComment()
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The text.</param>
         public HtmlComment(string text)

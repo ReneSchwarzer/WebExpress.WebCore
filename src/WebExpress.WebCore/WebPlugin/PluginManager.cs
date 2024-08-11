@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebPlugin
         public IEnumerable<IPluginContext> Plugins => Dictionary.Values.Select(x => x.PluginContext).ToList();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal PluginManager()
         {
@@ -187,8 +187,7 @@ namespace WebExpress.WebCore.WebPlugin
                 foreach (var type in assembly
                     .GetExportedTypes()
                     .Where(x => x.IsClass && x.IsSealed)
-                    .Where(x => x.GetInterface(typeof(IPlugin).Name) != null)
-                    .Where(x => x.Name.Equals("Plugin")))
+                    .Where(x => x.GetInterface(typeof(IPlugin).Name) != null))
                 {
                     var id = type.Namespace?.ToLower();
                     var name = type.Assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
@@ -225,8 +224,7 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = name,
                         Manufacturer = type.Assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = type.Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        //License = type.Assembly.GetCustomAttribute<AssemblyLicenseAttribute>()?.Copyright,
-                        Icon = UriResource.Combine(HttpServerContext.ContextPath, icon),
+                        Icon = UriResource.Combine(HttpServerContext?.ContextPath, icon),
                         Description = description,
                         Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
                         Host = HttpServerContext

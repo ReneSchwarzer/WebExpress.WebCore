@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebEvent
         private EventDictionary Dictionary { get; } = new EventDictionary();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal EventManager()
         {

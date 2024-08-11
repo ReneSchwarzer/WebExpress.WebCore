@@ -8,14 +8,9 @@ namespace WebExpress.WebCore.WebPlugin
     public interface IPlugin : IDisposable
     {
         /// <summary>
-        /// Returns the context of the plugin.
+        /// Initialization of the plugin. Here, for example, managed resources can be loaded. 
         /// </summary>
-        IPluginContext PluginContext { get; }
-
-        /// <summary>
-        /// Initialization of the plugin.
-        /// </summary>
-        /// <param name="pluginContext">The context.</param>
+        /// <param name="pluginContext">The plugin context.</param>
         void Initialization(IPluginContext pluginContext);
 
         /// <summary>

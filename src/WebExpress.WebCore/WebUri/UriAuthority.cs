@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebUri
         public int? Port { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public UriAuthority()
         {
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="host">The host.</param>
         public UriAuthority(string host)
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="host">The host.</param>
         /// <param name="port">The port.</param>

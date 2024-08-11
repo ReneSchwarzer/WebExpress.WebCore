@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebResource
         public UriResource Uri => ContextPath.Append(ResourceItem.PathSegment);
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="moduleContext">The module context.</param>
         internal ResourceContext(IModuleContext moduleContext)

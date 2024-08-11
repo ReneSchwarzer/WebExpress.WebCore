@@ -99,7 +99,7 @@ namespace WebExpress.WebCore.WebHtml
         public bool CloseTag { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name of the item.</param>
         public HtmlElement(string name, bool closeTag = true)
@@ -109,7 +109,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name of the item.</param>
         public HtmlElement(string name, bool closeTag, params IHtml[] nodes)

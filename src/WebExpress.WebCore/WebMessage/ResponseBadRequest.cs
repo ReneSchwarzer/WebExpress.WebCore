@@ -6,7 +6,7 @@
     public class ResponseBadRequest : Response
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResponseBadRequest()
         {

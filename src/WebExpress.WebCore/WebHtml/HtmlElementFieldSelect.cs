@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     ///  <option selected>Tom Waits</option>
     /// </select>
     /// </summary>
-    public class HtmlElementFieldSelect : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFieldSelect : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns the elements.
@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldSelect()
             : base("select")
@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldSelect(params IHtmlNode[] nodes)

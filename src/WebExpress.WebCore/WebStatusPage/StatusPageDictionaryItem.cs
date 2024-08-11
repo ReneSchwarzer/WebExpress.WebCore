@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebStatusPage
     /// key = statuscode
     /// value = status page item
     /// </summary>
-    public class ResponseDictionaryItem : Dictionary<int, ResponseItem>
+    public class StatusPageDictionaryItem : Dictionary<int, StatusPageItem>
     {
     }
 }

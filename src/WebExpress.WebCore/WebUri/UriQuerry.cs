@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebUri
         public string Value { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>

@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// Represents a set of controls.
     /// </summary>
-    public class HtmlElementFormFieldset : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormFieldset : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebHtml
         public new List<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormFieldset()
             : base("fieldset")
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormFieldset(params IHtmlNode[] nodes)

@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebSitemap
         public UriResource Uri { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal SearchResult()
         {

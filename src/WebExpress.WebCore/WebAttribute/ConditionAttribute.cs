@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ConditionAttribute<T> : Attribute, IResourceAttribute where T : class, ICondition
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ConditionAttribute()
         {

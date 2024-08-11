@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Value { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlAttribute()
         {
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         public HtmlAttribute(string name)
@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>

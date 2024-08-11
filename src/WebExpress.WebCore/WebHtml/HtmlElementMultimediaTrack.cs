@@ -6,7 +6,7 @@
     public class HtmlElementMultimediaTrack : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMultimediaTrack()
             : base("track", false)

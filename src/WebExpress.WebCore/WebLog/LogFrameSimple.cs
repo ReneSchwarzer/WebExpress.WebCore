@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebLog
         protected ILog Log { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="log">The log entry.</param>
         /// <param name="instance">Method that wants to log.</param>

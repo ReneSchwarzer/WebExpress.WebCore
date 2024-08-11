@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebAttribute
         private UriPathSegmentVariableGuid.Format DisplayFormat { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="parameter">The type of the variable.</param>
         /// <param name="display">The display string.</param>

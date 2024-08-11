@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ScopeAttribute<T> : Attribute, IResourceAttribute where T : class, IScope
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ScopeAttribute()
         {

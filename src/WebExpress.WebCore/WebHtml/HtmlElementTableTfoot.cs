@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableTfoot : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTfoot()
             : base("tfoot")
@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTfoot(params IHtmlNode[] nodes)
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTfoot(IEnumerable<IHtmlNode> nodes)

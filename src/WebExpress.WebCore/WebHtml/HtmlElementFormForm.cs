@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebHtml
         public new List<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormForm()
             : base("form")
@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The content of the html element.</param>
         public HtmlElementFormForm(string text)
@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormForm(params IHtmlNode[] nodes)

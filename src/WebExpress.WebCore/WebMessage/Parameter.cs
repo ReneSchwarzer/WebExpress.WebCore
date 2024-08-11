@@ -22,14 +22,14 @@ namespace WebExpress.WebCore.WebMessage
         public string Value { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public Parameter()
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -67,7 +67,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>

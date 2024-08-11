@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         public List<HtmlElementTableTr> Rows { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTable()
             : base("table")

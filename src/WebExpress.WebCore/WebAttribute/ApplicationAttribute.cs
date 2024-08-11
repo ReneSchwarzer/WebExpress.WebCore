@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ApplicationAttribute : Attribute, IModuleAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="applicationId">A specific ApplicationId, regular expression, or * for any application.</param>
         public ApplicationAttribute(string applicationId)

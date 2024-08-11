@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.WebResource
         public IHtmlNode Content { get; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public VisualTree()
         {

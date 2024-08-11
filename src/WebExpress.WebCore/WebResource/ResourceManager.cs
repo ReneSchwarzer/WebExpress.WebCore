@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebResource
             .SelectMany(x => x.ResourceContexts);
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal ResourceManager()
         {

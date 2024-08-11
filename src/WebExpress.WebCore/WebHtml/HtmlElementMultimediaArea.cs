@@ -6,7 +6,7 @@
     public class HtmlElementMultimediaArea : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMultimediaArea()
             : base("area", false)

@@ -130,7 +130,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public UriResource()
         {
@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="scheme">The scheme (e.g. Http, FTP).</param>
         /// <param name="authority">The authority (e.g. user@example.com:8080).</param>
@@ -151,7 +151,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
         public UriResource(string uri)
@@ -207,19 +207,19 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="uri">The uri.</param>
         public UriResource(UriResource uri)
         {
-            Scheme = uri.Scheme;
-            Authority = uri.Authority;
-            PathSegments = uri.PathSegments.Select(x => x.Copy()).ToList();
-            Query = uri.Query.Select(x => new UriQuerry(x.Key, x.Value)).ToList();
-            Fragment = uri.Fragment;
-            ServerRoot = uri.ServerRoot;
-            ApplicationRoot = uri.ApplicationRoot;
-            ModuleRoot = uri.ModuleRoot;
-            ResourceRoot = uri.ResourceRoot;
+            Scheme = uri?.Scheme ?? UriScheme.Http;
+            Authority = uri?.Authority;
+            PathSegments = uri?.PathSegments.Select(x => x.Copy()).ToList() ?? [];
+            Query = uri?.Query.Select(x => new UriQuerry(x.Key, x.Value)).ToList() ?? [];
+            Fragment = uri?.Fragment;
+            ServerRoot = uri?.ServerRoot;
+            ApplicationRoot = uri?.ApplicationRoot;
+            ModuleRoot = uri?.ModuleRoot;
+            ResourceRoot = uri?.ResourceRoot;
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segments">The path segments.</param>
         public UriResource(params IUriPathSegment[] segments)
@@ -233,7 +233,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="uri">The uri.</param>
         /// <param name="segments">The path segments.</param>
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="uri">The uri.</param>
         /// <param name="segments">The path segments.</param>
@@ -262,7 +262,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="scheme">The scheme (e.g. Http, FTP).</param>
         /// <param name="authority">The authority (e.g. user@example.com:8080).</param>

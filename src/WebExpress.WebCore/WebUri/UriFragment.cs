@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebUri
     public class UriFragment : UriResource
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public UriFragment()
         {

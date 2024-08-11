@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => false;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The name.</param>
         /// <param name="display">The display text.</param>

@@ -7,7 +7,7 @@
     public class HtmlElementTextSemanticsWbr : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTextSemanticsWbr()
             : base("wbr", false)

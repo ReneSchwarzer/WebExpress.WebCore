@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebJob
         public Cron Cron { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="moduleContext">The module context.</param>
         internal JobContext(IModuleContext moduleContext)
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebJob
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         internal JobContext(IPluginContext pluginContext)

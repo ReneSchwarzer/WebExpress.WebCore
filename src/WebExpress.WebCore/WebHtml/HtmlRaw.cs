@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Html { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlRaw()
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="html">The text.</param>
         public HtmlRaw(string html)

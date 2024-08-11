@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class OptionAttribute : Attribute, IApplicationAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="option">The option to activate.</param>
         public OptionAttribute(string option)

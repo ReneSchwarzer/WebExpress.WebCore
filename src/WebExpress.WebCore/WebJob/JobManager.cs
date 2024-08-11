@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebJob
         private IEnumerable<ScheduleDynamicItem> DynamicScheduleList { get; set; } = new List<ScheduleDynamicItem>();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal JobManager()
         {

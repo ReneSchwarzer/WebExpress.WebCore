@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The segment of the uri path.</param>
         /// <param name="display">The display string.</param>

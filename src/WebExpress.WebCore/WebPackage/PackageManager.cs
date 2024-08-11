@@ -47,7 +47,7 @@ namespace WebExpress.WebCore.WebPackage
         private PackageCatalog Catalog { get; } = new PackageCatalog();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal PackageManager()
         {

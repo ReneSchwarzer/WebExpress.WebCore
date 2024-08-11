@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.WebMessage
         public byte[] Content { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         /// <param name="serverContext">The context of the web server.</param>

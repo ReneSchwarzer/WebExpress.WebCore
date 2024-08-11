@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     /// <label for="firstname">First name:</label> 
     /// <input type="text" name="firstname" id="firstname" maxlength="30">
     /// </summary>
-    public class HtmlElementFieldLabel : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFieldLabel : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldLabel()
             : base("label")
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The content of the html element.</param>
         public HtmlElementFieldLabel(string text)
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldLabel(params IHtmlNode[] nodes)

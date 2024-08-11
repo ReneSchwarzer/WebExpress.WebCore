@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebHtml
         public List<IHtmlNode> Elements { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlList()
         {
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlList(params IHtmlNode[] nodes)
@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="firstNode">The first content of the html element.</param>
         /// <param name="followingNodes">The following contents of the html elements.</param>
@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlList(IEnumerable<IHtmlNode> nodes)
@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="firstNode">The first content of the html element.</param>
         /// <param name="followingNodes">The following contents of the html elements.</param>

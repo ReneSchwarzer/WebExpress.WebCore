@@ -68,7 +68,7 @@ namespace WebExpress.WebCore
         public IHost Host { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="uri">The uri of the web server.</param>
         /// <param name="endpoints">The endpoints to which the web server responds.</param>

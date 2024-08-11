@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     ///  <option selected>Tom Waits</option>
     /// </select>
     /// </summary>
-    public class HtmlElementFormOption : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormOption : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the text.
@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOption()
             : base("option")
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormOption(params IHtmlNode[] nodes)

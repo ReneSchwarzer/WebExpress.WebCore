@@ -6,7 +6,7 @@
     public class IncludeSubPathsAttribute : System.Attribute, IResourceAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="includeSubPaths">All subpaths are included.</param>
         public IncludeSubPathsAttribute(bool includeSubPaths)

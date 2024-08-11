@@ -6,12 +6,7 @@ namespace WebExpress.WebCore.WebResource
     public interface IResource : II18N
     {
         /// <summary>
-        /// Returns the module context where the resource exists.
-        /// </summary>
-        IResourceContext ResourceContext { get; }
-
-        /// <summary>
-        /// Initialization
+        /// Instillation of the resource. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="resourceContext">The context of the resource.</param>
         void Initialization(IResourceContext resourceContext);

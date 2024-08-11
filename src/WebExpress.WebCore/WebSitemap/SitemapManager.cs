@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.WebSitemap
         private SitemapNode SiteMap { get; set; } = new SitemapNode();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal SitemapManager()
         {

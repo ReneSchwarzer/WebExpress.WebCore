@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ModuleAttribute<T> : Attribute, IResourceAttribute, IModuleAttribute where T : class, IModule
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ModuleAttribute()
         {

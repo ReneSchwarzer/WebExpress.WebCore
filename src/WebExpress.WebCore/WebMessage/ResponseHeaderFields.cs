@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebMessage
         public CookieCollection Cookies { get; } = new CookieCollection();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResponseHeaderFields()
         {

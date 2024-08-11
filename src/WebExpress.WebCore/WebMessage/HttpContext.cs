@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebMessage
         public Uri Uri { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal HttpContext()
         {
@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         /// <param name="serverContext">The context of the Web server.</param>

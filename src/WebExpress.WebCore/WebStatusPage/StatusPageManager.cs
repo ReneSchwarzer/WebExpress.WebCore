@@ -6,13 +6,14 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
 {
     /// <summary>
     /// Management of status pages.
     /// </summary>
-    public class ResponseManager : IComponentPlugin, ISystemComponent
+    public class StatusPageManager : IComponentPlugin, ISystemComponent
     {
         /// <summary>
         /// An event that fires when an status page is added.
@@ -32,17 +33,31 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Returns the directory where the status pages are listed.
         /// </summary>
-        private ResponseDictionary Dictionary { get; } = new ResponseDictionary();
+        private StatusPageDictionary Dictionary { get; } = new StatusPageDictionary();
 
         /// <summary>
         /// Returns the default Items.
         /// </summary>
-        private ResponseDictionaryItem Defaults { get; } = new ResponseDictionaryItem();
+        private StatusPageDictionaryItem Defaults { get; } = new StatusPageDictionaryItem();
 
         /// <summary>
-        /// Constructor
+        /// Returns all status pages.
         /// </summary>
-        internal ResponseManager()
+        public IEnumerable<IStatusPageContext> StatusPages => Dictionary.Values
+            .SelectMany(x => x.Values)
+            .Select(x => new StatusPageContext()
+            {
+                PluginContext = x.PluginContext,
+                Code = x.StatusCode,
+                Title = x.Title,
+                Icon = x.Icon
+            }
+        );
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        internal StatusPageManager()
         {
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
@@ -65,7 +80,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:responsemanager.initialization")
+                InternationalizationManager.I18N("webexpress:statuspagemanager.initialization")
             );
         }
 
@@ -83,7 +98,9 @@ namespace WebExpress.WebCore.WebStatusPage
             {
                 var id = resource.Name?.ToLower();
                 var statusCode = -1;
-                var moduleId = string.Empty;
+                var icon = string.Empty;
+                var title = resource.Name;
+                //var moduleId = string.Empty;
                 var defaultItem = false;
 
                 foreach (var customAttribute in resource.CustomAttributes
@@ -93,10 +110,18 @@ namespace WebExpress.WebCore.WebStatusPage
                     {
                         statusCode = Convert.ToInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ModuleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ModuleAttribute<>).Namespace)
+                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
                     {
-                        moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
+                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
+                    else if (customAttribute.AttributeType == typeof(IconAttribute))
+                    {
+                        icon = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    //else if (customAttribute.AttributeType.Name == typeof(ModuleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ModuleAttribute<>).Namespace)
+                    //{
+                    //    moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
+                    //}
                 }
 
                 foreach (var customAttribute in resource.CustomAttributes
@@ -112,27 +137,29 @@ namespace WebExpress.WebCore.WebStatusPage
                 {
                     if (!Dictionary.ContainsKey(pluginContext))
                     {
-                        Dictionary.Add(pluginContext, new ResponseDictionaryItem());
+                        Dictionary.Add(pluginContext, new StatusPageDictionaryItem());
                     }
 
                     var item = Dictionary[pluginContext];
                     if (!item.ContainsKey(statusCode))
                     {
-                        item.Add(statusCode, new ResponseItem()
+                        item.Add(statusCode, new StatusPageItem()
                         {
                             Id = id,
                             StatusCode = statusCode,
                             StatusPageClass = resource,
                             PluginContext = pluginContext,
-                            ModuleId = moduleId
+                            Title = title,
+                            Icon = new UriResource(icon),
+                            //ModuleId = moduleId
                         });
                         HttpServerContext.Log.Debug
                         (
                             InternationalizationManager.I18N
                             (
-                                "webexpress:responsemanager.register",
+                                "webexpress:statuspagemanager.register",
                                 statusCode,
-                                moduleId,
+                                //moduleId,
                                 resource.Name
                             )
                         );
@@ -143,9 +170,9 @@ namespace WebExpress.WebCore.WebStatusPage
                         (
                             InternationalizationManager.I18N
                             (
-                                "webexpress:responsemanager.duplicat",
+                                "webexpress:statuspagemanager.duplicat",
                                 statusCode,
-                                moduleId,
+                                //moduleId,
                                 resource.Name
                             )
                         );
@@ -154,24 +181,24 @@ namespace WebExpress.WebCore.WebStatusPage
                     // default
                     if (!Defaults.ContainsKey(statusCode))
                     {
-                        Defaults.Add(statusCode, new ResponseItem()
+                        Defaults.Add(statusCode, new StatusPageItem()
                         {
                             Id = id,
                             StatusCode = statusCode,
                             StatusPageClass = resource,
                             PluginContext = pluginContext,
-                            ModuleId = moduleId
+                            //ModuleId = moduleId
                         });
                     }
                     else if (defaultItem)
                     {
-                        Defaults[statusCode] = new ResponseItem()
+                        Defaults[statusCode] = new StatusPageItem()
                         {
                             Id = id,
                             StatusCode = statusCode,
                             StatusPageClass = resource,
                             PluginContext = pluginContext,
-                            ModuleId = moduleId
+                            //ModuleId = moduleId
                         };
                     }
 
@@ -182,8 +209,8 @@ namespace WebExpress.WebCore.WebStatusPage
                     (
                         InternationalizationManager.I18N
                         (
-                            "webexpress:responsemanager.statuscode",
-                            moduleId,
+                            "webexpress:statuspagemanager.statuscode",
+                            //moduleId,
                             resource.Name
                         )
                     );
@@ -228,7 +255,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         /// <param name="status">The status code.</param>
         /// <returns>The first status page found to the given states or null.</returns>
-        private ResponseItem GetStatusPage(int status)
+        private StatusPageItem GetStatusPage(int status)
         {
             if (Defaults == null)
             {
@@ -249,7 +276,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="status">The status code.</param>
         /// <param name="pluginContext">The plugin context where the status pages are located.</param>
         /// <returns>The first status page found to the given states or null.</returns>
-        private ResponseItem GetStatusPage(int status, IPluginContext pluginContext)
+        private StatusPageItem GetStatusPage(int status, IPluginContext pluginContext)
         {
             if (pluginContext == null)
             {
@@ -336,7 +363,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     string.Empty.PadRight(4) +
                     InternationalizationManager.I18N
                     (
-                        "webexpress:responsemanager.statuspage",
+                        "webexpress:statuspagemanager.statuspage",
                         statusCode
                     )
                 );

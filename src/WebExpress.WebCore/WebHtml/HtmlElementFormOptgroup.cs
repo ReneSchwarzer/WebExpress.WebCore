@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebHtml
     ///  </optgroup>
     /// </select>
     /// </summary>
-    public class HtmlElementFormOptgroup : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormOptgroup : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns the elements.
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOptgroup()
             : base("optgroup")
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormOptgroup(params IHtmlNode[] nodes)

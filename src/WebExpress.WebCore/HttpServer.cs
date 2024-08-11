@@ -74,7 +74,7 @@ namespace WebExpress.WebCore
         public long RequestNumber { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">Der Serverkontext.</param>
         public HttpServer(HttpServerContext context)
@@ -473,7 +473,7 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var statusPage = ComponentManager.ResponseManager.CreateStatusPage
+                var statusPage = ComponentManager.StatusPageManager.CreateStatusPage
                 (
                     massage,
                     response.Status,

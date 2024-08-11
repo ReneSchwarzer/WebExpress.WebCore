@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebComponent
                 ModuleManager,
                 EventManager,
                 JobManager,
-                ResponseManager,
+                StatusPageManager,
                 SitemapManager,
                 InternationalizationManager,
                 SessionManager,
@@ -105,10 +105,10 @@ namespace WebExpress.WebCore.WebComponent
         public static JobManager JobManager { get; private set; }
 
         /// <summary>
-        /// Returns the response manager.
+        /// Returns the status page manager.
         /// </summary>
-        /// <returns>The instance of the response manager or null.</returns>
-        public static ResponseManager ResponseManager { get; private set; }
+        /// <returns>The instance of the status page manager or null.</returns>
+        public static StatusPageManager StatusPageManager { get; private set; }
 
         /// <summary>
         /// Returns the resource manager.
@@ -163,7 +163,7 @@ namespace WebExpress.WebCore.WebComponent
             ApplicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
             ModuleManager = CreateInstance(typeof(ModuleManager)) as ModuleManager;
             ResourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
-            ResponseManager = CreateInstance(typeof(ResponseManager)) as ResponseManager;
+            StatusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             EventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;
             SitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
@@ -471,7 +471,7 @@ namespace WebExpress.WebCore.WebComponent
                 ApplicationManager.PrepareForLog(pluginContext, output, 4);
                 ModuleManager.PrepareForLog(pluginContext, output, 4);
                 ResourceManager.PrepareForLog(pluginContext, output, 4);
-                ResponseManager.PrepareForLog(pluginContext, output, 4);
+                StatusPageManager.PrepareForLog(pluginContext, output, 4);
                 JobManager.PrepareForLog(pluginContext, output, 4);
             }
 

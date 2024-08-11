@@ -26,7 +26,7 @@
         public string Reason { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         protected Response()
         {

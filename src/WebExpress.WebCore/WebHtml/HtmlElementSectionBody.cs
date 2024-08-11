@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebHtml
         private List<HtmlElementScriptingScript> ElementScriptLinks { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementSectionBody()
             : base("body")
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementSectionBody(params IHtmlNode[] nodes)

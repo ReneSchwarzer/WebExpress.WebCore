@@ -100,11 +100,11 @@ resourcemanager.sitemap=Inhalt der Sitemap für das Modul '{0}':
 resourcemanager.wrongtype=Der Type '{0}' implementiert die Schnittstelle '{1}' nicht.
 resourcemanager.resource=Ressource: '{0}' für das Modul '{1}'
 
-responsemanager.initialization=Der Responsemanagermanager wurde initialisiert.
-responsemanager.register=Status {0} wurde im Module '{1}' registriert und der Statusseite '{2}' zugewiesen.
-responsemanager.duplicat=Der Status {0} wurde bereits im Module '{1}' registriert registriert. Die Statusseite '{2}' wird daher nicht verwendet.
-responsemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für das Modul '{0}' nicht zugewiesen.
-responsemanager.statuspage=Statuscode: '{0}'
+statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
+statuspagemanager.register=Status {0} wurde registriert und der Statusseite '{1}' zugewiesen.
+statuspagemanager.duplicat=Der Status {0} wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
+statuspagemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für das Modul '{0}' nicht zugewiesen.
+statuspagemanager.statuspage=Statuscode: '{0}'
 
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
 sitemapmanager.refresh=Die Sitemap wird neu aufgebaut.

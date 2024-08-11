@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// Represents a button element.
     /// </summary>
-    public class HtmlElementFieldButton : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFieldButton : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldButton()
             : base("button")
@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The content of the html element.</param>
         public HtmlElementFieldButton(string text)
@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldButton(params IHtmlNode[] nodes)
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldButton(IEnumerable<IHtmlNode> nodes)
