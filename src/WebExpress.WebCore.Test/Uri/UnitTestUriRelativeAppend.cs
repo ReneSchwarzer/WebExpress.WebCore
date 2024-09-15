@@ -1,12 +1,13 @@
-﻿using WebExpress.WebCore.WebUri;
-using Xunit;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
     /// Tests the append method.
     /// </summary>
-    public class UnitTestUriRelativeAppend
+    [Collection("NonParallelTests")]
+    public class UnitTestUriRelativeAppend(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         private readonly UriResource Uri = new UriResource("/a/b/c");
 

@@ -95,7 +95,7 @@ namespace WebExpress.WebCore.Test.Html
         }
 
         /// <summary>
-        /// Tests a tag.
+        /// Tests the class attribute.
         /// </summary>
         [Fact]
         public void Class()
@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.Test.Html
         }
 
         /// <summary>
-        /// Tests a tag.
+        /// Tests the style attribute.
         /// </summary>
         [Fact]
         public void Style()

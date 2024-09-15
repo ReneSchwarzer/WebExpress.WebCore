@@ -10,6 +10,40 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="test\contentTypeMultipartFormData1.post" />
+    <None Remove="test\contentTypeMultipartFormData2.post" />
+    <None Remove="test\contentTypeMultipartFormData3.post" />
+    <None Remove="test\contentTypeMultipartFormData4.post" />
+    <None Remove="test\contentTypeMultipartFormData_Umlaut.post" />
+    <None Remove="test\contentTypeTextPlain.post" />
+    <None Remove="test\contentTypeTextPlain_Umlaut.post" />
+    <None Remove="test\contentTypeXwwwFormUrlencoded.post" />
+    <None Remove="test\contentTypeXwwwFormUrlencoded_umlaut.post" />
+    <None Remove="test\general.get" />
+    <None Remove="test\less.get" />
+    <None Remove="test\massive.get" />
+    <None Remove="test\param.get" />
+    <None Remove="test\param_umlaut.get" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="test\contentTypeMultipartFormData1.post" />
+    <EmbeddedResource Include="test\contentTypeMultipartFormData2.post" />
+    <EmbeddedResource Include="test\contentTypeMultipartFormData3.post" />
+    <EmbeddedResource Include="test\contentTypeMultipartFormData4.post" />
+    <EmbeddedResource Include="test\contentTypeMultipartFormData_Umlaut.post" />
+    <EmbeddedResource Include="test\contentTypeTextPlain.post" />
+    <EmbeddedResource Include="test\contentTypeTextPlain_Umlaut.post" />
+    <EmbeddedResource Include="test\contentTypeXwwwFormUrlencoded.post" />
+    <EmbeddedResource Include="test\contentTypeXwwwFormUrlencoded_umlaut.post" />
+    <EmbeddedResource Include="test\general.get" />
+    <EmbeddedResource Include="test\less.get" />
+    <EmbeddedResource Include="test\massive.get" />
+    <EmbeddedResource Include="test\param.get" />
+    <EmbeddedResource Include="test\param_umlaut.get" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="xunit" Version="2.8.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">

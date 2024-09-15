@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebUri;
-using Xunit;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
     /// Tests the extended path property.
     /// </summary>
-    public class UnitTestUriRelativeExtendedPath
+    [Collection("NonParallelTests")]
+    public class UnitTestUriRelativeExtendedPath(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         private readonly UriResource Uri = new UriResource("http://user@example.com:80");
 

@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the context of the application.
         /// </summary>
-        public IApplicationContext ApplicationContext => ResourceContext?.ApplicationContext;
+        public IApplicationContext ApplicationContext => ResourceContext?.ModuleContext?.ApplicationContext;
 
         /// <summary>
         /// Returns the context of the module.

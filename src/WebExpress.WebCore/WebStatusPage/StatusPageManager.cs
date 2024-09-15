@@ -251,7 +251,7 @@ namespace WebExpress.WebCore.WebStatusPage
         }
 
         /// <summary>
-        /// Returns the default class for an status page.
+        /// Returns the class for an status code.
         /// </summary>
         /// <param name="status">The status code.</param>
         /// <returns>The first status page found to the given states or null.</returns>

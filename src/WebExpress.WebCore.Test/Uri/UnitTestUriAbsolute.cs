@@ -1,11 +1,13 @@
-﻿using WebExpress.WebCore.WebUri;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
     /// Tests an absolute Uri.
     /// </summary>
-    public class UnitTestUriAbsolute
+    [Collection("NonParallelTests")]
+    public class UnitTestUriAbsolute(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         [Fact]
         public void Test_0()

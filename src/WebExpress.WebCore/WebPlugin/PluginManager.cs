@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.WebPlugin
                     .Where(x => x.IsClass && x.IsSealed)
                     .Where(x => x.GetInterface(typeof(IPlugin).Name) != null))
                 {
-                    var id = type.Namespace?.ToLower();
+                    var id = $"{type.Namespace?.ToLower()}.{type.Name?.ToLower()}";
                     var name = type.Assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
                     var icon = string.Empty;
                     var description = type.Assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
@@ -292,6 +292,8 @@ namespace WebExpress.WebCore.WebPlugin
 
             var pluginItem = GetPluginItem(pluginContext);
             pluginItem?.PluginLoadContext?.Unload();
+
+            Dictionary.Remove(pluginContext.PluginId);
         }
 
         /// <summary>

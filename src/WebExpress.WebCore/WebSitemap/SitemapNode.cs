@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
@@ -22,15 +20,15 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         public ResourceItem ResourceItem { get; internal set; }
 
-        /// <summary>
-        /// Returns the context of the application.
-        /// </summary>
-        public IApplicationContext ApplicationContext { get; internal set; }
+        ///// <summary>
+        ///// Returns the context of the application.
+        ///// </summary>
+        //public IApplicationContext ApplicationContext { get; internal set; }
 
-        /// <summary>
-        /// Returns the context of the module.
-        /// </summary>
-        public IModuleContext ModuleContext { get; internal set; }
+        ///// <summary>
+        ///// Returns the context of the module.
+        ///// </summary>
+        //public IModuleContext ModuleContext { get; internal set; }
 
         /// <summary>
         /// Returns the context of the resource.
@@ -150,8 +148,8 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 PathSegment = PathSegment,
                 ResourceItem = ResourceItem,
-                ApplicationContext = ApplicationContext,
-                ModuleContext = ModuleContext,
+                //ApplicationContext = ApplicationContext,
+                //ModuleContext = ModuleContext,
                 ResourceContext = ResourceContext,
                 Instance = Instance,
                 Parent = Parent,

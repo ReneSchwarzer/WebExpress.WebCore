@@ -1,92 +1,77 @@
-﻿using System.IO;
-using System.Net.Http;
-using Xunit;
+﻿using WebExpress.WebCore.Test.Fixture;
 
 namespace WebExpress.WebCore.Test.Message
 {
-    public class UnitTestGetRequest
+    /// <summary>
+    /// UnitTestGetRequest class for testing HTTP GET requests.
+    /// </summary>
+    /// <param name="fixture">The fixture used for setting up the tests.</param>
+    public class UnitTestGetRequest(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
+        /// <summary>
+        /// Tests a general GET request.
+        /// </summary>
         [Fact]
-        public void Get_General()
+        public void General()
         {
-            var client = new HttpClient();
-            //client.
+            var content = fixture.GetEmbeddedResource("general.get");
+            var request = fixture.CrerateRequest(content);
 
-            //client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
-
-            //Stream data = client.OpenRead("http://localhost/");
-            //StreamReader reader = new StreamReader(data);
-            //string s = reader.ReadToEnd();
-            //Console.WriteLine(s);
-            //data.Close();
-            //reader.Close();
-
-            //using var reader = new BinaryReader(new FileStream(Path.Combine("test", "general.get"), FileMode.Open));
-            //var request = Request.Create(reader, "127.0.0.1");
-
-            //Assert.True
-            //(
-            //    request.Uri?.ToString() == "/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A",
-            //    "Fehler in der Funktion Get_General"
-            //);
+            Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
 
+        /// <summary>
+        /// Tests a GET request with less data.
+        /// </summary>
         [Fact]
-        public void Get_Less()
+        public void Less()
         {
-            //using var reader = new BinaryReader(new FileStream(Path.Combine("test", "less.get"), FileMode.Open));
-            //var request = Request.Create(reader, "127.0.0.1");
+            var content = fixture.GetEmbeddedResource("less.get");
+            var request = fixture.CrerateRequest(content);
 
-            //Assert.True
-            //(
-            //    request.Uri?.ToString() == "/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A",
-            //    "Fehler in der Funktion Get_Less"
-            //);
+            Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
 
+        /// <summary>
+        /// Tests a GET request with massive data.
+        /// </summary>
         [Fact]
-        public void Get_Massive()
+        public void Massive()
         {
-            //using var reader = new BinaryReader(new FileStream(Path.Combine("test", "massive.get"), FileMode.Open));
-            //var request = Request.Create(reader, "127.0.0.1");
+            var content = fixture.GetEmbeddedResource("massive.get");
+            var request = fixture.CrerateRequest(content);
 
-            //Assert.True
-            //(
-            //    request.Uri?.ToString() == "/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A",
-            //    "Fehler in der Funktion Get_Massive"
-            //);
+            Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
 
+        /// <summary>
+        /// Tests a GET request with parameters.
+        /// </summary>
         [Fact]
-        public void Get_Param()
+        public void GetParameter()
         {
-            //using var reader = new BinaryReader(new FileStream(Path.Combine("test", "param.get"), FileMode.Open));
-            //var request = Request.Create(reader, "127.0.0.1");
-            //var param = request?.GetParameter("a")?.Value;
+            var content = fixture.GetEmbeddedResource("param.get");
+            var request = fixture.CrerateRequest(content);
+            var param = request?.GetParameter("a")?.Value;
 
-            //Assert.True
-            //(
-            //    request.Uri?.ToString() == "/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A" &&
-            //    param != null && param == "1",
-            //    "Fehler in der Funktion Get_Param"
-            //);
+            Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
+            Assert.Equal("1", param);
         }
 
+        /// <summary>
+        /// Tests a GET request with parameters containing umlauts.
+        /// </summary>
         [Fact]
-        public void Get_Param_Umlaut()
+        public void GetParameterWithUmlaut()
         {
-            //using var reader = new BinaryReader(new FileStream(Path.Combine("test", "param_umlaut.get"), FileMode.Open));
-            //var request = Request.Create(reader, "127.0.0.1");
-            //var a = request?.GetParameter("a")?.Value;
-            //var b = request?.GetParameter("b")?.Value;
+            var content = fixture.GetEmbeddedResource("param_umlaut.get");
+            var request = fixture.CrerateRequest(content);
+            var a = request?.GetParameter("a")?.Value;
+            var b = request?.GetParameter("b")?.Value;
 
-            //Assert.True
-            //(
-            //    request.Uri?.ToString() == "/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A" &&
-            //    a != null && a == "ä" &&
-            //    b != null && b == "ö ü",
-            //    "Fehler in der Funktion Get_Param_Umlaut"
-            //);
+            Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
+            Assert.Equal("ä", a);
+            Assert.Equal("ö ü", b);
         }
     }
 }

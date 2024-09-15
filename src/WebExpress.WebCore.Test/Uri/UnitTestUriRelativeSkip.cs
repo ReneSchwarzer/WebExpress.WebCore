@@ -1,12 +1,13 @@
-﻿using WebExpress.WebCore.WebUri;
-using Xunit;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
     /// Tests the skip method.
     /// </summary>
-    public class UnitTestUriRelativeSkip
+    [Collection("NonParallelTests")]
+    public class UnitTestUriRelativeSkip(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         private readonly UriResource Uri = new UriResource("/a/b/c");
 

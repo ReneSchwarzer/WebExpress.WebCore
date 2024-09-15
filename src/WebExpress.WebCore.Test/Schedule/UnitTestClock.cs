@@ -1,11 +1,13 @@
-﻿using WebExpress.WebCore.WebJob;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebJob;
 
 namespace WebExpress.WebCore.Test.Schedule
 {
     /// <summary>
     /// Tests the scheduler's clock.
     /// </summary>
-    public class UnitTestClock
+    [Collection("NonParallelTests")]
+    public class UnitTestClock(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         [Fact]
         public void Synchronize_1()

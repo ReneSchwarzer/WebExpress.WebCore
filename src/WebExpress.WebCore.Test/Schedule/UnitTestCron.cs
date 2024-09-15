@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
@@ -8,7 +9,8 @@ namespace WebExpress.WebCore.Test.Schedule
     /// <summary>
     /// Test the cron job of the scheduler.
     /// </summary>
-    public class UnitTestCron
+    [Collection("NonParallelTests")]
+    public class UnitTestCron(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         [Fact]
         public void Create_1()

@@ -1,13 +1,13 @@
-﻿using System.Linq;
+﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebUri;
-using Xunit;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
-    /// Tests an relative Uri.
+    /// Tests an relative uri.
     /// </summary>
-    public class UnitTestUriRelative
+    [Collection("NonParallelTests")]
+    public class UnitTestUriRelative(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         [Fact]
         public void Test_0()

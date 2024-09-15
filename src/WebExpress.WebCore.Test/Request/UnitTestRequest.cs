@@ -1,9 +1,9 @@
-﻿using Xunit;
+﻿using WebExpress.WebCore.Test.Fixture;
 
 namespace WebExpress.WebCore.Test.Request
 {
-
-    public class Request
+    [Collection("NonParallelTests")]
+    public class UnitTestRequest(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
 
         [Fact]

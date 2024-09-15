@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
@@ -14,10 +13,10 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         IPluginContext PluginContext { get; }
 
-        /// <summary>
-        /// Returns the associated application context.
-        /// </summary>
-        IApplicationContext ApplicationContext { get; }
+        ///// <summary>
+        ///// Returns the associated application context.
+        ///// </summary>
+        //IApplicationContext ApplicationContext { get; }
 
         /// <summary>
         /// Returns the corresponding module context.

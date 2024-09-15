@@ -1,12 +1,13 @@
-﻿using WebExpress.WebCore.WebUri;
-using Xunit;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
     /// <summary>
     /// Tests the take method.
     /// </summary>
-    public class UnitTestUriRelativeTake
+    [Collection("NonParallelTests")]
+    public class UnitTestUriRelativeTake(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
         private readonly UriResource Uri = new UriResource("/a/b/c");
 

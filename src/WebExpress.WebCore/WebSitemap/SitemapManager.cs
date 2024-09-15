@@ -27,7 +27,12 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Returns the side map.
         /// </summary>
-        private SitemapNode SiteMap { get; set; } = new SitemapNode();
+        private SitemapNode Root { get; set; } = new SitemapNode();
+
+        /// <summary>
+        /// Returns the side map.
+        /// </summary>
+        public IEnumerable<IResourceContext> SiteMap => Root.GetPreOrder().Select(x => x.ResourceContext);
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -120,7 +125,7 @@ namespace WebExpress.WebCore.WebSitemap
                 ));
             }
 
-            SiteMap = newSiteMapNode;
+            Root = newSiteMapNode;
 
             using (var frame = new LogFrameSimple(HttpServerContext.Log))
             {
@@ -141,7 +146,7 @@ namespace WebExpress.WebCore.WebSitemap
             var variables = new Dictionary<string, string>();
             var result = SearchNode
             (
-                SiteMap,
+                Root,
                 new Queue<string>(requestUri.Segments.Select(x => (x == "/" ? x : (x.EndsWith("/") ? x[..^1] : x)))),
                 new Queue<IUriPathSegment>(),
                 searchContext
@@ -167,7 +172,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>Returns the uri taking into account the context or null.</returns>
         public UriResource GetUri<T>(params Parameter[] parameters) where T : IResource
         {
-            var node = SiteMap.GetPreOrder()
+            var node = Root.GetPreOrder()
                 .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
                 .FirstOrDefault();
 
@@ -182,9 +187,9 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>Returns the uri taking into account the context or null.</returns>
         public UriResource GetUri<T>(IModuleContext moduleContext) where T : IResource
         {
-            var node = SiteMap.GetPreOrder()
+            var node = Root.GetPreOrder()
                 .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
-                .Where(x => x.ModuleContext == moduleContext)
+                .Where(x => x.ResourceContext.ModuleContext == moduleContext)
                 .FirstOrDefault();
 
             return node?.ResourceContext?.Uri;
@@ -198,9 +203,9 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>Returns the uri taking into account the context or null.</returns>
         public UriResource GetUri<T>(IResourceContext resourceContext) where T : IResource
         {
-            var node = SiteMap.GetPreOrder()
+            var node = Root.GetPreOrder()
                 .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
-                .Where(x => x.ModuleContext == resourceContext.ModuleContext)
+                .Where(x => x.ResourceContext.ModuleContext == resourceContext.ModuleContext)
                 .FirstOrDefault();
 
             return node?.ResourceContext?.Uri;
@@ -227,7 +232,7 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 PathSegment = pathSegment as IUriPathSegment,
                 Parent = parent,
-                ApplicationContext = applicationContext
+                //ApplicationContext = applicationContext
             };
 
             if (contextPathSegments.Any())
@@ -259,8 +264,8 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 PathSegment = pathSegment as IUriPathSegment,
                 Parent = parent,
-                ApplicationContext = moduleContext?.ApplicationContext,
-                ModuleContext = moduleContext
+                //ApplicationContext = moduleContext?.ApplicationContext,
+                //ModuleContext = moduleContext
             };
 
             if (contextPathSegments.Any())
@@ -295,8 +300,8 @@ namespace WebExpress.WebCore.WebSitemap
                 PathSegment = pathSegment as IUriPathSegment,
                 Parent = parent,
                 ResourceItem = !contextPathSegments.Any() ? resourceItem : null,
-                ApplicationContext = resourceContext?.ModuleContext?.ApplicationContext,
-                ModuleContext = resourceContext?.ModuleContext,
+                //ApplicationContext = resourceContext?.ModuleContext?.ApplicationContext,
+                //ModuleContext = resourceContext?.ModuleContext,
                 ResourceContext = resourceContext
             };
 
@@ -324,8 +329,8 @@ namespace WebExpress.WebCore.WebSitemap
                         if (fc.ResourceItem == null)
                         {
                             fc.ResourceItem = sc.ResourceItem;
-                            fc.ApplicationContext = sc.ApplicationContext;
-                            fc.ModuleContext = sc.ModuleContext;
+                            //fc.ApplicationContext = sc.ApplicationContext;
+                            //fc.ModuleContext = sc.ModuleContext;
                             fc.ResourceContext = sc.ResourceContext;
                             fc.Instance = sc.Instance;
                             fc.Parent = sc.Parent;
@@ -377,8 +382,8 @@ namespace WebExpress.WebCore.WebSitemap
                     {
                         Id = node.ResourceItem.ResourceId,
                         Title = node.ResourceItem.Title,
-                        ApplicationContext = node.ApplicationContext,
-                        ModuleContext = node.ModuleContext,
+                        //ApplicationContext = node.ApplicationContext,
+                        //ModuleContext = node.ModuleContext,
                         ResourceContext = node.ResourceContext,
                         SearchContext = searchContext,
                         Uri = new UriResource(outPathSegments.ToArray()),
@@ -391,8 +396,8 @@ namespace WebExpress.WebCore.WebSitemap
                     {
                         Id = node.ResourceItem.ResourceId,
                         Title = node.ResourceItem.Title,
-                        ApplicationContext = node.ApplicationContext,
-                        ModuleContext = node.ModuleContext,
+                        //ApplicationContext = node.ApplicationContext,
+                        //ModuleContext = node.ModuleContext,
                         ResourceContext = node.ResourceContext,
                         SearchContext = searchContext,
                         Uri = new UriResource(outPathSegments.ToArray()),
@@ -409,8 +414,8 @@ namespace WebExpress.WebCore.WebSitemap
             // 404
             return new SearchResult()
             {
-                ApplicationContext = node.ApplicationContext,
-                ModuleContext = node.ModuleContext,
+                //ApplicationContext = node.ApplicationContext,
+                //ModuleContext = node.ModuleContext,
                 ResourceContext = node.ResourceContext,
                 SearchContext = searchContext,
                 Uri = new UriResource(outPathSegments.ToArray())
@@ -497,7 +502,7 @@ namespace WebExpress.WebCore.WebSitemap
                 )
             );
 
-            var preorder = SiteMap
+            var preorder = Root
                 .GetPreOrder()
                 .Select(x => InternationalizationManager.I18N
                 (

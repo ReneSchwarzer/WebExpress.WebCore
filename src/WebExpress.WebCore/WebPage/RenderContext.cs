@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Provides the context of the associated application.
         /// </summary>
-        public IApplicationContext ApplicationContext => Page?.ResourceContext?.ApplicationContext;
+        public IApplicationContext ApplicationContext => Page?.ResourceContext?.ModuleContext?.ApplicationContext;
 
         /// <summary>
         /// Returns the contents of a page.
