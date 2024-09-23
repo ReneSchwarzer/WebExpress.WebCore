@@ -384,6 +384,23 @@ namespace WebExpress.WebCore.WebPlugin
         }
 
         /// <summary>
+        /// Returns a plugin context based on its id.
+        /// </summary>
+        /// <param name="pluginId">The type of the plugin.</param>
+        /// <returns>The plugin context.</returns>
+        public IPluginContext GetPlugin(Type plugin)
+        {
+            return Dictionary.Values
+                .Where
+                (
+                    x => x.PluginContext != null &&
+                    x.PluginClass.Equals(plugin)
+                )
+                .Select(x => x.PluginContext)
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// Returns a plugin item based on the context.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
