@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy plugin for testing purposes.
     /// </summary>
-    [Name("webexpress.webui.unittest")]
+    [Name("webexpress.webcore.unittest")]
     [Description("plugin.description")]
     [Icon("/assets/img/Logo.png")]
     public sealed class TestPlugin : IPlugin

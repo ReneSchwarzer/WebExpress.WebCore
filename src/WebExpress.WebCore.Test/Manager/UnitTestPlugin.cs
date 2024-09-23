@@ -121,7 +121,7 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the get plugin function of the plugin manager.
         /// </summary>
         [Fact]
-        public void GetPlugin()
+        public void GetPluginById()
         {
             lock (_lock)
             {
@@ -131,6 +131,28 @@ namespace WebExpress.WebCore.Test.Manager
 
                 // test execution
                 var plugin2 = ComponentManager.PluginManager.GetPlugin(plugin1.PluginId);
+
+                Assert.Equal(plugin1, plugin2);
+
+                // postconditions
+                ComponentManager.PluginManager.Remove(ComponentManager.PluginManager.Plugins.FirstOrDefault());
+            }
+        }
+
+        /// <summary>
+        /// Test the get plugin function of the plugin manager.
+        /// </summary>
+        [Fact]
+        public void GetPluginByType()
+        {
+            lock (_lock)
+            {
+                // preconditions
+                fixture.RegisterPlugin(typeof(TestPlugin));
+                var plugin1 = ComponentManager.PluginManager.Plugins.FirstOrDefault();
+
+                // test execution
+                var plugin2 = ComponentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
                 Assert.Equal(plugin1, plugin2);
 

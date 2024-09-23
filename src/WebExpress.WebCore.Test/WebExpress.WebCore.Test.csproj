@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Internationalization\de" />
+    <None Remove="Internationalization\en" />
     <None Remove="test\contentTypeMultipartFormData1.post" />
     <None Remove="test\contentTypeMultipartFormData2.post" />
     <None Remove="test\contentTypeMultipartFormData3.post" />
@@ -27,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Internationalization\de" />
+    <EmbeddedResource Include="Internationalization\en" />
     <EmbeddedResource Include="test\contentTypeMultipartFormData1.post" />
     <EmbeddedResource Include="test\contentTypeMultipartFormData2.post" />
     <EmbeddedResource Include="test\contentTypeMultipartFormData3.post" />
