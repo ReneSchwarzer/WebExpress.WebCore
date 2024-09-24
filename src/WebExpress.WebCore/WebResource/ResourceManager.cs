@@ -338,6 +338,11 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="pluginContext">The context of the plugin that contains the resources to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
+
             // the plugin has not been registered in the manager
             if (!Dictionary.ContainsKey(pluginContext))
             {

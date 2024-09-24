@@ -402,6 +402,11 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
         public static void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
+
             if (Dictionary.ContainsKey(pluginContext))
             {
                 return;

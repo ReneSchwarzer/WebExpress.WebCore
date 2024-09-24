@@ -387,6 +387,11 @@ namespace WebExpress.WebCore.WebModule
         /// <param name="pluginContext">The context of the plugin that contains the modules to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
+
             if (!Dictionary.ContainsKey(pluginContext))
             {
                 return;

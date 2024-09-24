@@ -166,7 +166,7 @@ namespace WebExpress.WebCore.WebPlugin
             foreach (var assembly in assemblies)
             {
                 var pluginContext = Register(assembly, loadContext);
-                pluginContexts.Add(pluginContext);
+                pluginContexts.AddRange(pluginContext);
             }
 
             Logging();
@@ -180,8 +180,10 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="assembly">The assembly where the plugin is located.</param>
         /// <param name="loadContext">The plugin load context for isolating and unloading the dependent libraries.</param>
         /// <returns>A plugin created or null.</returns>
-        private IPluginContext Register(Assembly assembly, PluginLoadContext loadContext = null)
+        private IEnumerable<IPluginContext> Register(Assembly assembly, PluginLoadContext loadContext = null)
         {
+            var plugins = new List<IPluginContext>();
+
             try
             {
                 foreach (var type in assembly
@@ -189,7 +191,7 @@ namespace WebExpress.WebCore.WebPlugin
                     .Where(x => x.IsClass && x.IsSealed)
                     .Where(x => x.GetInterface(typeof(IPlugin).Name) != null))
                 {
-                    var id = $"{type.Namespace?.ToLower()}.{type.Name?.ToLower()}";
+                    var id = $"{type.Namespace?.ToLower()}";
                     var name = type.Assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
                     var icon = string.Empty;
                     var description = type.Assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
@@ -199,7 +201,11 @@ namespace WebExpress.WebCore.WebPlugin
                     foreach (var customAttribute in type.CustomAttributes
                         .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPluginAttribute))))
                     {
-                        if (customAttribute.AttributeType == typeof(NameAttribute))
+                        if (customAttribute.AttributeType == typeof(IdAttribute))
+                        {
+                            id = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString()?.ToLower() ?? id;
+                        }
+                        else if (customAttribute.AttributeType == typeof(NameAttribute))
                         {
                             name = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                         }
@@ -271,7 +277,17 @@ namespace WebExpress.WebCore.WebPlugin
                         );
                     }
 
-                    return pluginContext;
+                    if (plugins.Any())
+                    {
+                        plugins.Add(pluginContext);
+                    }
+                    else
+                    {
+                        HttpServerContext.Log.Warning
+                        (
+                            InternationalizationManager.I18N("webexpress:pluginmanager.tomany", type.FullName)
+                        );
+                    }
                 }
             }
             catch (Exception ex)
@@ -279,7 +295,7 @@ namespace WebExpress.WebCore.WebPlugin
                 HttpServerContext.Log.Exception(ex);
             }
 
-            return null;
+            return plugins;
         }
 
         /// <summary>
@@ -288,6 +304,11 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="pluginContext">The context of the plugin that contains the elemets to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
+
             OnRemovePlugin(pluginContext);
 
             var pluginItem = GetPluginItem(pluginContext);

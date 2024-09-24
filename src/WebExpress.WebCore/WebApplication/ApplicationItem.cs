@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace WebExpress.WebCore.WebApplication
 {
@@ -11,6 +12,11 @@ namespace WebExpress.WebCore.WebApplication
         /// The context associated with the application.
         /// </summary>
         public IApplicationContext ApplicationContext { get; set; }
+
+        /// <summary>
+        /// Returns the application class.
+        /// </summary>
+        public Type ApplicationClass { get; internal set; }
 
         /// <summary>
         /// The application.

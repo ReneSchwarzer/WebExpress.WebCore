@@ -59,6 +59,7 @@ pluginmanager.initialization=The plugin manager has been initialized.
 pluginmanager.load={0}.dll is loading. Version = '{1}'
 pluginmanager.created=The plugin '{0}' was created and registered in the plugin manager.
 pluginmanager.duplicate=The plugin '{0}' has already been registered in plugin manager.
+pluginmanager.tomany=There is more than one plugin class! The plugin '{0}' is not loading.
 pluginmanager.notavailable=The plugin '{0}' does not exist in plugin manager.
 pluginmanager.plugin=Plugin: '{0}'
 pluginmanager.pluginmanager.label=Plugin manager:

@@ -110,7 +110,11 @@ namespace WebExpress.WebCore.WebApplication
                 foreach (var customAttribute in type.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IApplicationAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(NameAttribute))
+                    if (customAttribute.AttributeType == typeof(IdAttribute))
+                    {
+                        id = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString()?.ToLower() ?? id;
+                    }
+                    else if (customAttribute.AttributeType == typeof(NameAttribute))
                     {
                         name = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
@@ -174,6 +178,7 @@ namespace WebExpress.WebCore.WebApplication
                 {
                     pluginDict.Add(id, new ApplicationItem()
                     {
+                        ApplicationClass = type,
                         ApplicationContext = applicationContext,
                         Application = applicationInstance
                     });
@@ -220,6 +225,27 @@ namespace WebExpress.WebCore.WebApplication
             var items = Dictionary.Values
                 .Where(x => x.ContainsKey(applicationId.ToLower()))
                 .Select(x => x[applicationId.ToLower()])
+                .FirstOrDefault();
+
+            if (items != null)
+            {
+                return items.ApplicationContext;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Determines the application contexts for a given application id.
+        /// </summary>
+        /// <param name="application">The application type.</param>
+        /// <returns>The context of the application or null.</returns>
+        public IApplicationContext GetApplcation(Type application)
+        {
+            if (application == null) return null;
+
+            var items = Dictionary.Values.SelectMany(x => x.Values)
+                .Where(x => x.ApplicationClass.Equals(application))
                 .FirstOrDefault();
 
             if (items != null)
@@ -362,6 +388,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
+
             if (!Dictionary.ContainsKey(pluginContext))
             {
                 return;
