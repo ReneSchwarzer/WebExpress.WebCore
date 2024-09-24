@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
@@ -26,38 +28,112 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         public UnitTestControlFixture()
         {
+        }
+
+        /// <summary>
+        /// Create a plugin.
+        /// </summary>
+        /// <returns>The plugin manager.</returns>
+        public static PluginManager CreatePluginManager()
+        {
+            var serverContext = new HttpServerContext
+            (
+                "localhost",
+                [],
+                "",
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                null,
+                CultureInfo.GetCultureInfo("en"),
+                new Log() { LogMode = LogMode.Off },
+                null
+            );
+
             lock (guard)
             {
-                var initializationComponentManager = typeof(ComponentManager).GetMethod("Initialization", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, [typeof(IHttpServerContext)]);
-                var serverContext = new HttpServerContext
-                (
-                    "localhost",
-                    [],
-                    "",
-                    Environment.CurrentDirectory,
-                    Environment.CurrentDirectory,
-                    Environment.CurrentDirectory,
-                    null,
-                    CultureInfo.GetCultureInfo("en"),
-                    new Log() { LogMode = LogMode.Off },
-                    null
-                );
+                var ctorPluginManager = typeof(PluginManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
 
-                initializationComponentManager.Invoke(null, [serverContext]);
+                var pluginManager = (PluginManager)ctorPluginManager.Invoke([]);
+                pluginManager.Initialization(serverContext);
+
+                return pluginManager;
             }
         }
 
         /// <summary>
         /// Register a plugin.
         /// </summary>
-        /// <param name="plugin">The plugin to be registered.</param>
-        public void RegisterPlugin(Type plugin)
+        /// <param name="pluginManager">The plugin manager.</param>
+        /// <param name="assembly">The assembly to be registered</param>
+        public static void RegisterPluginManager(PluginManager pluginManager, Assembly assembly)
         {
             lock (guard)
             {
                 var registerPluginManager = typeof(PluginManager).GetMethod("Register", BindingFlags.NonPublic | BindingFlags.Instance, [typeof(Assembly), typeof(PluginLoadContext)]);
+                registerPluginManager.Invoke(pluginManager, [assembly, null]);
+            }
+        }
 
-                registerPluginManager.Invoke(ComponentManager.PluginManager, [plugin.Assembly, null]);
+        /// <summary>
+        /// Create a internationalization manager.
+        /// </summary>
+        /// <returns>The internationalization manager.</returns>
+        public static InternationalizationManager CreateInternationalizationManager()
+        {
+            var serverContext = new HttpServerContext
+            (
+                "localhost",
+                [],
+                "",
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                null,
+                CultureInfo.GetCultureInfo("en"),
+                new Log() { LogMode = LogMode.Off },
+                null
+            );
+
+            lock (guard)
+            {
+                var ctorPluginManager = typeof(InternationalizationManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
+
+                var internationalizationManager = (InternationalizationManager)ctorPluginManager.Invoke([]);
+                internationalizationManager.Initialization(serverContext);
+
+                return internationalizationManager;
+            }
+        }
+
+        /// <summary>
+        /// Create a application.
+        /// </summary>
+        /// <returns>The application manager.</returns>
+        public static ApplicationManager CreateApplicationManager()
+        {
+            var serverContext = new HttpServerContext
+            (
+                "localhost",
+                [],
+                "",
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                Environment.CurrentDirectory,
+                null,
+                CultureInfo.GetCultureInfo("en"),
+                new Log() { LogMode = LogMode.Off },
+                null
+            );
+
+            lock (guard)
+            {
+                var ctorPluginManager = typeof(ApplicationManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
+
+                var applicationManager = (ApplicationManager)ctorPluginManager.Invoke([]);
+                applicationManager.Initialization(serverContext);
+
+                return applicationManager;
             }
         }
 
@@ -140,6 +216,7 @@ namespace WebExpress.WebCore.Test.Fixture
                 new Log() { LogMode = LogMode.Off },
                 null
             );
+
             var headers = (RequestHeaderFields)ctorRequestHeaderFields.Invoke([featureCollection]);
             var request = (WebMessage.Request)ctorRequest.Invoke([featureCollection, serverContext, headers]);
 

@@ -1,21 +1,22 @@
-﻿using WebExpress.WebCore.WebAttribute;
-using WebExpress.WebCore.WebPlugin;
+﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebAttribute;
 
 namespace WebExpress.WebCore.Test
 {
     /// <summary>
-    /// A dummy plugin for testing purposes.
+    /// A dummy application for testing purposes.
     /// </summary>
-    [Name("TestPlugin")]
-    [Description("plugin.description")]
+    [Name("TestApplicationA")]
+    [Description("application.description")]
     [Icon("/assets/img/Logo.png")]
-    public sealed class TestPlugin : IPlugin
+    [Dependency("webexpress.webui")]
+    public sealed class TestApplicationA : IApplication
     {
         /// <summary>
-        /// Initialization of the plugin.
+        /// Initialization of the application.
         /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        public void Initialization(IPluginContext pluginContext)
+        /// <param name="applicationContext">The application context.</param>
+        public void Initialization(IApplicationContext applicationContext)
         {
         }
 

@@ -6,11 +6,12 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy application for testing purposes.
     /// </summary>
-    [Name("webexpress.webui.unittest")]
-    [Description("plugin.description")]
+    [Id("TestApplicationC")]
+    [Name("TestApplicationC")]
+    [Description("application.description")]
     [Icon("/assets/img/Logo.png")]
     [Dependency("webexpress.webui")]
-    public sealed class TestApplication : IApplication
+    public sealed class TestApplicationC : IApplication
     {
         /// <summary>
         /// Initialization of the application.

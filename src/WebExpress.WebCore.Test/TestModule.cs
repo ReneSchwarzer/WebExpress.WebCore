@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy module for testing purposes.
     /// </summary>
-    [Application<TestApplication>()]
+    [Application<TestApplicationA>()]
     [Name("module.name")]
     [Description("module.description")]
     [Icon("/assets/img/Logo.png")]

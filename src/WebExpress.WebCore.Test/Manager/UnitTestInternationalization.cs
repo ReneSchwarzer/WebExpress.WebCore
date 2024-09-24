@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -12,42 +11,56 @@ namespace WebExpress.WebCore.Test.Manager
     [Collection("NonParallelTests")]
     public class UnitTestInternationalization(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
-        private static readonly object _lock = new object();
+        /// <summary>
+        /// Test the register function of the internationalization manager.
+        /// </summary>
+        [Fact]
+        public void Register()
+        {
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+
+            // test execution
+            internationalizationManager.Register(plugin);
+        }
 
         /// <summary>
         /// Test the I18N function of the plugin manager.
         /// </summary>
         [Theory]
-        [InlineData("webexpress.webcore.test.testplugin:unit.test.message", "Dies ist ein Test", "de")]
-        [InlineData("webexpress.webcore.test.testplugin:unit.test.message", "This is a test", null, typeof(TestPlugin))]
-        [InlineData("unit.test.message", "Dies ist ein Test", "de", typeof(TestPlugin))]
-        [InlineData("unit.test.message", "Dies ist ein Test", "DE-de", typeof(TestPlugin))]
-        [InlineData("unit.test.message", "This is a test", "en", typeof(TestPlugin))]
-        public void I18N(string key, string excepted, string cultureName = null, Type plugin = null)
+        [InlineData("webexpress.webcore.test:unit.test.message", "Dies ist ein Test", "de")]
+        [InlineData("webexpress.webcore.test:unit.test.message", "This is a test", null)]
+        [InlineData("unit.test.message", "Dies ist ein Test", "de")]
+        [InlineData("unit.test.message", "Dies ist ein Test", "DE-de")]
+        [InlineData("unit.test.message", "This is a test", "en")]
+        public void I18N(string key, string excepted, string cultureName = null)
         {
-            lock (_lock)
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            internationalizationManager.Register(plugin);
+
+            if (cultureName == null)
+            {
+                // test execution
+                var result = InternationalizationManager.I18N(key);
+
+                Assert.Equal(excepted, result);
+            }
+            else
             {
                 // preconditions
-                fixture.RegisterPlugin(typeof(TestPlugin));
-                var pluginContext = ComponentManager.PluginManager.GetPlugin(plugin);
+                var culture = CultureInfo.GetCultureInfo(cultureName);
 
-                if (cultureName == null)
-                {
-                    // test execution
-                    var result = InternationalizationManager.I18N(key);
+                // test execution
+                var result = InternationalizationManager.I18N(culture, plugin?.PluginId, key);
 
-                    Assert.Equal(excepted, result);
-                }
-                else
-                {
-                    // preconditions
-                    var culture = CultureInfo.GetCultureInfo(cultureName);
-
-                    // test execution
-                    var result = InternationalizationManager.I18N(culture, pluginContext?.PluginId, key);
-
-                    Assert.Equal(excepted, result);
-                }
+                Assert.Equal(excepted, result);
             }
         }
     }

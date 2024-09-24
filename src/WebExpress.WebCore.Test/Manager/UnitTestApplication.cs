@@ -1,5 +1,4 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -10,35 +9,25 @@ namespace WebExpress.WebCore.Test.Manager
     [Collection("NonParallelTests")]
     public class UnitTestApplication(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
     {
-        private static readonly object _lock = new object();
-
         /// <summary>
         /// Test the register function of the application manager.
         /// </summary>
         [Fact]
         public void Register()
         {
-            lock (_lock)
-            {
-                // preconditions
-                var i = 0;
-                bool triggered = false;
-                fixture.RegisterPlugin(typeof(TestPlugin));
-                var plugin = ComponentManager.PluginManager.Plugins.FirstOrDefault();
-                ComponentManager.ApplicationManager.Remove(ComponentManager.PluginManager.Plugins.FirstOrDefault());
-                ComponentManager.ApplicationManager.AddApplication += (s, e) => { i++; triggered = true; };
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
 
-                // test execution
-                ComponentManager.ApplicationManager.Register(plugin);
+            // test execution
+            applicationManager.Register(plugin);
 
-                Assert.Single(ComponentManager.ApplicationManager.Applications);
-                Assert.Equal("webexpress.webcore.test.testapplication", ComponentManager.ApplicationManager.Applications.FirstOrDefault().ApplicationId);
-                Assert.Equal(1, i);
-                Assert.True(triggered);
-
-                // postconditions
-                ComponentManager.ApplicationManager.Remove(ComponentManager.PluginManager.Plugins.FirstOrDefault());
-            }
+            Assert.Equal(3, applicationManager.Applications.Count());
+            Assert.Equal("webexpress.webcore.test.testapplicationa", applicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationb", applicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
+            Assert.Equal("testapplicationc", applicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
         }
 
         /// <summary>
@@ -47,17 +36,105 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            lock (_lock)
-            {
-                // preconditions
-                fixture.RegisterPlugin(typeof(TestPlugin));
-                var plugin = ComponentManager.PluginManager.Plugins.FirstOrDefault();
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            applicationManager.Register(plugin);
 
-                // test execution
-                ComponentManager.ApplicationManager.Remove(plugin);
+            // test execution
+            applicationManager.Remove(plugin);
 
-                Assert.Empty(ComponentManager.ApplicationManager.Applications);
-            }
+            Assert.Empty(applicationManager.Applications);
+        }
+
+        /// <summary>
+        /// Test the name property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.testapplicationa")]
+        [InlineData(typeof(TestApplicationB), "webexpress.webcore.test.testapplicationb")]
+        [InlineData(typeof(TestApplicationC), "testapplicationc")]
+        public void GetId(Type applicationType, string id)
+        {
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            applicationManager.Register(plugin);
+
+            // test execution
+            var applcation = applicationManager.GetApplcation(applicationType);
+
+            Assert.Equal(id, applcation.ApplicationId);
+        }
+
+        /// <summary>
+        /// Test the name property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "TestApplicationA")]
+        [InlineData(typeof(TestApplicationB), "TestApplicationB")]
+        [InlineData(typeof(TestApplicationC), "TestApplicationC")]
+        public void GetName(Type applicationType, string name)
+        {
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            applicationManager.Register(plugin);
+
+            // test execution
+            var applcation = applicationManager.GetApplcation(applicationType);
+
+            Assert.Equal(name, applcation.ApplicationName);
+        }
+
+        /// <summary>
+        /// Test the description property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "application.description")]
+        [InlineData(typeof(TestApplicationB), "application.description")]
+        [InlineData(typeof(TestApplicationC), "application.description")]
+        public void GetDescription(Type applicationType, string description)
+        {
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            applicationManager.Register(plugin);
+
+            // test execution
+            var applcation = applicationManager.GetApplcation(applicationType);
+
+            Assert.Equal(description, applcation.Description);
+        }
+
+        /// <summary>
+        /// Test the icon property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationB), "/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationC), "/assets/img/Logo.png")]
+        public void GetIcon(Type applicationType, string icon)
+        {
+            // preconditions
+            var pluginManager = UnitTestControlFixture.CreatePluginManager();
+            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
+            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
+            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            applicationManager.Register(plugin);
+
+            // test execution
+            var applcation = applicationManager.GetApplcation(applicationType);
+
+            Assert.Equal(icon, applcation.Icon);
         }
     }
 }
