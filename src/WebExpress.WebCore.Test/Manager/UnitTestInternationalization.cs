@@ -36,6 +36,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("unit.test.message", "Dies ist ein Test", "de")]
         [InlineData("unit.test.message", "Dies ist ein Test", "DE-de")]
         [InlineData("unit.test.message", "This is a test", "en")]
+        [InlineData("non.existent.key", "non.existent.key", "en")]
         public void I18N(string key, string excepted, string cultureName = null)
         {
             // preconditions

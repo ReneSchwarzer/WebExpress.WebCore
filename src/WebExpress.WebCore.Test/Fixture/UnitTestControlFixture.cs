@@ -28,6 +28,25 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         public UnitTestControlFixture()
         {
+            lock (guard)
+            {
+                var initializationComponentManager = typeof(ComponentManager).GetMethod("Initialization", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, [typeof(IHttpServerContext)]);
+                var serverContext = new HttpServerContext
+                (
+                    "localhost",
+                    [],
+                    "",
+                    Environment.CurrentDirectory,
+                    Environment.CurrentDirectory,
+                    Environment.CurrentDirectory,
+                    null,
+                    CultureInfo.GetCultureInfo("en"),
+                    new Log() { LogMode = LogMode.Off },
+                    null
+                );
+
+                initializationComponentManager.Invoke(null, [serverContext]);
+            }
         }
 
         /// <summary>
