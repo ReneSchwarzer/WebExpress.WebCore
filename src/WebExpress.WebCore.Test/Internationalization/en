@@ -1,3 +1,5 @@
-﻿# Englisch
+﻿# English
 
 unit.test.message=This is a test
+welcome.message=Welcome '{0}' to our application!
+logout.button=Logout

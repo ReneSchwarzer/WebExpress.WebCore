@@ -1,4 +1,5 @@
 ﻿# Deutsch
 
 unit.test.message=Dies ist ein Test
-
+welcome.message=Willkommen '{0}' zu unserer Anwendung!
+logout.button=Abmelden
