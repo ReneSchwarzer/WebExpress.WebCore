@@ -134,7 +134,20 @@ namespace WebExpress.WebCore.Internationalization
         /// <param name="pluginContext">The context of the plugin containing the key-value pairs to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
+            if (pluginContext == null)
+            {
+                return;
+            }
 
+            foreach (var dictionary in Dictionary.Values)
+            {
+                var keysToRemove = dictionary.Keys.Where(k => k.StartsWith($"{pluginContext?.PluginId}:")).ToList();
+
+                foreach (var key in keysToRemove)
+                {
+                    dictionary.Remove(key);
+                }
+            }
         }
 
         /// <summary>
@@ -151,6 +164,18 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Internationalization of a key.
         /// </summary>
+        /// <param name="obj">An internationalization object that is being extended.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string I18N(II18N obj, string key, params object[] args)
+        {
+            return string.Format(I18N(obj, key), args);
+        }
+
+        /// <summary>
+        /// Internationalization of a key.
+        /// </summary>
         /// <param name="request">The request with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
@@ -162,12 +187,36 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Internationalization of a key.
         /// </summary>
+        /// <param name="request">The request with the language to use.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string I18N(Request request, string key, params object[] args)
+        {
+            return string.Format(I18N(request, key), args);
+        }
+
+        /// <summary>
+        /// Internationalization of a key.
+        /// </summary>
         /// <param name="culture">The culture with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(CultureInfo culture, string key)
         {
             return I18N(culture, null, key);
+        }
+
+        /// <summary>
+        /// Internationalization of a key.
+        /// </summary>
+        /// <param name="culture">The culture with the language to use.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string I18N(CultureInfo culture, string key, params object[] args)
+        {
+            return string.Format(I18N(culture, key), args);
         }
 
         /// <summary>
@@ -206,6 +255,19 @@ namespace WebExpress.WebCore.Internationalization
             }
 
             return key;
+        }
+
+        /// <summary>
+        /// Internationalization of a key.
+        /// </summary>
+        /// <param name="culture">The culture with the language to use.</param>
+        /// <param name="pluginId">The plugin id.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string I18N(CultureInfo culture, string pluginId, string key, params object[] args)
+        {
+            return string.Format(I18N(culture, pluginId, key), args);
         }
 
         /// <summary>
