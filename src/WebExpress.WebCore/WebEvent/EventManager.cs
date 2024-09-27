@@ -24,10 +24,18 @@ namespace WebExpress.WebCore.WebEvent
         private EventDictionary Dictionary { get; } = new EventDictionary();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal EventManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal EventManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

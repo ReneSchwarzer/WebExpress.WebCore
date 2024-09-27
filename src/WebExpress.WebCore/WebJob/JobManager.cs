@@ -42,10 +42,18 @@ namespace WebExpress.WebCore.WebJob
         private IEnumerable<ScheduleDynamicItem> DynamicScheduleList { get; set; } = new List<ScheduleDynamicItem>();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal JobManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal JobManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

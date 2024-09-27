@@ -39,7 +39,12 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the parameters.
         /// </summary>
-        private ParameterDictionary Param { get; } = new ParameterDictionary();
+        private ParameterDictionary Param { get; } = [];
+
+        /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
 
         /// <summary>
         /// Returns the session.
@@ -132,18 +137,19 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
-        /// <param name="serverContext">The context of the web server.</param>
         /// <param name="header">The header.</param>
-        internal Request(IFeatureCollection contextFeatures, IHttpServerContext serverContext, RequestHeaderFields header)
+        /// <param name="componentManager">The component manager.</param>
+        internal Request(IFeatureCollection contextFeatures, RequestHeaderFields header, ComponentManager componentManager)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
             var requestIdentifierFeature = contextFeatures.Get<IHttpRequestIdentifierFeature>();
             //var sessionFeature = contextFeatures.Get<ISessionFeature>();
 
-            ServerContext = serverContext;
+            ServerContext = componentManager.HttpServerContext;
             RequestTraceIdentifier = requestIdentifierFeature.TraceIdentifier;
             Protocoll = requestFeature.Protocol;
+            ComponentManager = componentManager;
 
             Scheme = requestFeature.Scheme.ToLower() switch
             {
@@ -250,7 +256,6 @@ namespace WebExpress.WebCore.WebMessage
             }
 
             var contentType = Header.ContentType?.Split(';');
-            //var contentStr = Encoding.UTF8.GetString(Content);
 
             switch (TypeEnctypeExtensions.Convert(contentType.FirstOrDefault()))
             {
@@ -260,7 +265,7 @@ namespace WebExpress.WebCore.WebMessage
                         var boundaryValue = "--" + boundary?.Split('=').Skip(1)?.FirstOrDefault();
                         var offset = 0;
                         int pos = 0;
-                        var dispositions = new List<Tuple<int, int>>(); // Item1=Position, Item2=Länge
+                        var dispositions = new List<Tuple<int, int>>(); // Item1=position, Item2=size
 
                         // determine dispositions
                         for (var i = 0; i < Content.Length; i++)
@@ -481,13 +486,11 @@ namespace WebExpress.WebCore.WebMessage
         /// <param name="param">The parameter.</param>
         public void AddParameter(Parameter param)
         {
-            if (!Param.ContainsKey(param.Key.ToLower()))
+            var key = param.Key.ToLower();
+
+            if (!Param.TryAdd(key, param))
             {
-                Param.Add(param.Key.ToLower(), param);
-            }
-            else
-            {
-                Param[param.Key.ToLower()] = param;
+                Param[key] = param;
             }
         }
 

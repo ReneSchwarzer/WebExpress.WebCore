@@ -4,14 +4,11 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
 
 namespace WebExpress.WebCore.Test.Fixture
@@ -28,34 +25,15 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         public UnitTestControlFixture()
         {
-            lock (guard)
-            {
-                var initializationComponentManager = typeof(ComponentManager).GetMethod("Initialization", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, [typeof(IHttpServerContext)]);
-                var serverContext = new HttpServerContext
-                (
-                    "localhost",
-                    [],
-                    "",
-                    Environment.CurrentDirectory,
-                    Environment.CurrentDirectory,
-                    Environment.CurrentDirectory,
-                    null,
-                    CultureInfo.GetCultureInfo("en"),
-                    new Log() { LogMode = LogMode.Off },
-                    null
-                );
-
-                initializationComponentManager.Invoke(null, [serverContext]);
-            }
         }
 
         /// <summary>
-        /// Create a plugin.
+        /// Create a a server context.
         /// </summary>
-        /// <returns>The plugin manager.</returns>
-        public static PluginManager CreatePluginManager()
+        /// <returns>The server context.</returns>
+        public static HttpServerContext CreateHttpServerContext()
         {
-            var serverContext = new HttpServerContext
+            return new HttpServerContext
             (
                 "localhost",
                 [],
@@ -68,92 +46,25 @@ namespace WebExpress.WebCore.Test.Fixture
                 new Log() { LogMode = LogMode.Off },
                 null
             );
-
-            lock (guard)
-            {
-                var ctorPluginManager = typeof(PluginManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
-
-                var pluginManager = (PluginManager)ctorPluginManager.Invoke([]);
-                pluginManager.Initialization(serverContext);
-
-                return pluginManager;
-            }
         }
 
         /// <summary>
-        /// Register a plugin.
+        /// Create a component manager.
         /// </summary>
-        /// <param name="pluginManager">The plugin manager.</param>
-        /// <param name="assembly">The assembly to be registered</param>
-        public static void RegisterPluginManager(PluginManager pluginManager, Assembly assembly)
+        /// <returns>The component manager.</returns>
+        public static ComponentManager CreateComponentManager()
         {
-            lock (guard)
-            {
-                var registerPluginManager = typeof(PluginManager).GetMethod("Register", BindingFlags.NonPublic | BindingFlags.Instance, [typeof(Assembly), typeof(PluginLoadContext)]);
-                registerPluginManager.Invoke(pluginManager, [assembly, null]);
-            }
-        }
-
-        /// <summary>
-        /// Create a internationalization manager.
-        /// </summary>
-        /// <returns>The internationalization manager.</returns>
-        public static InternationalizationManager CreateInternationalizationManager()
-        {
-            var serverContext = new HttpServerContext
+            var ctorComponentManager = typeof(ComponentManager).GetConstructor
             (
-                "localhost",
-                [],
-                "",
-                Environment.CurrentDirectory,
-                Environment.CurrentDirectory,
-                Environment.CurrentDirectory,
+                BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
-                CultureInfo.GetCultureInfo("en"),
-                new Log() { LogMode = LogMode.Off },
+                [typeof(HttpServerContext)],
                 null
             );
 
-            lock (guard)
-            {
-                var ctorPluginManager = typeof(InternationalizationManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
+            var componentManager = (ComponentManager)ctorComponentManager.Invoke([CreateHttpServerContext()]);
 
-                var internationalizationManager = (InternationalizationManager)ctorPluginManager.Invoke([]);
-                internationalizationManager.Initialization(serverContext);
-
-                return internationalizationManager;
-            }
-        }
-
-        /// <summary>
-        /// Create a application.
-        /// </summary>
-        /// <returns>The application manager.</returns>
-        public static ApplicationManager CreateApplicationManager()
-        {
-            var serverContext = new HttpServerContext
-            (
-                "localhost",
-                [],
-                "",
-                Environment.CurrentDirectory,
-                Environment.CurrentDirectory,
-                Environment.CurrentDirectory,
-                null,
-                CultureInfo.GetCultureInfo("en"),
-                new Log() { LogMode = LogMode.Off },
-                null
-            );
-
-            lock (guard)
-            {
-                var ctorPluginManager = typeof(ApplicationManager).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [], null);
-
-                var applicationManager = (ApplicationManager)ctorPluginManager.Invoke([]);
-                applicationManager.Initialization(serverContext);
-
-                return applicationManager;
-            }
+            return componentManager;
         }
 
         /// <summary>
@@ -161,10 +72,10 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         /// <param name="content">The content.</param>
         /// <returns>A fake request for testing.</returns>
-        public WebMessage.Request CrerateRequest(string content = "")
+        public static WebMessage.Request CrerateRequest(string content = "")
         {
             var ctorRequestHeaderFields = typeof(RequestHeaderFields).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection)], null);
-            var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(IHttpServerContext), typeof(RequestHeaderFields)], null);
+            var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(ComponentManager)], null);
             var featureCollection = new FeatureCollection();
             var firstLine = content.Split('\n').FirstOrDefault();
             var lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
@@ -222,22 +133,10 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpRequestIdentifierFeature>(requestIdentifierFeature);
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
-            var serverContext = new HttpServerContext
-            (
-                "localhost",
-                [],
-                "",
-                "",
-                "",
-                "",
-                null,
-                null,
-                new Log() { LogMode = LogMode.Off },
-                null
-            );
+            var componentManager = CreateComponentManager();
 
             var headers = (RequestHeaderFields)ctorRequestHeaderFields.Invoke([featureCollection]);
-            var request = (WebMessage.Request)ctorRequest.Invoke([featureCollection, serverContext, headers]);
+            var request = (WebMessage.Request)ctorRequest.Invoke([featureCollection, headers, componentManager]);
 
             return request;
         }
@@ -246,7 +145,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a fake render context.
         /// </summary>
         /// <returns>A fake context for testing.</returns>
-        public RenderContext CrerateContext()
+        public static RenderContext CrerateContext()
         {
             var request = CrerateRequest();
             var page = new TestPage();
@@ -261,12 +160,12 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a fake resource context.
         /// </summary>
         /// <returns>A fake context for testing.</returns>
-        public ResourceContext CrerateResourceContext()
+        public static ResourceContext CrerateResourceContext()
         {
             var ctorResourceContext = typeof(ResourceContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IModuleContext)], null);
 
-            var moduleContext = ComponentManager.ModuleManager.Modules
-                .Where(x => x.ModuleId == typeof(TestModule).FullName.ToLower())
+            var moduleContext = WebEx.ComponentManager.ModuleManager.Modules
+                .Where(x => x.ModuleId == typeof(TestModuleA1).FullName.ToLower())
                 .FirstOrDefault();
 
             var resourceContext = (ResourceContext)ctorResourceContext.Invoke([moduleContext]);
@@ -279,17 +178,16 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         /// <param name="fileName">The name of the resource file.</param>
         /// <returns>The content of the embedded resource as a string.</returns>
-        public string GetEmbeddedResource(string fileName)
+        public static string GetEmbeddedResource(string fileName)
         {
-            var assembly = GetType().Assembly;
+            var assembly = typeof(UnitTestControlFixture).Assembly;
             var resourceName = assembly.GetManifestResourceNames()
                                    .FirstOrDefault(name => name.EndsWith(fileName, StringComparison.OrdinalIgnoreCase));
 
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            using Stream stream = assembly.GetManifestResourceStream(resourceName);
+            using StreamReader reader = new(stream);
+
+            return reader.ReadToEnd();
         }
 
         /// <summary>

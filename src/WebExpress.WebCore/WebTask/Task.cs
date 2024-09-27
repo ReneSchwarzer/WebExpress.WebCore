@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebTask
 {
@@ -98,7 +97,7 @@ namespace WebExpress.WebCore.WebTask
 
                 OnFinish();
 
-                ComponentManager.TaskManager.RemoveTask(this);
+                WebEx.ComponentManager.TaskManager.RemoveTask(this);
 
             }), TokenSource.Token);
         }
@@ -112,7 +111,7 @@ namespace WebExpress.WebCore.WebTask
 
             State = TaskState.Canceled;
 
-            ComponentManager.TaskManager.RemoveTask(this);
+            WebEx.ComponentManager.TaskManager.RemoveTask(this);
         }
     }
 }

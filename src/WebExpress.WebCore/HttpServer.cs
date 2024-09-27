@@ -74,6 +74,11 @@ namespace WebExpress.WebCore
         public long RequestNumber { get; private set; }
 
         /// <summary>
+        /// Returns the component manager.
+        /// </summary>
+        public ComponentManager ComponentManager { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">Der Serverkontext.</param>
@@ -95,7 +100,7 @@ namespace WebExpress.WebCore
 
             Culture = HttpServerContext.Culture;
 
-            ComponentManager.Initialization(HttpServerContext);
+            ComponentManager = new ComponentManager(HttpServerContext);
         }
 
         /// <summary>
@@ -233,9 +238,6 @@ namespace WebExpress.WebCore
         {
             // End running threads
             Kestrel.StopAsync(ServerToken);
-
-            // Stop running
-            ComponentManager.ShutDown();
         }
 
         /// <summary>
@@ -262,7 +264,7 @@ namespace WebExpress.WebCore
             ));
 
             // search page in sitemap
-            var searchResult = ComponentManager.SitemapManager.SearchResource(context.Uri, new SearchContext()
+            var searchResult = WebEx.ComponentManager.SitemapManager.SearchResource(context.Uri, new SearchContext()
             {
                 Culture = culture,
                 HttpContext = context,
@@ -538,7 +540,7 @@ namespace WebExpress.WebCore
         {
             try
             {
-                return new HttpContext(contextFeatures, this.HttpServerContext);
+                return new HttpContext(contextFeatures, HttpServerContext, ComponentManager);
             }
             catch (Exception ex)
             {

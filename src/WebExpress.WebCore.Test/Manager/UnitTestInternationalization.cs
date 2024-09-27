@@ -7,42 +7,20 @@ namespace WebExpress.WebCore.Test.Manager
     /// <summary>
     /// Test the internationalization manager.
     /// </summary>
-    /// <param name="fixture">The fixture.</param>
     [Collection("NonParallelTests")]
-    public class UnitTestInternationalization(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestInternationalization
     {
         /// <summary>
         /// Test the register function of the internationalization manager.
         /// </summary>
         [Fact]
-        public void RegisterSingle()
+        public void Register()
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
 
             // test execution
-            internationalizationManager.Register(plugin);
-
-            Assert.Equal("This is a test", InternationalizationManager.I18N("webexpress.webcore.test:unit.test.message"));
-        }
-
-        /// <summary>
-        /// Test the register function of the internationalization manager.
-        /// </summary>
-        [Fact]
-        public void RegisterMultible()
-        {
-            // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-
-            // test execution
-            internationalizationManager.Register([plugin]);
+            componentManager.PluginManager.Register();
 
             Assert.Equal("This is a test", InternationalizationManager.I18N("webexpress.webcore.test:unit.test.message"));
         }
@@ -54,14 +32,12 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            internationalizationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            internationalizationManager.Remove(plugin);
+            componentManager.InternationalizationManager.Remove(plugin);
 
             Assert.Equal("webexpress.webcore.test:unit.test.message", InternationalizationManager.I18N("webexpress.webcore.test:unit.test.message"));
         }
@@ -73,9 +49,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDefaultCulture()
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
 
             // test execution
             Assert.Equal(CultureInfo.GetCultureInfo("en"), InternationalizationManager.DefaultCulture);
@@ -95,11 +70,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void I18N(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var internationalizationManager = UnitTestControlFixture.CreateInternationalizationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            internationalizationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
 
             if (cultureName == null && !param.Any())
             {

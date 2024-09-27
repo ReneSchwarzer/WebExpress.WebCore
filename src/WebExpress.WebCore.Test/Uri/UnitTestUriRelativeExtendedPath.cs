@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebUri;
+﻿using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
@@ -7,7 +6,7 @@ namespace WebExpress.WebCore.Test.Uri
     /// Tests the extended path property.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestUriRelativeExtendedPath(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestUriRelativeExtendedPath
     {
         private readonly UriResource Uri = new UriResource("http://user@example.com:80");
 

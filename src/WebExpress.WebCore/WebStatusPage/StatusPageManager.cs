@@ -41,6 +41,11 @@ namespace WebExpress.WebCore.WebStatusPage
         private StatusPageDictionaryItem Defaults { get; } = new StatusPageDictionaryItem();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Returns all status pages.
         /// </summary>
         public IEnumerable<IStatusPageContext> StatusPages => Dictionary.Values
@@ -57,8 +62,11 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal StatusPageManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal StatusPageManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

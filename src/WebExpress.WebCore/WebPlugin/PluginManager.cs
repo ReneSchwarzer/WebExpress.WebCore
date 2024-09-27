@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebPlugin
     /// <summary>
     /// The plugin manager manages the WebExpress plugins.
     /// </summary>
-    public class PluginManager : IComponent, IExecutableElements, ISystemComponent
+    public sealed class PluginManager : IComponent, IExecutableElements, ISystemComponent
     {
         /// <summary>
         /// An event that fires when an plugin is added.
@@ -31,6 +31,11 @@ namespace WebExpress.WebCore.WebPlugin
         /// Returns or sets the reference to the context of the host.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; private set; }
+
+        /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
 
         /// <summary>
         /// Returns the directory where the plugins are listed.
@@ -50,8 +55,11 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal PluginManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal PluginManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.AddComponent += (s, e) =>
             {
                 //AssignToComponent(e);

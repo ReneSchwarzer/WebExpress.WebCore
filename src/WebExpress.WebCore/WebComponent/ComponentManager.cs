@@ -21,32 +21,32 @@ namespace WebExpress.WebCore.WebComponent
     /// <summary>
     /// Central management of components.
     /// </summary>
-    public static class ComponentManager
+    public class ComponentManager
     {
         /// <summary>
         /// An event that fires when an component is added.
         /// </summary>
-        public static event EventHandler<IComponent> AddComponent;
+        public event EventHandler<IComponent> AddComponent;
 
         /// <summary>
         /// An event that fires when an component is removed.
         /// </summary>
-        public static event EventHandler<IComponent> RemoveComponent;
+        public event EventHandler<IComponent> RemoveComponent;
 
         /// <summary>
         /// Returns the reference to the context of the host.
         /// </summary>
-        public static IHttpServerContext HttpServerContext { get; private set; }
+        public IHttpServerContext HttpServerContext { get; private set; }
 
         /// <summary>
         /// Returns the directory where the components are listed.
         /// </summary>
-        private static ComponentDictionary Dictionary { get; } = [];
+        private ComponentDictionary Dictionary { get; } = [];
 
         /// <summary>
         /// Returns all registered components.
         /// </summary>
-        public static IEnumerable<IComponent> Components => new IComponent[]
+        public IEnumerable<IComponent> Components => new IComponent[]
             {
                 LogManager,
                 PackageManager,
@@ -66,85 +66,85 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the log manager.
         /// </summary>
         /// <returns>The instance of the log manager or null.</returns>
-        public static LogManager LogManager { get; private set; }
+        public LogManager LogManager { get; private set; }
 
         /// <summary>
         /// Returns the package manager.
         /// </summary>
         /// <returns>The instance of the package manager or null.</returns>
-        public static PackageManager PackageManager { get; private set; }
+        public PackageManager PackageManager { get; private set; }
 
         /// <summary>
         /// Returns the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager or null.</returns>
-        public static PluginManager PluginManager { get; private set; }
+        public PluginManager PluginManager { get; private set; }
 
         /// <summary>
         /// Returns the application manager.
         /// </summary>
         /// <returns>The instance of the application manager or null.</returns>
-        public static ApplicationManager ApplicationManager { get; private set; }
+        public ApplicationManager ApplicationManager { get; private set; }
 
         /// <summary>
         /// Returns the module manager.
         /// </summary>
         /// <returns>The instance of the module manager or null.</returns>
-        public static ModuleManager ModuleManager { get; private set; }
+        public ModuleManager ModuleManager { get; private set; }
 
         /// <summary>
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager or null.</returns>
-        public static EventManager EventManager { get; private set; }
+        public EventManager EventManager { get; private set; }
 
         /// <summary>
         /// Returns the job manager.
         /// </summary>
         /// <returns>The instance of the job manager or null.</returns>
-        public static JobManager JobManager { get; private set; }
+        public JobManager JobManager { get; private set; }
 
         /// <summary>
         /// Returns the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager or null.</returns>
-        public static StatusPageManager StatusPageManager { get; private set; }
+        public StatusPageManager StatusPageManager { get; private set; }
 
         /// <summary>
         /// Returns the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager or null.</returns>
-        public static ResourceManager ResourceManager { get; private set; }
+        public ResourceManager ResourceManager { get; private set; }
 
         /// <summary>
         /// Returns the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager or null.</returns>
-        public static SitemapManager SitemapManager { get; private set; }
+        public SitemapManager SitemapManager { get; private set; }
 
         /// <summary>
         /// Returns the internationalization manager.
         /// </summary>
         /// <returns>The instance of the internationalization manager or null.</returns>
-        public static InternationalizationManager InternationalizationManager { get; private set; }
+        public InternationalizationManager InternationalizationManager { get; private set; }
 
         /// <summary>
         /// Returns the session manager.
         /// </summary>
         /// <returns>The instance of the session manager or null.</returns>
-        public static SessionManager SessionManager { get; private set; }
+        public SessionManager SessionManager { get; private set; }
 
         /// <summary>
         /// Returns the task manager.
         /// </summary>
         /// <returns>The instance of the task manager manager or null.</returns>
-        public static TaskManager TaskManager { get; private set; }
+        public TaskManager TaskManager { get; private set; }
 
         /// <summary>
-        /// Initialization
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal static void Initialization(IHttpServerContext httpServerContext)
+        internal ComponentManager(IHttpServerContext httpServerContext)
         {
             HttpServerContext = httpServerContext;
 
@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="componentType">The component class.</param>
         /// <returns>The instance of the create and initialized component.</returns>
-        private static IComponent CreateInstance(Type componentType)
+        private IComponent CreateInstance(Type componentType)
         {
             if (componentType == null)
             {
@@ -209,20 +209,34 @@ namespace WebExpress.WebCore.WebComponent
             try
             {
                 var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-                var component = componentType?.Assembly.CreateInstance
-                (
-                    componentType?.FullName,
-                    false,
-                    flags,
-                    null,
-                    null,
-                    null,
-                    null
-                ) as IComponent;
+                var constructors = componentType?.GetConstructors(flags);
 
-                component.Initialization(HttpServerContext);
+                if (constructors != null)
+                {
+                    foreach (var constructor in constructors)
+                    {
+                        // injection
+                        var parameters = constructor.GetParameters();
+                        var parameterValues = parameters.Select(parameter =>
+                            parameter.ParameterType == typeof(ComponentManager) ? this :
+                            parameter.ParameterType == typeof(IHttpServerContext) ? HttpServerContext :
+                            GetType().GetProperty
+                            (
+                                parameter.Name,
+                                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+                            )?.GetValue(this) ?? null
+                        ).ToArray();
 
-                return component;
+                        var component = constructor.Invoke(parameterValues) as IComponent;
+
+                        if (component != null)
+                        {
+                            component.Initialization(HttpServerContext);
+
+                            return component;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -237,7 +251,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component or null.</returns>
-        public static IComponent GetComponent(string id)
+        public IComponent GetComponent(string id)
         {
             return Dictionary.Values
                 .SelectMany(x => x)
@@ -251,7 +265,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <typeparam name="T">The component class.</typeparam>
         /// <returns>The instance of the component or null.</returns>
-        public static T GetComponent<T>() where T : IComponent
+        public T GetComponent<T>() where T : IComponent
         {
             return (T)Dictionary.Values
                 .SelectMany(x => x)
@@ -264,7 +278,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Discovers and registers the components from the specified plugin.
         /// </summary>
         /// <param name="pluginContexts">A plugin context that contain the components.</param>
-        internal static void Register(IPluginContext pluginContext)
+        internal void Register(IPluginContext pluginContext)
         {
             // the plugin has already been registered
             if (Dictionary.ContainsKey(pluginContext))
@@ -315,7 +329,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Discovers and registers the components from the specified plugins.
         /// </summary>
         /// <param name="pluginContexts">A list with plugin contexts that contain the components.</param>
-        public static void Register(IEnumerable<IPluginContext> pluginContexts)
+        public void Register(IEnumerable<IPluginContext> pluginContexts)
         {
             foreach (var pluinContext in pluginContexts)
             {
@@ -327,7 +341,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Boots the components.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        internal static void BootComponent(IPluginContext pluginContext)
+        internal void BootComponent(IPluginContext pluginContext)
         {
             PluginManager.Boot(pluginContext);
             ApplicationManager.Boot(pluginContext);
@@ -345,7 +359,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Boots the components.
         /// </summary>
         /// <param name="pluginContexts">A enumeration of plugin contexts.</param>
-        internal static void BootComponent(IEnumerable<IPluginContext> pluginContexts)
+        internal void BootComponent(IEnumerable<IPluginContext> pluginContexts)
         {
             foreach (var pluginContext in pluginContexts)
             {
@@ -356,7 +370,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Starts the component.
         /// </summary>
-        internal static void Execute()
+        internal void Execute()
         {
             HttpServerContext.Log.Debug
             (
@@ -370,7 +384,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Shutting down the component manager.
         /// </summary>
-        internal static void ShutDown()
+        internal void ShutDown()
         {
             HttpServerContext.Log.Debug
             (
@@ -382,7 +396,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Shutting down the component.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        internal static void ShutDownComponent(IPluginContext pluginContext)
+        internal void ShutDownComponent(IPluginContext pluginContext)
         {
             PluginManager.ShutDown(pluginContext);
             ApplicationManager.ShutDown(pluginContext);
@@ -400,7 +414,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Removes all components associated with the specified plugin context.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
-        public static void Remove(IPluginContext pluginContext)
+        public void Remove(IPluginContext pluginContext)
         {
             if (pluginContext == null)
             {
@@ -440,7 +454,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Raises the AddComponent event.
         /// </summary>
         /// <param name="component">The component.</param>
-        private static void OnAddComponent(IComponent component)
+        private void OnAddComponent(IComponent component)
         {
             AddComponent?.Invoke(null, component);
         }
@@ -449,7 +463,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Raises the RemoveComponent event.
         /// </summary>
         /// <param name="component">The component.</param>
-        private static void OnRemoveComponent(IComponent component)
+        private void OnRemoveComponent(IComponent component)
         {
             RemoveComponent?.Invoke(null, component);
         }
@@ -457,7 +471,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Output of the components to the log.
         /// </summary>
-        internal static void LogStatus()
+        internal void LogStatus()
         {
             using var frame = new LogFrameSimple(HttpServerContext.Log);
             var output = new List<string>

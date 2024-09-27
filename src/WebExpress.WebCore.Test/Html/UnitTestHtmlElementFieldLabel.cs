@@ -2,6 +2,7 @@
 
 namespace WebExpress.WebCore.Test.Html
 {
+    [Collection("NonParallelTests")]
     public class UnitTestHtmlElementFieldLabel
     {
         /// <summary>

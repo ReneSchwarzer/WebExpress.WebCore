@@ -36,6 +36,11 @@ namespace WebExpress.WebCore.WebModule
         private ModuleDictionary Dictionary { get; } = new ModuleDictionary();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Delivers all stored modules.
         /// </summary>
         public IEnumerable<IModuleContext> Modules => Dictionary.Values
@@ -46,8 +51,11 @@ namespace WebExpress.WebCore.WebModule
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal ModuleManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal ModuleManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
@@ -160,7 +168,7 @@ namespace WebExpress.WebCore.WebModule
                     );
                 }
 
-                Dictionary.Add(pluginContext, new Dictionary<string, ModuleItem>());
+                Dictionary.TryAdd(pluginContext, new Dictionary<string, ModuleItem>());
                 var item = Dictionary[pluginContext];
 
                 if (!item.ContainsKey(id))
@@ -266,6 +274,26 @@ namespace WebExpress.WebCore.WebModule
                     moduleItem.DetachApplication(applicationContext);
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines the module for a given application context and module id.
+        /// </summary>
+        /// <param name="applicationType">The type of the application.</param>
+        /// <param name="moduleId">The type of the module.</param>
+        /// <returns>The context of the module or null.</returns>
+        public IModuleContext GetModule(Type applicationType, Type moduleType)
+        {
+            var applicationContext = ComponentManager.ApplicationManager.GetApplcation(applicationType);
+            var item = Dictionary.Values
+                .SelectMany(x => x.Values)
+                .Where(x => x.Dictionary.ContainsKey(applicationContext))
+                .Where(x => x.ModuleClass.Equals(moduleType))
+                .Select(x => x.Dictionary[applicationContext])
+                .Select(x => x.ModuleContext)
+                .FirstOrDefault();
+
+            return item;
         }
 
         /// <summary>

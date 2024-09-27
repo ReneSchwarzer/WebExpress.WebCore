@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -61,7 +62,8 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         /// <param name="serverContext">The context of the Web server.</param>
-        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext serverContext)
+        /// <param name="componentManager">The component manager.</param>
+        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext serverContext, ComponentManager componentManager)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
@@ -76,7 +78,7 @@ namespace WebExpress.WebCore.WebMessage
             Encoding = requestFeature.Headers.ContentEncoding.Any() ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
-            Request = new Request(contextFeatures, serverContext, header);
+            Request = new Request(contextFeatures, header, componentManager);
         }
     }
 }

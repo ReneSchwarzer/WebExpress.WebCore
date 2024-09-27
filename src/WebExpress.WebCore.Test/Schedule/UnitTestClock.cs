@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.Test.Schedule
     /// Tests the scheduler's clock.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestClock(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestClock
     {
         [Fact]
         public void Synchronize_1()

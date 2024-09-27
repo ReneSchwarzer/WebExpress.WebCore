@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebUri;
+﻿using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
@@ -7,7 +6,7 @@ namespace WebExpress.WebCore.Test.Uri
     /// Tests the skip method.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestUriRelativeSkip(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestUriRelativeSkip
     {
         private readonly UriResource Uri = new UriResource("/a/b/c");
 

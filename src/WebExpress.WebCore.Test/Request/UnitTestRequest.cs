@@ -1,9 +1,7 @@
-﻿using WebExpress.WebCore.Test.Fixture;
-
-namespace WebExpress.WebCore.Test.Request
+﻿namespace WebExpress.WebCore.Test.Request
 {
     [Collection("NonParallelTests")]
-    public class UnitTestRequest(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestRequest
     {
 
         [Fact]

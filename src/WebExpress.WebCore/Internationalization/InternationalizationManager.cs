@@ -30,10 +30,18 @@ namespace WebExpress.WebCore.Internationalization
         public IHttpServerContext HttpServerContext { get; private set; }
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal InternationalizationManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal InternationalizationManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

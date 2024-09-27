@@ -47,11 +47,17 @@ namespace WebExpress.WebCore.WebPackage
         private PackageCatalog Catalog { get; } = new PackageCatalog();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal PackageManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal PackageManager(ComponentManager componentManager)
         {
-
+            ComponentManager = componentManager;
         }
 
         /// <summary>

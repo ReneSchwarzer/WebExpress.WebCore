@@ -30,6 +30,11 @@ namespace WebExpress.WebCore.WebSitemap
         private SitemapNode Root { get; set; } = new SitemapNode();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Returns the side map.
         /// </summary>
         public IEnumerable<IResourceContext> SiteMap => Root.GetPreOrder().Select(x => x.ResourceContext);
@@ -37,9 +42,10 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal SitemapManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal SitemapManager(ComponentManager componentManager)
         {
-
+            ComponentManager = componentManager;
         }
 
         /// <summary>

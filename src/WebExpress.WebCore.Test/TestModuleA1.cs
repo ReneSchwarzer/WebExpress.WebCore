@@ -1,27 +1,26 @@
 ﻿using WebExpress.WebCore.WebAttribute;
-using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebModule;
 
 namespace WebExpress.WebCore.Test
 {
     /// <summary>
-    /// A dummy plugin for testing purposes.
+    /// A dummy module for testing purposes.
     /// </summary>
-    [Name("TestPlugin")]
-    [Description("plugin.description")]
+    [Application<TestApplicationA>()]
+    [Name("module.namea1")]
+    [Description("module.descriptiona1")]
     [Icon("/assets/img/Logo.png")]
-    public sealed class TestPlugin : IPlugin
+    [AssetPath("/")]
+    [ContextPath("/")]
+    public sealed class TestModuleA1 : IModule
     {
-        public TestPlugin()
-        {
-
-        }
-
         /// <summary>
-        /// Initialization of the plugin.
+        /// Initialization of the module.
         /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        public void Initialization(IPluginContext pluginContext)
+        /// <param name="moduleContext">The module context.</param>
+        public void Initialization(IModuleContext moduleContext)
         {
+            throw new NotImplementedException();
         }
 
         /// <summary>

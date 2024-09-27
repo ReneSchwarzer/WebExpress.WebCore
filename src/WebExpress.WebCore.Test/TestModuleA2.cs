@@ -7,12 +7,12 @@ namespace WebExpress.WebCore.Test
     /// A dummy module for testing purposes.
     /// </summary>
     [Application<TestApplicationA>()]
-    [Name("module.name")]
-    [Description("module.description")]
+    [Name("module.namea2")]
+    [Description("module.descriptiona2")]
     [Icon("/assets/img/Logo.png")]
     [AssetPath("/")]
     [ContextPath("/")]
-    public sealed class TestModule : IModule
+    public sealed class TestModuleA2 : IModule
     {
         /// <summary>
         /// Initialization of the module.

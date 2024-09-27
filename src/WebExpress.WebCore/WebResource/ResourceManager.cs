@@ -34,6 +34,11 @@ namespace WebExpress.WebCore.WebResource
         public IHttpServerContext HttpServerContext { get; private set; }
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Returns the directory where the resources are listed.
         /// </summary>
         private ResourceDictionary Dictionary { get; } = new ResourceDictionary();
@@ -53,8 +58,11 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal ResourceManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal ResourceManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

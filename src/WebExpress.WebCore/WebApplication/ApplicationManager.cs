@@ -38,6 +38,11 @@ namespace WebExpress.WebCore.WebApplication
         private ApplicationDictionary Dictionary { get; } = new ApplicationDictionary();
 
         /// <summary>
+        /// Returns or sets the component manager.
+        /// </summary>
+        private ComponentManager ComponentManager { get; set; }
+
+        /// <summary>
         /// Returns the stored applications.
         /// </summary>
         public IEnumerable<IApplicationContext> Applications => Dictionary.Values.SelectMany(x => x.Values).Select(x => x.ApplicationContext);
@@ -45,8 +50,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        internal ApplicationManager()
+        /// <param name="componentManager">The component manager.</param>
+        internal ApplicationManager(ComponentManager componentManager)
         {
+            ComponentManager = componentManager;
+
             ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);

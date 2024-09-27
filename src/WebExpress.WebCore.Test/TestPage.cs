@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:homepage.label")]
     [Segment(null, "webindex:homepage.label")]
     [ContextPath(null)]
-    [Module<TestModule>]
+    [Module<TestModuleA1>]
     public sealed class TestPage : IPage
     {
         /// <summary>

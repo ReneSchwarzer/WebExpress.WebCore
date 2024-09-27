@@ -5,9 +5,8 @@ namespace WebExpress.WebCore.Test.Manager
     /// <summary>
     /// Test the application manager.
     /// </summary>
-    /// <param name="fixture">The fixture.</param>
     [Collection("NonParallelTests")]
-    public class UnitTestApplication(UnitTestControlFixture fixture) : IClassFixture<UnitTestControlFixture>
+    public class UnitTestApplication
     {
         /// <summary>
         /// Test the register function of the application manager.
@@ -16,18 +15,15 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
 
             // test execution
-            applicationManager.Register(plugin);
+            componentManager.PluginManager.Register();
 
-            Assert.Equal(3, applicationManager.Applications.Count());
-            Assert.Equal("webexpress.webcore.test.testapplicationa", applicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationb", applicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
-            Assert.Equal("testapplicationc", applicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
+            Assert.Equal(3, componentManager.ApplicationManager.Applications.Count());
+            Assert.Equal("webexpress.webcore.test.testapplicationa", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationb", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
+            Assert.Equal("testapplicationc", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
         }
 
         /// <summary>
@@ -37,16 +33,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            applicationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            applicationManager.Remove(plugin);
+            componentManager.ApplicationManager.Remove(plugin);
 
-            Assert.Empty(applicationManager.Applications);
+            Assert.Empty(componentManager.ApplicationManager.Applications);
         }
 
         /// <summary>
@@ -59,15 +53,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetId(Type applicationType, string id)
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            applicationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
-            var applcation = applicationManager.GetApplcation(applicationType);
-
             Assert.Equal(id, applcation.ApplicationId);
         }
 
@@ -81,15 +71,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetName(Type applicationType, string name)
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            applicationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
-            var applcation = applicationManager.GetApplcation(applicationType);
-
             Assert.Equal(name, applcation.ApplicationName);
         }
 
@@ -103,15 +89,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDescription(Type applicationType, string description)
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            applicationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
-            var applcation = applicationManager.GetApplcation(applicationType);
-
             Assert.Equal(description, applcation.Description);
         }
 
@@ -125,15 +107,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetIcon(Type applicationType, string icon)
         {
             // preconditions
-            var pluginManager = UnitTestControlFixture.CreatePluginManager();
-            UnitTestControlFixture.RegisterPluginManager(pluginManager, typeof(TestPlugin).Assembly);
-            var applicationManager = UnitTestControlFixture.CreateApplicationManager();
-            var plugin = pluginManager.GetPlugin(typeof(TestPlugin));
-            applicationManager.Register(plugin);
+            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            componentManager.PluginManager.Register();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
-            var applcation = applicationManager.GetApplcation(applicationType);
-
             Assert.Equal(icon, applcation.Icon);
         }
     }

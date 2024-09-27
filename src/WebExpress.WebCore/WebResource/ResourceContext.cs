@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
@@ -52,7 +51,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the parent or null if not used.
         /// </summary>
-        public IResourceContext ParentContext => ComponentManager.ResourceManager.Resources
+        public IResourceContext ParentContext => WebEx.ComponentManager.ResourceManager.Resources
             .Where(x => !string.IsNullOrWhiteSpace(ResourceItem.ParentId))
             .Where(x => x.ResourceId.Equals(ResourceItem.ParentId, StringComparison.OrdinalIgnoreCase))
             .Where(x => x.ModuleContext.ApplicationContext == ModuleContext.ApplicationContext)

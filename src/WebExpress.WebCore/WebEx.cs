@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -7,8 +8,19 @@ using System.Threading;
 using System.Xml.Serialization;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEvent;
+using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
+using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebPackage;
+using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebSession;
+using WebExpress.WebCore.WebSitemap;
+using WebExpress.WebCore.WebStatusPage;
+using WebExpress.WebCore.WebTask;
 using WebExpress.WebCore.WebUri;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]
@@ -28,9 +40,120 @@ namespace WebExpress.WebCore
         private HttpServer HttpServer { get; set; }
 
         /// <summary>
+        /// Returns the component manager.
+        /// </summary>
+        public static ComponentManager ComponentManager { get; private set; }
+
+        /// <summary>
         /// Returns the program version.
         /// </summary>
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        /// <summary>
+        /// An event that fires when an component is added.
+        /// </summary>
+        public static event EventHandler<IComponent> AddComponent
+        {
+            add { ComponentManager.AddComponent += value; }
+            remove { ComponentManager.AddComponent -= value; }
+        }
+
+        /// <summary>
+        /// An event that fires when an component is removed.
+        /// </summary>
+        public static event EventHandler<IComponent> RemoveComponent
+        {
+            add { ComponentManager.RemoveComponent += value; }
+            remove { ComponentManager.RemoveComponent -= value; }
+        }
+
+        /// <summary>
+        /// Returns the reference to the context of the host.
+        /// </summary>
+        public static IHttpServerContext HttpServerContext => ComponentManager.HttpServerContext;
+
+        /// <summary>
+        /// Returns all registered components.
+        /// </summary>
+        public static IEnumerable<IComponent> Components => ComponentManager.Components;
+
+        /// <summary>
+        /// Returns the log manager.
+        /// </summary>
+        /// <returns>The instance of the log manager or null.</returns>
+        public static LogManager LogManager => ComponentManager.LogManager;
+
+        /// <summary>
+        /// Returns the package manager.
+        /// </summary>
+        /// <returns>The instance of the package manager or null.</returns>
+        public static PackageManager PackageManager => ComponentManager.PackageManager;
+
+        /// <summary>
+        /// Returns the plugin manager.
+        /// </summary>
+        /// <returns>The instance of the plugin manager or null.</returns>
+        public static PluginManager PluginManager => ComponentManager.PluginManager;
+
+        /// <summary>
+        /// Returns the application manager.
+        /// </summary>
+        /// <returns>The instance of the application manager or null.</returns>
+        public static ApplicationManager ApplicationManager => ComponentManager.ApplicationManager;
+
+        /// <summary>
+        /// Returns the module manager.
+        /// </summary>
+        /// <returns>The instance of the module manager or null.</returns>
+        public static ModuleManager ModuleManager => ComponentManager.ModuleManager;
+
+        /// <summary>
+        /// Returns the event manager.
+        /// </summary>
+        /// <returns>The instance of the event manager or null.</returns>
+        public static EventManager EventManager => ComponentManager.EventManager;
+
+        /// <summary>
+        /// Returns the job manager.
+        /// </summary>
+        /// <returns>The instance of the job manager or null.</returns>
+        public static JobManager JobManager => ComponentManager.JobManager;
+
+        /// <summary>
+        /// Returns the status page manager.
+        /// </summary>
+        /// <returns>The instance of the status page manager or null.</returns>
+        public static StatusPageManager StatusPageManager => ComponentManager.StatusPageManager;
+
+        /// <summary>
+        /// Returns the resource manager.
+        /// </summary>
+        /// <returns>The instance of the resource manager or null.</returns>
+        public static ResourceManager ResourceManager => ComponentManager.ResourceManager;
+
+        /// <summary>
+        /// Returns the sitemap manager.
+        /// </summary>
+        /// <returns>The instance of the sitemap manager or null.</returns>
+        public static SitemapManager SitemapManager => ComponentManager.SitemapManager;
+
+        /// <summary>
+        /// Returns the internationalization manager.
+        /// </summary>
+        /// <returns>The instance of the internationalization manager or null.</returns>
+        public static InternationalizationManager InternationalizationManager => ComponentManager.InternationalizationManager;
+
+        /// <summary>
+        /// Returns the session manager.
+        /// </summary>
+        /// <returns>The instance of the session manager or null.</returns>
+        public static SessionManager SessionManager => ComponentManager.SessionManager;
+
+        /// <summary>
+        /// Returns the task manager.
+        /// </summary>
+        /// <returns>The instance of the task manager manager or null.</returns>
+        public static TaskManager TaskManager => ComponentManager.TaskManager;
 
         /// <summary>
         /// Entry point of application.
@@ -104,7 +227,7 @@ namespace WebExpress.WebCore
                     return 1;
                 }
 
-                WebPackage.PackageBuilder.Create(argumentDict["spec"], argumentDict["config"], argumentDict["target"], argumentDict["output"]);
+                PackageBuilder.Create(argumentDict["spec"], argumentDict["config"], argumentDict["target"], argumentDict["output"]);
 
                 return 0;
             }
@@ -208,6 +331,8 @@ namespace WebExpress.WebCore
                 Config = config
             };
 
+            ComponentManager = HttpServer.ComponentManager;
+
             // start logging
             HttpServer.HttpServerContext.Log.Begin(config.Log);
 
@@ -274,8 +399,31 @@ namespace WebExpress.WebCore
             HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.done"));
             HttpServer.HttpServerContext.Log.Seperator('/');
 
+            // Stop running
+            ComponentManager.ShutDown();
+
             // stop logging
             HttpServer.HttpServerContext.Log.Close();
+        }
+
+        /// <summary>
+        /// Returns a component based on its id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>The instance of the component or null.</returns>
+        public static IComponent GetComponent(string id)
+        {
+            return ComponentManager.GetComponent(id);
+        }
+
+        /// <summary>
+        /// Returns a component based on its type.
+        /// </summary>
+        /// <typeparam name="T">The component class.</typeparam>
+        /// <returns>The instance of the component or null.</returns>
+        public static T GetComponent<T>() where T : IComponent
+        {
+            return ComponentManager.GetComponent<T>();
         }
     }
 }
