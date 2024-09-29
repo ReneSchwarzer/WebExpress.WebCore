@@ -6,7 +6,7 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebLog
 {
-    public class LogManager : IComponentPlugin, ISystemComponent
+    public class LogManager : IManagerPlugin, ISystemComponent
     {
         /// <summary>
         /// An event that fires when an log is added.
@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebLog
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:logmanager.initialization")
+                I18N.Translate("webexpress:logmanager.initialization")
             );
         }
 
@@ -106,7 +106,7 @@ namespace WebExpress.WebCore.WebLog
             output.Add
             (
                 string.Empty.PadRight(deep) +
-                InternationalizationManager.I18N("webexpress:logmanager.titel")
+                I18N.Translate("webexpress:logmanager.titel")
             );
         }
     }

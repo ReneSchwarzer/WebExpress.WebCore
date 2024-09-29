@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
@@ -29,6 +30,14 @@ namespace WebExpress.WebCore.Test
         /// Returns or sets the culture information.
         /// </summary>
         public CultureInfo Culture { get => CultureInfo.CurrentCulture; set => throw new NotImplementedException(); }
+        public ISite Site { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public event EventHandler Disposed;
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Instillation of the resource. Here, for example, managed resources can be loaded. 
@@ -77,5 +86,6 @@ namespace WebExpress.WebCore.Test
         {
 
         }
+
     }
 }

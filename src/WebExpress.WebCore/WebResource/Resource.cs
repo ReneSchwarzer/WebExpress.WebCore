@@ -7,11 +7,6 @@ namespace WebExpress.WebCore.WebResource
 {
     public abstract class Resource : IResource
     {
-        ///// <summary>
-        ///// Returns the resource id.
-        ///// </summary>
-        //public string Id { get; internal set; }
-
         /// <summary>
         /// Returns the context of the application.
         /// </summary>

@@ -172,25 +172,12 @@ namespace WebExpress.WebCore.WebModule
                 // thread termination.
                 var token = item.CancellationTokenSource.Token;
 
-                // initialize module
-                item.ModuleInstance.Initialization(item.ModuleContext);
-
-                Log.Debug
-                (
-                    message: InternationalizationManager.I18N
-                    (
-                        "webexpress:modulemanager.module.initialization",
-                        item.ModuleContext.ApplicationContext.ApplicationId,
-                        item.ModuleContext.PluginContext.PluginId
-                    )
-                );
-
                 // execute modules concurrently
                 Task.Run(() =>
                 {
                     Log.Debug
                     (
-                        message: InternationalizationManager.I18N
+                        message: I18N.Translate
                         (
                             "webexpress:modulemanager.module.processing.start",
                             item.ModuleContext.ApplicationContext.ApplicationId,
@@ -202,7 +189,7 @@ namespace WebExpress.WebCore.WebModule
 
                     Log.Debug
                     (
-                        message: InternationalizationManager.I18N
+                        message: I18N.Translate
                         (
                             "webexpress:modulemanager.module.processing.end",
                             item.ModuleContext.ApplicationContext.ApplicationId,

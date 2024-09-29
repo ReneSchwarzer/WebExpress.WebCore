@@ -1,4 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -16,14 +18,15 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var pluginManager = componentManager.PluginManager as PluginManager;
 
             // test execution
-            componentManager.PluginManager.Register();
+            pluginManager.Register();
 
             Assert.Equal(3, componentManager.ApplicationManager.Applications.Count());
             Assert.Equal("webexpress.webcore.test.testapplicationa", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
             Assert.Equal("webexpress.webcore.test.testapplicationb", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
-            Assert.Equal("testapplicationc", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationc", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
         }
 
         /// <summary>
@@ -33,12 +36,12 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var applicationManager = componentManager.ApplicationManager as ApplicationManager;
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            componentManager.ApplicationManager.Remove(plugin);
+            applicationManager.Remove(plugin);
 
             Assert.Empty(componentManager.ApplicationManager.Applications);
         }
@@ -49,12 +52,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.testapplicationa")]
         [InlineData(typeof(TestApplicationB), "webexpress.webcore.test.testapplicationb")]
-        [InlineData(typeof(TestApplicationC), "testapplicationc")]
-        public void GetId(Type applicationType, string id)
+        [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.testapplicationc")]
+        public void Id(Type applicationType, string id)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
@@ -68,11 +70,10 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), "TestApplicationA")]
         [InlineData(typeof(TestApplicationB), "TestApplicationB")]
         [InlineData(typeof(TestApplicationC), "TestApplicationC")]
-        public void GetName(Type applicationType, string name)
+        public void Name(Type applicationType, string name)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
@@ -86,11 +87,10 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), "application.description")]
         [InlineData(typeof(TestApplicationB), "application.description")]
         [InlineData(typeof(TestApplicationC), "application.description")]
-        public void GetDescription(Type applicationType, string description)
+        public void Description(Type applicationType, string description)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
@@ -101,18 +101,68 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/assets/img/Logo.png")]
-        [InlineData(typeof(TestApplicationB), "/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationA), "/aca/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationB), "/acb/assets/img/Logo.png")]
         [InlineData(typeof(TestApplicationC), "/assets/img/Logo.png")]
-        public void GetIcon(Type applicationType, string icon)
+        public void Icon(Type applicationType, string icon)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(icon, applcation.Icon);
+        }
+
+        /// <summary>
+        /// Test the context path property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "/aca")]
+        [InlineData(typeof(TestApplicationB), "/acb")]
+        [InlineData(typeof(TestApplicationC), "/")]
+        public void ContextPath(Type applicationType, string contextPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+
+            // test execution
+            Assert.Equal(contextPath, applcation.ContextPath);
+        }
+
+        /// <summary>
+        /// Test the asset path property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "/aaa")]
+        [InlineData(typeof(TestApplicationB), "/aab")]
+        [InlineData(typeof(TestApplicationC), "/")]
+        public void AssetPath(Type applicationType, string assetPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+
+            // test execution
+            Assert.Equal(assetPath, applcation.AssetPath);
+        }
+
+        /// <summary>
+        /// Test the data path property of the application.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), "/ada")]
+        [InlineData(typeof(TestApplicationB), "/adb")]
+        [InlineData(typeof(TestApplicationC), "/")]
+        public void DataPath(Type applicationType, string dataPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+
+            // test execution
+            Assert.Equal(dataPath, applcation.DataPath);
         }
     }
 }

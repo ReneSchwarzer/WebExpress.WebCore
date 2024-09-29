@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
@@ -6,17 +7,12 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource
 {
-    public interface IResourceContext
+    public interface IResourceContext : IContext
     {
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
-
-        ///// <summary>
-        ///// Returns the associated application context.
-        ///// </summary>
-        //IApplicationContext ApplicationContext { get; }
 
         /// <summary>
         /// Returns the corresponding module context.
@@ -54,6 +50,11 @@ namespace WebExpress.WebCore.WebResource
         /// Determines whether the resource is created once and reused each time it is called.
         /// </summary>
         bool Cache { get; }
+
+        /// <summary>
+        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// </summary>
+        bool IncludeSubPaths { get; }
 
         /// <summary>
         /// Returns the context path.

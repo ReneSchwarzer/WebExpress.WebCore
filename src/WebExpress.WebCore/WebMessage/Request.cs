@@ -8,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebUri;
@@ -24,7 +23,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// The context of the web server.
         /// </summary>
-        public IHttpServerContext ServerContext { get; protected set; }
+        public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
         /// Returns the request method (e.g. POST).
@@ -40,11 +39,6 @@ namespace WebExpress.WebCore.WebMessage
         /// Returns the parameters.
         /// </summary>
         private ParameterDictionary Param { get; } = [];
-
-        /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
 
         /// <summary>
         /// Returns the session.
@@ -123,7 +117,7 @@ namespace WebExpress.WebCore.WebMessage
                 }
                 catch
                 {
-                    return ServerContext.Culture ?? CultureInfo.CurrentCulture;
+                    return HttpServerContext.Culture ?? CultureInfo.CurrentCulture;
                 }
             }
         }
@@ -138,18 +132,17 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         /// <param name="header">The header.</param>
-        /// <param name="componentManager">The component manager.</param>
-        internal Request(IFeatureCollection contextFeatures, RequestHeaderFields header, ComponentManager componentManager)
+        /// <param name="httpServerContext">The context of the web server.</param>
+        internal Request(IFeatureCollection contextFeatures, RequestHeaderFields header, IHttpServerContext httpServerContext)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
             var requestIdentifierFeature = contextFeatures.Get<IHttpRequestIdentifierFeature>();
             //var sessionFeature = contextFeatures.Get<ISessionFeature>();
 
-            ServerContext = componentManager.HttpServerContext;
+            HttpServerContext = httpServerContext;
             RequestTraceIdentifier = requestIdentifierFeature.TraceIdentifier;
             Protocoll = requestFeature.Protocol;
-            ComponentManager = componentManager;
 
             Scheme = requestFeature.Scheme.ToLower() switch
             {
@@ -456,7 +449,7 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         private void ParseSessionParams()
         {
-            Session = ComponentManager.SessionManager?.GetSession(this);
+            Session = WebEx.ComponentManager.SessionManager?.GetSession(this);
 
             var property = Session?.GetProperty<SessionPropertyParameter>();
             if (property != null && property.Params != null)

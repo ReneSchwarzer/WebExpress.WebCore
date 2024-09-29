@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
 
 namespace WebExpress.WebCore.Test.Fixture
@@ -16,9 +17,9 @@ namespace WebExpress.WebCore.Test.Fixture
     public class UnitTestControlFixture : IDisposable
     {
         /// <summary>
-        /// Returns a guard to protect against concurrent access.
+        /// Returns the 
         /// </summary>
-        private static object guard = new object();
+        private static List<IResource> Ressources { get; } = new List<IResource>();
 
         /// <summary>
         /// Initializes a new instance of the class and boot the component manager.
@@ -31,7 +32,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a a server context.
         /// </summary>
         /// <returns>The server context.</returns>
-        public static HttpServerContext CreateHttpServerContext()
+        public static IHttpServerContext CreateHttpServerContext()
         {
             return new HttpServerContext
             (
@@ -64,6 +65,26 @@ namespace WebExpress.WebCore.Test.Fixture
 
             var componentManager = (ComponentManager)ctorComponentManager.Invoke([CreateHttpServerContext()]);
 
+            // set static field in the webex class
+            var type = typeof(WebEx);
+            var field = type.GetField("_componentManager", BindingFlags.Static | BindingFlags.NonPublic);
+
+            field.SetValue(null, componentManager);
+
+            return componentManager;
+        }
+
+        /// <summary>
+        /// Create a component manager.
+        /// </summary>
+        /// <returns>The component manager.</returns>
+        public static ComponentManager CreateAndRegisterComponentManager()
+        {
+            var componentManager = CreateComponentManager();
+            var pluginManager = componentManager.PluginManager as PluginManager;
+
+            pluginManager.Register();
+
             return componentManager;
         }
 
@@ -74,13 +95,24 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>A fake request for testing.</returns>
         public static WebMessage.Request CrerateRequest(string content = "")
         {
-            var ctorRequestHeaderFields = typeof(RequestHeaderFields).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection)], null);
-            var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(ComponentManager)], null);
+            var context = CreateHttpContext(content);
+
+            return context.Request;
+        }
+
+        /// <summary>
+        /// Create a fake http context.
+        /// </summary>
+        /// <param name="content">The content.</param>
+        /// <returns>A fake http context for testing.</returns>
+        public static WebMessage.HttpContext CreateHttpContext(string content = "")
+        {
+            var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
             var featureCollection = new FeatureCollection();
             var firstLine = content.Split('\n').FirstOrDefault();
             var lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var filteredLines = lines.Skip(1).TakeWhile(line => !string.IsNullOrWhiteSpace(line));
-            var pos = content.IndexOf(filteredLines.LastOrDefault()) + filteredLines.LastOrDefault().Length + 4;
+            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault()) + filteredLines.LastOrDefault().Length + 4 : 0;
             var innerContent = pos < content.Length ? content.Substring(pos) : "";
             var contentBytes = Encoding.UTF8.GetBytes(innerContent);
 
@@ -100,10 +132,10 @@ namespace WebExpress.WebCore.Test.Fixture
                     ["UserAgent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
                     ["Referer"] = "0HN50661TV8TP"
                 },
-                Body = new MemoryStream(contentBytes),
-                Method = firstLine.Split(' ').FirstOrDefault(),
-                RawTarget = firstLine.Split(' ').Skip(1).FirstOrDefault().Split('?').FirstOrDefault(),
-                QueryString = "?" + firstLine.Split(' ').Skip(1).FirstOrDefault().Split('?').Skip(1).FirstOrDefault(),
+                Body = contentBytes.Length > 0 ? new MemoryStream(contentBytes) : null,
+                Method = firstLine.Split(' ')?.FirstOrDefault() ?? "GET",
+                RawTarget = firstLine.Split(' ')?.Skip(1)?.FirstOrDefault()?.Split('?')?.FirstOrDefault() ?? "/",
+                QueryString = "?" + firstLine.Split(' ')?.Skip(1)?.FirstOrDefault()?.Split('?')?.Skip(1)?.FirstOrDefault() ?? "",
             };
 
             foreach (var line in filteredLines)
@@ -134,11 +166,9 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
             var componentManager = CreateComponentManager();
+            var context = new WebMessage.HttpContext(featureCollection, componentManager.HttpServerContext);
 
-            var headers = (RequestHeaderFields)ctorRequestHeaderFields.Invoke([featureCollection]);
-            var request = (WebMessage.Request)ctorRequest.Invoke([featureCollection, headers, componentManager]);
-
-            return request;
+            return context;
         }
 
         /// <summary>

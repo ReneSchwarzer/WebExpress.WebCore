@@ -13,8 +13,12 @@ namespace WebExpress.WebCore.WebModule
     /// <summary>
     /// The module manager manages the WebExpress modules.
     /// </summary>
-    public sealed class ModuleManager : IComponentPlugin, IExecutableElements, ISystemComponent
+    public sealed class ModuleManager : IModuleManager, IManagerPlugin, IExecutableElements, ISystemComponent
     {
+        private readonly IComponentManager _componentManager;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly ModuleDictionary _dictionary = [];
+
         /// <summary>
         /// An event that fires when an module is added.
         /// </summary>
@@ -26,24 +30,9 @@ namespace WebExpress.WebCore.WebModule
         public event EventHandler<IModuleContext> RemoveModule;
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
-
-        /// <summary>
-        /// Returns the directory where the modules are listed.
-        /// </summary>
-        private ModuleDictionary Dictionary { get; } = new ModuleDictionary();
-
-        /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
-
-        /// <summary>
         /// Delivers all stored modules.
         /// </summary>
-        public IEnumerable<IModuleContext> Modules => Dictionary.Values
+        public IEnumerable<IModuleContext> Modules => _dictionary.Values
             .SelectMany(x => x.Values)
             .SelectMany(x => x.Dictionary.Values)
             .Select(x => x.ModuleContext);
@@ -52,42 +41,36 @@ namespace WebExpress.WebCore.WebModule
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal ModuleManager(ComponentManager componentManager)
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        private ModuleManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
         {
-            ComponentManager = componentManager;
+            _componentManager = componentManager;
 
-            ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            ComponentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
 
-            ComponentManager.ApplicationManager.AddApplication += (sender, applicationContext) =>
+            _componentManager.ApplicationManager.AddApplication += (sender, applicationContext) =>
             {
                 AssignToApplication(applicationContext);
             };
 
-            ComponentManager.ApplicationManager.RemoveApplication += (sender, applicationContext) =>
+            _componentManager.ApplicationManager.RemoveApplication += (sender, applicationContext) =>
             {
                 DetachFromApplication(applicationContext);
             };
-        }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
+            _httpServerContext = httpServerContext;
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:modulemanager.initialization")
+                I18N.Translate("webexpress:modulemanager.initialization")
             );
         }
 
@@ -97,7 +80,7 @@ namespace WebExpress.WebCore.WebModule
         /// <param name="pluginContext">A context of a plugin whose modules are to be registered.</param>
         public void Register(IPluginContext pluginContext)
         {
-            if (Dictionary.ContainsKey(pluginContext))
+            if (_dictionary.ContainsKey(pluginContext))
             {
                 return;
             }
@@ -113,7 +96,7 @@ namespace WebExpress.WebCore.WebModule
                 ))
             {
                 var id = type.FullName?.ToLower();
-                var name = type.Name;
+                var name = type.Name.ToLower();
                 var icon = string.Empty;
                 var description = string.Empty;
                 var contextPath = string.Empty;
@@ -162,14 +145,14 @@ namespace WebExpress.WebCore.WebModule
                 if (!applicationIds.Any())
                 {
                     // no application specified
-                    HttpServerContext.Log.Warning
+                    _httpServerContext.Log.Warning
                     (
-                        InternationalizationManager.I18N("webexpress:modulemanager.applicationless", id)
+                        I18N.Translate("webexpress:modulemanager.applicationless", id)
                     );
                 }
 
-                Dictionary.TryAdd(pluginContext, new Dictionary<string, ModuleItem>());
-                var item = Dictionary[pluginContext];
+                _dictionary.TryAdd(pluginContext, new Dictionary<string, ModuleItem>());
+                var item = _dictionary[pluginContext];
 
                 if (!item.ContainsKey(id))
                 {
@@ -186,7 +169,7 @@ namespace WebExpress.WebCore.WebModule
                         AssetPath = assetPath,
                         ContextPath = new UriResource(contextPath),
                         DataPath = dataPath,
-                        Log = HttpServerContext.Log
+                        Log = _httpServerContext.Log
                     };
 
                     moduleItem.AddModule += (s, e) =>
@@ -202,14 +185,14 @@ namespace WebExpress.WebCore.WebModule
                     item.Add(id, moduleItem);
 
                     // assign the module to existing applications.
-                    foreach (var applicationContext in ComponentManager.ApplicationManager.Applications)
+                    foreach (var applicationContext in _componentManager.ApplicationManager.Applications)
                     {
                         AssignToApplication(applicationContext);
                     }
 
-                    HttpServerContext.Log.Debug
+                    _httpServerContext.Log.Debug
                     (
-                        InternationalizationManager.I18N
+                        I18N.Translate
                         (
                             "webexpress:modulemanager.register",
                             id,
@@ -219,9 +202,9 @@ namespace WebExpress.WebCore.WebModule
                 }
                 else
                 {
-                    HttpServerContext.Log.Warning
+                    _httpServerContext.Log.Warning
                     (
-                        InternationalizationManager.I18N
+                        I18N.Translate
                         (
                             "webexpress:modulemanager.duplicate",
                             id,
@@ -250,7 +233,7 @@ namespace WebExpress.WebCore.WebModule
         /// <param name="applicationContext">The context of the application.</param>
         private void AssignToApplication(IApplicationContext applicationContext)
         {
-            foreach (var moduleItem in Dictionary.Values.SelectMany(x => x.Values))
+            foreach (var moduleItem in _dictionary.Values.SelectMany(x => x.Values))
             {
                 if (moduleItem.Applications.Contains("*")
                     || moduleItem.Applications.Contains(applicationContext?.ApplicationId?.ToLower()))
@@ -266,7 +249,7 @@ namespace WebExpress.WebCore.WebModule
         /// <param name="applicationContext">The context of the application.</param>
         private void DetachFromApplication(IApplicationContext applicationContext)
         {
-            foreach (var moduleItem in Dictionary.Values.SelectMany(x => x.Values))
+            foreach (var moduleItem in _dictionary.Values.SelectMany(x => x.Values))
             {
                 if (moduleItem.Applications.Contains("*")
                     || moduleItem.Applications.Contains(applicationContext?.ApplicationId?.ToLower()))
@@ -284,8 +267,8 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>The context of the module or null.</returns>
         public IModuleContext GetModule(Type applicationType, Type moduleType)
         {
-            var applicationContext = ComponentManager.ApplicationManager.GetApplcation(applicationType);
-            var item = Dictionary.Values
+            var applicationContext = _componentManager.ApplicationManager.GetApplcation(applicationType);
+            var item = _dictionary.Values
                 .SelectMany(x => x.Values)
                 .Where(x => x.Dictionary.ContainsKey(applicationContext))
                 .Where(x => x.ModuleClass.Equals(moduleType))
@@ -304,7 +287,7 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>The context of the module or null.</returns>
         public IModuleContext GetModule(IApplicationContext applicationContext, string moduleId)
         {
-            var item = Dictionary.Values
+            var item = _dictionary.Values
                 .SelectMany(x => x.Values)
                 .Where(x => x.Dictionary.ContainsKey(applicationContext))
                 .Select(x => x.Dictionary[applicationContext])
@@ -348,7 +331,7 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>An enumeration of the module contexts for the given plugin and module id.</returns>
         public IEnumerable<IModuleContext> GetModules(IApplicationContext applicationContext)
         {
-            return Dictionary.Values
+            return _dictionary.Values
                 .SelectMany(x => x.Values)
                 .Where(x => x.Dictionary.ContainsKey(applicationContext))
                 .Select(x => x.Dictionary[applicationContext])
@@ -362,12 +345,12 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>An enumeration of the module contexts for the given plugin.</returns>
         internal IEnumerable<ModuleItem> GetModuleItems(IPluginContext pluginContext)
         {
-            if (pluginContext == null || !Dictionary.ContainsKey(pluginContext))
+            if (pluginContext == null || !_dictionary.ContainsKey(pluginContext))
             {
-                return Enumerable.Empty<ModuleItem>();
+                return [];
             }
 
-            return Dictionary[pluginContext].Values;
+            return _dictionary[pluginContext].Values;
         }
 
         /// <summary>
@@ -402,7 +385,7 @@ namespace WebExpress.WebCore.WebModule
         /// <param name="pluginContext">The context of the application containing the modules.</param>
         public void ShutDown(IApplicationContext applicationContext)
         {
-            foreach (var moduleItem in Dictionary.Values.SelectMany(x => x.Values))
+            foreach (var moduleItem in _dictionary.Values.SelectMany(x => x.Values))
             {
                 // terminate module
                 moduleItem.ShutDown(applicationContext);
@@ -420,19 +403,19 @@ namespace WebExpress.WebCore.WebModule
                 return;
             }
 
-            if (!Dictionary.ContainsKey(pluginContext))
+            if (!_dictionary.ContainsKey(pluginContext))
             {
                 return;
             }
 
             ShutDown(pluginContext);
 
-            foreach (var moduleItem in Dictionary[pluginContext].Values)
+            foreach (var moduleItem in _dictionary[pluginContext].Values)
             {
                 moduleItem.Dispose();
             }
 
-            Dictionary.Remove(pluginContext);
+            _dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -466,7 +449,7 @@ namespace WebExpress.WebCore.WebModule
                 output.Add
                 (
                     string.Empty.PadRight(deep) +
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:modulemanager.module",
                         moduleContext.ModuleId,

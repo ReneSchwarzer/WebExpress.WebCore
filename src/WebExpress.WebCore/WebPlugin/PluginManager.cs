@@ -15,8 +15,13 @@ namespace WebExpress.WebCore.WebPlugin
     /// <summary>
     /// The plugin manager manages the WebExpress plugins.
     /// </summary>
-    public sealed class PluginManager : IComponent, IExecutableElements, ISystemComponent
+    public sealed class PluginManager : IPluginManager, IExecutableElements, ISystemComponent
     {
+        private readonly IComponentManager _componentManager;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly PluginDictionary _dictionary = [];
+        private readonly PluginDictionary _unfulfilledDependencies = [];
+
         /// <summary>
         /// An event that fires when an plugin is added.
         /// </summary>
@@ -28,60 +33,34 @@ namespace WebExpress.WebCore.WebPlugin
         public event EventHandler<IPluginContext> RemovePlugin;
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
-
-        /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
-
-        /// <summary>
-        /// Returns the directory where the plugins are listed.
-        /// </summary>
-        private PluginDictionary Dictionary { get; } = [];
-
-        /// <summary>
-        /// Plugins that do not meet the dependencies.
-        /// </summary>
-        private PluginDictionary UnfulfilledDependencies { get; } = [];
-
-        /// <summary>
         /// Returns all plugins.
         /// </summary>
-        public IEnumerable<IPluginContext> Plugins => Dictionary.Values.Select(x => x.PluginContext).ToList();
+        public IEnumerable<IPluginContext> Plugins => _dictionary.Values.Select(x => x.PluginContext).ToList();
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal PluginManager(ComponentManager componentManager)
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        private PluginManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
         {
-            ComponentManager = componentManager;
+            _componentManager = componentManager;
 
-            ComponentManager.AddComponent += (s, e) =>
+            _componentManager.AddComponent += (s, e) =>
             {
                 //AssignToComponent(e);
             };
 
-            ComponentManager.RemoveComponent += (s, e) =>
+            _componentManager.RemoveComponent += (s, e) =>
             {
                 //DetachFromcomponent(e);
             };
-        }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
+            _httpServerContext = httpServerContext;
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:pluginmanager.initialization")
+                I18N.Translate("webexpress:pluginmanager.initialization")
             );
         }
 
@@ -103,9 +82,9 @@ namespace WebExpress.WebCore.WebPlugin
                     if (assembly != null)
                     {
                         assemblies.Add(assembly);
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
                                 "webexpress:pluginmanager.load",
                                 assembly.GetName().Name,
@@ -154,9 +133,9 @@ namespace WebExpress.WebCore.WebPlugin
                 if (assembly != null)
                 {
                     assemblies.Add(assembly);
-                    HttpServerContext.Log.Debug
+                    _httpServerContext.Log.Debug
                     (
-                        InternationalizationManager.I18N
+                        I18N.Translate
                         (
                             "webexpress:pluginmanager.load",
                             assembly.GetName().Name,
@@ -209,11 +188,7 @@ namespace WebExpress.WebCore.WebPlugin
                     foreach (var customAttribute in type.CustomAttributes
                         .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPluginAttribute))))
                     {
-                        if (customAttribute.AttributeType == typeof(IdAttribute))
-                        {
-                            id = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString()?.ToLower() ?? id;
-                        }
-                        else if (customAttribute.AttributeType == typeof(NameAttribute))
+                        if (customAttribute.AttributeType == typeof(NameAttribute))
                         {
                             name = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                         }
@@ -238,39 +213,39 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = name,
                         Manufacturer = type.Assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = type.Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        Icon = UriResource.Combine(HttpServerContext?.ContextPath, icon),
+                        Icon = UriResource.Combine(_httpServerContext?.ContextPath, icon),
                         Description = description,
                         Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
-                        Host = HttpServerContext
+                        Host = _httpServerContext
                     };
 
                     hasUnfulfilledDependencies = HasUnfulfilledDependencies(id, dependencies);
 
                     if (hasUnfulfilledDependencies)
                     {
-                        UnfulfilledDependencies.Add(id, new PluginItem()
+                        _unfulfilledDependencies.Add(id, new PluginItem()
                         {
                             PluginLoadContext = loadContext,
                             PluginClass = type,
                             PluginContext = pluginContext,
-                            Plugin = Activator.CreateInstance(type) as IPlugin,
+                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _componentManager),
                             Dependencies = dependencies
                         });
                     }
-                    else if (!Dictionary.ContainsKey(id))
+                    else if (!_dictionary.ContainsKey(id))
                     {
-                        Dictionary.Add(id, new PluginItem()
+                        _dictionary.Add(id, new PluginItem()
                         {
                             PluginLoadContext = loadContext,
                             PluginClass = type,
                             PluginContext = pluginContext,
-                            Plugin = Activator.CreateInstance(type) as IPlugin,
+                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _componentManager),
                             Dependencies = dependencies
                         });
 
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N("webexpress:pluginmanager.created", id)
+                            I18N.Translate("webexpress:pluginmanager.created", id)
                         );
 
                         OnAddPlugin(pluginContext);
@@ -279,9 +254,9 @@ namespace WebExpress.WebCore.WebPlugin
                     }
                     else
                     {
-                        HttpServerContext.Log.Warning
+                        _httpServerContext.Log.Warning
                         (
-                            InternationalizationManager.I18N("webexpress:pluginmanager.duplicate", id)
+                            I18N.Translate("webexpress:pluginmanager.duplicate", id)
                         );
                     }
 
@@ -291,16 +266,16 @@ namespace WebExpress.WebCore.WebPlugin
                     }
                     else
                     {
-                        HttpServerContext.Log.Warning
+                        _httpServerContext.Log.Warning
                         (
-                            InternationalizationManager.I18N("webexpress:pluginmanager.tomany", type.FullName)
+                            I18N.Translate("webexpress:pluginmanager.tomany", type.FullName)
                         );
                     }
                 }
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                _httpServerContext.Log.Exception(ex);
             }
 
             return plugins;
@@ -322,7 +297,7 @@ namespace WebExpress.WebCore.WebPlugin
             var pluginItem = GetPluginItem(pluginContext);
             pluginItem?.PluginLoadContext?.Unload();
 
-            Dictionary.Remove(pluginContext.PluginId);
+            _dictionary.Remove(pluginContext.PluginId);
         }
 
         /// <summary>
@@ -336,7 +311,7 @@ namespace WebExpress.WebCore.WebPlugin
             {
                 fulfilledDependencies = false;
 
-                foreach (var unfulfilledDependencies in UnfulfilledDependencies)
+                foreach (var unfulfilledDependencies in _unfulfilledDependencies)
                 {
                     var hasUnfulfilledDependencies = HasUnfulfilledDependencies
                     (
@@ -347,14 +322,14 @@ namespace WebExpress.WebCore.WebPlugin
                     if (!hasUnfulfilledDependencies)
                     {
                         fulfilledDependencies = true;
-                        UnfulfilledDependencies.Remove(unfulfilledDependencies.Key);
-                        Dictionary.Add(unfulfilledDependencies.Key, unfulfilledDependencies.Value);
+                        _unfulfilledDependencies.Remove(unfulfilledDependencies.Key);
+                        _dictionary.Add(unfulfilledDependencies.Key, unfulfilledDependencies.Value);
 
                         OnAddPlugin(unfulfilledDependencies.Value.PluginContext);
 
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
                                 "webexpress:pluginmanager.fulfilleddependencies",
                                 unfulfilledDependencies.Key
@@ -376,14 +351,14 @@ namespace WebExpress.WebCore.WebPlugin
             var hasUnfulfilledDependencies = false;
 
             foreach (var dependency in dependencies
-                   .Where(x => !Dictionary.ContainsKey(x.ToLower())))
+                   .Where(x => !_dictionary.ContainsKey(x.ToLower())))
             {
                 // dependency was not fulfilled
                 hasUnfulfilledDependencies = true;
 
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:pluginmanager.unfulfilleddependencies",
                         id,
@@ -402,7 +377,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The plugin context.</returns>
         public IPluginContext GetPlugin(string pluginId)
         {
-            return Dictionary.Values
+            return _dictionary.Values
                 .Where
                 (
                     x => x.PluginContext != null &&
@@ -419,7 +394,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The plugin context.</returns>
         public IPluginContext GetPlugin(Type plugin)
         {
-            return Dictionary.Values
+            return _dictionary.Values
                 .Where
                 (
                     x => x.PluginContext != null &&
@@ -438,11 +413,11 @@ namespace WebExpress.WebCore.WebPlugin
         {
             var pluginId = pluginContext?.PluginId?.ToLower();
 
-            if (pluginId == null || !Dictionary.TryGetValue(pluginId, out PluginItem value))
+            if (pluginId == null || !_dictionary.TryGetValue(pluginId, out PluginItem value))
             {
-                HttpServerContext.Log.Warning
+                _httpServerContext.Log.Warning
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:pluginmanager.notavailable",
                         pluginId
@@ -469,23 +444,23 @@ namespace WebExpress.WebCore.WebPlugin
                 return;
             }
 
-            // initialize plugin
-            pluginItem.Plugin.Initialization(pluginItem.PluginContext);
-            HttpServerContext.Log.Debug
-            (
-                InternationalizationManager.I18N
-                (
-                    "webexpress:pluginmanager.plugin.initialization",
-                    pluginItem.PluginContext.PluginId
-                )
-            );
+            //// initialize plugin
+            //pluginItem.Plugin.Initialization(pluginItem.PluginContext);
+            //HttpServerContext.Log.Debug
+            //(
+            //    I18N.Translate
+            //    (
+            //        "webexpress:pluginmanager.plugin.initialization",
+            //        pluginItem.PluginContext.PluginId
+            //    )
+            //);
 
             // run plugin concurrently
             Task.Run(() =>
             {
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:pluginmanager.plugin.processing.start",
                         pluginItem.PluginContext.PluginId
@@ -494,9 +469,9 @@ namespace WebExpress.WebCore.WebPlugin
 
                 pluginItem.Plugin.Run();
 
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:pluginmanager.plugin.processing.end",
                         pluginItem.PluginContext.PluginId
@@ -566,44 +541,44 @@ namespace WebExpress.WebCore.WebPlugin
         /// </summary>
         private void Logging()
         {
-            using var frame = new LogFrameSimple(HttpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>();
-            HttpServerContext.Log.Info
+            _httpServerContext.Log.Info
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
                     "webexpress:pluginmanager.pluginmanager.label"
                 )
             );
 
-            list.AddRange(Dictionary
+            list.AddRange(_dictionary
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
                         .GetCustomAttribute(typeof(SystemPluginAttribute)) != null
                 )
-                .Select(x => InternationalizationManager.I18N
+                .Select(x => I18N.Translate
                 (
                     "webexpress:pluginmanager.pluginmanager.system",
                     x.Key
                 ))
             );
 
-            list.AddRange(Dictionary
+            list.AddRange(_dictionary
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
                         .GetCustomAttribute(typeof(SystemPluginAttribute)) == null
                 )
-                .Select(x => InternationalizationManager.I18N
+                .Select(x => I18N.Translate
                 (
                     "webexpress:pluginmanager.pluginmanager.custom",
                     x.Key
                 ))
             );
 
-            list.AddRange(UnfulfilledDependencies
-                .Select(x => InternationalizationManager.I18N
+            list.AddRange(_unfulfilledDependencies
+                .Select(x => I18N.Translate
                 (
                     "webexpress:pluginmanager.pluginmanager.unfulfilleddependencies",
                     x.Key
@@ -612,7 +587,7 @@ namespace WebExpress.WebCore.WebPlugin
 
             foreach (var item in list)
             {
-                HttpServerContext.Log.Info(string.Join(Environment.NewLine, item));
+                _httpServerContext.Log.Info(string.Join(Environment.NewLine, item));
             }
         }
 

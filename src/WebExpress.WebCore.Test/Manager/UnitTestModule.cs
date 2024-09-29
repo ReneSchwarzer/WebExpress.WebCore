@@ -1,4 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -16,11 +18,12 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var pluginManager = componentManager.PluginManager as PluginManager;
 
             // test execution
-            componentManager.PluginManager.Register();
+            pluginManager.Register();
 
-            Assert.Equal(2, componentManager.ModuleManager.Modules.Count());
+            Assert.Equal(7, componentManager.ModuleManager.Modules.Count());
         }
 
         /// <summary>
@@ -30,12 +33,12 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var moduleManager = componentManager.ModuleManager as ModuleManager;
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            componentManager.ModuleManager.Remove(plugin);
+            moduleManager.Remove(plugin);
 
             Assert.Empty(componentManager.ModuleManager.Modules);
         }
@@ -46,11 +49,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "webexpress.webcore.test.testmodulea1")]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "webexpress.webcore.test.testmodulea2")]
-        public void GetId(Type applicationType, Type moduleType, string id)
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "webexpress.webcore.test.testmoduleb1")]
+        public void Id(Type applicationType, Type moduleType, string id)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -65,11 +68,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "module.namea1")]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "module.namea2")]
-        public void GetName(Type applicationType, Type moduleType, string name)
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "testmoduleb1")]
+        public void Name(Type applicationType, Type moduleType, string name)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -84,11 +87,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "module.descriptiona1")]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "module.descriptiona2")]
-        public void GetDescription(Type applicationType, Type moduleType, string description)
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "")]
+        public void Description(Type applicationType, Type moduleType, string description)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -101,19 +104,82 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the module.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "/assets/img/Logo.png")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "/assets/img/Logo.png")]
-        public void GetIcon(Type applicationType, Type moduleType, string icon)
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "/aca/mca/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "/aca/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "/acb/mcb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), "/aca/mcab")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), "/acb/mcab")]
+        public void Icon(Type applicationType, Type moduleType, string icon)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
-
-            // test execution
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
             var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
 
+            // test execution
             Assert.Equal(icon, module.Icon);
+        }
+
+        /// <summary>
+        /// Test the context path property of the module.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "/aca/mca")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "/aca")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "/acb/mcb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), "/aca/mcab")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), "/acb/mcab")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC1), "/mcc")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC2), "/")]
+        public void ContextPath(Type applicationType, Type moduleType, string contextPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+
+            // test execution
+            Assert.Equal(contextPath, module.ContextPath);
+        }
+
+        /// <summary>
+        /// Test the asset path property of the module.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "/maa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "/aaa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "/mab")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), "/maab")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), "/maab")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC1), "/mac")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC2), "/")]
+        public void AssetPath(Type applicationType, Type moduleType, string assetPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+
+            // test execution
+            Assert.Equal(assetPath, module.AssetPath);
+        }
+
+        /// <summary>
+        /// Test the data path property of the module.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), "/mda")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), "/ada")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleB1), "/mdb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), "/mdab")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), "/mdab")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC1), "/mdc")]
+        [InlineData(typeof(TestApplicationC), typeof(TestModuleC2), "/")]
+        public void DataPath(Type applicationType, Type moduleType, string dataPath)
+        {
+            // preconditions
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+
+            // test execution
+            Assert.Equal(dataPath, module.DataPath);
         }
     }
 }

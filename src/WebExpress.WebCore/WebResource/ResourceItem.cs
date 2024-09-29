@@ -13,8 +13,10 @@ namespace WebExpress.WebCore.WebResource
     /// <summary>
     /// A resource element that contains meta information about a resource.
     /// </summary>
-    public class ResourceItem : IDisposable
+    internal class ResourceItem : IDisposable
     {
+        private readonly IResourceManager _resourceManager;
+
         /// <summary>
         /// An event that fires when an ressource is added.
         /// </summary>
@@ -114,6 +116,15 @@ namespace WebExpress.WebCore.WebResource
         public IEnumerable<IResourceContext> ResourceContexts => Dictionary.Values;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ResourceItem"/> class.
+        /// </summary>
+        /// <param name="resourceManager">The resource manager.</param>
+        internal ResourceItem(IResourceManager resourceManager)
+        {
+            _resourceManager = resourceManager;
+        }
+
+        /// <summary>
         /// Adds an module assignment
         /// </summary>
         /// <param name="moduleContext">The context of the module.</param>
@@ -122,20 +133,20 @@ namespace WebExpress.WebCore.WebResource
             // only if no instance has been created yet
             if (Dictionary.ContainsKey(moduleContext))
             {
-                Log.Warning(message: InternationalizationManager.I18N("webexpress:resourcemanager.addresource.duplicate", ResourceId, moduleContext.ModuleId));
+                Log.Warning(message: I18N.Translate("webexpress:resourcemanager.addresource.duplicate", ResourceId, moduleContext.ModuleId));
 
                 return;
             }
 
             // create context
-            var resourceContext = new ResourceContext(moduleContext)
+            var resourceContext = new ResourceContext(moduleContext, _resourceManager, this)
             {
                 Scopes = Scopes,
                 Conditions = Conditions,
                 ResourceId = ResourceId,
                 ResourceTitle = Title,
                 Cache = Cache,
-                ResourceItem = this
+                IncludeSubPaths = IncludeSubPaths
             };
 
             if

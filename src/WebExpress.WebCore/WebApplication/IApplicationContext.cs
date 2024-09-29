@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -7,7 +8,7 @@ namespace WebExpress.WebCore.WebApplication
     /// <summary>
     /// The application context.
     /// </summary>
-    public interface IApplicationContext
+    public interface IApplicationContext : IContext
     {
         /// <summary>
         /// Provides the context of the associated plugin.

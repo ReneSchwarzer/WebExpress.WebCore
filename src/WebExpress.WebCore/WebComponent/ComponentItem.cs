@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns the component instance or null if not already created.
         /// </summary>
-        public IComponent ComponentInstance { get; internal set; }
+        public IManager ComponentInstance { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class.

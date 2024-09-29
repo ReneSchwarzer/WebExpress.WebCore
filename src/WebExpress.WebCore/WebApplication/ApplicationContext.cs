@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebApplication
         /// <returns>The string that uniquely represents the application.</returns>
         public override string ToString()
         {
-            return $"Application {ApplicationId}";
+            return $"{ApplicationId}";
         }
     }
 }

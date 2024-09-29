@@ -17,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
@@ -74,11 +73,6 @@ namespace WebExpress.WebCore
         public long RequestNumber { get; private set; }
 
         /// <summary>
-        /// Returns the component manager.
-        /// </summary>
-        public ComponentManager ComponentManager { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">Der Serverkontext.</param>
@@ -99,8 +93,6 @@ namespace WebExpress.WebCore
             );
 
             Culture = HttpServerContext.Culture;
-
-            ComponentManager = new ComponentManager(HttpServerContext);
         }
 
         /// <summary>
@@ -255,7 +247,7 @@ namespace WebExpress.WebCore
             var uri = request?.Uri;
 
             HttpServerContext.Log.Debug(message: this.I18N("webexpress:httpserver.connected"), args: context.RemoteEndPoint);
-            HttpServerContext.Log.Info(InternationalizationManager.I18N
+            HttpServerContext.Log.Info(I18N.Translate
             (
                 "webexpress:httpserver.request",
                 context.RemoteEndPoint,
@@ -277,8 +269,8 @@ namespace WebExpress.WebCore
                 resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count)?.PathSegments)
                 {
                     ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments),
-                    ApplicationRoot = new UriResource(request.Uri, searchResult.ApplicationContext?.ContextPath.PathSegments),
-                    ModuleRoot = new UriResource(request.Uri, searchResult.ModuleContext?.ContextPath.PathSegments),
+                    ApplicationRoot = new UriResource(request.Uri, searchResult.ResourceContext?.ModuleContext?.ApplicationContext?.ContextPath.PathSegments),
+                    ModuleRoot = new UriResource(request.Uri, searchResult.ResourceContext?.ModuleContext?.ContextPath.PathSegments),
                     ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
                 };
 
@@ -368,7 +360,7 @@ namespace WebExpress.WebCore
 
             stopwatch.Stop();
 
-            HttpServerContext.Log.Info(InternationalizationManager.I18N
+            HttpServerContext.Log.Info(I18N.Translate
             (
                 "webexpress:httpserver.request.done",
                 context?.RemoteEndPoint,
@@ -475,12 +467,12 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var statusPage = ComponentManager.StatusPageManager.CreateStatusPage
+                var statusPage = WebEx.ComponentManager.StatusPageManager.CreateStatusPage
                 (
                     massage,
                     response.Status,
-                    searchResult?.ModuleContext?.PluginContext ??
-                    searchResult?.ApplicationContext?.PluginContext
+                    searchResult?.ResourceContext?.ModuleContext?.PluginContext ??
+                    searchResult?.ResourceContext?.ModuleContext?.ApplicationContext?.PluginContext
                 );
 
                 if (statusPage == null)
@@ -514,7 +506,7 @@ namespace WebExpress.WebCore
                     //    ContextPath = new UriResource()
                     //};
 
-                    resource.Initialization(new ResourceContext(resource.ModuleContext));
+                    resource.Initialization(new ResourceContext(resource.ModuleContext, WebEx.ResourceManager));
                 }
 
                 return statusPage.Process(request);
@@ -540,7 +532,7 @@ namespace WebExpress.WebCore
         {
             try
             {
-                return new HttpContext(contextFeatures, HttpServerContext, ComponentManager);
+                return new HttpContext(contextFeatures, HttpServerContext);
             }
             catch (Exception ex)
             {

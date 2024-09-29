@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test
 {
@@ -14,11 +15,23 @@ namespace WebExpress.WebCore.Test
     public sealed class TestApplicationC : IApplication
     {
         /// <summary>
-        /// Initialization of the application.
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="applicationContext">The application context.</param>
-        public void Initialization(IApplicationContext applicationContext)
+        /// <param name="applicationContext">The application context, for testing the injection.</param>
+        /// <param name="pluginManager">The plugin manager, for testing the injection.</param>
+        private TestApplicationC(IApplicationContext applicationContext, IPluginManager pluginManager)
         {
+            // test the injection
+            if (applicationContext == null)
+            {
+                throw new ArgumentNullException(nameof(applicationContext), "Parameter cannot be null or empty.");
+            }
+
+            // test the injection
+            if (pluginManager == null)
+            {
+                throw new ArgumentNullException(nameof(pluginManager), "Parameter cannot be null or empty.");
+            }
         }
 
         /// <summary>

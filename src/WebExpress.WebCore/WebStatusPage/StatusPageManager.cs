@@ -13,8 +13,13 @@ namespace WebExpress.WebCore.WebStatusPage
     /// <summary>
     /// Management of status pages.
     /// </summary>
-    public class StatusPageManager : IComponentPlugin, ISystemComponent
+    public class StatusPageManager : IManagerPlugin, ISystemComponent
     {
+        private readonly IComponentManager _componentManager;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly StatusPageDictionary _dictionary = [];
+        private readonly StatusPageDictionaryItem _defaults = [];
+
         /// <summary>
         /// An event that fires when an status page is added.
         /// </summary>
@@ -26,29 +31,9 @@ namespace WebExpress.WebCore.WebStatusPage
         public event EventHandler<IResourceContext> RemoveStatusPage;
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
-
-        /// <summary>
-        /// Returns the directory where the status pages are listed.
-        /// </summary>
-        private StatusPageDictionary Dictionary { get; } = new StatusPageDictionary();
-
-        /// <summary>
-        /// Returns the default Items.
-        /// </summary>
-        private StatusPageDictionaryItem Defaults { get; } = new StatusPageDictionaryItem();
-
-        /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
-
-        /// <summary>
         /// Returns all status pages.
         /// </summary>
-        public IEnumerable<IStatusPageContext> StatusPages => Dictionary.Values
+        public IEnumerable<IStatusPageContext> StatusPages => _dictionary.Values
             .SelectMany(x => x.Values)
             .Select(x => new StatusPageContext()
             {
@@ -63,32 +48,26 @@ namespace WebExpress.WebCore.WebStatusPage
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal StatusPageManager(ComponentManager componentManager)
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        internal StatusPageManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
         {
-            ComponentManager = componentManager;
+            _componentManager = componentManager;
 
-            ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            ComponentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
-        }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
+            _httpServerContext = httpServerContext;
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:statuspagemanager.initialization")
+                I18N.Translate("webexpress:statuspagemanager.initialization")
             );
         }
 
@@ -143,12 +122,12 @@ namespace WebExpress.WebCore.WebStatusPage
 
                 if (statusCode > 0)
                 {
-                    if (!Dictionary.ContainsKey(pluginContext))
+                    if (!_dictionary.ContainsKey(pluginContext))
                     {
-                        Dictionary.Add(pluginContext, new StatusPageDictionaryItem());
+                        _dictionary.Add(pluginContext, new StatusPageDictionaryItem());
                     }
 
-                    var item = Dictionary[pluginContext];
+                    var item = _dictionary[pluginContext];
                     if (!item.ContainsKey(statusCode))
                     {
                         item.Add(statusCode, new StatusPageItem()
@@ -158,49 +137,45 @@ namespace WebExpress.WebCore.WebStatusPage
                             StatusPageClass = resource,
                             PluginContext = pluginContext,
                             Title = title,
-                            Icon = new UriResource(icon),
-                            //ModuleId = moduleId
+                            Icon = new UriResource(icon)
                         });
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
                                 "webexpress:statuspagemanager.register",
                                 statusCode,
-                                //moduleId,
                                 resource.Name
                             )
                         );
                     }
                     else
                     {
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
                                 "webexpress:statuspagemanager.duplicat",
                                 statusCode,
-                                //moduleId,
                                 resource.Name
                             )
                         );
                     }
 
                     // default
-                    if (!Defaults.ContainsKey(statusCode))
+                    if (!_defaults.ContainsKey(statusCode))
                     {
-                        Defaults.Add(statusCode, new StatusPageItem()
+                        _defaults.Add(statusCode, new StatusPageItem()
                         {
                             Id = id,
                             StatusCode = statusCode,
                             StatusPageClass = resource,
-                            PluginContext = pluginContext,
-                            //ModuleId = moduleId
+                            PluginContext = pluginContext
                         });
                     }
                     else if (defaultItem)
                     {
-                        Defaults[statusCode] = new StatusPageItem()
+                        _defaults[statusCode] = new StatusPageItem()
                         {
                             Id = id,
                             StatusCode = statusCode,
@@ -213,12 +188,11 @@ namespace WebExpress.WebCore.WebStatusPage
                 }
                 else
                 {
-                    HttpServerContext.Log.Debug
+                    _httpServerContext.Log.Debug
                     (
-                        InternationalizationManager.I18N
+                        I18N.Translate
                         (
                             "webexpress:statuspagemanager.statuscode",
-                            //moduleId,
                             resource.Name
                         )
                     );
@@ -250,9 +224,9 @@ namespace WebExpress.WebCore.WebStatusPage
                 return Enumerable.Empty<int>();
             }
 
-            if (Dictionary.ContainsKey(pluginContext))
+            if (_dictionary.ContainsKey(pluginContext))
             {
-                return Dictionary[pluginContext].Keys;
+                return _dictionary[pluginContext].Keys;
             }
 
             return Enumerable.Empty<int>();
@@ -265,17 +239,17 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <returns>The first status page found to the given states or null.</returns>
         private StatusPageItem GetStatusPage(int status)
         {
-            if (Defaults == null)
+            if (_defaults == null)
             {
                 return null;
             }
 
-            if (!Defaults.ContainsKey(status))
+            if (!_defaults.ContainsKey(status))
             {
                 return null;
             }
 
-            return Defaults[status];
+            return _defaults[status];
         }
 
         /// <summary>
@@ -291,17 +265,17 @@ namespace WebExpress.WebCore.WebStatusPage
                 return null;
             }
 
-            if (!Dictionary.ContainsKey(pluginContext))
+            if (!_dictionary.ContainsKey(pluginContext))
             {
                 return null;
             }
 
-            if (!Dictionary[pluginContext].ContainsKey(status))
+            if (!_dictionary[pluginContext].ContainsKey(status))
             {
                 return null;
             }
 
-            return Dictionary[pluginContext][status];
+            return _dictionary[pluginContext][status];
         }
 
         /// <summary>
@@ -369,7 +343,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 output.Add
                 (
                     string.Empty.PadRight(4) +
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:statuspagemanager.statuspage",
                         statusCode

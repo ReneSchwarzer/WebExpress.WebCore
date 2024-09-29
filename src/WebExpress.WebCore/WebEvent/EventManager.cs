@@ -11,63 +11,46 @@ namespace WebExpress.WebCore.WebEvent
     /// <summary>
     /// The event manager.
     /// </summary>
-    public sealed class EventManager : IComponentPlugin, ISystemComponent
+    public sealed class EventManager : IManagerPlugin, ISystemComponent
     {
-        /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
-
-        /// <summary>
-        /// Returns the directory where the events are listed.
-        /// </summary>
-        private EventDictionary Dictionary { get; } = new EventDictionary();
-
-        /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
+        private readonly IComponentManager _componentManager;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly EventDictionary _dictionary = [];
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal EventManager(ComponentManager componentManager)
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        internal EventManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
         {
-            ComponentManager = componentManager;
+            _componentManager = componentManager;
 
-            ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            ComponentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
 
-            ComponentManager.ModuleManager.AddModule += (sender, moduleContext) =>
+            _componentManager.ModuleManager.AddModule += (sender, moduleContext) =>
             {
                 AssignToModule(moduleContext);
             };
 
-            ComponentManager.ModuleManager.RemoveModule += (sender, moduleContext) =>
+            _componentManager.ModuleManager.RemoveModule += (sender, moduleContext) =>
             {
                 DetachFromModule(moduleContext);
             };
-        }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
+            _httpServerContext = httpServerContext;
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
                     "webexpress:eventmanager.initialization"
                 )
@@ -112,7 +95,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <param name="moduleContext">The context of the module.</param>
         private void AssignToModule(IModuleContext moduleContext)
         {
-            //foreach (var scheduleItem in Dictionary.Values.SelectMany(x => x))
+            //foreach (var scheduleItem in _dictionary.Values.SelectMany(x => x))
             //{
             //    if (scheduleItem.moduleId.Equals(moduleContext?.ModuleId))
             //    {
@@ -127,7 +110,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <param name="moduleContext">The context of the module.</param>
         private void DetachFromModule(IModuleContext moduleContext)
         {
-            //foreach (var scheduleItem in Dictionary.Values.SelectMany(x => x))
+            //foreach (var scheduleItem in _dictionary.Values.SelectMany(x => x))
             //{
             //    if (scheduleItem.moduleId.Equals(moduleContext?.ModuleId))
             //    {
@@ -143,17 +126,17 @@ namespace WebExpress.WebCore.WebEvent
         public void Remove(IPluginContext pluginContext)
         {
             //// the plugin has not been registered in the manager
-            //if (!Dictionary.ContainsKey(pluginContext))
+            //if (!_dictionary.ContainsKey(pluginContext))
             //{
             //    return;
             //}
 
-            //foreach (var scheduleItem in Dictionary[pluginContext])
+            //foreach (var scheduleItem in _dictionary[pluginContext])
             //{
             //    scheduleItem.Dispose();
             //}
 
-            //Dictionary.Remove(pluginContext);
+            //_dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -169,7 +152,7 @@ namespace WebExpress.WebCore.WebEvent
             //    output.Add
             //    (
             //        string.Empty.PadRight(deep) +
-            //        InternationalizationManager.I18N
+            //        I18N.Translate
             //        (
             //            "webexpress:eventmanager.job",
             //            scheduleItem.JobId,

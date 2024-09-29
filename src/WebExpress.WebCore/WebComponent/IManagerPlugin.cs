@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebComponent
     /// <summary>
     /// Interface of the manager classes.
     /// </summary>
-    public interface IComponentPlugin : IComponent
+    public interface IManagerPlugin : IManager
     {
         /// <summary>
         /// Discovers and registers entries from the specified plugin.

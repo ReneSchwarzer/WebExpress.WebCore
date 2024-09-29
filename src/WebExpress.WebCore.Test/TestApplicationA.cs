@@ -9,9 +9,25 @@ namespace WebExpress.WebCore.Test
     [Name("TestApplicationA")]
     [Description("application.description")]
     [Icon("/assets/img/Logo.png")]
+    [ContextPath("/aca")]
+    [AssetPath("/aaa")]
+    [DataPath("/ada")]
     [Dependency("webexpress.webui")]
     public sealed class TestApplicationA : IApplication
     {
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="applicationContext">The application context, for testing the injection.</param>
+        private TestApplicationA(IApplicationContext applicationContext)
+        {
+            // test the injection
+            if (applicationContext == null)
+            {
+                throw new ArgumentNullException(nameof(applicationContext), "Parameter cannot be null or empty.");
+            }
+        }
+
         /// <summary>
         /// Initialization of the application.
         /// </summary>

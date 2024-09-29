@@ -8,7 +8,7 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebSession
 {
-    public class SessionManager : IComponent, ISystemComponent
+    public class SessionManager : IManager, ISystemComponent
     {
         /// <summary>
         /// Returns or sets the reference to the context of the host.
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebSession
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:sessionmanager.initialization")
+                I18N.Translate("webexpress:sessionmanager.initialization")
             );
         }
 

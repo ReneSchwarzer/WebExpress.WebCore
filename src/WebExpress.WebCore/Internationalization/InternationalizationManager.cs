@@ -12,8 +12,10 @@ namespace WebExpress.WebCore.Internationalization
     /// <summary>
     /// Internationalization
     /// </summary>
-    public sealed class InternationalizationManager : IComponentPlugin, ISystemComponent
+    public sealed class InternationalizationManager : IInternationalizationManager, IManagerPlugin, ISystemComponent
     {
+        private readonly IComponentManager _componentManager;
+
         /// <summary>
         /// Returns the default language.
         /// </summary>
@@ -30,41 +32,30 @@ namespace WebExpress.WebCore.Internationalization
         public IHttpServerContext HttpServerContext { get; private set; }
 
         /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal InternationalizationManager(ComponentManager componentManager)
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        private InternationalizationManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
         {
-            ComponentManager = componentManager;
+            _componentManager = componentManager;
 
-            ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            ComponentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
-        }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
+            HttpServerContext = httpServerContext;
             DefaultCulture = HttpServerContext.Culture;
 
             HttpServerContext.Log.Debug
             (
-                I18N("webexpress:internationalizationmanager.initialization")
+                Translate("webexpress:internationalizationmanager.initialization")
             );
         }
 
@@ -79,7 +70,7 @@ namespace WebExpress.WebCore.Internationalization
 
             HttpServerContext.Log.Debug
             (
-                I18N("webexpress:internationalizationmanager.register", pluginId)
+                Translate("webexpress:internationalizationmanager.register", pluginId)
             );
         }
 
@@ -100,11 +91,11 @@ namespace WebExpress.WebCore.Internationalization
         /// </summary>
         /// <param name="assembly">The assembly that contains the key-value pairs to insert.</param>
         /// <param name="pluginId">The id of the plugin to which the internationalization data will be assigned.</param>
-        internal static void Register(Assembly assembly, string pluginId)
+        internal void Register(Assembly assembly, string pluginId)
         {
             var assemblyName = assembly.GetName().Name.ToLower();
             var name = assemblyName + ".internationalization.";
-            var resources = assembly.GetManifestResourceNames().Where(x => x.ToLower().Contains(name));
+            var resources = assembly.GetManifestResourceNames().Where(x => x.Contains(name, System.StringComparison.CurrentCultureIgnoreCase));
 
             foreach (var languageResource in resources)
             {
@@ -112,7 +103,7 @@ namespace WebExpress.WebCore.Internationalization
 
                 if (!Dictionary.ContainsKey(language))
                 {
-                    Dictionary.Add(language, new InternationalizationItem());
+                    Dictionary.Add(language, []);
                 }
 
                 var dictItem = Dictionary[language];
@@ -159,82 +150,103 @@ namespace WebExpress.WebCore.Internationalization
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the default language.
+        /// </summary>
+        /// <param name="key">The internationalization key.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public string Translate(string key)
+        {
+            return Translate(DefaultCulture, null, key);
+        }
+
+        /// <summary>
+        /// Translates a given key to the default language.
+        /// </summary>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public string Translate(string key, params object[] args)
+        {
+            return string.Format(Translate(DefaultCulture, null, key), args);
+        }
+
+        /// <summary>
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="obj">An internationalization object that is being extended.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(II18N obj, string key)
+        public string Translate(II18N obj, string key)
         {
-            return I18N(obj.Culture, key);
+            return Translate(obj.Culture, key);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="obj">An internationalization object that is being extended.</param>
         /// <param name="key">The internationalization key.</param>
         /// <param name="args">The formatting arguments.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(II18N obj, string key, params object[] args)
+        public string Translate(II18N obj, string key, params object[] args)
         {
-            return string.Format(I18N(obj, key), args);
+            return string.Format(Translate(obj, key), args);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="request">The request with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(Request request, string key)
+        public string Translate(Request request, string key)
         {
-            return I18N(request.Culture, null, key);
+            return Translate(request.Culture, null, key);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="request">The request with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <param name="args">The formatting arguments.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(Request request, string key, params object[] args)
+        public string Translate(Request request, string key, params object[] args)
         {
-            return string.Format(I18N(request, key), args);
+            return string.Format(Translate(request, key), args);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="culture">The culture with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(CultureInfo culture, string key)
+        public string Translate(CultureInfo culture, string key)
         {
-            return I18N(culture, null, key);
+            return Translate(culture, null, key);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="culture">The culture with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <param name="args">The formatting arguments.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(CultureInfo culture, string key, params object[] args)
+        public string Translate(CultureInfo culture, string key, params object[] args)
         {
-            return string.Format(I18N(culture, key), args);
+            return string.Format(Translate(culture, key), args);
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="culture">The culture with the language to use.</param>
         /// <param name="pluginId">The plugin id.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(CultureInfo culture, string pluginId, string key)
+        public string Translate(CultureInfo culture, string pluginId, string key)
         {
             var language = culture?.TwoLetterISOLanguageName;
             var k = string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(pluginId) || key.StartsWith($"{pluginId?.ToLower()}:") ? key?.ToLower() : $"{pluginId?.ToLower()}:{key?.ToLower()}";
@@ -266,37 +278,16 @@ namespace WebExpress.WebCore.Internationalization
         }
 
         /// <summary>
-        /// Internationalization of a key.
+        /// Translates a given key to the specified language.
         /// </summary>
         /// <param name="culture">The culture with the language to use.</param>
         /// <param name="pluginId">The plugin id.</param>
         /// <param name="key">The internationalization key.</param>
         /// <param name="args">The formatting arguments.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(CultureInfo culture, string pluginId, string key, params object[] args)
+        public string Translate(CultureInfo culture, string pluginId, string key, params object[] args)
         {
-            return string.Format(I18N(culture, pluginId, key), args);
-        }
-
-        /// <summary>
-        /// Internationalization of a key.
-        /// </summary>
-        /// <param name="key">The internationalization key.</param>
-        /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(string key)
-        {
-            return I18N(DefaultCulture, null, key);
-        }
-
-        /// <summary>
-        /// Internationalization of a key.
-        /// </summary>
-        /// <param name="key">The internationalization key.</param>
-        /// <param name="args">The formatting arguments.</param>
-        /// <returns>The value of the key in the current language.</returns>
-        public static string I18N(string key, params object[] args)
-        {
-            return string.Format(I18N(DefaultCulture, null, key), args);
+            return string.Format(Translate(culture, pluginId, key), args);
         }
 
         /// <summary>

@@ -1,16 +1,10 @@
-﻿using WebExpress.WebCore.Internationalization;
+﻿using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebResource
 {
-    public interface IResource : II18N
+    public interface IResource : IComponent
     {
-        /// <summary>
-        /// Instillation of the resource. Here, for example, managed resources can be loaded. 
-        /// </summary>
-        /// <param name="resourceContext">The context of the resource.</param>
-        void Initialization(IResourceContext resourceContext);
-
         /// <summary>
         /// Preprocessing of the resource.
         /// </summary>

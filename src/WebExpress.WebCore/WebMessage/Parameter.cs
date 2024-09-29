@@ -4,6 +4,9 @@ using System.Text;
 
 namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents a parameter with a key, value, and scope.
+    /// </summary>
     public class Parameter
     {
         /// <summary>
@@ -12,12 +15,12 @@ namespace WebExpress.WebCore.WebMessage
         public ParameterScope Scope { get; private set; }
 
         /// <summary>
-        /// The key.
+        /// Returns the key of the parameter.
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
-        /// The value.
+        /// Returns the value of the parameter.
         /// </summary>
         public string Value { get; internal set; }
 

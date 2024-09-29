@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>The string that uniquely represents the module.</returns>
         public override string ToString()
         {
-            return $"Module {ModuleId}";
+            return $"{ApplicationContext?.ApplicationId}:{ModuleId}";
         }
     }
 }

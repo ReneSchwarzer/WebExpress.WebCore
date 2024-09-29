@@ -11,17 +11,13 @@ namespace WebExpress.WebCore.Test
     [Icon("/assets/img/Logo.png")]
     public sealed class TestPlugin : IPlugin
     {
-        public TestPlugin()
-        {
-
-        }
-
         /// <summary>
-        /// Initialization of the plugin.
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        public void Initialization(IPluginContext pluginContext)
+        private TestPlugin(IPluginContext pluginContext)
         {
+
         }
 
         /// <summary>

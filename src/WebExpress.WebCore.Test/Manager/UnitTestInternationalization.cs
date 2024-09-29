@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -18,11 +19,12 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var pluginManager = componentManager.PluginManager as PluginManager;
 
             // test execution
-            componentManager.PluginManager.Register();
+            pluginManager.Register();
 
-            Assert.Equal("This is a test", InternationalizationManager.I18N("webexpress.webcore.test:unit.test.message"));
+            Assert.Equal("This is a test", I18N.Translate("webexpress.webcore.test:unit.test.message"));
         }
 
         /// <summary>
@@ -32,14 +34,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var internationalizationManager = componentManager.InternationalizationManager as InternationalizationManager;
             var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            componentManager.InternationalizationManager.Remove(plugin);
+            internationalizationManager.Remove(plugin);
 
-            Assert.Equal("webexpress.webcore.test:unit.test.message", InternationalizationManager.I18N("webexpress.webcore.test:unit.test.message"));
+            Assert.Equal("webexpress.webcore.test:unit.test.message", I18N.Translate("webexpress.webcore.test:unit.test.message"));
         }
 
         /// <summary>
@@ -49,15 +51,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDefaultCulture()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
 
             // test execution
             Assert.Equal(CultureInfo.GetCultureInfo("en"), InternationalizationManager.DefaultCulture);
         }
 
         /// <summary>
-        /// Test the I18N function of the plugin manager.
+        /// Test the translate function of the internationalization manager.
         /// </summary>
         [Theory]
         [InlineData("webexpress.webcore.test:unit.test.message", "This is a test")]
@@ -67,51 +68,50 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("webexpress.webcore.test:welcome.message", "Welcome 'Max' to our application!", "en", null, "Max")]
         [InlineData("welcome.message", "Welcome 'Max' to our application!", "en", "webexpress.webcore.test", "Max")]
         [InlineData("non.existent.key", "non.existent.key", "de")]
-        public void I18N(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
+        public void Translate(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            componentManager.PluginManager.Register();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
 
             if (cultureName == null && !param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(key);
+                var result = I18N.Translate(key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName == null && param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(key, param);
+                var result = I18N.Translate(key, param);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName != null && pluginID == null && !param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(CultureInfo.GetCultureInfo(cultureName), key);
+                var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName != null && pluginID == null && param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(CultureInfo.GetCultureInfo(cultureName), key, param);
+                var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key, param);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName != null && pluginID != null && !param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(CultureInfo.GetCultureInfo(cultureName), pluginID, key);
+                var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName != null && pluginID != null && param.Any())
             {
                 // test execution
-                var result = InternationalizationManager.I18N(CultureInfo.GetCultureInfo(cultureName), pluginID, key, param);
+                var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key, param);
 
                 Assert.Equal(excepted, result);
             }

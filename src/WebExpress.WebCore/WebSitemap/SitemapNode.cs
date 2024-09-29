@@ -16,29 +16,9 @@ namespace WebExpress.WebCore.WebSitemap
         public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
-        /// Returns the resource item.
-        /// </summary>
-        public ResourceItem ResourceItem { get; internal set; }
-
-        ///// <summary>
-        ///// Returns the context of the application.
-        ///// </summary>
-        //public IApplicationContext ApplicationContext { get; internal set; }
-
-        ///// <summary>
-        ///// Returns the context of the module.
-        ///// </summary>
-        //public IModuleContext ModuleContext { get; internal set; }
-
-        /// <summary>
         /// Returns the context of the resource.
         /// </summary>
         public IResourceContext ResourceContext { get; internal set; }
-
-        /// <summary>
-        /// Returns the instance
-        /// </summary>
-        public IResource Instance { get; internal set; }
 
         /// <summary>
         /// Returns the child nodes.
@@ -147,11 +127,7 @@ namespace WebExpress.WebCore.WebSitemap
             var node = new SitemapNode()
             {
                 PathSegment = PathSegment,
-                ResourceItem = ResourceItem,
-                //ApplicationContext = ApplicationContext,
-                //ModuleContext = ModuleContext,
                 ResourceContext = ResourceContext,
-                Instance = Instance,
                 Parent = Parent,
                 Children = Children.Select(x => x.Copy()).ToList()
             };

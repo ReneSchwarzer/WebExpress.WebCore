@@ -3,7 +3,7 @@
     /// <summary>
     /// The unique identification key.
     /// </summary>
-    public class IdAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute
+    public class IdAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute, IResourceAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

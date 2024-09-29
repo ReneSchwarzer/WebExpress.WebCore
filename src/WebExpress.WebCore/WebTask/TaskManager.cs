@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebTask
     /// <summary>
     /// Management of ad-hoc tasks.
     /// </summary>
-    public class TaskManager : IComponent, ISystemComponent
+    public class TaskManager : IManager, ISystemComponent
     {
         /// <summary>
         /// Returns or sets the reference to the context of the host.
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebTask
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:applicationmanager.initialization")
+                I18N.Translate("webexpress:applicationmanager.initialization")
             );
         }
 

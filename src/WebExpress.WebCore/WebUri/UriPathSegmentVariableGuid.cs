@@ -114,7 +114,7 @@ namespace WebExpress.WebCore.WebUri
 
             return string.Format
             (
-                InternationalizationManager.I18N(culture, Display),
+                I18N.Translate(culture, Display),
                 guid
             );
         }

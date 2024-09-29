@@ -131,7 +131,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="culture">The culture.</param>
         public virtual string GetDisplay(CultureInfo culture)
         {
-            return string.Format(InternationalizationManager.I18N(culture, Display), Value);
+            return string.Format(I18N.Translate(culture, Display), Value);
         }
 
         /// <summary>

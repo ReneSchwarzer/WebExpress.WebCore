@@ -1,30 +1,10 @@
-﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebPlugin;
-
-namespace WebExpress.WebCore.WebComponent
+﻿namespace WebExpress.WebCore.WebComponent
 {
     /// <summary>
-    /// Interface of the manager classes.
+    /// Interface of a component.
     /// </summary>
     public interface IComponent
     {
-        /// <summary>
-        /// Returns the reference to the context of the host.
-        /// </summary>
-        static IHttpServerContext HttpServerContext { get; }
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        void Initialization(IHttpServerContext httpServerContext);
-
-        /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep);
     }
 }

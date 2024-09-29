@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPlugin
@@ -6,7 +7,7 @@ namespace WebExpress.WebCore.WebPlugin
     /// <summary>
     /// The context of a plugin.
     /// </summary>
-    public interface IPluginContext
+    public interface IPluginContext : IContext
     {
         /// <summary>
         /// The assembly that contains the plugin.

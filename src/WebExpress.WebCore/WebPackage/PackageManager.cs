@@ -19,8 +19,11 @@ namespace WebExpress.WebCore.WebPackage
     /// <summary>
     /// The package manager manages packages with WebExpress extensions. The packages must be in WebExpressPackage format (*.wxp).
     /// </summary>
-    public sealed class PackageManager : IComponent, ISystemComponent
+    public sealed class PackageManager : IManager, ISystemComponent
     {
+        private readonly ComponentManager _componentManager;
+        private readonly PluginManager _pluginManager;
+
         /// <summary>
         /// An event that fires when an package is added.
         /// </summary>
@@ -47,30 +50,21 @@ namespace WebExpress.WebCore.WebPackage
         private PackageCatalog Catalog { get; } = new PackageCatalog();
 
         /// <summary>
-        /// Returns or sets the component manager.
-        /// </summary>
-        private ComponentManager ComponentManager { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
-        internal PackageManager(ComponentManager componentManager)
-        {
-            ComponentManager = componentManager;
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
+        /// <param name="pluginManager">The plugin manager.</param>
         /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
+        private PackageManager(IComponentManager componentManager, IPluginManager pluginManager, IHttpServerContext context)
         {
+            _componentManager = componentManager as ComponentManager;
+            _pluginManager = pluginManager as PluginManager;
+
             HttpServerContext = context;
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:packagemanager.initialization")
+                I18N.Translate("webexpress:packagemanager.initialization")
             );
         }
 
@@ -80,10 +74,10 @@ namespace WebExpress.WebCore.WebPackage
         internal void Execute()
         {
             // load the default plugins
-            ComponentManager.PluginManager.Register();
+            _pluginManager.Register();
 
             // boot default elements 
-            ComponentManager.BootComponent(ComponentManager.PluginManager.Plugins);
+            _componentManager.BootComponent(_pluginManager.Plugins);
 
             LoadCatalog();
 
@@ -95,7 +89,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 HttpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N("webexpress:packagemanager.existing", package.File)
+                    I18N.Translate("webexpress:packagemanager.existing", package.File)
                 );
 
                 if (package.State != PackageCatalogeItemState.Disable)
@@ -110,7 +104,7 @@ namespace WebExpress.WebCore.WebPackage
             SaveCatalog();
 
             // build sitemap
-            ComponentManager.SitemapManager.Refresh();
+            _componentManager.SitemapManager.Refresh();
 
             Task.Factory.StartNew(() =>
             {
@@ -140,7 +134,7 @@ namespace WebExpress.WebCore.WebPackage
         {
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
                     "webexpress:packagemanager.scan",
                     HttpServerContext.PackagePath
@@ -171,7 +165,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 HttpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:packagemanager.add",
                         package
@@ -187,7 +181,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 HttpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
                         "webexpress:packagemanager.remove",
                         package
@@ -229,7 +223,7 @@ namespace WebExpress.WebCore.WebPackage
             if (newPackages.Any() || removePackages.Any())
             {
                 // build sitemap
-                ComponentManager.SitemapManager.Refresh();
+                _componentManager.SitemapManager.Refresh();
 
                 // save the catalog
                 SaveCatalog();
@@ -303,7 +297,7 @@ namespace WebExpress.WebCore.WebPackage
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
                     "webexpress:packagemanager.packagenotfound",
                     file
@@ -347,7 +341,7 @@ namespace WebExpress.WebCore.WebPackage
 
             HttpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:packagemanager.save")
+                I18N.Translate("webexpress:packagemanager.save")
             );
         }
 
@@ -409,12 +403,12 @@ namespace WebExpress.WebCore.WebPackage
             // load plugins
             foreach (var plugin in package?.Metadata.PluginSources ?? Enumerable.Empty<string>())
             {
-                var pluginContexts = ComponentManager.PluginManager.Register(GetTargetPath(package, plugin));
+                var pluginContexts = _pluginManager.Register(GetTargetPath(package, plugin));
 
                 package.Plugins.AddRange(pluginContexts);
             }
 
-            ComponentManager.LogStatus();
+            _componentManager.LogStatus();
         }
 
         /// <summary>
@@ -423,7 +417,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void BootPackage(PackageCatalogItem package)
         {
-            ComponentManager.BootComponent(package.Plugins);
+            _componentManager.BootComponent(package.Plugins);
         }
 
         /// <summary>

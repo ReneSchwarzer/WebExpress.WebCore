@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.WebPage
         public virtual IHtmlNode Render(RenderContext context)
         {
             var html = new HtmlElementRootHtml();
-            html.Head.Title = InternationalizationManager.I18N(context.Request, context.Page?.Title);
+            html.Head.Title = I18N.Translate(context.Request, context.Page?.Title);
             html.Head.Favicons = Favicons?.Select(x => new Favicon(x.Url, x.Mediatype));
             //html.Head.Base = Context.ContextPath.ToString();
             html.Head.Styles = Styles;

@@ -9,14 +9,16 @@ namespace WebExpress.WebCore.Test
     [Name("TestApplicationB")]
     [Description("application.description")]
     [Icon("/assets/img/Logo.png")]
+    [ContextPath("/acb")]
+    [AssetPath("/aab")]
+    [DataPath("/adb")]
     [Dependency("webexpress.webui")]
     public sealed class TestApplicationB : IApplication
     {
         /// <summary>
-        /// Initialization of the application.
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="applicationContext">The application context.</param>
-        public void Initialization(IApplicationContext applicationContext)
+        private TestApplicationB()
         {
         }
 

@@ -10,17 +10,22 @@ namespace WebExpress.WebCore.Test
     [Name("module.namea1")]
     [Description("module.descriptiona1")]
     [Icon("/assets/img/Logo.png")]
-    [AssetPath("/")]
-    [ContextPath("/")]
+    [ContextPath("/mca")]
+    [AssetPath("/maa")]
+    [DataPath("/mda")]
     public sealed class TestModuleA1 : IModule
     {
         /// <summary>
         /// Initialization of the module.
         /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        public void Initialization(IModuleContext moduleContext)
+        /// <param name="moduleContext">The module context, for testing the injection.</param>
+        private TestModuleA1(IModuleContext moduleContext)
         {
-            throw new NotImplementedException();
+            // test the injection
+            if (moduleContext == null)
+            {
+                throw new ArgumentNullException(nameof(moduleContext), "Parameter cannot be null or empty.");
+            }
         }
 
         /// <summary>

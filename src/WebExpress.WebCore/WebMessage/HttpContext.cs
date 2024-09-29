@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
-using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -12,7 +11,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// The context of the web server.
         /// </summary>
-        public IHttpServerContext ServerContext { get; protected set; }
+        public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
         /// Returns or sets the id.
@@ -61,9 +60,8 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
-        /// <param name="serverContext">The context of the Web server.</param>
-        /// <param name="componentManager">The component manager.</param>
-        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext serverContext, ComponentManager componentManager)
+        /// <param name="httpServerContext">The context of the Web server.</param>
+        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext httpServerContext)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
@@ -78,7 +76,7 @@ namespace WebExpress.WebCore.WebMessage
             Encoding = requestFeature.Headers.ContentEncoding.Any() ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
-            Request = new Request(contextFeatures, header, componentManager);
+            Request = new Request(contextFeatures, header, httpServerContext);
         }
     }
 }

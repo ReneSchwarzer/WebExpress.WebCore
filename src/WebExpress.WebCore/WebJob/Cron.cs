@@ -109,7 +109,7 @@ namespace WebExpress.WebCore.WebJob
                     }
                     else
                     {
-                        Context.Log.Warning(message: InternationalizationManager.I18N("webexpress:schedulermanager.cron.range"), args: value);
+                        Context.Log.Warning(message: I18N.Translate("webexpress:schedulermanager.cron.range"), args: value);
                     }
                 }
                 else if (range.Length == 1)
@@ -122,17 +122,17 @@ namespace WebExpress.WebCore.WebJob
                         }
                         else
                         {
-                            Context.Log.Warning(message: InternationalizationManager.I18N("webexpress:schedulermanager.cron.range"), args: result);
+                            Context.Log.Warning(message: I18N.Translate("webexpress:schedulermanager.cron.range"), args: result);
                         }
                     }
                     else
                     {
-                        Context.Log.Warning(message: InternationalizationManager.I18N("webexpress:schedulermanager.cron.parseerror"), args: value);
+                        Context.Log.Warning(message: I18N.Translate("webexpress:schedulermanager.cron.parseerror"), args: value);
                     }
                 }
                 else
                 {
-                    Context.Log.Warning(message: InternationalizationManager.I18N("webexpress:schedulermanager.cron.parseerror"), args: value);
+                    Context.Log.Warning(message: I18N.Translate("webexpress:schedulermanager.cron.parseerror"), args: value);
                 }
             }
 

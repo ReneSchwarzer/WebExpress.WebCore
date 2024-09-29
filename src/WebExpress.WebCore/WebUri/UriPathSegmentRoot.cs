@@ -93,7 +93,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="culture">The culture.</param>
         public virtual string GetDisplay(CultureInfo culture)
         {
-            return InternationalizationManager.I18N(culture, Display);
+            return I18N.Translate(culture, Display);
         }
 
         /// <summary>

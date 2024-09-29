@@ -27,22 +27,18 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore
 {
+    /// <summary>
+    /// The class provides a web server application for WebExpress.
+    /// </summary>
     public class WebEx
     {
+        private static ComponentManager _componentManager;
+        private HttpServer _httpServer;
+
         /// <summary>
         /// Returns or sets the name of the web server.
         /// </summary>
         public string Name { get; set; } = "WebExpress";
-
-        /// <summary>
-        /// The http(s) server.
-        /// </summary>
-        private HttpServer HttpServer { get; set; }
-
-        /// <summary>
-        /// Returns the component manager.
-        /// </summary>
-        public static ComponentManager ComponentManager { get; private set; }
 
         /// <summary>
         /// Returns the program version.
@@ -50,110 +46,97 @@ namespace WebExpress.WebCore
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// An event that fires when an component is added.
+        /// Returns the component manager.
         /// </summary>
-        public static event EventHandler<IComponent> AddComponent
-        {
-            add { ComponentManager.AddComponent += value; }
-            remove { ComponentManager.AddComponent -= value; }
-        }
-
-        /// <summary>
-        /// An event that fires when an component is removed.
-        /// </summary>
-        public static event EventHandler<IComponent> RemoveComponent
-        {
-            add { ComponentManager.RemoveComponent += value; }
-            remove { ComponentManager.RemoveComponent -= value; }
-        }
+        public static IComponentManager ComponentManager => _componentManager;
 
         /// <summary>
         /// Returns the reference to the context of the host.
         /// </summary>
-        public static IHttpServerContext HttpServerContext => ComponentManager.HttpServerContext;
+        public static IHttpServerContext HttpServerContext => _componentManager?.HttpServerContext;
 
         /// <summary>
         /// Returns all registered components.
         /// </summary>
-        public static IEnumerable<IComponent> Components => ComponentManager.Components;
+        public static IEnumerable<IManager> Components => ComponentManager?.Managers;
 
         /// <summary>
         /// Returns the log manager.
         /// </summary>
         /// <returns>The instance of the log manager or null.</returns>
-        public static LogManager LogManager => ComponentManager.LogManager;
+        public static LogManager LogManager => ComponentManager?.LogManager;
 
         /// <summary>
         /// Returns the package manager.
         /// </summary>
         /// <returns>The instance of the package manager or null.</returns>
-        public static PackageManager PackageManager => ComponentManager.PackageManager;
+        public static PackageManager PackageManager => ComponentManager?.PackageManager;
 
         /// <summary>
         /// Returns the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager or null.</returns>
-        public static PluginManager PluginManager => ComponentManager.PluginManager;
+        public static IPluginManager PluginManager => ComponentManager?.PluginManager;
 
         /// <summary>
         /// Returns the application manager.
         /// </summary>
         /// <returns>The instance of the application manager or null.</returns>
-        public static ApplicationManager ApplicationManager => ComponentManager.ApplicationManager;
+        public static IApplicationManager ApplicationManager => ComponentManager?.ApplicationManager;
 
         /// <summary>
         /// Returns the module manager.
         /// </summary>
         /// <returns>The instance of the module manager or null.</returns>
-        public static ModuleManager ModuleManager => ComponentManager.ModuleManager;
+        public static IModuleManager ModuleManager => ComponentManager?.ModuleManager;
 
         /// <summary>
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager or null.</returns>
-        public static EventManager EventManager => ComponentManager.EventManager;
+        public static EventManager EventManager => ComponentManager?.EventManager;
 
         /// <summary>
         /// Returns the job manager.
         /// </summary>
         /// <returns>The instance of the job manager or null.</returns>
-        public static JobManager JobManager => ComponentManager.JobManager;
+        public static JobManager JobManager => ComponentManager?.JobManager;
 
         /// <summary>
         /// Returns the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager or null.</returns>
-        public static StatusPageManager StatusPageManager => ComponentManager.StatusPageManager;
+        public static StatusPageManager StatusPageManager => ComponentManager?.StatusPageManager;
 
         /// <summary>
         /// Returns the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager or null.</returns>
-        public static ResourceManager ResourceManager => ComponentManager.ResourceManager;
+        public static IResourceManager ResourceManager => ComponentManager?.ResourceManager;
 
         /// <summary>
         /// Returns the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager or null.</returns>
-        public static SitemapManager SitemapManager => ComponentManager.SitemapManager;
+        public static ISitemapManager SitemapManager => ComponentManager?.SitemapManager;
 
         /// <summary>
         /// Returns the internationalization manager.
         /// </summary>
         /// <returns>The instance of the internationalization manager or null.</returns>
-        public static InternationalizationManager InternationalizationManager => ComponentManager.InternationalizationManager;
+        public static IInternationalizationManager InternationalizationManager => ComponentManager?.InternationalizationManager;
 
         /// <summary>
         /// Returns the session manager.
         /// </summary>
         /// <returns>The instance of the session manager or null.</returns>
-        public static SessionManager SessionManager => ComponentManager.SessionManager;
+        public static SessionManager SessionManager => ComponentManager?.SessionManager;
 
         /// <summary>
         /// Returns the task manager.
         /// </summary>
         /// <returns>The instance of the task manager manager or null.</returns>
-        public static TaskManager TaskManager => ComponentManager.TaskManager;
+        public static TaskManager TaskManager => ComponentManager?.TaskManager;
 
         /// <summary>
         /// Entry point of application.
@@ -250,7 +233,7 @@ namespace WebExpress.WebCore
             Initialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
 
             // start the manager
-            ComponentManager.Execute();
+            _componentManager.Execute();
 
             // starting the web server
             Start();
@@ -326,36 +309,36 @@ namespace WebExpress.WebCore
                 null
             );
 
-            HttpServer = new HttpServer(context)
+            _httpServer = new HttpServer(context)
             {
                 Config = config
             };
 
-            ComponentManager = HttpServer.ComponentManager;
+            _componentManager = CreateComponentManager(_httpServer.HttpServerContext);
 
             // start logging
-            HttpServer.HttpServerContext.Log.Begin(config.Log);
+            _httpServer.HttpServerContext.Log.Begin(config.Log);
 
             // log program start
-            HttpServer.HttpServerContext.Log.Seperator('/');
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.startup"));
-            HttpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.version"), args: Version);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.arguments"), args: args);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.workingdirectory"), args: Environment.CurrentDirectory);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.packagebase"), args: config.PackageBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.assetbase"), args: config.AssetBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.database"), args: config.DataBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.configuration"), args: Path.GetFileName(configFile));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.logdirectory"), args: Path.GetDirectoryName(HttpServer.HttpServerContext.Log.Filename));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.log"), args: Path.GetFileName(HttpServer.HttpServerContext.Log.Filename));
+            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.startup"));
+            _httpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.version"), args: Version);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.arguments"), args: args);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.workingdirectory"), args: Environment.CurrentDirectory);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.packagebase"), args: config.PackageBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.assetbase"), args: config.AssetBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.database"), args: config.DataBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.configuration"), args: Path.GetFileName(configFile));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.logdirectory"), args: Path.GetDirectoryName(_httpServer.HttpServerContext.Log.Filename));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.log"), args: Path.GetFileName(_httpServer.HttpServerContext.Log.Filename));
             foreach (var v in config.Endpoints)
             {
-                HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.uri"), args: v.Uri);
+                _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.uri"), args: v.Uri);
             }
 
-            HttpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Seperator('=');
 
             if (!Directory.Exists(config.PackageBase))
             {
@@ -380,7 +363,7 @@ namespace WebExpress.WebCore
         /// </summary>
         private void Start()
         {
-            HttpServer.Start();
+            _httpServer.Start();
 
             Thread.CurrentThread.Join();
         }
@@ -390,20 +373,20 @@ namespace WebExpress.WebCore
         /// </summary>
         private void Exit()
         {
-            HttpServer.Stop();
+            _httpServer.Stop();
 
             // end of program log
-            HttpServer.HttpServerContext.Log.Seperator('=');
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.errors"), args: HttpServer.HttpServerContext.Log.ErrorCount);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.warnings"), args: HttpServer.HttpServerContext.Log.WarningCount);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.done"));
-            HttpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.errors"), args: _httpServer.HttpServerContext.Log.ErrorCount);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.warnings"), args: _httpServer.HttpServerContext.Log.WarningCount);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress:app.done"));
+            _httpServer.HttpServerContext.Log.Seperator('/');
 
             // Stop running
-            ComponentManager.ShutDown();
+            _componentManager.ShutDown();
 
             // stop logging
-            HttpServer.HttpServerContext.Log.Close();
+            _httpServer.HttpServerContext.Log.Close();
         }
 
         /// <summary>
@@ -411,9 +394,9 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component or null.</returns>
-        public static IComponent GetComponent(string id)
+        public static IManager GetComponent(string id)
         {
-            return ComponentManager.GetComponent(id);
+            return _componentManager.GetComponent(id);
         }
 
         /// <summary>
@@ -421,9 +404,19 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <typeparam name="T">The component class.</typeparam>
         /// <returns>The instance of the component or null.</returns>
-        public static T GetComponent<T>() where T : IComponent
+        public static T GetComponent<T>() where T : IManager
         {
-            return ComponentManager.GetComponent<T>();
+            return _componentManager.GetComponent<T>();
+        }
+
+        /// <summary>
+        /// Creates and returns a new instance of <see cref="ComponentManager"/>.
+        /// </summary>
+        /// <param name="httpServerContext">The HTTP server context used to initialize the component manager.</param>
+        /// <returns>A new instance of <see cref="ComponentManager"/>.</returns>
+        protected virtual ComponentManager CreateComponentManager(IHttpServerContext httpServerContext)
+        {
+            return new ComponentManager(httpServerContext);
         }
     }
 }
