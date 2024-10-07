@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.WebTask
 
                 OnFinish();
 
-                WebEx.ComponentManager.TaskManager.RemoveTask(this);
+                WebEx.ComponentHub.TaskManager.RemoveTask(this);
 
             }), TokenSource.Token);
         }
@@ -111,7 +111,7 @@ namespace WebExpress.WebCore.WebTask
 
             State = TaskState.Canceled;
 
-            WebEx.ComponentManager.TaskManager.RemoveTask(this);
+            WebEx.ComponentHub.TaskManager.RemoveTask(this);
         }
     }
 }

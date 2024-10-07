@@ -5,9 +5,9 @@ using WebExpress.WebCore.WebUri;
 namespace WebExpress.WebCore.WebPage
 {
     /// <summary>
-    /// Represents the context in which rendering occurs, providing access to the page, request, culture, and visual tree.
+    /// Represents the context of a visual tree.
     /// </summary>
-    public class RenderContext : IRenderContext
+    public class VisualTreeContext : IVisualTreeContext
     {
         /// <summary>
         /// Returns the page where is rendered.
@@ -35,40 +35,25 @@ namespace WebExpress.WebCore.WebPage
         public IPageContext PageContext { get; protected set; }
 
         /// <summary>
-        /// Returns the contents of a page.
+        /// Initializes a new instance of the class.
         /// </summary>
-        public IVisualTree VisualTree { get; protected set; }
+        /// <param name="page">The page where the rendering is taking place.</param>
+        /// <param name="resourceContext">The context of the associated resource.</param>
+        /// <param name="request">The request associated with the rendering context.</param>
+        public VisualTreeContext(IPage page, IPageContext resourceContext, Request request)
+        {
+            Page = page;
+            PageContext = resourceContext;
+            Request = request;
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="page">The page where the rendering is taking place.</param>
-        /// <param name="pageContext">The context of the associated page.</param>
-        /// <param name="request">The request associated with the rendering context.</param>
-        public RenderContext(IPage page, IPageContext pageContext, Request request)
-        {
-            Page = page;
-            PageContext = pageContext;
-            Request = request;
-            VisualTree = CreateVisualTree();
-        }
-
-        /// <summary>
-        /// Copy-Constructor
-        /// </summary>
         /// <param name="context">The context to copy./param>
-        public RenderContext(RenderContext context)
+        public VisualTreeContext(IRenderContext context)
             : this(context?.Page, context.PageContext, context?.Request)
         {
-        }
-
-        /// <summary>
-        /// Creates the visual tree representing the contents of a page.
-        /// </summary>
-        /// <returns>A new instance of the <see cref="IVisualTree"/> interface.</returns>
-        protected virtual IVisualTree CreateVisualTree()
-        {
-            return new VisualTree();
         }
     }
 }

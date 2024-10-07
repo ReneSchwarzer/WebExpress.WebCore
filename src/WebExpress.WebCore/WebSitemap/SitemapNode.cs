@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSitemap
@@ -16,14 +16,14 @@ namespace WebExpress.WebCore.WebSitemap
         public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
-        /// Returns the context of the resource.
+        /// Returns the context of the endpoint.
         /// </summary>
-        public IResourceContext ResourceContext { get; internal set; }
+        public IEndpointContext EndpointContext { get; internal set; }
 
         /// <summary>
         /// Returns the child nodes.
         /// </summary>
-        public ICollection<SitemapNode> Children { get; private set; } = new List<SitemapNode>();
+        public ICollection<SitemapNode> Children { get; private set; } = [];
 
         /// <summary>
         /// Returns the parent node.
@@ -127,7 +127,7 @@ namespace WebExpress.WebCore.WebSitemap
             var node = new SitemapNode()
             {
                 PathSegment = PathSegment,
-                ResourceContext = ResourceContext,
+                EndpointContext = EndpointContext,
                 Parent = Parent,
                 Children = Children.Select(x => x.Copy()).ToList()
             };
@@ -144,7 +144,7 @@ namespace WebExpress.WebCore.WebSitemap
             return Path.FirstOrDefault()?.PathSegment + string.Join
             (
                 "/",
-                Path.Where(x => !(x.PathSegment is UriPathSegmentRoot))
+                Path.Where(x => x.PathSegment is not UriPathSegmentRoot)
                 .Select(x => x.PathSegment?.ToString())
            );
         }

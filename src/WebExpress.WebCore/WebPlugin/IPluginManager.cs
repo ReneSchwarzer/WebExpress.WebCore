@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebPlugin
     /// <summary>
     /// The plugin manager manages the WebExpress plugins.
     /// </summary>
-    public interface IPluginManager : IManager
+    public interface IPluginManager : IComponentManager
     {
         /// <summary>
         /// An event that fires when an plugin is added.

@@ -105,12 +105,12 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Convert to html.
         /// </summary>
-        /// <param name="context">The context for rendering the page.</param>
+        /// <param name="context">The context for rendering the visual tree.</param>
         /// <returns>The page as an html tree.</returns>
-        public virtual IHtmlNode Render(RenderContext context)
+        public virtual IHtmlNode Render(IVisualTreeContext context)
         {
             var html = new HtmlElementRootHtml();
-            html.Head.Title = I18N.Translate(context.Request, context.Page?.Title);
+            html.Head.Title = I18N.Translate(context.Request, context.PageContext.PageTitle);
             html.Head.Favicons = Favicons?.Select(x => new Favicon(x.Url, x.Mediatype));
             //html.Head.Base = Context.ContextPath.ToString();
             html.Head.Styles = Styles;

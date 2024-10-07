@@ -12,9 +12,9 @@ namespace WebExpress.WebCore.Internationalization
     /// <summary>
     /// Internationalization
     /// </summary>
-    public sealed class InternationalizationManager : IInternationalizationManager, IManagerPlugin, ISystemComponent
+    public sealed class InternationalizationManager : IInternationalizationManager, IComponentManagerPlugin, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
 
         /// <summary>
         /// Returns the default language.
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.Internationalization
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private InternationalizationManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        private InternationalizationManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

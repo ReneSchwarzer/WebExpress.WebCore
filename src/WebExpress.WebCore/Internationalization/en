@@ -86,9 +86,9 @@ modulemanager.register=The module '{0}' has been assigned to the application '{1
 modulemanager.duplicate=The module '{0}' has already been registered in the application '{1}'.
 modulemanager.applicationless=The module '{0}' does not have any information about the application.
 modulemanager.module=Module: '{0}' for application(s) '{1}'
-pluginmanager.module.initialization=The module '{1}' of the application '{0}' has been initialized.
-pluginmanager.module.processing.start=The module '{1}' of the application '{0}' is running.
-pluginmanager.module.processing.end=The running of the module '{1}' of the application '{0}' has been stopped.
+modulemanager.module.initialization=The module '{1}' of the application '{0}' has been initialized.
+modulemanager.module.processing.start=The module '{1}' of the application '{0}' is running.
+modulemanager.module.processing.end=The running of the module '{1}' of the application '{0}' has been stopped.
 
 resourcemanager.initialization=The resource manager has been initialized.
 resourcemanager.register={0} resource(s) have been assigned to the module '{1}'.
@@ -99,7 +99,13 @@ resourcemanager.addresource.duplicate=The resource '{0}' of module '{1}' has alr
 resourcemanager.addresource.error=The resource '{0}' of the module '{1}' could not be added.
 resourcemanager.sitemap=Sitemap content resource '{0}' application:
 resourcemanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
-resourcemanager.statuspage=Resource: '{0}' for module '{1}'
+resourcemanager.resource=Resource: '{0}' for module '{1}'
+
+pagemanager.initialization=The page manager has been initialized.
+pagemanager.moduleless=The page '{0}' does not have any information about the module.
+pagemanager.addresource=The page '{0}' has been registered in the module '{1}'.
+pagemanager.addresource.duplicate=The page '{0}' of module '{1}' has already been added.
+pagemanager.resource=Page: '{0}' for module '{1}'
 
 statuspagemanager.initialization=The status page manager has been initialized.
 statuspagemanager.register=Status {0} has been registered and assigned to the status page '{1}'.

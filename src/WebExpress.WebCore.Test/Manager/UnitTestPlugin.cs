@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -16,14 +17,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
             pluginManager.Register();
 
-            Assert.Single(componentManager.PluginManager.Plugins);
-            Assert.Contains("webexpress.webcore.test", componentManager.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
+            Assert.Single(componentHub.PluginManager.Plugins);
+            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
         }
 
         /// <summary>
@@ -33,18 +34,18 @@ namespace WebExpress.WebCore.Test.Manager
         public void RegisterEvent()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
             var i = 0;
             var triggered = false;
 
-            componentManager.PluginManager.AddPlugin += (s, e) => { i++; triggered = true; };
+            componentHub.PluginManager.AddPlugin += (s, e) => { i++; triggered = true; };
 
             // test execution
             pluginManager.Register();
 
-            Assert.Single(componentManager.PluginManager.Plugins);
-            Assert.Contains("webexpress.webcore.test", componentManager.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
+            Assert.Single(componentHub.PluginManager.Plugins);
+            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
             Assert.Equal(1, i);
             Assert.True(triggered);
         }
@@ -56,15 +57,15 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             pluginManager.Remove(plugin);
 
-            Assert.Empty(componentManager.PluginManager.Plugins);
+            Assert.Empty(componentHub.PluginManager.Plugins);
         }
 
         /// <summary>
@@ -74,19 +75,19 @@ namespace WebExpress.WebCore.Test.Manager
         public void RemoveEvent()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
             var i = 1;
             var triggered = false;
 
-            componentManager.PluginManager.RemovePlugin += (s, e) => { i--; triggered = true; };
+            componentHub.PluginManager.RemovePlugin += (s, e) => { i--; triggered = true; };
             pluginManager.Register();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             pluginManager.Remove(plugin);
 
-            Assert.Empty(componentManager.PluginManager.Plugins);
+            Assert.Empty(componentHub.PluginManager.Plugins);
             Assert.Equal(0, i);
             Assert.True(triggered);
         }
@@ -98,10 +99,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetPluginById()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            var plugin = componentManager.PluginManager.GetPlugin("webexpress.webcore.test");
+            var plugin = componentHub.PluginManager.GetPlugin("webexpress.webcore.test");
 
             Assert.Equal("webexpress.webcore.test", plugin?.PluginId);
         }
@@ -113,10 +114,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetPluginByType()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             Assert.Equal("webexpress.webcore.test", plugin?.PluginId);
         }
@@ -128,8 +129,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             Assert.Equal(typeof(TestPlugin).Namespace.ToLower(), plugin.PluginId);
@@ -142,8 +143,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetName()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             Assert.Equal("TestPlugin", plugin.PluginName);
@@ -156,8 +157,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDescription()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             Assert.Equal("plugin.description", plugin.Description);
@@ -170,8 +171,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetIcon()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             Assert.Equal("/assets/img/Logo.png", plugin.Icon);
@@ -188,15 +189,15 @@ namespace WebExpress.WebCore.Test.Manager
         public void Boot(string pluginId, string expected)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
-            var plugin = componentManager.PluginManager.GetPlugin(pluginId);
+            var plugin = componentHub.PluginManager.GetPlugin(pluginId);
 
             // test execution
             pluginManager.Boot(plugin);
 
-            Assert.Single(componentManager.PluginManager.Plugins);
+            Assert.Single(componentHub.PluginManager.Plugins);
             Assert.Equal(expected, plugin?.PluginId);
         }
 
@@ -211,16 +212,46 @@ namespace WebExpress.WebCore.Test.Manager
         public void ShutDown(string pluginId, string expected)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
-            var plugin = componentManager.PluginManager.GetPlugin(pluginId);
+            var plugin = componentHub.PluginManager.GetPlugin(pluginId);
 
             // test execution
             pluginManager.ShutDown(plugin);
 
-            Assert.Single(componentManager.PluginManager.Plugins);
+            Assert.Single(componentHub.PluginManager.Plugins);
             Assert.Equal(expected, plugin?.PluginId);
+        }
+
+        /// <summary>
+        /// Tests whether the plugin manager implements interface IComponentManager.
+        /// </summary>
+        [Fact]
+        public void IsIComponentManager()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
+
+            // test execution
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.PluginManager.GetType()));
+        }
+
+        /// <summary>
+        /// Tests whether the plugin context implements interface IContext.
+        /// </summary>
+        [Fact]
+        public void IsIContext()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            foreach (var plugin in componentHub.PluginManager.Plugins)
+            {
+                Assert.True(typeof(IContext).IsAssignableFrom(plugin.GetType()), $"Plugin context {plugin.GetType().Name} does not implement IContext.");
+            }
         }
     }
 }

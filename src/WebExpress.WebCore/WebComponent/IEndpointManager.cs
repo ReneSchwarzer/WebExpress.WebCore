@@ -1,9 +1,10 @@
 ﻿namespace WebExpress.WebCore.WebComponent
 {
     /// <summary>
-    /// Interface of the manager classes.
+    /// Represents a endpoint manager.
     /// </summary>
-    public interface IManager
+    public interface IEndpointManager : IComponentManager
     {
+
     }
 }

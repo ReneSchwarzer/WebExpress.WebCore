@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="componentType">The type of the component to create.</param>
         /// <param name="componentManager">The component manager to use for dependency injection.</param>
         /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T>(Type componentType, ComponentManager componentManager) where T : class, IManager
+        public static T CreateInstance<T>(Type componentType, ComponentHub componentManager) where T : class, IComponentManager
         {
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.WebComponent
                     var properties = componentManager.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
                     var parameterValues = parameters.Select(parameter =>
-                        parameter.ParameterType == typeof(IComponentManager) ? componentManager :
+                        parameter.ParameterType == typeof(IComponentHub) ? componentManager :
                         parameter.ParameterType == typeof(IHttpServerContext) ? componentManager.HttpServerContext :
                         properties.Where(x => x.PropertyType == parameter.ParameterType)
                                   .FirstOrDefault()?
@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="context">The context to pass to the component's constructor.</param>
         /// <param name="componentManager">The component manager to use for dependency injection.</param>
         /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T, C>(Type componentType, C context, IComponentManager componentManager) where T : class, IComponent where C : IContext
+        public static T CreateInstance<T, C>(Type componentType, C context, IComponentHub componentManager) where T : class, IComponent where C : IContext
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebComponent
                     var properties = componentManager.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
                     var parameterValues = parameters.Select(parameter =>
-                        parameter.ParameterType == typeof(IComponentManager) ? componentManager :
+                        parameter.ParameterType == typeof(IComponentHub) ? componentManager :
                         parameter.ParameterType == typeof(IHttpServerContext) ? componentManager.HttpServerContext :
                         parameter.ParameterType == typeof(C) ? context :
                         properties.Where(x => x.PropertyType == parameter.ParameterType)

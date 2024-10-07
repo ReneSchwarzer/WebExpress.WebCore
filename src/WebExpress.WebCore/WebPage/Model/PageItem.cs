@@ -8,29 +8,29 @@ using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.WebResource
+namespace WebExpress.WebCore.WebPage.Model
 {
     /// <summary>
-    /// A resource element that contains meta information about a resource.
+    /// A page element that contains meta information about a page.
     /// </summary>
-    internal class ResourceItem : IDisposable
+    internal class PageItem : IDisposable
     {
-        private readonly IResourceManager _resourceManager;
+        private readonly IPageManager _pageManager;
 
         /// <summary>
-        /// An event that fires when an ressource is added.
+        /// An event that fires when an page is added.
         /// </summary>
-        public event EventHandler<IResourceContext> AddResource;
+        public event EventHandler<IPageContext> AddPage;
 
         /// <summary>
-        /// An event that fires when an resource is removed.
+        /// An event that fires when an page is removed.
         /// </summary>
-        public event EventHandler<IResourceContext> RemoveResource;
+        public event EventHandler<IPageContext> RemovePage;
 
         /// <summary>
-        /// Returns or sets the resource id.
+        /// Returns or sets the page id.
         /// </summary>
-        public string ResourceId { get; set; }
+        public string PageId { get; set; }
 
         /// <summary>
         /// Returns or sets the resource title.
@@ -43,14 +43,14 @@ namespace WebExpress.WebCore.WebResource
         public string ParentId { get; set; }
 
         /// <summary>
-        /// Returns or sets the type of resource.
+        /// Returns or sets the type of page.
         /// </summary>
-        public Type ResourceClass { get; set; }
+        public Type PageClass { get; set; }
 
         /// <summary>
-        /// Returns or sets the instance of the resource, if the resource is cached, otherwise null.
+        /// Returns or sets the instance of the page, if the page is cached, otherwise null.
         /// </summary>
-        public IResource Instance { get; set; }
+        public IPage Instance { get; set; }
 
         /// <summary>
         /// Returns or sets the module id.
@@ -102,8 +102,8 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the directory where the module instances are listed.
         /// </summary>
-        private IDictionary<IModuleContext, IResourceContext> Dictionary { get; }
-            = new Dictionary<IModuleContext, IResourceContext>();
+        private IDictionary<IModuleContext, IPageContext> Dictionary { get; }
+            = new Dictionary<IModuleContext, IPageContext>();
 
         /// <summary>
         /// Returns the associated module contexts.
@@ -111,17 +111,17 @@ namespace WebExpress.WebCore.WebResource
         public IEnumerable<IModuleContext> ModuleContexts => Dictionary.Keys;
 
         /// <summary>
-        /// Returns the resource contexts.
+        /// Returns the page contexts.
         /// </summary>
-        public IEnumerable<IResourceContext> ResourceContexts => Dictionary.Values;
+        public IEnumerable<IPageContext> PageContexts => Dictionary.Values;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceItem"/> class.
+        /// Initializes a new instance of the <see cref="PageItem"/> class.
         /// </summary>
-        /// <param name="resourceManager">The resource manager.</param>
-        internal ResourceItem(IResourceManager resourceManager)
+        /// <param name="pageManager">The page manager.</param>
+        internal PageItem(IPageManager pageManager)
         {
-            _resourceManager = resourceManager;
+            _pageManager = pageManager;
         }
 
         /// <summary>
@@ -133,18 +133,18 @@ namespace WebExpress.WebCore.WebResource
             // only if no instance has been created yet
             if (Dictionary.ContainsKey(moduleContext))
             {
-                Log.Warning(message: I18N.Translate("webexpress:resourcemanager.addresource.duplicate", ResourceId, moduleContext.ModuleId));
+                Log.Warning(message: I18N.Translate("webexpress:pagemanager.addresource.duplicate", PageId, moduleContext.ModuleId));
 
                 return;
             }
 
             // create context
-            var resourceContext = new ResourceContext(moduleContext, _resourceManager, this)
+            var pageContext = new PageContext(moduleContext, _pageManager, this)
             {
                 Scopes = Scopes,
                 Conditions = Conditions,
-                ResourceId = ResourceId,
-                ResourceTitle = Title,
+                EndpointId = PageId,
+                PageTitle = Title,
                 Cache = Cache,
                 IncludeSubPaths = IncludeSubPaths
             };
@@ -152,13 +152,13 @@ namespace WebExpress.WebCore.WebResource
             if
             (
                 !Optional ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{ResourceId.ToLower()}") ||
+                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{PageId.ToLower()}") ||
                 moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.*") ||
-                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{ResourceId.ToLower()}", x).Success).Any()
+                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{PageId.ToLower()}", x).Success).Any()
             )
             {
-                Dictionary.Add(moduleContext, resourceContext);
-                OnAddResource(resourceContext);
+                Dictionary.Add(moduleContext, pageContext);
+                OnAddPage(pageContext);
             }
         }
 
@@ -176,7 +176,7 @@ namespace WebExpress.WebCore.WebResource
 
             foreach (var resourceContext in Dictionary.Values)
             {
-                OnRemoveResource(resourceContext);
+                OnRemovePage(resourceContext);
             }
 
             Dictionary.Remove(moduleContext);
@@ -193,21 +193,21 @@ namespace WebExpress.WebCore.WebResource
         }
 
         /// <summary>
-        /// Raises the AddResource event.
+        /// Raises the AddPage event.
         /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnAddResource(IResourceContext resourceContext)
+        /// <param name="pageContext">The page context.</param>
+        private void OnAddPage(IPageContext pageContext)
         {
-            AddResource?.Invoke(this, resourceContext);
+            AddPage?.Invoke(this, pageContext);
         }
 
         /// <summary>
-        /// Raises the RemoveResource event.
+        /// Raises the RemovePage event.
         /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnRemoveResource(IResourceContext resourceContext)
+        /// <param name="pageContext">The page context.</param>
+        private void OnRemovePage(IPageContext pageContext)
         {
-            RemoveResource?.Invoke(this, resourceContext);
+            RemovePage?.Invoke(this, pageContext);
         }
 
         /// <summary>
@@ -215,14 +215,14 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         public void Dispose()
         {
-            foreach (Delegate d in AddResource.GetInvocationList())
+            foreach (Delegate d in AddPage.GetInvocationList())
             {
-                AddResource -= (EventHandler<IResourceContext>)d;
+                AddPage -= (EventHandler<IPageContext>)d;
             }
 
-            foreach (Delegate d in RemoveResource.GetInvocationList())
+            foreach (Delegate d in RemovePage.GetInvocationList())
             {
-                RemoveResource -= (EventHandler<IResourceContext>)d;
+                RemovePage -= (EventHandler<IPageContext>)d;
             }
         }
 
@@ -232,7 +232,7 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>The resource element in its string representation.</returns>
         public override string ToString()
         {
-            return $"Resource '{ResourceId}'";
+            return $"Page '{PageId}'";
         }
     }
 }

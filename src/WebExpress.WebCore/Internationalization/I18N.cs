@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(string key)
         {
-            return WebEx.InternationalizationManager?.Translate(key) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(key) ?? key;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(string key, params object[] args)
         {
-            return WebEx.InternationalizationManager?.Translate(key, args) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(key, args) ?? key;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(II18N obj, string key)
         {
-            return WebEx.InternationalizationManager?.Translate(obj, key) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(obj, key) ?? key;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(II18N obj, string key, params object[] args)
         {
-            return WebEx.InternationalizationManager?.Translate(obj, key, args) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(obj, key, args) ?? key;
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(Request request, string key)
         {
-            return WebEx.InternationalizationManager.Translate(request, key) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(request, key) ?? key;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(Request request, string key, params object[] args)
         {
-            return WebEx.InternationalizationManager?.Translate(request, key, args) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(request, key, args) ?? key;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(CultureInfo culture, string key)
         {
-            return WebEx.InternationalizationManager?.Translate(culture, key) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(culture, key) ?? key;
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(CultureInfo culture, string key, params object[] args)
         {
-            return WebEx.InternationalizationManager?.Translate(culture, key, args) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(culture, key, args) ?? key;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(CultureInfo culture, string pluginId, string key)
         {
-            return WebEx.InternationalizationManager?.Translate(culture, pluginId, key) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(culture, pluginId, key) ?? key;
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string Translate(CultureInfo culture, string pluginId, string key, params object[] args)
         {
-            return WebEx.InternationalizationManager?.Translate(culture, pluginId, key, args) ?? key;
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(culture, pluginId, key, args) ?? key;
         }
     }
 }

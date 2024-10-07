@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.Internationalization
     /// <summary>
     /// The interface of the internationalization manager.
     /// </summary>
-    public interface IInternationalizationManager : IManager
+    public interface IInternationalizationManager : IComponentManager
     {
         /// <summary>
         /// Translates a given key to the default language.

@@ -6,7 +6,7 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebLog
 {
-    public class LogManager : IManagerPlugin, ISystemComponent
+    public class LogManager : IComponentManagerPlugin, ISystemComponent
     {
         /// <summary>
         /// An event that fires when an log is added.

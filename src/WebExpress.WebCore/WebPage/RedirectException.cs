@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebExpress.WebCore.WebResource
+namespace WebExpress.WebCore.WebPage
 {
     public class RedirectException : Exception
     {

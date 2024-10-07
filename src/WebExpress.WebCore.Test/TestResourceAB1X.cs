@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebAttribute;
+﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebResource;
 
@@ -31,8 +30,6 @@ namespace WebExpress.WebCore.Test
             {
                 throw new ArgumentNullException(nameof(resourceContext), "Parameter cannot be null or empty.");
             }
-
-            ResourceCounter.Add(this);
         }
 
         /// <summary>

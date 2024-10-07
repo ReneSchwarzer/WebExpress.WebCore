@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
@@ -8,9 +7,9 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebResource
 {
     /// <summary>
-    /// The resource manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
+    /// The resource manager manages resources elements, which can be called with a URI (Uniform Resource Identifier).
     /// </summary>
-    public interface IResourceManager : IManager
+    public interface IResourceManager : IEndpointManager
     {
         /// <summary>
         /// An event that fires when an resource is added.
@@ -51,6 +50,14 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns an enumeration of resource contextes.
         /// </summary>
+        /// <param name="resourceType">The resource type.</param>
+        /// <param name="moduleContext">The context of the module.</param>
+        /// <returns>An enumeration of resource contextes.</returns>
+        IEnumerable<IResourceContext> GetResorces(Type resourceType, IModuleContext moduleContext);
+
+        /// <summary>
+        /// Returns an enumeration of resource contextes.
+        /// </summary>
         /// <typeparam name="T">The resource type.</typeparam>
         /// <param name="moduleContext">The context of the module.</param>
         /// <returns>An enumeration of resource contextes.</returns>
@@ -80,13 +87,5 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="resourceId">The resource id.</param>
         /// <returns>An resource context or null.</returns>
         IResourceContext GetResorce(string applicationId, string moduleId, string resourceId);
-
-        /// <summary>
-        /// Creates a new resource and returns it. If a resource already exists (through caching), the existing instance is returned.
-        /// </summary>
-        /// <param name="resourceContext">The context used for resource creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
-        /// <returns>The created or cached resource.</returns>
-        IResource CreateResourceInstance(IResourceContext resourceContext, CultureInfo culture);
     }
 }

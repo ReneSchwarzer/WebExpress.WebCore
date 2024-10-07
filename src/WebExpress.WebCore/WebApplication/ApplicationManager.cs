@@ -15,9 +15,9 @@ namespace WebExpress.WebCore.WebApplication
     /// <summary>
     /// Management of WebExpress applications.
     /// </summary>
-    public sealed class ApplicationManager : IApplicationManager, IManagerPlugin, IExecutableElements, ISystemComponent
+    public sealed class ApplicationManager : IApplicationManager, IComponentManagerPlugin, IExecutableElements, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly ApplicationDictionary _dictionary = [];
 
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private ApplicationManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        private ApplicationManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

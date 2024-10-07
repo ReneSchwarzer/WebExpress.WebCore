@@ -1,4 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSitemap;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -16,12 +18,12 @@ namespace WebExpress.WebCore.Test.Manager
         public void Refresh()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(13, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(14, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -33,27 +35,26 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/aca/a2x", "webexpress.webcore.test.testresourcea2x")]
         [InlineData("http://localhost:8080/aca/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
         [InlineData("http://localhost:8080/acb/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
+        [InlineData("http://localhost:8080/aca/mca/pa1x", "webexpress.webcore.test.testpagea1x")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
 
         public void SearchResource(string uri, string id)
         {
             // preconditions
-            using var componentMoinitor = new ResourceMonitor();
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
             var context = UnitTestControlFixture.CreateHttpContext();
-            componentManager.SitemapManager.Refresh();
-            var map = componentManager.SitemapManager.ToString();
+            componentHub.SitemapManager.Refresh();
+            var map = componentHub.SitemapManager.ToString();
 
             // test execution
-            var searchResult = componentManager.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
+            var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
             {
-                HttpServerContext = componentManager.HttpServerContext,
-                Culture = componentManager.HttpServerContext.Culture,
+                HttpServerContext = componentHub.HttpServerContext,
+                Culture = componentHub.HttpServerContext.Culture,
                 HttpContext = context
             });
 
-            Assert.Equal(id, searchResult.ResourceId);
-            //Assert.Single(componentMoinitor.Contains(resourceType));
+            Assert.Equal(id, searchResult.EndpointId);
         }
 
         /// <summary>
@@ -64,21 +65,34 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestResourceA1Y), "/aca/mca/a1x/a1y")]
         [InlineData(typeof(TestResourceA2X), "/aca/a2x")]
         [InlineData(typeof(TestResourceAB1X), "/aca/mcab/ab1x")]
+        [InlineData(typeof(TestPageA1X), "/aca/mca/pa1x")]
 
         public void GetUri(Type resourceType, string expected)
         {
             // preconditions
-            using var componentMoinitor = new ResourceMonitor();
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
             var context = UnitTestControlFixture.CreateHttpContext();
-            componentManager.SitemapManager.Refresh();
-            //var ressource = componentManager.ResourceManager.GetResorces(resourceType).FirstOrDefault();
+            componentHub.SitemapManager.Refresh();
 
             // test execution
-            var uri = componentManager.SitemapManager.GetUri(resourceType);
+            var uri = componentHub.SitemapManager.GetUri(resourceType);
 
             Assert.Equal(expected, uri?.ToString());
-            Assert.False(componentMoinitor.Contains(resourceType));
+        }
+
+        /// <summary>
+        /// Tests whether the sitemap manager implements interface IComponentManager.
+        /// </summary>
+        [Fact]
+        public void IsIComponentManager()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
+
+            // test execution
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));
         }
     }
+
 }

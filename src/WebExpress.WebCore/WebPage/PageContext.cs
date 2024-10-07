@@ -4,19 +4,19 @@ using System.Linq;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource.Model;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.WebResource
+namespace WebExpress.WebCore.WebPage
 {
     /// <summary>
-    /// Represents the context of a resource.
+    /// Represents the context of a page.
     /// </summary>
-    public class ResourceContext : IResourceContext
+    public class PageContext : IPageContext
     {
-        private readonly IResourceManager _resourceManager;
-        private readonly ResourceItem _resourceItem;
+        private readonly IPageManager _pageManager;
+        private readonly PageItem _pageItem;
 
         /// <summary>
         /// Returns the associated plugin context.
@@ -41,16 +41,21 @@ namespace WebExpress.WebCore.WebResource
         public IEnumerable<ICondition> Conditions { get; internal set; } = new List<ICondition>();
 
         /// <summary>
-        /// Returns the resource id.
+        /// Returns the endpoint id.
         /// </summary>
         public string EndpointId { get; internal set; }
 
         /// <summary>
+        /// Returns the resource title.
+        /// </summary>
+        public string PageTitle { get; internal set; }
+
+        /// <summary>
         /// Returns the parent or null if not used.
         /// </summary>
-        public IEndpointContext ParentContext => _resourceManager.Resources
-            .Where(x => !string.IsNullOrWhiteSpace(_resourceItem.ParentId))
-            .Where(x => x.EndpointId.Equals(_resourceItem.ParentId, StringComparison.OrdinalIgnoreCase))
+        public IEndpointContext ParentContext => _pageManager.Pages
+            .Where(x => !string.IsNullOrWhiteSpace(_pageItem.ParentId))
+            .Where(x => x.EndpointId.Equals(_pageItem.ParentId, StringComparison.OrdinalIgnoreCase))
             .Where(x => x.ModuleContext.ApplicationContext == ModuleContext.ApplicationContext)
             .FirstOrDefault();
 
@@ -74,30 +79,30 @@ namespace WebExpress.WebCore.WebResource
                 var parentContext = ParentContext;
                 if (parentContext != null)
                 {
-                    return UriResource.Combine(ParentContext?.Uri, _resourceItem.ContextPath);
+                    return UriResource.Combine(ParentContext?.Uri, _pageItem.ContextPath);
                 }
 
-                return UriResource.Combine(ModuleContext.ContextPath, _resourceItem.ContextPath);
+                return UriResource.Combine(ModuleContext.ContextPath, _pageItem.ContextPath);
             }
         }
 
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_resourceItem.PathSegment);
+        public UriResource Uri => ContextPath.Append(_pageItem.PathSegment);
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="moduleContext">The module context.</param>
-        /// <param name="resourceManager">The resource manager.</param>
-        /// <param name="resourceItem">The resource item or null.</param>
-        internal ResourceContext(IModuleContext moduleContext, IResourceManager resourceManager, ResourceItem resourceItem = null)
+        /// <param name="pageManager">The resource manager.</param>
+        /// <param name="pageItem">The page item or null.</param>
+        internal PageContext(IModuleContext moduleContext, IPageManager pageManager, PageItem pageItem = null)
         {
             PluginContext = moduleContext?.PluginContext;
             ModuleContext = moduleContext;
-            _resourceManager = resourceManager;
-            _resourceItem = resourceItem;
+            _pageManager = pageManager;
+            _pageItem = pageItem;
         }
 
         /// <summary>

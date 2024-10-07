@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -17,16 +18,16 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
             pluginManager.Register();
 
-            Assert.Equal(3, componentManager.ApplicationManager.Applications.Count());
-            Assert.Equal("webexpress.webcore.test.testapplicationa", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationb", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationc", componentManager.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
+            Assert.Equal(3, componentHub.ApplicationManager.Applications.Count());
+            Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationc", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
         }
 
         /// <summary>
@@ -36,14 +37,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applicationManager = componentManager.ApplicationManager as ApplicationManager;
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applicationManager = componentHub.ApplicationManager as ApplicationManager;
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             applicationManager.Remove(plugin);
 
-            Assert.Empty(componentManager.ApplicationManager.Applications);
+            Assert.Empty(componentHub.ApplicationManager.Applications);
         }
 
         /// <summary>
@@ -56,8 +57,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, string id)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(id, applcation.ApplicationId);
@@ -73,8 +74,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Name(Type applicationType, string name)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(name, applcation.ApplicationName);
@@ -90,8 +91,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Description(Type applicationType, string description)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(description, applcation.Description);
@@ -107,8 +108,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Icon(Type applicationType, string icon)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(icon, applcation.Icon);
@@ -124,8 +125,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, string contextPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(contextPath, applcation.ContextPath);
@@ -141,8 +142,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void AssetPath(Type applicationType, string assetPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(assetPath, applcation.AssetPath);
@@ -158,11 +159,40 @@ namespace WebExpress.WebCore.Test.Manager
         public void DataPath(Type applicationType, string dataPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var applcation = componentManager.ApplicationManager.GetApplcation(applicationType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
 
             // test execution
             Assert.Equal(dataPath, applcation.DataPath);
+        }
+
+        /// <summary>
+        /// Tests whether the application manager implements interface IComponentManager.
+        /// </summary>
+        [Fact]
+        public void IsIComponentManager()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ApplicationManager.GetType()));
+        }
+
+        /// <summary>
+        /// Tests whether the application context implements interface IContext.
+        /// </summary>
+        [Fact]
+        public void IsIContext()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            foreach (var application in componentHub.ApplicationManager.Applications)
+            {
+                Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Application context {application.GetType().Name} does not implement IContext.");
+            }
         }
     }
 }

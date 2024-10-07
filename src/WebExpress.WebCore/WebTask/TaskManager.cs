@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebTask
     /// <summary>
     /// Management of ad-hoc tasks.
     /// </summary>
-    public class TaskManager : IManager, ISystemComponent
+    public class TaskManager : IComponentManager, ISystemComponent
     {
         /// <summary>
         /// Returns or sets the reference to the context of the host.

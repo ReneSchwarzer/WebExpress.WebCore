@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebPlugin
     /// </summary>
     public sealed class PluginManager : IPluginManager, IExecutableElements, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly PluginDictionary _dictionary = [];
         private readonly PluginDictionary _unfulfilledDependencies = [];
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private PluginManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        private PluginManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

@@ -19,9 +19,9 @@ namespace WebExpress.WebCore.WebPackage
     /// <summary>
     /// The package manager manages packages with WebExpress extensions. The packages must be in WebExpressPackage format (*.wxp).
     /// </summary>
-    public sealed class PackageManager : IManager, ISystemComponent
+    public sealed class PackageManager : IComponentManager, ISystemComponent
     {
-        private readonly ComponentManager _componentManager;
+        private readonly ComponentHub _componentManager;
         private readonly PluginManager _pluginManager;
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="componentManager">The component manager.</param>
         /// <param name="pluginManager">The plugin manager.</param>
         /// <param name="context">The reference to the context of the host.</param>
-        private PackageManager(IComponentManager componentManager, IPluginManager pluginManager, IHttpServerContext context)
+        private PackageManager(IComponentHub componentManager, IPluginManager pluginManager, IHttpServerContext context)
         {
-            _componentManager = componentManager as ComponentManager;
+            _componentManager = componentManager as ComponentHub;
             _pluginManager = pluginManager as PluginManager;
 
             HttpServerContext = context;

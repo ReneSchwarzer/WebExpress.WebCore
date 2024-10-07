@@ -8,7 +8,7 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebSession
 {
-    public class SessionManager : IManager, ISystemComponent
+    public class SessionManager : IComponentManager, ISystemComponent
     {
         /// <summary>
         /// Returns or sets the reference to the context of the host.

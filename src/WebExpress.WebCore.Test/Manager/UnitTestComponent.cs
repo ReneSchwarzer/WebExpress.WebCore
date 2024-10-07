@@ -15,10 +15,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void PluginManager()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
 
             // test execution
-            Assert.NotNull(componentManager.PluginManager);
+            Assert.NotNull(componentHub.PluginManager);
         }
 
         /// <summary>
@@ -28,10 +28,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void ApplicationManager()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
 
             // test execution
-            Assert.NotNull(componentManager.ApplicationManager);
+            Assert.NotNull(componentHub.ApplicationManager);
         }
 
         /// <summary>
@@ -41,10 +41,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void ModuleManager()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
 
             // test execution
-            Assert.NotNull(componentManager.ModuleManager);
+            Assert.NotNull(componentHub.ModuleManager);
         }
     }
 }

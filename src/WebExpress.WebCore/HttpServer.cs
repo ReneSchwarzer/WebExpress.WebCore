@@ -256,7 +256,7 @@ namespace WebExpress.WebCore
             ));
 
             // search page in sitemap
-            var searchResult = WebEx.ComponentManager.SitemapManager.SearchResource(context.Uri, new SearchContext()
+            var searchResult = WebEx.ComponentHub.SitemapManager.SearchResource(context.Uri, new SearchContext()
             {
                 Culture = culture,
                 HttpContext = context,
@@ -269,8 +269,8 @@ namespace WebExpress.WebCore
                 resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count)?.PathSegments)
                 {
                     ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments),
-                    ApplicationRoot = new UriResource(request.Uri, searchResult.ResourceContext?.ModuleContext?.ApplicationContext?.ContextPath.PathSegments),
-                    ModuleRoot = new UriResource(request.Uri, searchResult.ResourceContext?.ModuleContext?.ContextPath.PathSegments),
+                    ApplicationRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ModuleContext?.ApplicationContext?.ContextPath.PathSegments),
+                    ModuleRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ModuleContext?.ContextPath.PathSegments),
                     ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
                 };
 
@@ -283,9 +283,7 @@ namespace WebExpress.WebCore
 
                     if (searchResult.Instance != null)
                     {
-                        searchResult.Instance?.PreProcess(request);
-                        response = searchResult.Instance?.Process(request);
-                        response = searchResult.Instance?.PostProcess(request, response);
+                        response = searchResult.Process(request);
 
                         if (searchResult.Instance is IPage)
                         {
@@ -467,12 +465,12 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var statusPage = WebEx.ComponentManager.StatusPageManager.CreateStatusPage
+                var statusPage = WebEx.ComponentHub.StatusPageManager.CreateStatusPage
                 (
                     massage,
                     response.Status,
-                    searchResult?.ResourceContext?.ModuleContext?.PluginContext ??
-                    searchResult?.ResourceContext?.ModuleContext?.ApplicationContext?.PluginContext
+                    searchResult?.EndpointContext?.ModuleContext?.PluginContext ??
+                    searchResult?.EndpointContext?.ModuleContext?.ApplicationContext?.PluginContext
                 );
 
                 if (statusPage == null)
@@ -506,7 +504,7 @@ namespace WebExpress.WebCore
                     //    ContextPath = new UriResource()
                     //};
 
-                    resource.Initialization(new ResourceContext(resource.ModuleContext, WebEx.ResourceManager));
+                    resource.Initialization(new ResourceContext(resource.ModuleContext, WebEx.ComponentHub?.ResourceManager));
                 }
 
                 return statusPage.Process(request);

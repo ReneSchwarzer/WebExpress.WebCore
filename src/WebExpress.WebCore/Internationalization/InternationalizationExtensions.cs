@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this II18N obj, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj, key);
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this II18N obj, string pluginId, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj.Culture, pluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, pluginId, key);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this II18N obj, IApplicationContext applicationContext, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj.Culture, applicationContext?.PluginContext?.PluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, applicationContext?.PluginContext?.PluginId, key);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this RenderContext obj, string pluginId, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj.Culture, pluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, pluginId, key);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this RenderContext obj, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj.Culture, obj?.PluginContext?.PluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, obj?.PageContext?.PluginContext?.PluginId, key);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this RenderContext obj, IApplicationContext applicationContext, string key)
         {
-            return WebEx.InternationalizationManager.Translate(obj.Culture, applicationContext?.PluginContext?.PluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, applicationContext?.PluginContext?.PluginId, key);
         }
     }
 }

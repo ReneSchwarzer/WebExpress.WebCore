@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebApplication
     /// <summary>
     /// Interface of the management of WebExpress applications.
     /// </summary>
-    public interface IApplicationManager : IManager
+    public interface IApplicationManager : IComponentManager
     {
         /// <summary>
         /// An event that fires when an application is added.

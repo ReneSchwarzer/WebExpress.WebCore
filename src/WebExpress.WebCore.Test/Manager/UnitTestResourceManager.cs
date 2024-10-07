@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebResource;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -16,11 +17,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            // resources (3 unique + 2 ambiguous) + pages (1)
-            Assert.Equal(6, componentManager.ResourceManager.Resources.Count());
+            // resources (3 unique + 2 ambiguous) 
+            Assert.Equal(5, componentHub.ResourceManager.Resources.Count());
         }
 
         /// <summary>
@@ -30,14 +31,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
-            var resourceManager = componentManager.ResourceManager as ResourceManager;
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var resourceManager = componentHub.ResourceManager as ResourceManager;
 
             // test execution
             resourceManager.Remove(plugin);
 
-            Assert.Empty(componentManager.ResourceManager.Resources);
+            Assert.Empty(componentHub.ResourceManager.Resources);
         }
 
         /// <summary>
@@ -53,39 +54,12 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            using var componentMoinitor = new ResourceMonitor();
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
+            var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
 
             // test execution
-            var resource = componentManager.ResourceManager.GetResorce(module, resourceType);
-
-            Assert.Equal(id, resource.ResourceId);
-            Assert.False(componentMoinitor.Contains(resourceType));
-        }
-
-        /// <summary>
-        /// Test the title property of the resource.
-        /// </summary>
-        [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1X), "webindex:resourcea1x.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1Y), "TestResourceA1Y")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), typeof(TestResourceA2X), "webindex:resourcea2x.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webindex:resourceab1x.label")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webindex:resourceab1x.label")]
-
-        public void Title(Type applicationType, Type moduleType, Type resourceType, string id)
-        {
-            // preconditions
-            using var componentMoinitor = new ResourceMonitor();
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
-
-            // test execution
-            var resource = componentManager.ResourceManager.GetResorce(module, resourceType);
-
-            Assert.Equal(id, resource.ResourceTitle);
-            Assert.False(componentMoinitor.Contains(resourceType));
+            Assert.Equal(id, resource.EndpointId);
         }
 
         /// <summary>
@@ -101,15 +75,41 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            using var componentMoinitor = new ResourceMonitor();
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
+            var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
 
             // test execution
-            var resource = componentManager.ResourceManager.GetResorce(module, resourceType);
-
             Assert.Equal(id, resource.ContextPath);
-            Assert.False(componentMoinitor.Contains(resourceType));
+        }
+
+        /// <summary>
+        /// Tests whether the resource manager implements interface IComponentManager.
+        /// </summary>
+        [Fact]
+        public void IsIComponentManager()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
+        }
+
+        /// <summary>
+        /// Tests whether the resource context implements interface IContext.
+        /// </summary>
+        [Fact]
+        public void IsIContext()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            foreach (var application in componentHub.ResourceManager.Resources)
+            {
+                Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Resource context {application.GetType().Name} does not implement IContext.");
+            }
         }
     }
 }

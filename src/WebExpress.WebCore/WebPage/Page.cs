@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebResource;
+﻿using WebExpress.WebCore.WebResource;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -17,18 +16,10 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public Page()
+        /// <param name="pageContext">The context of the page.</param>
+        public Page(IPageContext pageContext)
         {
 
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The context of the resource.</param>
-        public override void Initialization(IResourceContext context)
-        {
-            base.Initialization(context);
         }
 
         /// <summary>
@@ -42,30 +33,9 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Processing of the resource.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns>The response.</returns>
-        public override Response Process(Request request)
-        {
-            var context = new T()
-            {
-                Page = this,
-                Request = request
-            };
-
-            Process(context);
-
-            return new ResponseOK()
-            {
-                Content = context.VisualTree.Render(context)
-            };
-        }
-
-        /// <summary>
-        /// Processing of the resource.
+        /// Processing of the page.
         /// </summary>
         /// <param name="context">The context for rendering the page.</param>
-        public abstract void Process(T context);
+        public abstract void Process(IRenderContext context);
     }
 }

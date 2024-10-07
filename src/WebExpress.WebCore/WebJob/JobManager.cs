@@ -14,9 +14,9 @@ namespace WebExpress.WebCore.WebJob
     /// <summary>
     /// Processing of cyclic jobs.
     /// </summary>
-    public sealed class JobManager : IManagerPlugin, ISystemComponent, IExecutableElements
+    public sealed class JobManager : IComponentManagerPlugin, ISystemComponent, IExecutableElements
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly ScheduleDictionary _staticScheduleDictionary = [];
         private readonly List<ScheduleDynamicItem> _dynamicScheduleList = [];
@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebJob
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal JobManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        internal JobManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

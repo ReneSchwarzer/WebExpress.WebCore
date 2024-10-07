@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebModule
     /// <summary>
     /// The interface of the module manager.
     /// </summary>
-    public interface IModuleManager : IManager
+    public interface IModuleManager : IComponentManager
     {
         /// <summary>
         /// An event that fires when an module is added.

@@ -1,5 +1,5 @@
 ﻿using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Returns the resource context where the resource exists.
         /// </summary>
-        IResourceContext ResourceContext { get; }
+        IPageContext ResourceContext { get; }
 
         /// <summary>
         /// Returns or sets the status code.
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// Initialization
         /// </summary>
         /// <param name="resourceContext">The context of the resource.</param>
-        void Initialization(IResourceContext resourceContext);
+        void Initialization(IPageContext resourceContext);
 
         /// <summary>
         /// Processing of the resource.

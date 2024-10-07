@@ -25,19 +25,10 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ResourceAsset()
+        /// <param name="resourceContext">The resource context.</param>
+        public ResourceAsset(IResourceContext resourceContext)
         {
             Gard = new object();
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The context.</param>
-        public override void Initialization(IResourceContext context)
-        {
-            base.Initialization(context);
-
             AssetDirectory = ResourceContext.PluginContext.Assembly.GetName().Name;
         }
 

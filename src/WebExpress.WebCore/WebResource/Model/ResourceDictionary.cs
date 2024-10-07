@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using WebExpress.WebCore.WebPlugin;
 
-namespace WebExpress.WebCore.WebResource
+namespace WebExpress.WebCore.WebResource.Model
 {
     /// <summary>
     /// key = plugin context

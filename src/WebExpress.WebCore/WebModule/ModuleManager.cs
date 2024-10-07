@@ -13,9 +13,9 @@ namespace WebExpress.WebCore.WebModule
     /// <summary>
     /// The module manager manages the WebExpress modules.
     /// </summary>
-    public sealed class ModuleManager : IModuleManager, IManagerPlugin, IExecutableElements, ISystemComponent
+    public sealed class ModuleManager : IModuleManager, IComponentManagerPlugin, IExecutableElements, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly ModuleDictionary _dictionary = [];
 
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebModule
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private ModuleManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        private ModuleManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

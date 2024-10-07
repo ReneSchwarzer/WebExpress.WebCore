@@ -50,12 +50,12 @@ namespace WebExpress.WebCore.Test.Fixture
         }
 
         /// <summary>
-        /// Create a component manager.
+        /// Create a component hub.
         /// </summary>
         /// <returns>The component manager.</returns>
-        public static ComponentManager CreateComponentManager()
+        public static ComponentHub CreateComponentHub()
         {
-            var ctorComponentManager = typeof(ComponentManager).GetConstructor
+            var ctorComponentManager = typeof(ComponentHub).GetConstructor
             (
                 BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
@@ -63,11 +63,11 @@ namespace WebExpress.WebCore.Test.Fixture
                 null
             );
 
-            var componentManager = (ComponentManager)ctorComponentManager.Invoke([CreateHttpServerContext()]);
+            var componentManager = (ComponentHub)ctorComponentManager.Invoke([CreateHttpServerContext()]);
 
             // set static field in the webex class
             var type = typeof(WebEx);
-            var field = type.GetField("_componentManager", BindingFlags.Static | BindingFlags.NonPublic);
+            var field = type.GetField("_componentHub", BindingFlags.Static | BindingFlags.NonPublic);
 
             field.SetValue(null, componentManager);
 
@@ -75,12 +75,12 @@ namespace WebExpress.WebCore.Test.Fixture
         }
 
         /// <summary>
-        /// Create a component manager.
+        /// Create a component hub and register the plugins.
         /// </summary>
         /// <returns>The component manager.</returns>
-        public static ComponentManager CreateAndRegisterComponentManager()
+        public static ComponentHub CreateAndRegisterComponentHub()
         {
-            var componentManager = CreateComponentManager();
+            var componentManager = CreateComponentHub();
             var pluginManager = componentManager.PluginManager as PluginManager;
 
             pluginManager.Register();
@@ -165,7 +165,7 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpRequestIdentifierFeature>(requestIdentifierFeature);
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
-            var componentManager = CreateComponentManager();
+            var componentManager = CreateComponentHub();
             var context = new WebMessage.HttpContext(featureCollection, componentManager.HttpServerContext);
 
             return context;
@@ -178,29 +178,26 @@ namespace WebExpress.WebCore.Test.Fixture
         public static RenderContext CrerateContext()
         {
             var request = CrerateRequest();
-            var page = new TestPage();
-            var visualTree = new VisualTree();
+            var page = new TestPageA1X(CreratePageContext());
 
-            page.Initialization(CrerateResourceContext());
-
-            return new RenderContext(page, request, visualTree);
+            return new RenderContext(page, CreratePageContext(), request);
         }
 
         /// <summary>
-        /// Create a fake resource context.
+        /// Create a fake page context.
         /// </summary>
         /// <returns>A fake context for testing.</returns>
-        public static ResourceContext CrerateResourceContext()
+        public static PageContext CreratePageContext()
         {
-            var ctorResourceContext = typeof(ResourceContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IModuleContext)], null);
+            var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IModuleContext)], null);
 
-            var moduleContext = WebEx.ComponentManager.ModuleManager.Modules
+            var moduleContext = WebEx.ComponentHub.ModuleManager.Modules
                 .Where(x => x.ModuleId == typeof(TestModuleA1).FullName.ToLower())
                 .FirstOrDefault();
 
-            var resourceContext = (ResourceContext)ctorResourceContext.Invoke([moduleContext]);
+            var pageContext = (PageContext)ctorPageContext.Invoke([moduleContext]);
 
-            return resourceContext;
+            return pageContext;
         }
 
         /// <summary>

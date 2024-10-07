@@ -449,7 +449,7 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         private void ParseSessionParams()
         {
-            Session = WebEx.ComponentManager.SessionManager?.GetSession(this);
+            Session = WebEx.ComponentHub.SessionManager?.GetSession(this);
 
             var property = Session?.GetProperty<SessionPropertyParameter>();
             if (property != null && property.Params != null)

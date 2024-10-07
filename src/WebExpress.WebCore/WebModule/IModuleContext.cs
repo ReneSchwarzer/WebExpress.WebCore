@@ -1,10 +1,11 @@
 ﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebModule
 {
-    public interface IModuleContext
+    public interface IModuleContext : IContext
     {
         /// <summary>
         /// Returns the context of the associated plugin.

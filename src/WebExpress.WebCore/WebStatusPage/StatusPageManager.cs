@@ -4,8 +4,8 @@ using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
@@ -13,9 +13,9 @@ namespace WebExpress.WebCore.WebStatusPage
     /// <summary>
     /// Management of status pages.
     /// </summary>
-    public class StatusPageManager : IManagerPlugin, ISystemComponent
+    public class StatusPageManager : IComponentManagerPlugin, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly StatusPageDictionary _dictionary = [];
         private readonly StatusPageDictionaryItem _defaults = [];
@@ -23,12 +23,12 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// An event that fires when an status page is added.
         /// </summary>
-        public event EventHandler<IResourceContext> AddStatusPage;
+        public event EventHandler<IPageContext> AddStatusPage;
 
         /// <summary>
         /// An event that fires when an status page is removed.
         /// </summary>
-        public event EventHandler<IResourceContext> RemoveStatusPage;
+        public event EventHandler<IPageContext> RemoveStatusPage;
 
         /// <summary>
         /// Returns all status pages.
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal StatusPageManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        internal StatusPageManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 
@@ -316,7 +316,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// Raises the AddStatusPage event.
         /// </summary>
         /// <param name="statusPage">The status page.</param>
-        private void OnAddStatusPage(IResourceContext statusPage)
+        private void OnAddStatusPage(IPageContext statusPage)
         {
             AddStatusPage?.Invoke(this, statusPage);
         }
@@ -325,7 +325,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// Raises the RemoveComponent event.
         /// </summary>
         /// <param name="statusPage">The status page.</param>
-        private void OnRemoveStatusPage(IResourceContext statusPage)
+        private void OnRemoveStatusPage(IPageContext statusPage)
         {
             RemoveStatusPage?.Invoke(this, statusPage);
         }

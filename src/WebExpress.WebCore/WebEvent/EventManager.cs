@@ -11,9 +11,9 @@ namespace WebExpress.WebCore.WebEvent
     /// <summary>
     /// The event manager.
     /// </summary>
-    public sealed class EventManager : IManagerPlugin, ISystemComponent
+    public sealed class EventManager : IComponentManagerPlugin, ISystemComponent
     {
-        private readonly IComponentManager _componentManager;
+        private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly EventDictionary _dictionary = [];
 
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebEvent
         /// </summary>
         /// <param name="componentManager">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal EventManager(IComponentManager componentManager, IHttpServerContext httpServerContext)
+        internal EventManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
             _componentManager = componentManager;
 

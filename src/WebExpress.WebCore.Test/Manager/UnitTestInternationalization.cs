@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -18,8 +19,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentManager();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
             pluginManager.Register();
@@ -34,9 +35,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
-            var internationalizationManager = componentManager.InternationalizationManager as InternationalizationManager;
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var internationalizationManager = componentHub.InternationalizationManager as InternationalizationManager;
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             internationalizationManager.Remove(plugin);
@@ -51,7 +52,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDefaultCulture()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
             Assert.Equal(CultureInfo.GetCultureInfo("en"), InternationalizationManager.DefaultCulture);
@@ -71,7 +72,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Translate(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentManager();
+            UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             if (cultureName == null && !param.Any())
             {
@@ -116,6 +117,19 @@ namespace WebExpress.WebCore.Test.Manager
                 Assert.Equal(excepted, result);
             }
 
+        }
+
+        /// <summary>
+        /// Tests whether the internationalization manager implements interface IComponentManager.
+        /// </summary>
+        [Fact]
+        public void IsIComponentManager()
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+
+            // test execution
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.InternationalizationManager.GetType()));
         }
     }
 }

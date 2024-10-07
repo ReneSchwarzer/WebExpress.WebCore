@@ -8,6 +8,7 @@ using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPackage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebSession;
@@ -20,24 +21,25 @@ namespace WebExpress.WebCore.WebComponent
     /// <summary>
     /// Central management of components.
     /// </summary>
-    public class ComponentManager : IComponentManager
+    public class ComponentHub : IComponentHub
     {
         private readonly InternationalizationManager _internationalizationManager;
         private readonly PluginManager _pluginManager;
         private readonly ApplicationManager _applicationManager;
         private readonly ModuleManager _moduleManager;
         private readonly ResourceManager _resourceManager;
+        private readonly PageManager _pageManager;
         private readonly SitemapManager _sitemapManager;
 
         /// <summary>
         /// An event that fires when an component is added.
         /// </summary>
-        public event EventHandler<IManager> AddComponent;
+        public event EventHandler<IComponentManager> AddComponent;
 
         /// <summary>
         /// An event that fires when an component is removed.
         /// </summary>
-        public event EventHandler<IManager> RemoveComponent;
+        public event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
         /// Returns the reference to the context of the host.
@@ -52,17 +54,19 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns all registered managers.
         /// </summary>
-        public IEnumerable<IManager> Managers => new IManager[]
+        public IEnumerable<IComponentManager> Managers => new IComponentManager[]
             {
                 LogManager,
                 PackageManager,
                 _pluginManager,
-                ApplicationManager,
+                _applicationManager,
                 _moduleManager,
+                _sitemapManager,
+                _resourceManager,
+                _pageManager,
                 EventManager,
                 JobManager,
                 StatusPageManager,
-                _sitemapManager,
                 _internationalizationManager,
                 SessionManager,
                 TaskManager
@@ -71,86 +75,92 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns the log manager.
         /// </summary>
-        /// <returns>The instance of the log manager or null.</returns>
+        /// <returns>The instance of the log manager.</returns>
         public LogManager LogManager { get; private set; }
 
         /// <summary>
         /// Returns the package manager.
         /// </summary>
-        /// <returns>The instance of the package manager or null.</returns>
+        /// <returns>The instance of the package manager.</returns>
         public PackageManager PackageManager { get; private set; }
 
         /// <summary>
         /// Returns the plugin manager.
         /// </summary>
-        /// <returns>The instance of the plugin manager or null.</returns>
+        /// <returns>The instance of the plugin manager.</returns>
         public IPluginManager PluginManager => _pluginManager;
 
         /// <summary>
         /// Returns the application manager.
         /// </summary>
-        /// <returns>The instance of the application manager or null.</returns>
+        /// <returns>The instance of the application manager.</returns>
         public IApplicationManager ApplicationManager => _applicationManager;
 
         /// <summary>
         /// Returns the module manager.
         /// </summary>
-        /// <returns>The instance of the module manager or null.</returns>
+        /// <returns>The instance of the module manager.</returns>
         public IModuleManager ModuleManager => _moduleManager;
 
         /// <summary>
         /// Returns the event manager.
         /// </summary>
-        /// <returns>The instance of the event manager or null.</returns>
+        /// <returns>The instance of the event manager.</returns>
         public EventManager EventManager { get; private set; }
 
         /// <summary>
         /// Returns the job manager.
         /// </summary>
-        /// <returns>The instance of the job manager or null.</returns>
+        /// <returns>The instance of the job manager.</returns>
         public JobManager JobManager { get; private set; }
 
         /// <summary>
         /// Returns the status page manager.
         /// </summary>
-        /// <returns>The instance of the status page manager or null.</returns>
+        /// <returns>The instance of the status page manager.</returns>
         public StatusPageManager StatusPageManager { get; private set; }
 
         /// <summary>
         /// Returns the resource manager.
         /// </summary>
-        /// <returns>The instance of the resource manager or null.</returns>
+        /// <returns>The instance of the resource manager.</returns>
         public IResourceManager ResourceManager => _resourceManager;
+
+        /// <summary>
+        /// Returns the page manager.
+        /// </summary>
+        /// <returns>The instance of the page manager.</returns>
+        public IPageManager PageManager => _pageManager;
 
         /// <summary>
         /// Returns the sitemap manager.
         /// </summary>
-        /// <returns>The instance of the sitemap manager or null.</returns>
+        /// <returns>The instance of the sitemap manager.</returns>
         public ISitemapManager SitemapManager => _sitemapManager;
 
         /// <summary>
         /// Returns the internationalization manager.
         /// </summary>
-        /// <returns>The instance of the internationalization manager or null.</returns>
+        /// <returns>The instance of the internationalization manager.</returns>
         public IInternationalizationManager InternationalizationManager => _internationalizationManager;
 
         /// <summary>
         /// Returns the session manager.
         /// </summary>
-        /// <returns>The instance of the session manager or null.</returns>
+        /// <returns>The instance of the session manager.</returns>
         public SessionManager SessionManager { get; private set; }
 
         /// <summary>
         /// Returns the task manager.
         /// </summary>
-        /// <returns>The instance of the task manager manager or null.</returns>
+        /// <returns>The instance of the task manager manager.</returns>
         public TaskManager TaskManager { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal ComponentManager(IHttpServerContext httpServerContext)
+        internal ComponentHub(IHttpServerContext httpServerContext)
         {
             HttpServerContext = httpServerContext;
 
@@ -161,11 +171,12 @@ namespace WebExpress.WebCore.WebComponent
             _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
             _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
             _moduleManager = CreateInstance(typeof(ModuleManager)) as ModuleManager;
+            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
+            _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             StatusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             EventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;
-            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
             SessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             TaskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
 
@@ -192,20 +203,20 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="componentType">The component class.</param>
         /// <returns>The instance of the create and initialized component.</returns>
-        private IManager CreateInstance(Type componentType)
+        private IComponentManager CreateInstance(Type componentType)
         {
             if (componentType == null)
             {
                 return null;
             }
-            else if (!componentType.GetInterfaces().Where(x => x == typeof(IManager)).Any())
+            else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
             {
                 HttpServerContext.Log.Warning
                 (
                     _internationalizationManager.Translate
                     (
                         "webexpress:componentmanager.wrongtype",
-                        componentType?.FullName, typeof(IManager).FullName
+                        componentType?.FullName, typeof(IComponentManager).FullName
                     )
                 );
 
@@ -214,7 +225,7 @@ namespace WebExpress.WebCore.WebComponent
 
             try
             {
-                return ComponentActivator.CreateInstance<IManager>(componentType, this);
+                return ComponentActivator.CreateInstance<IComponentManager>(componentType, this);
             }
             catch (Exception ex)
             {
@@ -229,7 +240,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component or null.</returns>
-        public IManager GetComponent(string id)
+        public IComponentManager GetComponent(string id)
         {
             return Dictionary.Values
                 .SelectMany(x => x)
@@ -243,7 +254,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <typeparam name="T">The component class.</typeparam>
         /// <returns>The instance of the component or null.</returns>
-        public T GetComponent<T>() where T : IManager
+        public T GetComponent<T>() where T : IComponentManager
         {
             return (T)Dictionary.Values
                 .SelectMany(x => x)
@@ -269,7 +280,7 @@ namespace WebExpress.WebCore.WebComponent
             Dictionary.Add(pluginContext, []);
             var componentItems = Dictionary[pluginContext];
 
-            foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IManager).Name) != null))
+            foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) != null))
             {
                 var id = type.FullName?.ToLower();
 
@@ -432,7 +443,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Raises the AddComponent event.
         /// </summary>
         /// <param name="component">The component.</param>
-        private void OnAddComponent(IManager component)
+        private void OnAddComponent(IComponentManager component)
         {
             AddComponent?.Invoke(null, component);
         }
@@ -441,7 +452,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Raises the RemoveComponent event.
         /// </summary>
         /// <param name="component">The component.</param>
-        private void OnRemoveComponent(IManager component)
+        private void OnRemoveComponent(IComponentManager component)
         {
             RemoveComponent?.Invoke(null, component);
         }

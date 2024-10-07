@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -8,19 +7,9 @@ using System.Threading;
 using System.Xml.Serialization;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebEvent;
-using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPackage;
-using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource;
-using WebExpress.WebCore.WebSession;
-using WebExpress.WebCore.WebSitemap;
-using WebExpress.WebCore.WebStatusPage;
-using WebExpress.WebCore.WebTask;
 using WebExpress.WebCore.WebUri;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]
@@ -32,7 +21,7 @@ namespace WebExpress.WebCore
     /// </summary>
     public class WebEx
     {
-        private static ComponentManager _componentManager;
+        private static ComponentHub _componentHub;
         private HttpServer _httpServer;
 
         /// <summary>
@@ -46,97 +35,9 @@ namespace WebExpress.WebCore
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// Returns the component manager.
+        /// Returns the component hub.
         /// </summary>
-        public static IComponentManager ComponentManager => _componentManager;
-
-        /// <summary>
-        /// Returns the reference to the context of the host.
-        /// </summary>
-        public static IHttpServerContext HttpServerContext => _componentManager?.HttpServerContext;
-
-        /// <summary>
-        /// Returns all registered components.
-        /// </summary>
-        public static IEnumerable<IManager> Components => ComponentManager?.Managers;
-
-        /// <summary>
-        /// Returns the log manager.
-        /// </summary>
-        /// <returns>The instance of the log manager or null.</returns>
-        public static LogManager LogManager => ComponentManager?.LogManager;
-
-        /// <summary>
-        /// Returns the package manager.
-        /// </summary>
-        /// <returns>The instance of the package manager or null.</returns>
-        public static PackageManager PackageManager => ComponentManager?.PackageManager;
-
-        /// <summary>
-        /// Returns the plugin manager.
-        /// </summary>
-        /// <returns>The instance of the plugin manager or null.</returns>
-        public static IPluginManager PluginManager => ComponentManager?.PluginManager;
-
-        /// <summary>
-        /// Returns the application manager.
-        /// </summary>
-        /// <returns>The instance of the application manager or null.</returns>
-        public static IApplicationManager ApplicationManager => ComponentManager?.ApplicationManager;
-
-        /// <summary>
-        /// Returns the module manager.
-        /// </summary>
-        /// <returns>The instance of the module manager or null.</returns>
-        public static IModuleManager ModuleManager => ComponentManager?.ModuleManager;
-
-        /// <summary>
-        /// Returns the event manager.
-        /// </summary>
-        /// <returns>The instance of the event manager or null.</returns>
-        public static EventManager EventManager => ComponentManager?.EventManager;
-
-        /// <summary>
-        /// Returns the job manager.
-        /// </summary>
-        /// <returns>The instance of the job manager or null.</returns>
-        public static JobManager JobManager => ComponentManager?.JobManager;
-
-        /// <summary>
-        /// Returns the status page manager.
-        /// </summary>
-        /// <returns>The instance of the status page manager or null.</returns>
-        public static StatusPageManager StatusPageManager => ComponentManager?.StatusPageManager;
-
-        /// <summary>
-        /// Returns the resource manager.
-        /// </summary>
-        /// <returns>The instance of the resource manager or null.</returns>
-        public static IResourceManager ResourceManager => ComponentManager?.ResourceManager;
-
-        /// <summary>
-        /// Returns the sitemap manager.
-        /// </summary>
-        /// <returns>The instance of the sitemap manager or null.</returns>
-        public static ISitemapManager SitemapManager => ComponentManager?.SitemapManager;
-
-        /// <summary>
-        /// Returns the internationalization manager.
-        /// </summary>
-        /// <returns>The instance of the internationalization manager or null.</returns>
-        public static IInternationalizationManager InternationalizationManager => ComponentManager?.InternationalizationManager;
-
-        /// <summary>
-        /// Returns the session manager.
-        /// </summary>
-        /// <returns>The instance of the session manager or null.</returns>
-        public static SessionManager SessionManager => ComponentManager?.SessionManager;
-
-        /// <summary>
-        /// Returns the task manager.
-        /// </summary>
-        /// <returns>The instance of the task manager manager or null.</returns>
-        public static TaskManager TaskManager => ComponentManager?.TaskManager;
+        public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
         /// Entry point of application.
@@ -233,7 +134,7 @@ namespace WebExpress.WebCore
             Initialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
 
             // start the manager
-            _componentManager.Execute();
+            _componentHub.Execute();
 
             // starting the web server
             Start();
@@ -314,7 +215,7 @@ namespace WebExpress.WebCore
                 Config = config
             };
 
-            _componentManager = CreateComponentManager(_httpServer.HttpServerContext);
+            _componentHub = CreateComponentManager(_httpServer.HttpServerContext);
 
             // start logging
             _httpServer.HttpServerContext.Log.Begin(config.Log);
@@ -383,7 +284,7 @@ namespace WebExpress.WebCore
             _httpServer.HttpServerContext.Log.Seperator('/');
 
             // Stop running
-            _componentManager.ShutDown();
+            _componentHub.ShutDown();
 
             // stop logging
             _httpServer.HttpServerContext.Log.Close();
@@ -394,9 +295,9 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component or null.</returns>
-        public static IManager GetComponent(string id)
+        public static IComponentManager GetComponent(string id)
         {
-            return _componentManager.GetComponent(id);
+            return _componentHub.GetComponent(id);
         }
 
         /// <summary>
@@ -404,19 +305,19 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <typeparam name="T">The component class.</typeparam>
         /// <returns>The instance of the component or null.</returns>
-        public static T GetComponent<T>() where T : IManager
+        public static T GetComponent<T>() where T : IComponentManager
         {
-            return _componentManager.GetComponent<T>();
+            return _componentHub.GetComponent<T>();
         }
 
         /// <summary>
-        /// Creates and returns a new instance of <see cref="ComponentManager"/>.
+        /// Creates and returns a new instance of <see cref="ComponentHub"/>.
         /// </summary>
         /// <param name="httpServerContext">The HTTP server context used to initialize the component manager.</param>
-        /// <returns>A new instance of <see cref="ComponentManager"/>.</returns>
-        protected virtual ComponentManager CreateComponentManager(IHttpServerContext httpServerContext)
+        /// <returns>A new instance of <see cref="ComponentHub"/>.</returns>
+        protected virtual ComponentHub CreateComponentManager(IHttpServerContext httpServerContext)
         {
-            return new ComponentManager(httpServerContext);
+            return new ComponentHub(httpServerContext);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.WebAttribute;
+﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebResource;
 
@@ -18,7 +17,6 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         public TestResourceA1Y()
         {
-            ResourceCounter.Add(this);
         }
 
         /// <summary>
