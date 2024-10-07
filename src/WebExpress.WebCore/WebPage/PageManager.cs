@@ -81,10 +81,20 @@ namespace WebExpress.WebCore.WebPage
                     EndpointResolver = () => Pages,
                     HandleRequest = (endpoint, endpontContext, request) =>
                     {
-                        var typeOfT = endpoint.GetType().GetGenericArguments()[0];
-                        object[] parameters = [endpoint, endpontContext as IPageContext, request];
+                        var type = endpoint.GetType();
+                        var context = default(IRenderContext);
 
-                        var context = (IRenderContext)Activator.CreateInstance(typeOfT, parameters);
+                        if (type.IsGenericType)
+                        {
+                            var typeOfT = type.GetGenericArguments()[0];
+                            object[] parameters = [endpoint as IPage, endpontContext as IPageContext, request];
+
+                            context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
+                        }
+                        else
+                        {
+                            context = new RenderContext(endpoint as IPage, endpontContext as IPageContext, request);
+                        }
 
                         (endpoint as IPage).Process(context);
 

@@ -44,9 +44,8 @@ namespace WebExpress.WebCore.Test
         /// Processing of the page.
         /// </summary>
         /// <param name="context">The context for rendering the page.</param>
-        public void Process(RenderContext context)
+        public void Process(IRenderContext context)
         {
-
         }
 
         /// <summary>
@@ -54,12 +53,6 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         public void Dispose()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Process(IRenderContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -66,7 +66,12 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>The response.</returns>
         public Response Process(Request request)
         {
-            return _handleRequest(Instance, EndpointContext, request);
+            if (_handleRequest != null)
+            {
+                return _handleRequest(Instance, EndpointContext, request);
+            }
+
+            return new ResponseBadRequest();
         }
     }
 }

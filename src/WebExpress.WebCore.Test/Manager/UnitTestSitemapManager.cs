@@ -1,12 +1,11 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSitemap;
 
 namespace WebExpress.WebCore.Test.Manager
 {
     /// <summary>
-    /// Test the resource manager.
+    /// Test the sitemap manager.
     /// </summary>
     [Collection("NonParallelTests")]
     public class UnitTestSitemapManager
@@ -44,7 +43,6 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
             var context = UnitTestControlFixture.CreateHttpContext();
             componentHub.SitemapManager.Refresh();
-            var map = componentHub.SitemapManager.ToString();
 
             // test execution
             var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
@@ -53,6 +51,8 @@ namespace WebExpress.WebCore.Test.Manager
                 Culture = componentHub.HttpServerContext.Culture,
                 HttpContext = context
             });
+
+            searchResult.Process(UnitTestControlFixture.CrerateRequest());
 
             Assert.Equal(id, searchResult.EndpointId);
         }
@@ -71,7 +71,6 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var context = UnitTestControlFixture.CreateHttpContext();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -88,7 +87,6 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));
