@@ -309,7 +309,7 @@ namespace WebExpress.WebCore.WebPage
                 var cache = false;
 
                 foreach (var customAttribute in resourceType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IResourceAttribute))))
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     var buf = typeof(ModuleAttribute<>);
 

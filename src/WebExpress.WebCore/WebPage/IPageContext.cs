@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebComponent;
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -11,5 +12,12 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the resource title.
         /// </summary>
         string PageTitle { get; }
+
+        /// <summary>
+        /// Returns the scope names that provides the resource. The scope name
+        /// is a string with a name (e.g. global, admin), which can be used by elements to 
+        /// determine whether content and how content should be displayed.
+        /// </summary>
+        IEnumerable<string> Scopes { get; }
     }
 }

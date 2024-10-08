@@ -3,7 +3,7 @@
     /// <summary>
     /// Determines whether all resources below the specified path (including segment) are also processed.
     /// </summary>
-    public class IncludeSubPathsAttribute : System.Attribute, IResourceAttribute
+    public class IncludeSubPathsAttribute : System.Attribute, IEndpointAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

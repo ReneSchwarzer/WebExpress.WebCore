@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// </summary>
     /// <typeparam name="T">The type of the module.</typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ModuleAttribute<T> : Attribute, IResourceAttribute, IModuleAttribute where T : class, IModule
+    public class ModuleAttribute<T> : Attribute, IEndpointAttribute, IModuleAttribute where T : class, IModule
     {
         /// <summary>
         /// Initializes a new instance of the class.

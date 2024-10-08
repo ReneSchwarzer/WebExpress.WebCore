@@ -34,7 +34,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// Gets data.
         /// </summary>
         /// <returns>The data.</returns>
-        public virtual object GetData()
+        public virtual object GetData(Request request)
         {
             return null;
         }

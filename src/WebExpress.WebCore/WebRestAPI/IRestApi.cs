@@ -17,8 +17,9 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Gets data.
         /// </summary>
+        /// <param name="request">The request.</param>
         /// <returns>The data.</returns>
-        object GetData();
+        object GetData(Request request);
 
         /// <summary>
         /// Updates data.

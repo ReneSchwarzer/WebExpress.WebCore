@@ -35,6 +35,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/aca/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
         [InlineData("http://localhost:8080/acb/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
         [InlineData("http://localhost:8080/aca/mca/pa1x", "webexpress.webcore.test.testpagea1x")]
+        [InlineData("http://localhost:8080/aca/mca/ra1x", "webexpress.webcore.test.testrestapia1x")]
+        [InlineData("http://localhost:8080/aca/mca/ra1x/ra1y", "webexpress.webcore.test.testrestapia1y")]
+        [InlineData("http://localhost:8080/aca/mca/ra1x/ra1y/ra1z", "webexpress.webcore.test.testrestapia1z")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
 
         public void SearchResource(string uri, string id)

@@ -38,17 +38,17 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
         /// </summary>
-        public IEnumerable<ICondition> Conditions { get; internal set; } = new List<ICondition>();
+        public IEnumerable<ICondition> Conditions { get; internal set; } = [];
+
+        /// <summary>
+        /// Returns the crud methods.
+        /// </summary>
+        public IEnumerable<CrudMethod> Methods { get; internal set; } = [];
 
         /// <summary>
         /// Returns the endpoint id.
         /// </summary>
         public string EndpointId { get; internal set; }
-
-        /// <summary>
-        /// Returns the resource title.
-        /// </summary>
-        public string PageTitle { get; internal set; }
 
         /// <summary>
         /// Returns the parent or null if not used.

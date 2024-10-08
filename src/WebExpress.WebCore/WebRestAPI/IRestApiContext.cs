@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebComponent;
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebRestApi
 {
@@ -7,5 +8,9 @@ namespace WebExpress.WebCore.WebRestApi
     /// </summary>
     public interface IRestApiContext : IEndpointContext
     {
+        /// <summary>
+        /// Returns the crud methods.
+        /// </summary>
+        IEnumerable<CrudMethod> Methods { get; }
     }
 }

@@ -27,13 +27,6 @@ namespace WebExpress.WebCore.WebComponent
         IModuleContext ModuleContext { get; }
 
         /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
-        /// is a string with a name (e.g. global, admin), which can be used by elements to 
-        /// determine whether content and how content should be displayed.
-        /// </summary>
-        IEnumerable<string> Scopes { get; }
-
-        /// <summary>
         /// Provides the conditions that must be met for the resource to be active.
         /// </summary>
         IEnumerable<ICondition> Conditions { get; }

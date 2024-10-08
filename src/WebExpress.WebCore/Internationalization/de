@@ -112,6 +112,7 @@ restapimanager.moduleless=Die Seite '{0}' besitzt keine Angaben zum Modul.
 restapimanager.addresource=Die Seite '{0}' wurde in dem Modul '{1}' registiert.
 restapimanager.addresource.duplicate=Die Seite '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
 restapimanager.resource=Seite: '{0}' für das Modul '{1}'
+restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
 
 statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
 statuspagemanager.register=Status {0} wurde registriert und der Statusseite '{1}' zugewiesen.

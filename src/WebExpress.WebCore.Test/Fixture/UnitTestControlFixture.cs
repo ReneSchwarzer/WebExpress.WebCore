@@ -133,7 +133,7 @@ namespace WebExpress.WebCore.Test.Fixture
                     ["Referer"] = "0HN50661TV8TP"
                 },
                 Body = contentBytes.Length > 0 ? new MemoryStream(contentBytes) : null,
-                Method = firstLine.Split(' ')?.FirstOrDefault() ?? "GET",
+                Method = firstLine.Split(' ')?.Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault() ?? "GET",
                 RawTarget = firstLine.Split(' ')?.Skip(1)?.FirstOrDefault()?.Split('?')?.FirstOrDefault() ?? "/",
                 QueryString = "?" + firstLine.Split(' ')?.Skip(1)?.FirstOrDefault()?.Split('?')?.Skip(1)?.FirstOrDefault() ?? "",
             };

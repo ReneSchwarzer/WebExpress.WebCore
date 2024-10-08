@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebAttribute
 {
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
-    public class ContextPathAttribute : Attribute, IApplicationAttribute, IModuleAttribute, IResourceAttribute
+    public class ContextPathAttribute : Attribute, IApplicationAttribute, IModuleAttribute, IEndpointAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

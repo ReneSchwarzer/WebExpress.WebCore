@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// A dynamic path segment of type guid.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class SegmentGuidAttribute<T> : Attribute, IResourceAttribute, ISegmentAttribute where T : Parameter
+    public class SegmentGuidAttribute<T> : Attribute, IEndpointAttribute, ISegmentAttribute where T : Parameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.

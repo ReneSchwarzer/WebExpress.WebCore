@@ -3,7 +3,7 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
 {
-    public class SegmentUIntAttribute : Attribute, IResourceAttribute, ISegmentAttribute
+    public class SegmentUIntAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
         /// Returns or sets the name of the variable.

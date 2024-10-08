@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebRestApi;
 
 namespace WebExpress.WebCore.Test
@@ -7,17 +8,26 @@ namespace WebExpress.WebCore.Test
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:resourcea1x.label")]
-    [Segment("ra1y", "webindex:homepage.label")]
+    [Segment("ra1z", "webindex:homepage.label")]
     [Parent<TestRestApiA1Y>]
+    [Method(CrudMethod.GET)]
     [Module<TestModuleA1>]
-    public sealed class TestRestApiA1Z : IRestApi
+    public sealed class TestRestApiA1Z : RestApi
     {
         /// <summary>
         /// Instillation of the rest api resource. Here, for example, managed resources can be loaded. 
         /// </summary>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="restApiContext">The context of the restapi resource.</param>
-        public TestRestApiA1Z(IRestApiContext restApiContext)
+        public TestRestApiA1Z(IComponentHub componentHub, IRestApiContext restApiContext)
+            : base(restApiContext)
         {
+            // test the injection
+            if (componentHub == null)
+            {
+                throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
+            }
+
             // test the injection
             if (restApiContext == null)
             {
@@ -29,7 +39,7 @@ namespace WebExpress.WebCore.Test
         /// Creates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void CreateData(WebMessage.Request request)
+        public override void CreateData(WebMessage.Request request)
         {
 
         }
@@ -37,8 +47,9 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Gets data.
         /// </summary>
+        /// <param name="request">The request.</param>
         /// <returns>The data.</returns>
-        public object GetData()
+        public override object GetData(WebMessage.Request request)
         {
             return null;
         }
@@ -47,7 +58,7 @@ namespace WebExpress.WebCore.Test
         /// Updates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void UpdateData(WebMessage.Request request)
+        public override void UpdateData(WebMessage.Request request)
         {
             // test the request
             if (request == null)
@@ -60,7 +71,7 @@ namespace WebExpress.WebCore.Test
         /// Deletes data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void DeleteData(WebMessage.Request request)
+        public override void DeleteData(WebMessage.Request request)
         {
             // test the request
             if (request == null)

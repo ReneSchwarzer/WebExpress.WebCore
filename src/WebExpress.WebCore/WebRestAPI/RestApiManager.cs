@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
@@ -10,7 +12,6 @@ using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebRestApi.Model;
-using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
@@ -25,6 +26,7 @@ namespace WebExpress.WebCore.WebRestApi
         private readonly IComponentHub _componentManager;
         private readonly IHttpServerContext _httpServerContext;
         private readonly RestApiDictionary _dictionary = [];
+        private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
         /// <summary>
         /// An event that fires when an rest api resource is added.
@@ -81,9 +83,45 @@ namespace WebExpress.WebCore.WebRestApi
                     EndpointResolver = () => RestApis,
                     HandleRequest = (endpoint, endpontContext, request) =>
                     {
-                        return new ResponseOK()
-                        {
+                        var restApi = endpoint as IRestApi;
+                        var restApiContext = endpontContext as IRestApiContext;
 
+                        if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
+                        {
+                            switch (request.Method)
+                            {
+                                case RequestMethod.POST:
+                                    restApi.CreateData(request);
+
+                                    return new ResponseOK();
+                                case RequestMethod.GET:
+                                    var data = restApi.GetData(request);
+                                    if (data != null)
+                                    {
+                                        var jsonData = JsonSerializer.Serialize(data, _jsonOptions);
+                                        var content = Encoding.UTF8.GetBytes(jsonData);
+
+                                        return new ResponseOK
+                                        {
+                                            Content = content
+                                        };
+                                    }
+
+                                    return new ResponseOK();
+                                case RequestMethod.PATCH:
+                                    restApi.UpdateData(request);
+
+                                    return new ResponseOK();
+                                case RequestMethod.DELETE:
+                                    restApi.DeleteData(request);
+
+                                    return new ResponseOK();
+                            }
+                        }
+
+                        return new ResponseBadRequest()
+                        {
+                            Content = I18N.Translate("webexpress:restapimanager.methodnotsupported", request.Method.ToString())
                         };
                     }
                 }
@@ -286,23 +324,19 @@ namespace WebExpress.WebCore.WebRestApi
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var moduleId = string.Empty;
-                var scopes = new List<string>();
                 var conditions = new List<ICondition>();
                 var optional = false;
                 var cache = false;
+                var methods = new List<CrudMethod>();
 
                 foreach (var customAttribute in resourceType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IResourceAttribute))))
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     var buf = typeof(ModuleAttribute<>);
 
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
-                    }
-                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
-                    {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
@@ -320,14 +354,15 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
-                    {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
-                    }
                     else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(MethodAttribute).Name && customAttribute.AttributeType.Namespace == typeof(MethodAttribute).Namespace)
+                    {
+                        var method = (CrudMethod)customAttribute.ConstructorArguments.FirstOrDefault().Value;
+                        methods.Add(method);
                     }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
@@ -337,11 +372,6 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         optional = true;
                     }
-                }
-
-                if (resourceType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
-                {
-                    scopes.Add(resourceType.FullName?.ToLower());
                 }
 
                 if (string.IsNullOrEmpty(moduleId))
@@ -367,6 +397,7 @@ namespace WebExpress.WebCore.WebRestApi
                         ParentId = parent,
                         RestApiClass = resourceType,
                         ModuleId = moduleId,
+                        Methods = methods.Distinct(),
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),

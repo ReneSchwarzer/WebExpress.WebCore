@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
         /// </summary>
-        public ICollection<ICondition> Conditions { get; set; }
+        public IEnumerable<ICondition> Conditions { get; set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.

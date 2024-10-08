@@ -8,7 +8,8 @@ namespace WebExpress.WebCore.Test
     /// </summary>
     [Title("webindex:resourcea1x.label")]
     [Segment("ra1x", "webindex:homepage.label")]
-    [ContextPath(null)]
+    [Method(CrudMethod.POST)]
+    [Method(CrudMethod.GET)]
     [Module<TestModuleA1>]
     public sealed class TestRestApiA1X : IRestApi
     {
@@ -37,8 +38,9 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Gets data.
         /// </summary>
+        /// <param name="request">The request.</param>
         /// <returns>The data.</returns>
-        public object GetData()
+        public object GetData(WebMessage.Request request)
         {
             return null;
         }

@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class TitleAttribute : System.Attribute, IResourceAttribute
+    public class TitleAttribute : System.Attribute, IEndpointAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

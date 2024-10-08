@@ -77,6 +77,25 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Test the context path property of the rest api.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), CrudMethod.POST)]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), CrudMethod.GET)]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), CrudMethod.GET)]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), CrudMethod.GET)]
+        public void Method(Type applicationType, Type moduleType, Type resourceType, CrudMethod method)
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
+            var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
+
+            // test execution
+            Assert.Contains(method, api.Methods);
+        }
+
+        /// <summary>
         /// Tests whether the rest api manager implements interface IComponentManager.
         /// </summary>
         [Fact]

@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// Activation of options (e.g. WebEx.WebApp.Setting.SystemInformation for displaying system information).
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public class ConditionAttribute<T> : Attribute, IResourceAttribute where T : class, ICondition
+    public class ConditionAttribute<T> : Attribute, IEndpointAttribute where T : class, ICondition
     {
         /// <summary>
         /// Initializes a new instance of the class.

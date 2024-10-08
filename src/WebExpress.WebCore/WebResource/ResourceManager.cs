@@ -9,7 +9,6 @@ using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
-using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
@@ -113,28 +112,22 @@ namespace WebExpress.WebCore.WebResource
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var title = resourceType.Name;
                 var parent = default(string);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var moduleId = string.Empty;
-                var scopes = new List<string>();
                 var conditions = new List<ICondition>();
                 var optional = false;
                 var cache = false;
 
                 foreach (var customAttribute in resourceType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IResourceAttribute))))
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     var buf = typeof(ModuleAttribute<>);
 
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
-                    }
-                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
-                    {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
@@ -152,10 +145,6 @@ namespace WebExpress.WebCore.WebResource
                     {
                         moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
-                    {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
-                    }
                     else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
@@ -169,11 +158,6 @@ namespace WebExpress.WebCore.WebResource
                     {
                         optional = true;
                     }
-                }
-
-                if (resourceType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
-                {
-                    scopes.Add(resourceType.FullName?.ToLower());
                 }
 
                 if (string.IsNullOrEmpty(moduleId))

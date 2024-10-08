@@ -70,7 +70,12 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <summary>
         /// Returns the conditions that must be met for the rest api resource to be active.
         /// </summary>
-        public ICollection<ICondition> Conditions { get; set; }
+        public IEnumerable<ICondition> Conditions { get; set; }
+
+        /// <summary>
+        /// Returns the crud methods.
+        /// </summary>
+        public IEnumerable<CrudMethod> Methods { get; set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
@@ -132,7 +137,8 @@ namespace WebExpress.WebCore.WebRestApi.Model
                 Conditions = Conditions,
                 EndpointId = RestApiId,
                 Cache = Cache,
-                IncludeSubPaths = IncludeSubPaths
+                IncludeSubPaths = IncludeSubPaths,
+                Methods = Methods
             };
 
             if

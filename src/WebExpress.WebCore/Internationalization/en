@@ -112,6 +112,7 @@ restapimanager.moduleless=The REST API '{0}' does not have any information about
 restapimanager.addresource=The REST API '{0}' has been registered in the module '{1}'.
 restapimanager.addresource.duplicate=The REST API '{0}' of module '{1}' has already been added.
 restapimanager.resource=REST API: '{0}' for module '{1}'
+restapimanager.methodnotsupported=The method '{0}' is not supported.
 
 statuspagemanager.initialization=The status page manager has been initialized.
 statuspagemanager.register=Status {0} has been registered and assigned to the status page '{1}'.
