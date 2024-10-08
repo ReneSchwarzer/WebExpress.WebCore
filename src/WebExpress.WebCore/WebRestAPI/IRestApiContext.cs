@@ -12,5 +12,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// Returns the crud methods.
         /// </summary>
         IEnumerable<CrudMethod> Methods { get; }
+
+        /// <summary>
+        /// Returns the version number of the rest api.
+        /// </summary>
+        uint Version { get; }
     }
 }

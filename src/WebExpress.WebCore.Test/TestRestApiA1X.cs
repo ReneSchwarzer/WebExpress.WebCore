@@ -10,6 +10,7 @@ namespace WebExpress.WebCore.Test
     [Segment("ra1x", "webindex:homepage.label")]
     [Method(CrudMethod.POST)]
     [Method(CrudMethod.GET)]
+    [Version(1)]
     [Module<TestModuleA1>]
     public sealed class TestRestApiA1X : IRestApi
     {

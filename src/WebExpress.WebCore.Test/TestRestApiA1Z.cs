@@ -11,6 +11,7 @@ namespace WebExpress.WebCore.Test
     [Segment("ra1z", "webindex:homepage.label")]
     [Parent<TestRestApiA1Y>]
     [Method(CrudMethod.GET)]
+    [Version(3)]
     [Module<TestModuleA1>]
     public sealed class TestRestApiA1Z : RestApi
     {

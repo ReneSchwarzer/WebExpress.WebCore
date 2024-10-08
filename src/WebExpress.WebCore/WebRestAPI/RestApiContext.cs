@@ -60,6 +60,11 @@ namespace WebExpress.WebCore.WebRestApi
             .FirstOrDefault();
 
         /// <summary>
+        /// Returns the version number of the rest api.
+        /// </summary>
+        public uint Version { get; internal set; }
+
+        /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
@@ -79,10 +84,10 @@ namespace WebExpress.WebCore.WebRestApi
                 var parentContext = ParentContext;
                 if (parentContext != null)
                 {
-                    return UriResource.Combine(ParentContext?.Uri, _restApiItem.ContextPath);
+                    return UriResource.Combine(ParentContext?.Uri, _restApiItem.ContextPath, Version.ToString());
                 }
 
-                return UriResource.Combine(ModuleContext.ContextPath, _restApiItem.ContextPath);
+                return UriResource.Combine(ModuleContext.ContextPath, _restApiItem.ContextPath, Version.ToString());
             }
         }
 

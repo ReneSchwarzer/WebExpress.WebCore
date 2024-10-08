@@ -328,6 +328,7 @@ namespace WebExpress.WebCore.WebRestApi
                 var optional = false;
                 var cache = false;
                 var methods = new List<CrudMethod>();
+                var version = 1u;
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
@@ -364,6 +365,10 @@ namespace WebExpress.WebCore.WebRestApi
                         var method = (CrudMethod)customAttribute.ConstructorArguments.FirstOrDefault().Value;
                         methods.Add(method);
                     }
+                    else if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
+                    {
+                        version = Convert.ToUInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                    }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
                         cache = true;
@@ -398,6 +403,7 @@ namespace WebExpress.WebCore.WebRestApi
                         RestApiClass = resourceType,
                         ModuleId = moduleId,
                         Methods = methods.Distinct(),
+                        Version = version,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),

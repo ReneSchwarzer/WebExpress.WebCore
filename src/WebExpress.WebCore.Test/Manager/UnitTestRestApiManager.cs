@@ -62,9 +62,9 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), "/aca/mca")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), "/aca/mca/ra1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), "/aca/mca/ra1x/ra1y")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), "/aca/mca/1")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), "/aca/mca/1/ra1x/2")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), "/aca/mca/1/ra1x/2/ra1y/3")]
         public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions

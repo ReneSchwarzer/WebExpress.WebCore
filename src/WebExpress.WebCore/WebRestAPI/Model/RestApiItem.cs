@@ -78,6 +78,11 @@ namespace WebExpress.WebCore.WebRestApi.Model
         public IEnumerable<CrudMethod> Methods { get; set; }
 
         /// <summary>
+        /// Returns the version number of the rest api.
+        /// </summary>
+        public uint Version { get; set; }
+
+        /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; set; }
@@ -138,7 +143,8 @@ namespace WebExpress.WebCore.WebRestApi.Model
                 EndpointId = RestApiId,
                 Cache = Cache,
                 IncludeSubPaths = IncludeSubPaths,
-                Methods = Methods
+                Methods = Methods,
+                Version = Version
             };
 
             if
