@@ -107,6 +107,12 @@ pagemanager.addresource=The page '{0}' has been registered in the module '{1}'.
 pagemanager.addresource.duplicate=The page '{0}' of module '{1}' has already been added.
 pagemanager.resource=Page: '{0}' for module '{1}'
 
+restapimanager.initialization=The REST API manager has been initialized.
+restapimanager.moduleless=The REST API '{0}' does not have any information about the module.
+restapimanager.addresource=The REST API '{0}' has been registered in the module '{1}'.
+restapimanager.addresource.duplicate=The REST API '{0}' of module '{1}' has already been added.
+restapimanager.resource=REST API: '{0}' for module '{1}'
+
 statuspagemanager.initialization=The status page manager has been initialized.
 statuspagemanager.register=Status {0} has been registered and assigned to the status page '{1}'.
 statuspagemanager.duplicat=The status {0} has already been registered. Therefore, the status page '{1}' is not used.

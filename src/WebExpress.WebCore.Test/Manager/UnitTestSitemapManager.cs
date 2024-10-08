@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(14, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(19, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -66,6 +66,8 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestResourceA2X), "/aca/a2x")]
         [InlineData(typeof(TestResourceAB1X), "/aca/mcab/ab1x")]
         [InlineData(typeof(TestPageA1X), "/aca/mca/pa1x")]
+        [InlineData(typeof(TestPageA1Y), "/aca/mca/pa1y")]
+        [InlineData(typeof(TestPageA1Z), "/aca/mca/pa1z")]
 
         public void GetUri(Type resourceType, string expected)
         {

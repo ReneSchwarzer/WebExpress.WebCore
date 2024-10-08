@@ -1,10 +1,10 @@
 ﻿using System;
-using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebAttribute
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ParentAttribute<T> : Attribute, IResourceAttribute where T : class, IResource
+    public class ParentAttribute<T> : Attribute, IResourceAttribute where T : class, IEndpoint
     {
         /// <summary>
         /// Initializes a new instance of the class.

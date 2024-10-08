@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            Assert.Equal(1, componentHub.PageManager.Pages.Count());
+            Assert.Equal(3, componentHub.PageManager.Pages.Count());
         }
 
         /// <summary>
@@ -45,6 +45,8 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "webexpress.webcore.test.testpagea1x")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "webexpress.webcore.test.testpagea1y")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "webexpress.webcore.test.testpagea1z")]
         public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
@@ -61,6 +63,8 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "webindex:homepage.label")]
 
         public void Title(Type applicationType, Type moduleType, Type resourceType, string id)
         {
@@ -78,6 +82,8 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "/aca/mca")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "/aca/mca")]
+        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "/aca/mca")]
         public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions

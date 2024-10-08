@@ -163,7 +163,7 @@ namespace WebExpress.WebCore.WebPage.Model
         }
 
         /// <summary>
-        /// Remove an module assignment
+        /// Remove an module assignment.
         /// </summary>
         /// <param name="moduleContext">The context of the module.</param>
         public void DetachModule(IModuleContext moduleContext)

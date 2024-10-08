@@ -33,32 +33,18 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Post-processes the request and response.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="response">The response.</param>
-        /// <returns>The processed response.</returns>
-        public Response PostProcess(WebMessage.Request request, Response response)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Pre-processes the request.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        public void PreProcess(WebMessage.Request request)
-        {
-
-        }
-
-        /// <summary>
         /// Processes the request.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The processed response.</returns>
         public Response Process(WebMessage.Request request)
         {
+            // test the request
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
+            }
+
             return null;
         }
 

@@ -196,11 +196,9 @@ namespace WebExpress.WebCore.WebResource
                     var resourceItem = new ResourceItem(_componentManager.ResourceManager)
                     {
                         ResourceId = id,
-                        Title = title,
                         ParentId = parent,
                         ResourceClass = resourceType,
                         ModuleId = moduleId,
-                        Scopes = scopes,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),

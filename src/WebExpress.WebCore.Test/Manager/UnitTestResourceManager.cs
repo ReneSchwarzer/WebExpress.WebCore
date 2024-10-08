@@ -50,6 +50,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), typeof(TestResourceA2X), "webexpress.webcore.test.testresourcea2x")]
         [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
         [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
+        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestPageA1X), null)]
 
         public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
         {
@@ -59,7 +60,7 @@ namespace WebExpress.WebCore.Test.Manager
             var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
 
             // test execution
-            Assert.Equal(id, resource.EndpointId);
+            Assert.Equal(id, resource?.EndpointId);
         }
 
         /// <summary>

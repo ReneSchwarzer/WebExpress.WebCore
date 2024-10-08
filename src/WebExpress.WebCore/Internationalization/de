@@ -107,6 +107,12 @@ pagemanager.addresource=Die Seite '{0}' wurde in dem Modul '{1}' registiert.
 pagemanager.addresource.duplicate=Die Seite '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
 pagemanager.resource=Seite: '{0}' für das Modul '{1}'
 
+restapimanager.initialization=Der RestApiManager wurde initialisiert.
+restapimanager.moduleless=Die Seite '{0}' besitzt keine Angaben zum Modul.
+restapimanager.addresource=Die Seite '{0}' wurde in dem Modul '{1}' registiert.
+restapimanager.addresource.duplicate=Die Seite '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
+restapimanager.resource=Seite: '{0}' für das Modul '{1}'
+
 statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
 statuspagemanager.register=Status {0} wurde registriert und der Statusseite '{1}' zugewiesen.
 statuspagemanager.duplicat=Der Status {0} wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.

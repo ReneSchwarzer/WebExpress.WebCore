@@ -42,15 +42,23 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
+        public RenderContext()
+        {
+            VisualTree = CreateVisualTree();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
         /// <param name="page">The page where the rendering is taking place.</param>
         /// <param name="pageContext">The context of the associated page.</param>
         /// <param name="request">The request associated with the rendering context.</param>
         public RenderContext(IPage page, IPageContext pageContext, Request request)
+            : this()
         {
             Page = page;
             PageContext = pageContext;
             Request = request;
-            VisualTree = CreateVisualTree();
         }
 
         /// <summary>

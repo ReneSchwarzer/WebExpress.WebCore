@@ -10,6 +10,7 @@ using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
@@ -100,6 +101,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the page manager.</returns>
         IPageManager PageManager { get; }
+
+        /// <summary>
+        /// Returns the rest api manager.
+        /// </summary>
+        /// <returns>The instance of the rest api manager.</returns>
+        IRestApiManager RestApiManager { get; }
 
         /// <summary>
         /// Returns the sitemap manager.

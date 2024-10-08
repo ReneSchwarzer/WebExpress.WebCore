@@ -3,40 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.WebResource.Model
+namespace WebExpress.WebCore.WebRestApi.Model
 {
     /// <summary>
-    /// A resource element that contains meta information about a resource.
+    /// A rest api resource that contains meta information about a rest api resource.
     /// </summary>
-    internal class ResourceItem : IDisposable
+    internal class RestApiItem : IDisposable
     {
-        private readonly IResourceManager _resourceManager;
+        private readonly IRestApiManager _restApiManager;
 
         /// <summary>
-        /// An event that fires when an ressource is added.
+        /// An event that fires when an rest api resource is added.
         /// </summary>
-        public event EventHandler<IResourceContext> AddResource;
+        public event EventHandler<IRestApiContext> AddRestApi;
 
         /// <summary>
-        /// An event that fires when an resource is removed.
+        /// An event that fires when an rest api resource is removed.
         /// </summary>
-        public event EventHandler<IResourceContext> RemoveResource;
+        public event EventHandler<IRestApiContext> RemoveRestApi;
 
         /// <summary>
-        /// Returns or sets the resource id.
+        /// Returns or sets the rest api resource id.
         /// </summary>
-        public string ResourceId { get; set; }
-
-        /// <summary>
-        /// Returns or sets the resource title.
-        /// </summary>
-        //public string Title { get; set; }
+        public string RestApiId { get; set; }
 
         /// <summary>
         /// Returns or sets the parent id.
@@ -44,26 +38,19 @@ namespace WebExpress.WebCore.WebResource.Model
         public string ParentId { get; set; }
 
         /// <summary>
-        /// Returns or sets the type of resource.
+        /// Returns or sets the type of rest api resource.
         /// </summary>
-        public Type ResourceClass { get; set; }
+        public Type RestApiClass { get; set; }
 
         /// <summary>
-        /// Returns or sets the instance of the resource, if the resource is cached, otherwise null.
+        /// Returns or sets the instance of the rest api resource, if the rest api resource is cached, otherwise null.
         /// </summary>
-        public IEndpoint Instance { get; set; }
+        public IRestApi Instance { get; set; }
 
         /// <summary>
         /// Returns or sets the module id.
         /// </summary>
         public string ModuleId { get; set; }
-
-        /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
-        /// is a string with a name (e.g. global, admin), which can be used by elements to 
-        /// determine whether content and how content should be displayed.
-        /// </summary>
-        //public IReadOnlyList<string> Scopes { get; set; }
 
         /// <summary>
         /// Returns or sets the paths of the resource.
@@ -81,7 +68,7 @@ namespace WebExpress.WebCore.WebResource.Model
         public bool IncludeSubPaths { get; set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the resource to be active.
+        /// Returns the conditions that must be met for the rest api resource to be active.
         /// </summary>
         public ICollection<ICondition> Conditions { get; set; }
 
@@ -91,7 +78,7 @@ namespace WebExpress.WebCore.WebResource.Model
         public bool Cache { get; set; }
 
         /// <summary>
-        /// Returns whether it is a optional resource.
+        /// Returns whether it is a optional rest api resource.
         /// </summary>
         public bool Optional { get; set; }
 
@@ -103,8 +90,8 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <summary>
         /// Returns the directory where the module instances are listed.
         /// </summary>
-        private IDictionary<IModuleContext, IResourceContext> Dictionary { get; }
-            = new Dictionary<IModuleContext, IResourceContext>();
+        private IDictionary<IModuleContext, IRestApiContext> Dictionary { get; }
+            = new Dictionary<IModuleContext, IRestApiContext>();
 
         /// <summary>
         /// Returns the associated module contexts.
@@ -112,17 +99,17 @@ namespace WebExpress.WebCore.WebResource.Model
         public IEnumerable<IModuleContext> ModuleContexts => Dictionary.Keys;
 
         /// <summary>
-        /// Returns the resource contexts.
+        /// Returns the rest api contexts.
         /// </summary>
-        public IEnumerable<IResourceContext> ResourceContexts => Dictionary.Values;
+        public IEnumerable<IRestApiContext> RestApiContexts => Dictionary.Values;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ResourceItem"/> class.
+        /// Initializes a new instance of the <see cref="RestApiItem"/> class.
         /// </summary>
-        /// <param name="resourceManager">The resource manager.</param>
-        internal ResourceItem(IResourceManager resourceManager)
+        /// <param name="restApiManager">The rest api manager.</param>
+        internal RestApiItem(IRestApiManager restApiManager)
         {
-            _resourceManager = resourceManager;
+            _restApiManager = restApiManager;
         }
 
         /// <summary>
@@ -134,17 +121,16 @@ namespace WebExpress.WebCore.WebResource.Model
             // only if no instance has been created yet
             if (Dictionary.ContainsKey(moduleContext))
             {
-                Log.Warning(message: I18N.Translate("webexpress:resourcemanager.addresource.duplicate", ResourceId, moduleContext.ModuleId));
+                Log.Warning(message: I18N.Translate("webexpress:restapimanager.addresource.duplicate", RestApiId, moduleContext.ModuleId));
 
                 return;
             }
 
             // create context
-            var resourceContext = new ResourceContext(moduleContext, _resourceManager, this)
+            var restApiContext = new RestApiContext(moduleContext, _restApiManager, this)
             {
-                //Scopes = Scopes,
                 Conditions = Conditions,
-                EndpointId = ResourceId,
+                EndpointId = RestApiId,
                 Cache = Cache,
                 IncludeSubPaths = IncludeSubPaths
             };
@@ -152,13 +138,13 @@ namespace WebExpress.WebCore.WebResource.Model
             if
             (
                 !Optional ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{ResourceId.ToLower()}") ||
+                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{RestApiId.ToLower()}") ||
                 moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.*") ||
-                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{ResourceId.ToLower()}", x).Success).Any()
+                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{RestApiId.ToLower()}", x).Success).Any()
             )
             {
-                Dictionary.Add(moduleContext, resourceContext);
-                OnAddResource(resourceContext);
+                Dictionary.Add(moduleContext, restApiContext);
+                OnAddRestApi(restApiContext);
             }
         }
 
@@ -174,9 +160,9 @@ namespace WebExpress.WebCore.WebResource.Model
                 return;
             }
 
-            foreach (var resourceContext in Dictionary.Values)
+            foreach (var restApiContext in Dictionary.Values)
             {
-                OnRemoveResource(resourceContext);
+                OnRemovePage(restApiContext);
             }
 
             Dictionary.Remove(moduleContext);
@@ -193,46 +179,46 @@ namespace WebExpress.WebCore.WebResource.Model
         }
 
         /// <summary>
-        /// Raises the AddResource event.
+        /// Raises the AddRestApi event.
         /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnAddResource(IResourceContext resourceContext)
+        /// <param name="restApiContext">The rest api context.</param>
+        private void OnAddRestApi(IRestApiContext restApiContext)
         {
-            AddResource?.Invoke(this, resourceContext);
+            AddRestApi?.Invoke(this, restApiContext);
         }
 
         /// <summary>
-        /// Raises the RemoveResource event.
+        /// Raises the RemoveRestApi event.
         /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnRemoveResource(IResourceContext resourceContext)
+        /// <param name="restApiContext">The rest api context.</param>
+        private void OnRemovePage(IRestApiContext restApiContext)
         {
-            RemoveResource?.Invoke(this, resourceContext);
+            RemoveRestApi?.Invoke(this, restApiContext);
         }
 
         /// <summary>
-        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged rest api resources.
         /// </summary>
         public void Dispose()
         {
-            foreach (Delegate d in AddResource.GetInvocationList())
+            foreach (Delegate d in AddRestApi.GetInvocationList())
             {
-                AddResource -= (EventHandler<IResourceContext>)d;
+                AddRestApi -= (EventHandler<IRestApiContext>)d;
             }
 
-            foreach (Delegate d in RemoveResource.GetInvocationList())
+            foreach (Delegate d in RemoveRestApi.GetInvocationList())
             {
-                RemoveResource -= (EventHandler<IResourceContext>)d;
+                RemoveRestApi -= (EventHandler<IRestApiContext>)d;
             }
         }
 
         /// <summary>
         /// Convert the resource element to a string.
         /// </summary>
-        /// <returns>The resource element in its string representation.</returns>
+        /// <returns>The rest api resource element in its string representation.</returns>
         public override string ToString()
         {
-            return $"Resource '{ResourceId}'";
+            return $"RestApi '{RestApiId}'";
         }
     }
 }

@@ -7,28 +7,18 @@ namespace WebExpress.WebCore.Test
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:homepage.label")]
-    [Segment("pa1x", "webindex:homepage.label")]
+    [Segment("pa1z", "webindex:homepage.label")]
     [ContextPath(null)]
     [Module<TestModuleA1>]
-    public sealed class TestPageA1X : IPage<RenderContext>
+    public sealed class TestPageA1Z : Page<RenderContext>
     {
-        /// <summary>
-        /// Returns or sets the title of the page.
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Returns or sets the page context.
-        /// </summary>
-        public IPageContext PageContext { get; private set; }
-
         /// <summary>
         /// Instillation of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
-        public TestPageA1X(IPageContext pageContext)
+        private TestPageA1Z(IPageContext pageContext)
+            : base(pageContext)
         {
-            PageContext = pageContext;
 
             // test the injection
             if (pageContext == null)
@@ -38,19 +28,10 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Redirects to the specified URI.
-        /// </summary>
-        /// <param name="uri">The URI to redirect to.</param>
-        public void Redirecting(string uri)
-        {
-
-        }
-
-        /// <summary>
         /// Processing of the page.
         /// </summary>
         /// <param name="context">The context for rendering the page.</param>
-        public void Process(IRenderContext context)
+        public override void Process(IRenderContext context)
         {
             // test the context
             if (context == null)

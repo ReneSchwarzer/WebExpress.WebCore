@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
@@ -29,6 +30,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly ModuleManager _moduleManager;
         private readonly ResourceManager _resourceManager;
         private readonly PageManager _pageManager;
+        private readonly RestApiManager _restApiManager;
         private readonly SitemapManager _sitemapManager;
 
         /// <summary>
@@ -64,6 +66,7 @@ namespace WebExpress.WebCore.WebComponent
                 _sitemapManager,
                 _resourceManager,
                 _pageManager,
+                _restApiManager,
                 EventManager,
                 JobManager,
                 StatusPageManager,
@@ -133,6 +136,12 @@ namespace WebExpress.WebCore.WebComponent
         public IPageManager PageManager => _pageManager;
 
         /// <summary>
+        /// Returns the rest api manager.
+        /// </summary>
+        /// <returns>The instance of the rest api manager.</returns>
+        public IRestApiManager RestApiManager => _restApiManager;
+
+        /// <summary>
         /// Returns the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
@@ -174,6 +183,7 @@ namespace WebExpress.WebCore.WebComponent
             _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
+            _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
             StatusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             EventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;

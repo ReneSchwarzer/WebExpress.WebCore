@@ -7,10 +7,10 @@ namespace WebExpress.WebCore.Test
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:homepage.label")]
-    [Segment("pa1x", "webindex:homepage.label")]
+    [Segment("pa1y", "webindex:homepage.label")]
     [ContextPath(null)]
     [Module<TestModuleA1>]
-    public sealed class TestPageA1X : IPage<RenderContext>
+    public sealed class TestPageA1Y : IPage
     {
         /// <summary>
         /// Returns or sets the title of the page.
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test
         /// Instillation of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
-        public TestPageA1X(IPageContext pageContext)
+        public TestPageA1Y(IPageContext pageContext)
         {
             PageContext = pageContext;
 
