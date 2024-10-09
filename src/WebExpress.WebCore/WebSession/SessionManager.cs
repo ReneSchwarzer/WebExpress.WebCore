@@ -5,6 +5,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebSession
 {

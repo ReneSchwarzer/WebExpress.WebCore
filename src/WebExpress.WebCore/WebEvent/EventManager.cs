@@ -2,7 +2,7 @@
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebJob;
+using WebExpress.WebCore.WebEvent.Model;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 

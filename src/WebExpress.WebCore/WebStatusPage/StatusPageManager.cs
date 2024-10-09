@@ -6,6 +6,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebStatusPage.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage

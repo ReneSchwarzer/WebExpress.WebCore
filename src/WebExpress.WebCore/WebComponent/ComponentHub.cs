@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent.Model;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;

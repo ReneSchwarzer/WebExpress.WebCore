@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebPackage.Model;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebPackage

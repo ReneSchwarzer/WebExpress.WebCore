@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebJob.Model;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 

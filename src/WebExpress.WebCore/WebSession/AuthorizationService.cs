@@ -1,4 +1,6 @@
-﻿namespace WebExpress.WebCore.WebSession
+﻿using WebExpress.WebCore.WebSession.Model;
+
+namespace WebExpress.WebCore.WebSession
 {
     public abstract class AuthorizationService
     {

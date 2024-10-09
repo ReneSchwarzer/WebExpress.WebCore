@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSitemap

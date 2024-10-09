@@ -8,6 +8,7 @@ using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSitemap

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using WebExpress.WebCore.Internationalization.Model;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;

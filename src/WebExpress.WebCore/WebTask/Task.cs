@@ -4,12 +4,13 @@ using System.Threading;
 
 namespace WebExpress.WebCore.WebTask
 {
+
+    /// <summary>
+    /// Represents a task that can be executed asynchronously.
+    /// </summary>
     public class Task : ITask
     {
-        /// <summary>
-        /// Internal management of progress.
-        /// </summary>
-        private int _Progress { get; set; }
+        private int _progress;
 
         /// <summary>
         /// Event is triggered when the task is executed.
@@ -22,7 +23,7 @@ namespace WebExpress.WebCore.WebTask
         public event EventHandler<TaskEventArgs> Finish;
 
         /// <summary>
-        /// The id of the task.
+        /// Returns the id of the task.
         /// </summary>
         public string Id { get; internal set; }
 
@@ -46,8 +47,8 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         public int Progress
         {
-            get => _Progress;
-            set => _Progress = Math.Min(value, 100);
+            get => _progress;
+            set => _progress = Math.Min(value, 100);
         }
 
         /// <summary>
@@ -87,11 +88,11 @@ namespace WebExpress.WebCore.WebTask
             {
                 State = TaskState.Run;
 
-                this.Progress = 0;
+                Progress = 0;
 
                 OnProcess();
 
-                this.Progress = 100;
+                Progress = 100;
 
                 State = TaskState.Finish;
 

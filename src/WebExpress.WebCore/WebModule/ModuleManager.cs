@@ -5,6 +5,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebModule.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 

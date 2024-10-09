@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebTask.Model;
 
 namespace WebExpress.WebCore.WebTask
 {
