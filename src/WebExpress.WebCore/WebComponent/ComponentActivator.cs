@@ -55,8 +55,9 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="componentType">The type of the component to create.</param>
         /// <param name="context">The context to pass to the component's constructor.</param>
         /// <param name="componentManager">The component manager to use for dependency injection.</param>
+        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
         /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T, C>(Type componentType, C context, IComponentHub componentManager) where T : class, IComponent where C : IContext
+        public static T CreateInstance<T, C>(Type componentType, C context, IComponentHub componentManager, params object[] advancedParameters) where T : class, IComponent where C : IContext
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -75,7 +76,9 @@ namespace WebExpress.WebCore.WebComponent
                         parameter.ParameterType == typeof(C) ? context :
                         properties.Where(x => x.PropertyType == parameter.ParameterType)
                                   .FirstOrDefault()?
-                                  .GetValue(componentManager) ?? null
+                                  .GetValue(componentManager) ??
+                        advancedParameters.Where(x => x.GetType() == parameter.ParameterType)
+                                  .FirstOrDefault() ?? null
                     ).ToArray();
 
                     if (constructor.Invoke(parameterValues) is T component)

@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a successful response according to RFC 2616 Section 6.
     /// </summary>
+    [StatusCode(200)]
     public class ResponseOK : Response
     {
         /// <summary>
@@ -10,7 +13,6 @@
         /// </summary>
         public ResponseOK()
         {
-            Status = 200;
             Reason = "OK";
         }
     }

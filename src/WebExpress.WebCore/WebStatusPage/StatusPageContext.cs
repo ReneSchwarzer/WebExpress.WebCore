@@ -1,8 +1,12 @@
-﻿using WebExpress.WebCore.WebPlugin;
+﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
 {
+    /// <summary>
+    /// Represents the context for a status page.
+    /// </summary>
     public class StatusPageContext : IStatusPageContext
     {
         /// <summary>
@@ -11,18 +15,28 @@ namespace WebExpress.WebCore.WebStatusPage
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status code.
+        /// Returns the associated application context.
         /// </summary>
-        public int Code { get; internal set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status title.
+        /// Returns or sets the status id.
         /// </summary>
-        public string Title { get; internal set; }
+        public string StatusId { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status icon.
+        /// Returns the status code.
         /// </summary>
-        public UriResource Icon { get; internal set; }
+        public int StatusCode { get; internal set; }
+
+        /// <summary>
+        /// Returns the status title.
+        /// </summary>
+        public string StatusTitle { get; internal set; }
+
+        /// <summary>
+        /// Returns the status icon.
+        /// </summary>
+        public UriResource StatusIcon { get; internal set; }
     }
 }

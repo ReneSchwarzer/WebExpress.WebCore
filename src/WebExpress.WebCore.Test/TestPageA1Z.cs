@@ -13,13 +13,11 @@ namespace WebExpress.WebCore.Test
     public sealed class TestPageA1Z : Page<RenderContext>
     {
         /// <summary>
-        /// Instillation of the page. Here, for example, managed resources can be loaded. 
+        /// Initialization of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
         private TestPageA1Z(IPageContext pageContext)
-            : base(pageContext)
         {
-
             // test the injection
             if (pageContext == null)
             {

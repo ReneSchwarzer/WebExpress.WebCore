@@ -1,44 +1,49 @@
 ﻿using System;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage.Model
 {
+    /// <summary>
+    /// Represents a status page item.
+    /// </summary>
     internal class StatusPageItem
     {
+        /// <summary>
+        /// Returns the status page id.
+        /// </summary>
+        public string StatusPageId { get; internal set; }
+
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the resource id.
+        /// Returns the associated application context.
         /// </summary>
-        public string Id { get; internal set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status code.
+        /// Returns status page context.
         /// </summary>
-        public int StatusCode { get; internal set; }
+        public StatusPageContext StatusPageContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status title.
+        /// Returns the status code.
         /// </summary>
-        public string Title { get; internal set; }
+        public Type StatusResponse { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status icon.
-        /// </summary>
-        public UriResource Icon { get; internal set; }
-
-        /// <summary>
-        /// Returns or sets the type of status page.
+        /// Returns the type of status page.
         /// </summary>
         public Type StatusPageClass { get; internal set; }
 
-        ///// <summary>
-        ///// Returns or sets the module id.
-        ///// </summary>
-        //public string ModuleId { get; internal set; }
+        /// <summary>
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

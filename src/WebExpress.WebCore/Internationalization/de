@@ -115,9 +115,11 @@ restapimanager.resource=Seite: '{0}' für das Modul '{1}'
 restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
 
 statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
-statuspagemanager.register=Status {0} wurde registriert und der Statusseite '{1}' zugewiesen.
-statuspagemanager.duplicat=Der Status {0} wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
-statuspagemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für das Modul '{0}' nicht zugewiesen.
+statuspagemanager.applicationless=Die Statusseite '{0}' besitzt keine Angaben zur Anwendung.
+statuspagemanager.applicationrich=Die Statusseite '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
+statuspagemanager.register=Der Status '{0}' wurde registriert und der Statusseite '{1}' zugewiesen.
+statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
+statuspagemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
 statuspagemanager.statuspage=Statuscode: '{0}'
 
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.

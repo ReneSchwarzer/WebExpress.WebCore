@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test
     public sealed class TestResourceA2X : IResource
     {
         /// <summary>
-        /// Instillation of the resource. Here, for example, managed resources can be loaded. 
+        /// Initialization of the resource. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="resourceManager">The resource manager.</param>
         /// <param name="resourceContext">The context of the resource.</param>

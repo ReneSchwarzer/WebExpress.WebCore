@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response according to RFC 2616 Section 6.
     /// </summary>
+    [StatusCode(403)]
     public class ResponseForbidden : Response
     {
         /// <summary>
@@ -11,7 +14,6 @@
         public ResponseForbidden()
         {
             var content = "<html><head><title>403</title></head><body>403 - Forbidden</body></html>";
-            Status = 403;
             Reason = "Forbidden";
 
             Header.ContentType = "text/html";

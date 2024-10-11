@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response for the HTTP 500 Internal Server Error status code according to RFC 2616 Section 6.
     /// </summary>
+    [StatusCode(500)]
     public class ResponseInternalServerError : Response
     {
         /// <summary>
@@ -11,7 +14,6 @@
         public ResponseInternalServerError()
         {
             var content = "<html><head><title>404</title></head><body>500 - Internal Server Error</body></html>";
-            Status = 500;
             Reason = "Internal Server Error";
 
             Header.ContentType = "text/html";

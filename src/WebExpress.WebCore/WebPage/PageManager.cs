@@ -12,7 +12,6 @@ using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebSitemap;
-using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
@@ -83,17 +82,18 @@ namespace WebExpress.WebCore.WebPage
                     {
                         var type = endpoint.GetType();
                         var context = default(IRenderContext);
+                        var pageContetx = endpontContext as IPageContext;
 
                         if (type.IsGenericType)
                         {
                             var typeOfT = type.GetGenericArguments()[0];
-                            object[] parameters = [endpoint as IPage, endpontContext as IPageContext, request];
+                            var parameters = new object[] { endpoint as IPage, endpontContext as IPageContext, request };
 
                             context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
                         }
                         else
                         {
-                            context = new RenderContext(endpoint as IPage, endpontContext as IPageContext, request);
+                            context = new RenderContext(endpontContext.ModuleContext?.ApplicationContext, request, pageContetx.Scopes);
                         }
 
                         (endpoint as IPage).Process(context);
@@ -272,7 +272,7 @@ namespace WebExpress.WebCore.WebPage
                 return instance;
             }
 
-            return resourceItem?.Instance as IPage;
+            return resourceItem?.Instance;
         }
 
         /// <summary>
@@ -293,8 +293,7 @@ namespace WebExpress.WebCore.WebPage
 
             foreach (var resourceType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IPage).Name) != null)
-                .Where(x => x.GetInterface(typeof(IStatusPage).Name) == null))
+                .Where(x => x.GetInterface(typeof(IPage).Name) != null))
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
@@ -317,10 +316,6 @@ namespace WebExpress.WebCore.WebPage
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
-                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
-                    {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                    }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
                         parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
@@ -337,10 +332,6 @@ namespace WebExpress.WebCore.WebPage
                     {
                         moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
-                    {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
-                    }
                     else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
@@ -353,6 +344,21 @@ namespace WebExpress.WebCore.WebPage
                     else if (customAttribute.AttributeType == typeof(OptionalAttribute))
                     {
                         optional = true;
+                    }
+                }
+
+                foreach (var customAttribute in resourceType.CustomAttributes
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
+                {
+                    var buf = typeof(ModuleAttribute<>);
+
+                    if (customAttribute.AttributeType == typeof(TitleAttribute))
+                    {
+                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
+                    {
+                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
                     }
                 }
 

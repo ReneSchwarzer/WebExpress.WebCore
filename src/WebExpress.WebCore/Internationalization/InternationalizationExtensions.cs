@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <returns>The value of the key in the current language.</returns>
         public static string I18N(this RenderContext obj, string key)
         {
-            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, obj?.PageContext?.PluginContext?.PluginId, key);
+            return WebEx.ComponentHub?.InternationalizationManager.Translate(obj.Culture, obj?.ApplicationContext?.PluginContext?.PluginId, key);
         }
 
         /// <summary>

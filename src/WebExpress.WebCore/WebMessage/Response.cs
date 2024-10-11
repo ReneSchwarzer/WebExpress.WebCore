@@ -1,32 +1,35 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using System.Reflection;
+using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response according to RFC 2616 Section 6.
     /// </summary>
-    public class Response
+    public abstract class Response
     {
         /// <summary>
-        /// Setzt oder liefert die Optionen
+        /// Returns the response header fields.
         /// </summary>
         public ResponseHeaderFields Header { get; } = new ResponseHeaderFields();
 
         /// <summary>
-        /// Setzt oder liefert den Content
+        /// Returns or sets the response content.
         /// </summary>
         public object Content { get; set; }
 
         /// <summary>
-        /// Liefert oder setzt den Statuscode
+        /// Returns the status code of the response.
         /// </summary>
-        public int Status { get; protected set; }
+        public int Status => GetType().GetCustomAttribute<StatusCodeAttribute>().StatusCode;
 
         /// <summary>
-        /// Liefert oder setzt den Statustext
+        /// Returns or sets the reason phrase of the response.
         /// </summary>
         public string Reason { get; protected set; }
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the Response class.
         /// </summary>
         protected Response()
         {

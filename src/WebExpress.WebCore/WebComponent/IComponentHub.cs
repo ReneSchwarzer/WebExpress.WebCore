@@ -85,12 +85,6 @@ namespace WebExpress.WebCore.WebComponent
         JobManager JobManager { get; }
 
         /// <summary>
-        /// Returns the status page manager.
-        /// </summary>
-        /// <returns>The instance of the status page manager.</returns>
-        StatusPageManager StatusPageManager { get; }
-
-        /// <summary>
         /// Returns the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
@@ -113,6 +107,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         ISitemapManager SitemapManager { get; }
+
+        /// <summary>
+        /// Returns the status page manager.
+        /// </summary>
+        /// <returns>The instance of the status page manager.</returns>
+        IStatusPageManager StatusPageManager { get; }
 
         /// <summary>
         /// Returns the internationalization manager.

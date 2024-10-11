@@ -18,13 +18,13 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateComponentHub();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
             pluginManager.Register();
 
-            Assert.Equal(7, componentManager.ModuleManager.Modules.Count());
+            Assert.Equal(7, componentHub.ModuleManager.Modules.Count());
         }
 
         /// <summary>
@@ -34,14 +34,14 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var moduleManager = componentManager.ModuleManager as ModuleManager;
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var moduleManager = componentHub.ModuleManager as ModuleManager;
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             moduleManager.Remove(plugin);
 
-            Assert.Empty(componentManager.ModuleManager.Modules);
+            Assert.Empty(componentHub.ModuleManager.Modules);
         }
 
         /// <summary>
@@ -54,11 +54,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type moduleType, string id)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             Assert.Equal(id, module.ModuleId);
         }
@@ -73,11 +73,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void Name(Type applicationType, Type moduleType, string name)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             Assert.Equal(name, module.ModuleName);
         }
@@ -92,11 +92,11 @@ namespace WebExpress.WebCore.Test.Manager
         public void Description(Type applicationType, Type moduleType, string description)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var plugin = componentManager.PluginManager.GetPlugin(typeof(TestPlugin));
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             Assert.Equal(description, module.Description);
         }
@@ -113,8 +113,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void Icon(Type applicationType, Type moduleType, string icon)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             // test execution
             Assert.Equal(icon, module.Icon);
@@ -134,8 +134,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, Type moduleType, string contextPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             // test execution
             Assert.Equal(contextPath, module.ContextPath);
@@ -155,8 +155,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void AssetPath(Type applicationType, Type moduleType, string assetPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             // test execution
             Assert.Equal(assetPath, module.AssetPath);
@@ -176,8 +176,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void DataPath(Type applicationType, Type moduleType, string dataPath)
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var module = componentManager.ModuleManager.GetModule(applicationType, moduleType);
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
 
             // test execution
             Assert.Equal(dataPath, module.DataPath);
@@ -190,10 +190,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentManager.ModuleManager.GetType()));
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ModuleManager.GetType()));
         }
 
         /// <summary>
@@ -203,10 +203,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
 
             // test execution
-            foreach (var module in componentManager.ModuleManager.Modules)
+            foreach (var module in componentHub.ModuleManager.Modules)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(module.GetType()), $"Module context {module.GetType().Name} does not implement IContext.");
             }

@@ -11,6 +11,11 @@ namespace WebExpress.WebCore.WebPage
     public class VisualTree : IVisualTree
     {
         /// <summary>
+        /// Returns the title of the html document.
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
         /// Returns the favicons.
         /// </summary>
         public List<Favicon> Favicons { get; } = [];
@@ -51,9 +56,9 @@ namespace WebExpress.WebCore.WebPage
         public List<KeyValuePair<string, string>> Meta { get; } = [];
 
         /// <summary>
-        /// Returns the content.
+        /// Returns or sets the content.
         /// </summary>
-        public IHtmlNode Content { get; }
+        public IHtmlNode Content { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -110,9 +115,8 @@ namespace WebExpress.WebCore.WebPage
         public virtual IHtmlNode Render(IVisualTreeContext context)
         {
             var html = new HtmlElementRootHtml();
-            html.Head.Title = I18N.Translate(context.Request, context.PageContext.PageTitle);
+            html.Head.Title = I18N.Translate(context.Request, Title);
             html.Head.Favicons = Favicons?.Select(x => new Favicon(x.Url, x.Mediatype));
-            //html.Head.Base = Context.ContextPath.ToString();
             html.Head.Styles = Styles;
             html.Head.Meta = Meta;
             html.Head.Scripts = HeaderScripts;

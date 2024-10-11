@@ -1,50 +1,25 @@
-﻿using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
 {
     /// <summary>
     /// Interface of the status pages.
     /// </summary>
-    public interface IStatusPage
+    public interface IStatusPage : IComponent
     {
         /// <summary>
-        /// Returns the resource context where the resource exists.
+        /// Processing of the status page.
         /// </summary>
-        IPageContext ResourceContext { get; }
+        /// <param name="context">The context for rendering the status page.</param>
+        void Process(IRenderContext context);
+    }
 
-        /// <summary>
-        /// Returns or sets the status code.
-        /// </summary>
-        int StatusCode { get; set; }
-
-        /// <summary>
-        /// Returns or sets the status title.
-        /// </summary>
-        string StatusTitle { get; set; }
-
-        /// <summary>
-        /// Returns or sets the status message.
-        /// </summary>
-        string StatusMessage { get; set; }
-
-        /// <summary>
-        /// Returns or sets the status icon.
-        /// </summary>
-        UriResource StatusIcon { get; set; }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="resourceContext">The context of the resource.</param>
-        void Initialization(IPageContext resourceContext);
-
-        /// <summary>
-        /// Processing of the resource.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns>The response.</returns>
-        Response Process(Request request);
+    /// <summary>
+    /// Defines the contract for a status page resource that can be rendered using a specific context.
+    /// </summary>
+    /// <typeparam name="T">The type of the render context.</typeparam>
+    public interface IStatusPage<T> : IStatusPage where T : IRenderContext
+    {
     }
 }

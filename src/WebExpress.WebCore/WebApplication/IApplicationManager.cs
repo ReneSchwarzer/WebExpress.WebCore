@@ -30,27 +30,27 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="applicationId">The application id.</param>
         /// <returns>The context of the application or null.</returns>
-        IApplicationContext GetApplcation(string applicationId);
+        IApplicationContext GetApplication(string applicationId);
 
         /// <summary>
         /// Determines the application contexts for a given application id.
         /// </summary>
         /// <param name="application">The application type.</param>
         /// <returns>The context of the application or null.</returns>
-        IApplicationContext GetApplcation(Type application);
+        IApplicationContext GetApplication(Type application);
 
         /// <summary>
         /// Determines the application contexts for the given application ids.
         /// </summary>
         /// <param name="applicationIds">The applications ids. Can contain regular expressions or * for all.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
-        IEnumerable<IApplicationContext> GetApplcations(IEnumerable<string> applicationIds);
+        IEnumerable<IApplicationContext> GetApplications(IEnumerable<string> applicationIds);
 
         /// <summary>
         /// Determines the application contexts for the given plugin.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
-        IEnumerable<IApplicationContext> GetApplcations(IPluginContext pluginContext);
+        IEnumerable<IApplicationContext> GetApplications(IPluginContext pluginContext);
     }
 }

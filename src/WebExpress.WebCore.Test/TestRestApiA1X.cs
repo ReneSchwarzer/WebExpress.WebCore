@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Test
     public sealed class TestRestApiA1X : IRestApi
     {
         /// <summary>
-        /// Instillation of the rest api resource. Here, for example, managed resources can be loaded. 
+        /// Initialization of the rest api resource. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="restApiContext">The context of the restapi resource.</param>
         public TestRestApiA1X(IRestApiContext restApiContext)

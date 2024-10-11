@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response for a bad request (HTTP 400). See RFC 2616 Section 6
     /// </summary>
+    [StatusCode(400)]
     public class ResponseBadRequest : Response
     {
         /// <summary>
@@ -11,7 +14,6 @@
         public ResponseBadRequest()
         {
             var content = "<html><head><title>404</title></head><body>404 - Bad Request</body></html>";
-            Status = 400;
             Reason = "Bad Request";
 
             Header.ContentType = "text/html";

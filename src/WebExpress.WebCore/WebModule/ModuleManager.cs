@@ -268,7 +268,7 @@ namespace WebExpress.WebCore.WebModule
         /// <returns>The context of the module or null.</returns>
         public IModuleContext GetModule(Type applicationType, Type moduleType)
         {
-            var applicationContext = _componentManager.ApplicationManager.GetApplcation(applicationType);
+            var applicationContext = _componentManager.ApplicationManager.GetApplication(applicationType);
             var item = _dictionary.Values
                 .SelectMany(x => x.Values)
                 .Where(x => x.Dictionary.ContainsKey(applicationContext))
@@ -300,7 +300,7 @@ namespace WebExpress.WebCore.WebModule
         }
 
         /// <summary>
-        /// Determines the module for a given application context and module id.
+        /// Determines the module for a given application context and module type.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="moduleClass">The module class.</param>

@@ -25,6 +25,7 @@ namespace WebExpress.WebCore.WebComponent
     /// </summary>
     public class ComponentHub : IComponentHub
     {
+        private readonly ComponentDictionary _dictionary = [];
         private readonly InternationalizationManager _internationalizationManager;
         private readonly PluginManager _pluginManager;
         private readonly ApplicationManager _applicationManager;
@@ -33,6 +34,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly PageManager _pageManager;
         private readonly RestApiManager _restApiManager;
         private readonly SitemapManager _sitemapManager;
+        private readonly StatusPageManager _statusPageManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -50,11 +52,6 @@ namespace WebExpress.WebCore.WebComponent
         public IHttpServerContext HttpServerContext { get; private set; }
 
         /// <summary>
-        /// Returns the directory where the components are listed.
-        /// </summary>
-        private ComponentDictionary Dictionary { get; } = [];
-
-        /// <summary>
         /// Returns all registered managers.
         /// </summary>
         public IEnumerable<IComponentManager> Managers => new IComponentManager[]
@@ -70,11 +67,11 @@ namespace WebExpress.WebCore.WebComponent
                 _restApiManager,
                 EventManager,
                 JobManager,
-                StatusPageManager,
+                _statusPageManager,
                 _internationalizationManager,
                 SessionManager,
                 TaskManager
-            }.Concat(Dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
+            }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
         /// <summary>
         /// Returns the log manager.
@@ -119,12 +116,6 @@ namespace WebExpress.WebCore.WebComponent
         public JobManager JobManager { get; private set; }
 
         /// <summary>
-        /// Returns the status page manager.
-        /// </summary>
-        /// <returns>The instance of the status page manager.</returns>
-        public StatusPageManager StatusPageManager { get; private set; }
-
-        /// <summary>
         /// Returns the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
@@ -147,6 +138,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         public ISitemapManager SitemapManager => _sitemapManager;
+
+        /// <summary>
+        /// Returns the status page manager.
+        /// </summary>
+        /// <returns>The instance of the status page manager.</returns>
+        public IStatusPageManager StatusPageManager => _statusPageManager;
 
         /// <summary>
         /// Returns the internationalization manager.
@@ -185,7 +182,7 @@ namespace WebExpress.WebCore.WebComponent
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
-            StatusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
+            _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             EventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;
             SessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
@@ -253,7 +250,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <returns>The instance of the component or null.</returns>
         public IComponentManager GetComponent(string id)
         {
-            return Dictionary.Values
+            return _dictionary.Values
                 .SelectMany(x => x)
                 .Where(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase))
                 .Select(x => x.ComponentInstance)
@@ -267,7 +264,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <returns>The instance of the component or null.</returns>
         public T GetComponent<T>() where T : IComponentManager
         {
-            return (T)Dictionary.Values
+            return (T)_dictionary.Values
                 .SelectMany(x => x)
                 .Where(x => x.ComponentClass == typeof(T))
                 .Select(x => x.ComponentInstance)
@@ -281,15 +278,15 @@ namespace WebExpress.WebCore.WebComponent
         internal void Register(IPluginContext pluginContext)
         {
             // the plugin has already been registered
-            if (Dictionary.ContainsKey(pluginContext))
+            if (_dictionary.ContainsKey(pluginContext))
             {
                 return;
             }
 
             var assembly = pluginContext.Assembly;
 
-            Dictionary.Add(pluginContext, []);
-            var componentItems = Dictionary[pluginContext];
+            _dictionary.Add(pluginContext, []);
+            var componentItems = _dictionary[pluginContext];
 
             foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) != null))
             {
@@ -300,12 +297,12 @@ namespace WebExpress.WebCore.WebComponent
 
                 if (!componentItems.Where(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)).Any())
                 {
-                    componentItems.Add(new ComponentItem()
+                    componentItems = componentItems.Concat([ new ComponentItem()
                     {
                         ComponentClass = type,
                         ComponentId = id,
                         ComponentInstance = componentInstance
-                    });
+                    }]);
 
                     HttpServerContext.Log.Debug
                     (
@@ -347,7 +344,7 @@ namespace WebExpress.WebCore.WebComponent
             _applicationManager.Boot(pluginContext);
             _moduleManager.Boot(pluginContext);
 
-            foreach (var component in Dictionary.Values
+            foreach (var component in _dictionary.Values
                 .Where(x => x is IExecutableElements)
                 .Select(x => x as IExecutableElements))
             {
@@ -402,7 +399,7 @@ namespace WebExpress.WebCore.WebComponent
             _applicationManager.ShutDown(pluginContext);
             _moduleManager.ShutDown(pluginContext);
 
-            foreach (var component in Dictionary.Values
+            foreach (var component in _dictionary.Values
                 .Where(x => x is IExecutableElements)
                 .Select(x => x as IExecutableElements))
             {
@@ -421,33 +418,25 @@ namespace WebExpress.WebCore.WebComponent
                 return;
             }
 
-            if (Dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out IEnumerable<ComponentItem> componentItems))
             {
-                return;
+                if (!componentItems.Any())
+                {
+                    return;
+                }
+
+                foreach (var componentItem in componentItems)
+                {
+                    OnRemoveComponent(componentItem.ComponentInstance);
+
+                    HttpServerContext.Log.Debug
+                    (
+                        _internationalizationManager.Translate("webexpress:componentmanager.remove")
+                    );
+                }
             }
 
-            var componentItems = Dictionary[pluginContext];
-
-            if (!componentItems.Any())
-            {
-                return;
-            }
-
-            foreach (var componentItem in componentItems)
-            {
-                OnRemoveComponent(componentItem.ComponentInstance);
-
-                HttpServerContext.Log.Debug
-                (
-                    _internationalizationManager.Translate("webexpress:componentmanager.remove")
-                );
-            }
-
-            _moduleManager.Remove(pluginContext);
-            _applicationManager.Remove(pluginContext);
-            _pluginManager.Remove(pluginContext);
-
-            Dictionary.Remove(pluginContext);
+            _dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -490,7 +479,7 @@ namespace WebExpress.WebCore.WebComponent
                 _applicationManager.PrepareForLog(pluginContext, output, 4);
                 _moduleManager.PrepareForLog(pluginContext, output, 4);
                 _resourceManager.PrepareForLog(pluginContext, output, 4);
-                StatusPageManager.PrepareForLog(pluginContext, output, 4);
+                _statusPageManager.PrepareForLog(pluginContext, output, 4);
                 JobManager.PrepareForLog(pluginContext, output, 4);
             }
 

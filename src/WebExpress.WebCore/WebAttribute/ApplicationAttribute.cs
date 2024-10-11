@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// Application assignment attribute of the application ID.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ApplicationAttribute : Attribute, IModuleAttribute
+    public class ApplicationAttribute : Attribute, IModuleAttribute, IStatusPageAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.
@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// </summary>
     /// <typeparamref name="T">The type of the application.</typeparamref/>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ApplicationAttribute<T> : Attribute, IModuleAttribute where T : class, IApplication
+    public class ApplicationAttribute<T> : Attribute, IModuleAttribute, IStatusPageAttribute where T : class, IApplication
     {
 
     }

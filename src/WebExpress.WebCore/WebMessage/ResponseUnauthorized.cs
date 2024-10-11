@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response indicating that the request requires user authentication. See RFC 2616 Section 6
     /// </summary>
+    [StatusCode(401)]
     public class ResponseUnauthorized : Response
     {
         /// <summary>
@@ -10,7 +13,6 @@
         /// </summary>
         public ResponseUnauthorized()
         {
-            Status = 401;
             Reason = "OK";
 
             Header.WWWAuthenticate = true;

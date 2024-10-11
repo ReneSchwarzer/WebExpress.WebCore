@@ -178,9 +178,8 @@ namespace WebExpress.WebCore.Test.Fixture
         public static RenderContext CrerateContext()
         {
             var request = CrerateRequest();
-            var page = new TestPageA1X(CreratePageContext());
 
-            return new RenderContext(page, CreratePageContext(), request);
+            return new RenderContext(CreratePageContext()?.ModuleContext?.ApplicationContext, request, []);
         }
 
         /// <summary>

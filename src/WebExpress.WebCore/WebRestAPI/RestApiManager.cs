@@ -13,7 +13,6 @@ using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebRestApi.Model;
 using WebExpress.WebCore.WebSitemap;
-using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebRestApi
@@ -314,8 +313,7 @@ namespace WebExpress.WebCore.WebRestApi
 
             foreach (var resourceType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IRestApi).Name) != null)
-                .Where(x => x.GetInterface(typeof(IStatusPage).Name) == null))
+                .Where(x => x.GetInterface(typeof(IRestApi).Name) != null))
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
@@ -365,10 +363,6 @@ namespace WebExpress.WebCore.WebRestApi
                         var method = (CrudMethod)customAttribute.ConstructorArguments.FirstOrDefault().Value;
                         methods.Add(method);
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
-                    {
-                        version = Convert.ToUInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
-                    }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
                         cache = true;
@@ -377,6 +371,16 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         optional = true;
                     }
+                }
+
+                foreach (var customAttribute in resourceType.CustomAttributes
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IRestApiAttribute))))
+                {
+                    if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
+                    {
+                        version = Convert.ToUInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                    }
+
                 }
 
                 if (string.IsNullOrEmpty(moduleId))

@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.Test
         public IPageContext PageContext { get; private set; }
 
         /// <summary>
-        /// Instillation of the page. Here, for example, managed resources can be loaded. 
+        /// Initialization of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
         public TestPageA1X(IPageContext pageContext)

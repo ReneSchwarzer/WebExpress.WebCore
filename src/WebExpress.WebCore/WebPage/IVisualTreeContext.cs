@@ -10,11 +10,6 @@ namespace WebExpress.WebCore.WebPage
     public interface IVisualTreeContext
     {
         /// <summary>
-        /// Returns the page where is rendered.
-        /// </summary>
-        IPage Page { get; }
-
-        /// <summary>
         /// Returns the request.
         /// </summary>
         Request Request { get; }
@@ -28,10 +23,5 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the culture.
         /// </summary>
         CultureInfo Culture { get; }
-
-        /// <summary>
-        /// Provides the context of the associated page.
-        /// </summary>
-        IPageContext PageContext { get; }
     }
 }

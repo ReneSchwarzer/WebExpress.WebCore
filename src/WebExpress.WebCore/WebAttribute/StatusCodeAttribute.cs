@@ -1,17 +1,23 @@
-﻿using System;
-
-namespace WebExpress.WebCore.WebAttribute
+﻿namespace WebExpress.WebCore.WebAttribute
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class StatusCodeAttribute : System.Attribute, IApplicationAttribute
+    /// <summary>
+    /// Specifies the status code for an HTTP response (see RFC 7231). 
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false)]
+    public class StatusCodeAttribute : System.Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Gets the status code.
         /// </summary>
-        /// <param name="status">The status code.</param>
-        public StatusCodeAttribute(int status)
-        {
+        public int StatusCode { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the class with the specified status code.
+        /// </summary>
+        /// <param name="code">The status code.</param>
+        public StatusCodeAttribute(int code)
+        {
+            StatusCode = code;
         }
     }
 }

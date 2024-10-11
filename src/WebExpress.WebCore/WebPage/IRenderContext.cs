@@ -1,18 +1,18 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
 {
     /// <summary>
-    /// Represents the interface of the context in which rendering occurs, providing access to the page, request, culture, and visual tree.
+    /// Represents the interface of the context in which rendering occurs.
     /// </summary>
     public interface IRenderContext
     {
         /// <summary>
-        /// Returns the page where is rendered.
+        /// Returns the application context.
         /// </summary>
-        IPage Page { get; }
+        IApplicationContext ApplicationContext { get; }
 
         /// <summary>
         /// Returns the request.
@@ -20,19 +20,9 @@ namespace WebExpress.WebCore.WebPage
         Request Request { get; }
 
         /// <summary>
-        /// The uri of the request.
+        /// Returns the scopes.
         /// </summary>
-        UriResource Uri { get; }
-
-        /// <summary>
-        /// Returns the culture.
-        /// </summary>
-        CultureInfo Culture { get; }
-
-        /// <summary>
-        /// Provides the context of the associated resource.
-        /// </summary>
-        IPageContext PageContext { get; }
+        IEnumerable<string> Scopes { get; }
 
         /// <summary>
         /// Returns the contents of a page.

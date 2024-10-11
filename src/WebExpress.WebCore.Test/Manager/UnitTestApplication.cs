@@ -25,9 +25,9 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.Register();
 
             Assert.Equal(3, componentHub.ApplicationManager.Applications.Count());
-            Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationA))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationB))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationc", componentHub.ApplicationManager.GetApplcation(typeof(TestApplicationC))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationA))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationB))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationc", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationC))?.ApplicationId);
         }
 
         /// <summary>
@@ -58,10 +58,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(id, applcation.ApplicationId);
+            Assert.Equal(id, application.ApplicationId);
         }
 
         /// <summary>
@@ -75,10 +75,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(name, applcation.ApplicationName);
+            Assert.Equal(name, application.ApplicationName);
         }
 
         /// <summary>
@@ -92,10 +92,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(description, applcation.Description);
+            Assert.Equal(description, application.Description);
         }
 
         /// <summary>
@@ -109,10 +109,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(icon, applcation.Icon);
+            Assert.Equal(icon, application.Icon);
         }
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(contextPath, applcation.ContextPath);
+            Assert.Equal(contextPath, application.ContextPath);
         }
 
         /// <summary>
@@ -143,10 +143,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(assetPath, applcation.AssetPath);
+            Assert.Equal(assetPath, application.AssetPath);
         }
 
         /// <summary>
@@ -160,10 +160,10 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var applcation = componentHub.ApplicationManager.GetApplcation(applicationType);
+            var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
-            Assert.Equal(dataPath, applcation.DataPath);
+            Assert.Equal(dataPath, application.DataPath);
         }
 
         /// <summary>

@@ -20,9 +20,8 @@
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
-        public Page(IPageContext pageContext)
+        public Page()
         {
-            PageContext = pageContext;
         }
 
         /// <summary>

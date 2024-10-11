@@ -21,7 +21,6 @@ using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
 
@@ -446,11 +445,11 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Creates a status page
         /// </summary>
-        /// <param name="massage">The error message.</param>
+        /// <param name="message">The error message.</param>
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private Response CreateStatusPage<T>(string massage, Request request, SearchResult searchResult = null) where T : Response, new()
+        private Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
         {
             var response = new T() as Response;
             var culture = Culture;
@@ -465,54 +464,18 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var statusPage = WebEx.ComponentHub.StatusPageManager.CreateStatusPage
+                return WebEx.ComponentHub.StatusPageManager.CreateStatusResponse
                 (
-                    massage,
+                    message,
                     response.Status,
-                    searchResult?.EndpointContext?.ModuleContext?.PluginContext ??
-                    searchResult?.EndpointContext?.ModuleContext?.ApplicationContext?.PluginContext
+                    searchResult?.EndpointContext?.ModuleContext?.ApplicationContext,
+                    request
                 );
-
-                if (statusPage == null)
-                {
-                    return response;
-                }
-
-                if (statusPage is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
-
-                if (statusPage is Resource resource)
-                {
-                    //resource.ApplicationContext = searchResult?.ApplicationContext ?? new ApplicationContext()
-                    //{
-                    //    PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                    //    searchResult?.ApplicationContext?.PluginContext,
-                    //    ApplicationId = "webex",
-                    //    ApplicationName = "WebExpress",
-                    //    ContextPath = new UriResource()
-                    //};
-
-                    //resource.ModuleContext = searchResult?.ModuleContext ?? new ModuleContext()
-                    //{
-                    //    ApplicationContext = resource.ApplicationContext,
-                    //    PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                    //    searchResult?.ApplicationContext?.PluginContext,
-                    //    ModuleId = "webex",
-                    //    ModuleName = "WebExpress",
-                    //    ContextPath = new UriResource()
-                    //};
-
-                    resource.Initialization(new ResourceContext(resource.ModuleContext, WebEx.ComponentHub?.ResourceManager));
-                }
-
-                return statusPage.Process(request);
             }
 
-            var message = $"<html><head><title>{response.Status}</title></head><body>" +
-                          $"<p>{massage}<br/><p>" +
-                          $"</body></html>";
+            message = $"<html><head><title>{response.Status}</title></head><body>" +
+                      $"<p>{message}<br/><p>" +
+                      $"</body></html>";
 
             response.Content = message;
             response.Header.ContentLength = message.Length;

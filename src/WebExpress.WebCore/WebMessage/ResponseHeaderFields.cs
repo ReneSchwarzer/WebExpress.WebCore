@@ -5,7 +5,7 @@ using System.Text;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616
+    /// see RFC 2616
     /// </summary>
     public class ResponseHeaderFields
     {
@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebMessage
         public string ContentLanguage { get; set; }
 
         /// <summary>
-        /// Liefert oder setzt die Direktiven für das Caching (siehe RFC 7234)
+        /// Liefert oder setzt die Direktiven für das Caching (see RFC 7234)
         /// </summary>
         public string CacheControl { get; set; }
 

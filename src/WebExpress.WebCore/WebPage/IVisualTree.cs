@@ -3,8 +3,16 @@ using WebExpress.WebCore.WebHtml;
 
 namespace WebExpress.WebCore.WebPage
 {
+    /// <summary>
+    /// Represents a visual tree for rendering a web page.
+    /// </summary>
     public interface IVisualTree
     {
+        /// <summary>
+        /// Returns the title of the html document.
+        /// </summary>
+        string Title { get; set; }
+
         /// <summary>
         /// Returns the favicon.
         /// </summary>
@@ -44,6 +52,11 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the meta information.
         /// </summary>
         List<KeyValuePair<string, string>> Meta { get; }
+
+        /// <summary>
+        /// Returns or sets the content.
+        /// </summary>
+        IHtmlNode Content { get; set; }
 
         /// <summary>
         /// Adds a java script.

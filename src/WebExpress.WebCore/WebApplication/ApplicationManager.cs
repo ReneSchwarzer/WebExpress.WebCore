@@ -211,7 +211,7 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="applicationId">The application id.</param>
         /// <returns>The context of the application or null.</returns>
-        public IApplicationContext GetApplcation(string applicationId)
+        public IApplicationContext GetApplication(string applicationId)
         {
             if (string.IsNullOrWhiteSpace(applicationId)) return null;
 
@@ -233,7 +233,7 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="application">The application type.</param>
         /// <returns>The context of the application or null.</returns>
-        public IApplicationContext GetApplcation(Type application)
+        public IApplicationContext GetApplication(Type application)
         {
             if (application == null) return null;
 
@@ -254,7 +254,7 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="applicationIds">The applications ids. Can contain regular expressions or * for all.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
-        public IEnumerable<IApplicationContext> GetApplcations(IEnumerable<string> applicationIds)
+        public IEnumerable<IApplicationContext> GetApplications(IEnumerable<string> applicationIds)
         {
             var list = new List<IApplicationContext>();
 
@@ -286,7 +286,7 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
-        public IEnumerable<IApplicationContext> GetApplcations(IPluginContext pluginContext)
+        public IEnumerable<IApplicationContext> GetApplications(IPluginContext pluginContext)
         {
             if (!_dictionary.ContainsKey(pluginContext))
             {
@@ -414,7 +414,7 @@ namespace WebExpress.WebCore.WebApplication
         /// <param name="deep">The shaft deep.</param>
         public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
         {
-            foreach (var applicationContext in GetApplcations(pluginContext))
+            foreach (var applicationContext in GetApplications(pluginContext))
             {
                 output.Add
                 (

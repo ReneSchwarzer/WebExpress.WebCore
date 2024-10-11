@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response according to RFC 2616 Section 6.
     /// </summary>
+    [StatusCode(302)]
     public class ResponseRedirectTemporarilyMoved : Response
     {
         /// <summary>
@@ -10,7 +13,6 @@
         /// </summary>
         public ResponseRedirectTemporarilyMoved(string location)
         {
-            Status = 302;
             Reason = "temporarily moved";
             //Content = "<html></html>";
 
