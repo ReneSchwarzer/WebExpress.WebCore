@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -12,6 +13,16 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseUnauthorized()
+            : this(null)
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="message">The user defined status message or null.</param></param>
+        public ResponseUnauthorized(StatusMessage message)
         {
             Reason = "OK";
 

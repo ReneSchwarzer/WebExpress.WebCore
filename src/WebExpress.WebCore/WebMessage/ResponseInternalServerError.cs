@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -12,8 +13,17 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseInternalServerError()
+            : this(null)
         {
-            var content = "<html><head><title>404</title></head><body>500 - Internal Server Error</body></html>";
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="message">The user defined status message or null.</param></param>
+        public ResponseInternalServerError(StatusMessage message)
+        {
+            var content = message?.Message ?? "<html><head><title>404</title></head><body>500 - Internal Server Error</body></html>";
             Reason = "Internal Server Error";
 
             Header.ContentType = "text/html";

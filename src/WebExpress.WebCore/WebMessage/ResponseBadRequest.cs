@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -12,8 +13,17 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseBadRequest()
+            : this(null)
         {
-            var content = "<html><head><title>404</title></head><body>404 - Bad Request</body></html>";
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="message">The user defined status message or null.</param></param>
+        public ResponseBadRequest(StatusMessage message)
+        {
+            var content = message?.Message ?? "<html><head><title>404</title></head><body>404 - Bad Request</body></html>";
             Reason = "Bad Request";
 
             Header.ContentType = "text/html";

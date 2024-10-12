@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebStatusPage
     /// </summary>
     public class StatusPageManager : IStatusPageManager, IComponentManagerPlugin, ISystemComponent
     {
-        private readonly IComponentHub _componentManager;
+        private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly StatusPageDictionary _dictionary = [];
         private readonly Dictionary<int, StatusPageItem> _defaults = [];
@@ -49,14 +49,14 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         internal StatusPageManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
-            _componentManager = componentManager;
+            _componentHub = componentManager;
 
-            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
@@ -134,7 +134,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 }
 
                 // assign the module to existing applications.
-                var applicationContext = _componentManager.ApplicationManager.GetApplication(applicationIds.FirstOrDefault());
+                var applicationContext = _componentHub.ApplicationManager.GetApplication(applicationIds.FirstOrDefault());
 
                 if (statusResponse != default)
                 {
@@ -287,14 +287,16 @@ namespace WebExpress.WebCore.WebStatusPage
             {
                 switch (status)
                 {
+                    case 400:
+                        return new ResponseBadRequest(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
                     case 401:
-                        return new ResponseUnauthorized() { Content = message };
+                        return new ResponseUnauthorized(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
                     case 404:
-                        return new ResponseNotFound() { Content = message };
+                        return new ResponseNotFound(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
                     case 500:
-                        return new ResponseInternalServerError() { Content = message };
+                        return new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
                     default:
-                        return new ResponseInternalServerError() { Content = message };
+                        return new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
                 }
             }
 
@@ -302,7 +304,7 @@ namespace WebExpress.WebCore.WebStatusPage
             (
                 statusPageItem.StatusPageClass,
                 statusPageItem.StatusPageContext,
-                _componentManager,
+                _componentHub,
                 new StatusMessage(message)
             );
             var type = instance.GetType();
@@ -322,8 +324,12 @@ namespace WebExpress.WebCore.WebStatusPage
 
             instance.Process(renderContext);
 
-            var response = Activator.CreateInstance(statusPageItem.StatusResponse) as Response;
-            response.Content = renderContext.VisualTree.Render(new VisualTreeContext(request));
+
+            var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _componentHub, new StatusMessage(message));
+            var content = renderContext.VisualTree.Render(new VisualTreeContext(request))?.ToString();
+
+            response.Content = content;
+            response.Header.ContentLength = content?.Length ?? 0;
 
             return response;
         }

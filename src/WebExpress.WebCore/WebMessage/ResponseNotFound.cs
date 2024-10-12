@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -12,8 +13,18 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseNotFound()
+            : this(null)
         {
-            var content = "<html><head><title>404</title></head><body>404 - Not Found</body></html>";
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="message">The user defined status message or null.</param></param>
+        public ResponseNotFound(StatusMessage message)
+        {
+            var content = message?.Message ?? "<html><head><title>404</title></head><body>404 - Not Found</body></html>";
             Reason = "Not Found";
 
             Header.ContentType = "text/html";
