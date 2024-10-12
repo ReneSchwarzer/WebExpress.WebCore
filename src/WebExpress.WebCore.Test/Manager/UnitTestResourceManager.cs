@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             // resources (3 unique + 2 ambiguous) 
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var resourceManager = componentHub.ResourceManager as ResourceManager;
 
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
             var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
 
@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
             var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
 
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var application in componentHub.ResourceManager.Resources)

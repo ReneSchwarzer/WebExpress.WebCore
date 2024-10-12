@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_1()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var clock = new Clock();
             var cron = new Cron(context, "0-59", "*", "1-31", "1-2,3,4,5,6,7,8-10,11,12");
 
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_2()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(dateTime.Year, 1, dateTime.Day, dateTime.Hour, dateTime.Minute, 0));
             var cron = new Cron(context, "*", "*", "0-33", "2, 1-4, x");
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_3()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(dateTime.Year, 12, 31, dateTime.Hour, dateTime.Minute, 0));
             var cron = new Cron(context, "*", "*", "31", "12");
@@ -52,7 +52,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_4()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             Log.Current.Clear();
 
@@ -67,7 +67,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_5()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(dateTime.Year, 12, 31, dateTime.Hour, dateTime.Minute, 0));
             var cron = new Cron(context, "*", "*", "*", "");
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Create_6()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             Log.Current.Clear();
 
@@ -95,7 +95,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Matching_1()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(dateTime.Year, 12, 31, dateTime.Hour, dateTime.Minute, 0));
             var cron = new Cron(context, "*", "*", "31", "1-11");
@@ -108,7 +108,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Matching_2()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(2020, 1, 1, dateTime.Hour, dateTime.Minute, 0)); // wednesday
             var cron = new Cron(context, "*", "*", "*", "*", "3"); // wednesday
@@ -121,7 +121,7 @@ namespace WebExpress.WebCore.Test.Schedule
         public void Matching_3()
         {
             // preconditions
-            var context = UnitTestControlFixture.CreateHttpServerContext();
+            var context = UnitTestControlFixture.CreateHttpServerContextMock();
             var dateTime = DateTime.Now;
             var clock = new Clock(new DateTime(2020, 1, 1, dateTime.Hour, dateTime.Minute, 0)); // wednesday
             var cron = new Cron(context, "*", "*", "*", "*", "1"); // sunday

@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Refresh()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             componentManager.SitemapManager.Refresh();
@@ -43,8 +43,8 @@ namespace WebExpress.WebCore.Test.Manager
         public void SearchResource(string uri, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
-            var context = UnitTestControlFixture.CreateHttpContext();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var context = UnitTestControlFixture.CreateHttpContextMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            searchResult.Process(UnitTestControlFixture.CrerateRequest());
+            searchResult.Process(UnitTestControlFixture.CrerateRequestMock());
 
             Assert.Equal(id, searchResult.EndpointId);
         }
@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetUri(Type resourceType, string expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));

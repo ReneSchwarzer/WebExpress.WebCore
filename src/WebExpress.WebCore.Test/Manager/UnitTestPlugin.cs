@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
@@ -34,7 +34,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void RegisterEvent()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             var i = 0;
             var triggered = false;
@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void RemoveEvent()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             var i = 1;
             var triggered = false;
@@ -99,7 +99,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetPluginById()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             var plugin = componentHub.PluginManager.GetPlugin("webexpress.webcore.test");
@@ -114,7 +114,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetPluginByType()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -143,7 +143,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetName()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -157,7 +157,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDescription()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -171,7 +171,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetIcon()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Boot(string pluginId, string expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
             var plugin = componentHub.PluginManager.GetPlugin(pluginId);
@@ -212,7 +212,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ShutDown(string pluginId, string expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             pluginManager.Register();
             var plugin = componentHub.PluginManager.GetPlugin(pluginId);
@@ -231,7 +231,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
@@ -245,7 +245,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var plugin in componentHub.PluginManager.Plugins)

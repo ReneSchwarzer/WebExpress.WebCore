@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void PluginManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
 
             // test execution
             Assert.NotNull(componentHub.PluginManager);
@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ApplicationManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
 
             // test execution
             Assert.NotNull(componentHub.ApplicationManager);
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ModuleManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
 
             // test execution
             Assert.NotNull(componentHub.ModuleManager);

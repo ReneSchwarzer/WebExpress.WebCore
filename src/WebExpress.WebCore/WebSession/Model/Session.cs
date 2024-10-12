@@ -115,10 +115,7 @@ namespace WebExpress.WebCore.WebSession.Model
         {
             lock (Properties)
             {
-                if (Properties.ContainsKey(typeof(T)))
-                {
-                    Properties.Remove(typeof(T));
-                }
+                Properties.Remove(typeof(T));
             }
         }
 

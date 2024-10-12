@@ -1,5 +1,8 @@
 ﻿namespace WebExpress.WebCore.WebSession.Model
 {
+    /// <summary>
+    /// Represents the authentication session property.
+    /// </summary>
     public class SessionPropertyAuthentification : SessionProperty
     {
         /// <summary>

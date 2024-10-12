@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var applicationManager = componentHub.ApplicationManager as ApplicationManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -74,7 +74,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Name(Type applicationType, string name)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Description(Type applicationType, string description)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -108,7 +108,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Icon(Type applicationType, string icon)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -125,7 +125,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, string contextPath)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -142,7 +142,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void AssetPath(Type applicationType, string assetPath)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -159,7 +159,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void DataPath(Type applicationType, string dataPath)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication(applicationType);
 
             // test execution
@@ -173,7 +173,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ApplicationManager.GetType()));
@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var application in componentHub.ApplicationManager.Applications)

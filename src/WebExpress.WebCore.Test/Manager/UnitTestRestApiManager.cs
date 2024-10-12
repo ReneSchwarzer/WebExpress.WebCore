@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(3, componentHub.RestApiManager.RestApis.Count());
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var apiManager = componentHub.RestApiManager as RestApiManager;
 
@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
             var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
 
@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
             var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
 
@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Method(Type applicationType, Type moduleType, Type resourceType, CrudMethod method)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
             var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
 
@@ -102,7 +102,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.RestApiManager.GetType()));
@@ -115,7 +115,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var api in componentHub.RestApiManager.RestApis)

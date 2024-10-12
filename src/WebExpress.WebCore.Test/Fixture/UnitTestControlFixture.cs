@@ -29,10 +29,10 @@ namespace WebExpress.WebCore.Test.Fixture
         }
 
         /// <summary>
-        /// Create a a server context.
+        /// Create a fake server context.
         /// </summary>
         /// <returns>The server context.</returns>
-        public static IHttpServerContext CreateHttpServerContext()
+        public static IHttpServerContext CreateHttpServerContextMock()
         {
             return new HttpServerContext
             (
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a component hub.
         /// </summary>
         /// <returns>The component manager.</returns>
-        public static ComponentHub CreateComponentHub()
+        public static ComponentHub CreateComponentHubMock()
         {
             var ctorComponentManager = typeof(ComponentHub).GetConstructor
             (
@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.Test.Fixture
                 null
             );
 
-            var componentManager = (ComponentHub)ctorComponentManager.Invoke([CreateHttpServerContext()]);
+            var componentManager = (ComponentHub)ctorComponentManager.Invoke([CreateHttpServerContextMock()]);
 
             // set static field in the webex class
             var type = typeof(WebEx);
@@ -78,9 +78,9 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a component hub and register the plugins.
         /// </summary>
         /// <returns>The component manager.</returns>
-        public static ComponentHub CreateAndRegisterComponentHub()
+        public static ComponentHub CreateAndRegisterComponentHubMock()
         {
-            var componentManager = CreateComponentHub();
+            var componentManager = CreateComponentHubMock();
             var pluginManager = componentManager.PluginManager as PluginManager;
 
             pluginManager.Register();
@@ -93,9 +93,9 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         /// <param name="content">The content.</param>
         /// <returns>A fake request for testing.</returns>
-        public static WebMessage.Request CrerateRequest(string content = "")
+        public static WebMessage.Request CrerateRequestMock(string content = "")
         {
-            var context = CreateHttpContext(content);
+            var context = CreateHttpContextMock(content);
 
             return context.Request;
         }
@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         /// <param name="content">The content.</param>
         /// <returns>A fake http context for testing.</returns>
-        public static WebMessage.HttpContext CreateHttpContext(string content = "")
+        public static WebMessage.HttpContext CreateHttpContextMock(string content = "")
         {
             var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
             var featureCollection = new FeatureCollection();
@@ -165,7 +165,7 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpRequestIdentifierFeature>(requestIdentifierFeature);
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
-            var componentManager = CreateComponentHub();
+            var componentManager = CreateComponentHubMock();
             var context = new WebMessage.HttpContext(featureCollection, componentManager.HttpServerContext);
 
             return context;
@@ -175,18 +175,18 @@ namespace WebExpress.WebCore.Test.Fixture
         /// Create a fake render context.
         /// </summary>
         /// <returns>A fake context for testing.</returns>
-        public static RenderContext CrerateContext()
+        public static RenderContext CrerateContextMock()
         {
-            var request = CrerateRequest();
+            var request = CrerateRequestMock();
 
-            return new RenderContext(CreratePageContext()?.ModuleContext?.ApplicationContext, request, []);
+            return new RenderContext(CreratePageContextMock()?.ModuleContext?.ApplicationContext, request, []);
         }
 
         /// <summary>
         /// Create a fake page context.
         /// </summary>
         /// <returns>A fake context for testing.</returns>
-        public static PageContext CreratePageContext()
+        public static PageContext CreratePageContextMock()
         {
             var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IModuleContext)], null);
 

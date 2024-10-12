@@ -2,13 +2,17 @@
 
 namespace WebExpress.WebCore.WebSession
 {
+
+    /// <summary>
+    /// Represents an abstract authorization service.
+    /// </summary>
     public abstract class AuthorizationService
     {
         /// <summary>
-        /// Prüft ob der authentifizierte Nutzer autorisiert ist
+        /// Checks if the authenticated user is authorized.
         /// </summary>
-        /// <param name="session">Die aktuelle Session</param>
-        /// <returns>true, wenn autorisiert false sonst</returns>
+        /// <param name="session">The current session.</param>
+        /// <returns>true if authorized, false otherwise.</returns>
         public abstract bool Authorization(Session session);
     }
 }

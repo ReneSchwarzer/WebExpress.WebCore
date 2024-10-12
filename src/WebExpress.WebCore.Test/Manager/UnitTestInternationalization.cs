@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHub();
+            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var internationalizationManager = componentHub.InternationalizationManager as InternationalizationManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
@@ -52,7 +52,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetDefaultCulture()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(CultureInfo.GetCultureInfo("en"), InternationalizationManager.DefaultCulture);
@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Translate(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {
             // preconditions
-            UnitTestControlFixture.CreateAndRegisterComponentHub();
+            UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             if (cultureName == null && !param.Any())
             {
@@ -126,7 +126,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHub();
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.InternationalizationManager.GetType()));

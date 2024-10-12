@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Test.Message
         public void General()
         {
             var content = UnitTestControlFixture.GetEmbeddedResource("general.get");
-            var request = UnitTestControlFixture.CrerateRequest(content);
+            var request = UnitTestControlFixture.CrerateRequestMock(content);
 
             Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.Test.Message
         public void Less()
         {
             var content = UnitTestControlFixture.GetEmbeddedResource("less.get");
-            var request = UnitTestControlFixture.CrerateRequest(content);
+            var request = UnitTestControlFixture.CrerateRequestMock(content);
 
             Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.Test.Message
         public void Massive()
         {
             var content = UnitTestControlFixture.GetEmbeddedResource("massive.get");
-            var request = UnitTestControlFixture.CrerateRequest(content);
+            var request = UnitTestControlFixture.CrerateRequestMock(content);
 
             Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
         }
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.Test.Message
         public void GetParameter()
         {
             var content = UnitTestControlFixture.GetEmbeddedResource("param.get");
-            var request = UnitTestControlFixture.CrerateRequest(content);
+            var request = UnitTestControlFixture.CrerateRequestMock(content);
             var param = request?.GetParameter("a")?.Value;
 
             Assert.Equal("http://localhost:8080/abc/xyz/A7BCCCA9-4C7E-4117-9EE2-ECC3381B605A", request.Uri?.ToString());
@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.Test.Message
         public void GetParameterWithUmlaut()
         {
             var content = UnitTestControlFixture.GetEmbeddedResource("param_umlaut.get");
-            var request = UnitTestControlFixture.CrerateRequest(content);
+            var request = UnitTestControlFixture.CrerateRequestMock(content);
             var a = request?.GetParameter("a")?.Value;
             var b = request?.GetParameter("b")?.Value;
 
