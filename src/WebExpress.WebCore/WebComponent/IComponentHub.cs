@@ -124,7 +124,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
-        SessionManager SessionManager { get; }
+        ISessionManager SessionManager { get; }
 
         /// <summary>
         /// Returns the task manager.

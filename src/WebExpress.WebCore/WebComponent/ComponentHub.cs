@@ -35,6 +35,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly RestApiManager _restApiManager;
         private readonly SitemapManager _sitemapManager;
         private readonly StatusPageManager _statusPageManager;
+        private readonly SessionManager _sessionManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -155,7 +156,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
-        public SessionManager SessionManager { get; private set; }
+        public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
         /// Returns the task manager.
@@ -185,7 +186,7 @@ namespace WebExpress.WebCore.WebComponent
             _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             EventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;
-            SessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
+            _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             TaskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, "webexpress");

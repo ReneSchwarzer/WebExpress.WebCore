@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebSession
     /// <summary>
     /// Represents a session manager that handles session creation and retrieval.
     /// </summary>
-    public class SessionManager : IComponentManager, ISystemComponent
+    public class SessionManager : ISessionManager, ISystemComponent
     {
         private readonly IHttpServerContext _httpServerContext;
         private readonly SessionDictionary _dictionary = [];
