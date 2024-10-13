@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
-        EventManager EventManager { get; }
+        IEventManager EventManager { get; }
 
         /// <summary>
         /// Returns the job manager.

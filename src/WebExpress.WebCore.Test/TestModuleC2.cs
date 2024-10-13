@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test
         /// Initialization of the module.
         /// </summary>
         /// <param name="moduleContext">The module context, for testing the injection.</param>
-        /// <param name="applicationContext">The application manager, for testing the injection.</param>
+        /// <param name="applicationManager">The application manager, for testing the injection.</param>
         private TestModuleC2(IModuleContext moduleContext, ApplicationManager applicationManager)
         {
             // test the injection

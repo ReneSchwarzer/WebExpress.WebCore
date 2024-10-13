@@ -134,6 +134,11 @@ sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gem
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
 
 eventmanager.initialization=Der Eventmanager wurde initialisiert.
+eventmanager.applicationless=Der Eventhandler '{0}' besitzt keine Angaben zur Anwendung.
+eventmanager.applicationrich=Der Eventhandler '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
+eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiesen und im Eventmanager registriert.
+eventmanager.duplicate=Der Eventhandler '{0}' wurde bereits in der Anwendung '{1}' registriert.
+eventmanager.eventless=Der Eventhandler '{0}' besitzt keine Angaben zu einem Event.
 
 jobmanager.initialization=Der Schedulemanager wurde initialisiert.
 jobmanager.register=Das Plugin '{0}' wurde im Schedulemanager registriert.

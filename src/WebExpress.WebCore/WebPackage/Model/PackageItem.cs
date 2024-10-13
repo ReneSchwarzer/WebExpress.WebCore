@@ -65,5 +65,14 @@ namespace WebExpress.WebCore.WebPackage.Model
         internal PackageItem()
         {
         }
+
+        /// <summary>
+        /// Convert the package element to a string.
+        /// </summary>
+        /// <returns>The package element in its string representation.</returns>
+        public override string ToString()
+        {
+            return $"Package '{Id}'";
+        }
     }
 }

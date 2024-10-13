@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
         }
     }

@@ -39,5 +39,10 @@
         /// </summary>
         /// <param name="context">The context for rendering the page.</param>
         public abstract void Process(IRenderContext context);
+
+        /// <summary>
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// </summary>
+        public abstract void Dispose();
     }
 }

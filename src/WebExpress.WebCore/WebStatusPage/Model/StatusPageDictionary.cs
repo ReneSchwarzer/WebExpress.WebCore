@@ -119,10 +119,10 @@ namespace WebExpress.WebCore.WebStatusPage.Model
         }
 
         /// <summary>
-        /// Returns all StatusPageContexts for a given PluginContext.
+        /// Returns all StatusPageContexts for a given plugin context.
         /// </summary>
-        /// <param name="pluginContext">The PluginContext.</param>
-        /// <returns>An IEnumerable of StatusPageContexts.</returns>
+        /// <param name="pluginContext">The plugin context.</param>
+        /// <returns>An IEnumerable of status page contexts.</returns>
         public IEnumerable<StatusPageContext> GetStatusPageContexts(IPluginContext pluginContext)
         {
             return this.Where(entry => entry.Key == pluginContext)

@@ -36,6 +36,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly SitemapManager _sitemapManager;
         private readonly StatusPageManager _statusPageManager;
         private readonly SessionManager _sessionManager;
+        private readonly EventManager _eventManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -66,11 +67,11 @@ namespace WebExpress.WebCore.WebComponent
                 _resourceManager,
                 _pageManager,
                 _restApiManager,
-                EventManager,
+                _eventManager,
                 JobManager,
                 _statusPageManager,
                 _internationalizationManager,
-                SessionManager,
+                _sessionManager,
                 TaskManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
@@ -108,7 +109,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
-        public EventManager EventManager { get; private set; }
+        public IEventManager EventManager => _eventManager;
 
         /// <summary>
         /// Returns the job manager.
@@ -184,7 +185,7 @@ namespace WebExpress.WebCore.WebComponent
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
             _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
-            EventManager = CreateInstance(typeof(EventManager)) as EventManager;
+            _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
             JobManager = CreateInstance(typeof(JobManager)) as JobManager;
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             TaskManager = CreateInstance(typeof(TaskManager)) as TaskManager;

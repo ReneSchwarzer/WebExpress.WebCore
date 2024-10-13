@@ -56,5 +56,13 @@ namespace WebExpress.WebCore.WebRestApi
         {
 
         }
+
+        /// <summary>
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// </summary>
+        public virtual void Dispose()
+        {
+
+        }
     }
 }

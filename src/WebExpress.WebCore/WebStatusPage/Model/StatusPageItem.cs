@@ -45,5 +45,14 @@ namespace WebExpress.WebCore.WebStatusPage.Model
         public void Dispose()
         {
         }
+
+        /// <summary>
+        /// Convert the status page element to a string.
+        /// </summary>
+        /// <returns>The status page element in its string representation.</returns>
+        public override string ToString()
+        {
+            return $"StatusPage '{StatusPageId}'";
+        }
     }
 }

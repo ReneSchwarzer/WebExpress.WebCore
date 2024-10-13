@@ -393,5 +393,13 @@ namespace WebExpress.WebCore.WebStatusPage
                 );
             }
         }
+
+        /// <summary>
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+
+        }
     }
 }

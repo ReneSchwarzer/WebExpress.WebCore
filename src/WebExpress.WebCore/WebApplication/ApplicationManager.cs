@@ -250,6 +250,16 @@ namespace WebExpress.WebCore.WebApplication
         }
 
         /// <summary>
+        /// Determines the application contexts for a given application id.
+        /// </summary>
+        /// <typeparam name="T">The application type.</typeparam>
+        /// <returns>The context of the application or null.</returns>
+        public IApplicationContext GetApplication<T>()
+        {
+            return GetApplication(typeof(T));
+        }
+
+        /// <summary>
         /// Determines the application contexts for the given application ids.
         /// </summary>
         /// <param name="applicationIds">The applications ids. Can contain regular expressions or * for all.</param>

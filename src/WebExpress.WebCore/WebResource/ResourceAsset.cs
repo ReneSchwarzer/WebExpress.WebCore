@@ -27,6 +27,7 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         /// <param name="resourceContext">The resource context.</param>
         public ResourceAsset(IResourceContext resourceContext)
+            : base(resourceContext)
         {
             Gard = new object();
             AssetDirectory = ResourceContext.PluginContext.Assembly.GetName().Name;
@@ -146,6 +147,14 @@ namespace WebExpress.WebCore.WebResource
             stream.CopyTo(memoryStream);
 
             return memoryStream.ToArray();
+        }
+
+        /// <summary>
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+
         }
     }
 }

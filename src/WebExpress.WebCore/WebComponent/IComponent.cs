@@ -1,9 +1,11 @@
-﻿namespace WebExpress.WebCore.WebComponent
+﻿using System;
+
+namespace WebExpress.WebCore.WebComponent
 {
     /// <summary>
     /// Interface of a component.
     /// </summary>
-    public interface IComponent
+    public interface IComponent : IDisposable
     {
 
     }

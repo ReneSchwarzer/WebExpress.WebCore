@@ -55,7 +55,6 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
@@ -74,7 +73,6 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
@@ -93,7 +91,6 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
             var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
