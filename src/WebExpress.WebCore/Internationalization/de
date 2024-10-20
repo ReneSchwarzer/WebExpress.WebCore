@@ -140,11 +140,12 @@ eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiese
 eventmanager.duplicate=Der Eventhandler '{0}' wurde bereits in der Anwendung '{1}' registriert.
 eventmanager.eventless=Der Eventhandler '{0}' besitzt keine Angaben zu einem Event.
 
-jobmanager.initialization=Der Schedulemanager wurde initialisiert.
-jobmanager.register=Das Plugin '{0}' wurde im Schedulemanager registriert.
-jobmanager.job.register=Der Job '{1}' wurden dem Modul '{0}' zugewiesen.
-jobmanager.moduleless=Der Job '{0}' besitzt keine Angaben zum Modul.
-jobmanager.wrongmodule=Der Job '{1}' ist kein Teil des Moduls {0}.
+jobmanager.initialization=Der Jobmanager wurde initialisiert.
+jobmanager.applicationless=Der Job '{0}' besitzt keine Angaben zur Anwendung.
+jobmanager.applicationrich=Der Job '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
+jobmanager.register=Der Job '{0}' wurde der Anwendung '{1}' zugewiesen und im Jobmanager registriert.
+jobmanager.duplicate=Der Job '{0}' wurde bereits in der Anwendung '{1}' registriert.
+jobmanager.jobless=Der Job '{0}' besitzt keine Angaben zu einem Job.
 jobmanager.job=Job: '{0}' für Modul '{1}'
 jobmanager.job.process=Der Job '{0}' wird ausgeführt.
 jobmanager.cron.parseerror=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' kann nicht verarbeitet werden.

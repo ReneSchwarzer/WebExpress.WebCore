@@ -82,7 +82,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the job manager.
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
-        JobManager JobManager { get; }
+        IJobManager JobManager { get; }
 
         /// <summary>
         /// Returns the resource manager.

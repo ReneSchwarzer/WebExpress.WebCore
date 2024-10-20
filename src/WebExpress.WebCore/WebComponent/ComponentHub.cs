@@ -37,6 +37,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly StatusPageManager _statusPageManager;
         private readonly SessionManager _sessionManager;
         private readonly EventManager _eventManager;
+        private readonly JobManager _jobManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -68,7 +69,7 @@ namespace WebExpress.WebCore.WebComponent
                 _pageManager,
                 _restApiManager,
                 _eventManager,
-                JobManager,
+                _jobManager,
                 _statusPageManager,
                 _internationalizationManager,
                 _sessionManager,
@@ -115,7 +116,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the job manager.
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
-        public JobManager JobManager { get; private set; }
+        public IJobManager JobManager => _jobManager;
 
         /// <summary>
         /// Returns the resource manager.
@@ -186,7 +187,7 @@ namespace WebExpress.WebCore.WebComponent
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
             _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
-            JobManager = CreateInstance(typeof(JobManager)) as JobManager;
+            _jobManager = CreateInstance(typeof(JobManager)) as JobManager;
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             TaskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
 
@@ -377,7 +378,7 @@ namespace WebExpress.WebCore.WebComponent
             );
 
             PackageManager.Execute();
-            JobManager.Execute();
+            _jobManager.Execute();
         }
 
         /// <summary>
@@ -482,7 +483,7 @@ namespace WebExpress.WebCore.WebComponent
                 _moduleManager.PrepareForLog(pluginContext, output, 4);
                 _resourceManager.PrepareForLog(pluginContext, output, 4);
                 _statusPageManager.PrepareForLog(pluginContext, output, 4);
-                JobManager.PrepareForLog(pluginContext, output, 4);
+                _jobManager.PrepareForLog(pluginContext, output, 4);
             }
 
             //foreach (var item in Dictionary)
