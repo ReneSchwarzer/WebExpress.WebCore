@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebLog;
@@ -185,6 +186,7 @@ namespace WebExpress.WebCore.WebPlugin
                     var description = type.Assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
                     var dependencies = new List<string>();
                     var hasUnfulfilledDependencies = false;
+                    var applicationTypes = new List<Type>();
 
                     foreach (var customAttribute in type.CustomAttributes
                         .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPluginAttribute))))
@@ -205,6 +207,21 @@ namespace WebExpress.WebCore.WebPlugin
                         {
                             dependencies.Add(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
                         }
+                        else if (customAttribute.AttributeType.Name == typeof(ApplicationAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ApplicationAttribute<>).Namespace)
+                        {
+                            applicationTypes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                        }
+                    }
+
+                    if (!applicationTypes.Any())
+                    {
+                        // no application specified
+                        _httpServerContext.Log.Warning
+                        (
+                            I18N.Translate("webexpress:pluginmanager.applicationless", id)
+                        );
+
+                        break;
                     }
 
                     var pluginContext = new PluginContext()
@@ -241,7 +258,8 @@ namespace WebExpress.WebCore.WebPlugin
                             PluginClass = type,
                             PluginContext = pluginContext,
                             Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _componentManager),
-                            Dependencies = dependencies
+                            Dependencies = dependencies,
+                            ApplicationTypes = applicationTypes
                         });
 
                         _httpServerContext.Log.Debug
@@ -404,6 +422,43 @@ namespace WebExpress.WebCore.WebPlugin
                 .Select(x => x.PluginContext)
                 .FirstOrDefault();
         }
+
+        /// <summary>
+        /// Returns all plugins that have associated applications.
+        /// </summary>
+        /// <param name="applicationContext">The application context to filter plugins.</param>
+        /// <returns>An enumerable collection of plugin contexts with applications.</returns>
+        public IEnumerable<IPluginContext> GetPlugins(IApplicationContext applicationContext)
+        {
+            return _dictionary.Values
+                .Where(x => x.ApplicationTypes != null)
+                .Where(x => x.ApplicationTypes.Select(x => _componentManager.ApplicationManager.GetApplications(x))
+                .SelectMany(x => x)
+                .Where(x => x.ApplicationId == applicationContext.ApplicationId)
+                .Any())
+                .Select(x => x.PluginContext);
+        }
+
+        /// <summary>
+        /// Returns all ApplicationContext instances associated with a plugin.
+        /// </summary>
+        /// <param name="pluginContext">The context of the plugin.</param>
+        /// <returns>A collection of ApplicationContext instances.</returns>
+        public IEnumerable<IApplicationContext> GetAssociatedApplications(IPluginContext pluginContext)
+        {
+            var pluginItem = GetPluginItem(pluginContext);
+
+            if (pluginItem == null)
+            {
+                return [];
+            }
+
+            return pluginItem.ApplicationTypes?
+                .Select(x => _componentManager.ApplicationManager.GetApplications(x))
+                .SelectMany(x => x)
+                .Where(x => x != null) ?? [];
+        }
+
 
         /// <summary>
         /// Returns a plugin item based on the context.
@@ -599,6 +654,13 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="output">A list of log entries.</param>
         /// <param name="deep">The shaft deep.</param>
         public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        {
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
         {
         }
     }

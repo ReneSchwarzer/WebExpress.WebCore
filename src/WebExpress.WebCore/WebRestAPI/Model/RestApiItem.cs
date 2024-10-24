@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebRestApi.Model
@@ -18,24 +14,9 @@ namespace WebExpress.WebCore.WebRestApi.Model
         private readonly IRestApiManager _restApiManager;
 
         /// <summary>
-        /// An event that fires when an rest api resource is added.
+        /// Returns or sets the parent type.
         /// </summary>
-        public event EventHandler<IRestApiContext> AddRestApi;
-
-        /// <summary>
-        /// An event that fires when an rest api resource is removed.
-        /// </summary>
-        public event EventHandler<IRestApiContext> RemoveRestApi;
-
-        /// <summary>
-        /// Returns or sets the rest api resource id.
-        /// </summary>
-        public string RestApiId { get; set; }
-
-        /// <summary>
-        /// Returns or sets the parent id.
-        /// </summary>
-        public string ParentId { get; set; }
+        public Type ParentType { get; set; }
 
         /// <summary>
         /// Returns or sets the type of rest api resource.
@@ -46,11 +27,6 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// Returns or sets the instance of the rest api resource, if the rest api resource is cached, otherwise null.
         /// </summary>
         public IRestApi Instance { get; set; }
-
-        /// <summary>
-        /// Returns or sets the module id.
-        /// </summary>
-        public string ModuleId { get; set; }
 
         /// <summary>
         /// Returns or sets the paths of the resource.
@@ -98,20 +74,9 @@ namespace WebExpress.WebCore.WebRestApi.Model
         public ILog Log { get; internal set; }
 
         /// <summary>
-        /// Returns the directory where the module instances are listed.
-        /// </summary>
-        private IDictionary<IModuleContext, IRestApiContext> Dictionary { get; }
-            = new Dictionary<IModuleContext, IRestApiContext>();
-
-        /// <summary>
-        /// Returns the associated module contexts.
-        /// </summary>
-        public IEnumerable<IModuleContext> ModuleContexts => Dictionary.Keys;
-
-        /// <summary>
         /// Returns the rest api contexts.
         /// </summary>
-        public IEnumerable<IRestApiContext> RestApiContexts => Dictionary.Values;
+        public IRestApiContext RestApiContext { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RestApiItem"/> class.
@@ -123,105 +88,10 @@ namespace WebExpress.WebCore.WebRestApi.Model
         }
 
         /// <summary>
-        /// Adds an module assignment
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        public void AddModule(IModuleContext moduleContext)
-        {
-            // only if no instance has been created yet
-            if (Dictionary.ContainsKey(moduleContext))
-            {
-                Log.Warning(message: I18N.Translate("webexpress:restapimanager.addresource.duplicate", RestApiId, moduleContext.ModuleId));
-
-                return;
-            }
-
-            // create context
-            var restApiContext = new RestApiContext(moduleContext, _restApiManager, this)
-            {
-                Conditions = Conditions,
-                EndpointId = RestApiId,
-                Cache = Cache,
-                IncludeSubPaths = IncludeSubPaths,
-                Methods = Methods,
-                Version = Version
-            };
-
-            if
-            (
-                !Optional ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{RestApiId.ToLower()}") ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.*") ||
-                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{RestApiId.ToLower()}", x).Success).Any()
-            )
-            {
-                Dictionary.Add(moduleContext, restApiContext);
-                OnAddRestApi(restApiContext);
-            }
-        }
-
-        /// <summary>
-        /// Remove an module assignment.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        public void DetachModule(IModuleContext moduleContext)
-        {
-            // not an assignment has been created yet
-            if (!Dictionary.ContainsKey(moduleContext))
-            {
-                return;
-            }
-
-            foreach (var restApiContext in Dictionary.Values)
-            {
-                OnRemovePage(restApiContext);
-            }
-
-            Dictionary.Remove(moduleContext);
-        }
-
-        /// <summary>
-        /// Checks whether a module context is already assigned to the item.
-        /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        /// <returns>True a mapping exists, false otherwise.</returns>
-        public bool IsAssociatedWithModule(IModuleContext moduleContext)
-        {
-            return Dictionary.ContainsKey(moduleContext);
-        }
-
-        /// <summary>
-        /// Raises the AddRestApi event.
-        /// </summary>
-        /// <param name="restApiContext">The rest api context.</param>
-        private void OnAddRestApi(IRestApiContext restApiContext)
-        {
-            AddRestApi?.Invoke(this, restApiContext);
-        }
-
-        /// <summary>
-        /// Raises the RemoveRestApi event.
-        /// </summary>
-        /// <param name="restApiContext">The rest api context.</param>
-        private void OnRemovePage(IRestApiContext restApiContext)
-        {
-            RemoveRestApi?.Invoke(this, restApiContext);
-        }
-
-        /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged rest api resources.
         /// </summary>
         public void Dispose()
         {
-            foreach (Delegate d in AddRestApi.GetInvocationList())
-            {
-                AddRestApi -= (EventHandler<IRestApiContext>)d;
-            }
-
-            foreach (Delegate d in RemoveRestApi.GetInvocationList())
-            {
-                RemoveRestApi -= (EventHandler<IRestApiContext>)d;
-            }
         }
 
         /// <summary>
@@ -230,7 +100,7 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <returns>The rest api resource element in its string representation.</returns>
         public override string ToString()
         {
-            return $"RestApi '{RestApiId}'";
+            return $"RestApi: '{RestApiContext?.EndpointId}'";
         }
     }
 }

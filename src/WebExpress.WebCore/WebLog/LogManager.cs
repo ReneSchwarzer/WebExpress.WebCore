@@ -109,5 +109,12 @@ namespace WebExpress.WebCore.WebLog
                 I18N.Translate("webexpress:logmanager.titel")
             );
         }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

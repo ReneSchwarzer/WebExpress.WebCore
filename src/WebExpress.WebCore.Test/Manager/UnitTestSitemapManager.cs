@@ -22,22 +22,37 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(22, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(42, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
         /// Test the SearchResource function of the sitemap.
         /// </summary>
         [Theory]
-        [InlineData("http://localhost:8080/aca/mca/a1x", "webexpress.webcore.test.testresourcea1x")]
-        [InlineData("http://localhost:8080/aca/mca/a1x/a1y", "webexpress.webcore.test.testresourcea1y")]
-        [InlineData("http://localhost:8080/aca/a2x", "webexpress.webcore.test.testresourcea2x")]
-        [InlineData("http://localhost:8080/aca/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
-        [InlineData("http://localhost:8080/acb/mcab/ab1x", "webexpress.webcore.test.testresourceab1x")]
-        [InlineData("http://localhost:8080/aca/mca/pa1x", "webexpress.webcore.test.testpagea1x")]
-        [InlineData("http://localhost:8080/aca/mca/1/ra1x", "webexpress.webcore.test.testrestapia1x")]
-        [InlineData("http://localhost:8080/aca/mca/1/ra1x/2/ra1y", "webexpress.webcore.test.testrestapia1y")]
-        [InlineData("http://localhost:8080/aca/mca/1/ra1x/2/ra1y/3/ra1z", "webexpress.webcore.test.testrestapia1z")]
+        [InlineData("http://localhost:8080/appa/resa", "webexpress.webcore.test.testresourcea")]
+        [InlineData("http://localhost:8080/appa/resa/resb", "webexpress.webcore.test.testresourceb")]
+        [InlineData("http://localhost:8080/appa/resc", "webexpress.webcore.test.testresourcec")]
+        [InlineData("http://localhost:8080/appa/resd", "webexpress.webcore.test.testresourced")]
+        [InlineData("http://localhost:8080/appb/resa", "webexpress.webcore.test.testresourcea")]
+        [InlineData("http://localhost:8080/appb/resa/resb", "webexpress.webcore.test.testresourceb")]
+        [InlineData("http://localhost:8080/appb/resc", "webexpress.webcore.test.testresourcec")]
+        [InlineData("http://localhost:8080/appb/resd", "webexpress.webcore.test.testresourced")]
+        [InlineData("http://localhost:8080/resa", "webexpress.webcore.test.testresourcea")]
+        [InlineData("http://localhost:8080/resa/resb", "webexpress.webcore.test.testresourceb")]
+        [InlineData("http://localhost:8080/resc", "webexpress.webcore.test.testresourcec")]
+        [InlineData("http://localhost:8080/resd", "webexpress.webcore.test.testresourced")]
+        [InlineData("http://localhost:8080/appa/pagea", "webexpress.webcore.test.testpagea")]
+        [InlineData("http://localhost:8080/appa/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/appa/pagec", "webexpress.webcore.test.testpagec")]
+        [InlineData("http://localhost:8080/appb/pagea", "webexpress.webcore.test.testpagea")]
+        [InlineData("http://localhost:8080/appb/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/appb/pagec", "webexpress.webcore.test.testpagec")]
+        [InlineData("http://localhost:8080/pagea", "webexpress.webcore.test.testpagea")]
+        [InlineData("http://localhost:8080/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/pagec", "webexpress.webcore.test.testpagec")]
+        [InlineData("http://localhost:8080/appa/1/apia", "webexpress.webcore.test.testrestapia")]
+        [InlineData("http://localhost:8080/appa/1/apia/2/apib", "webexpress.webcore.test.testrestapib")]
+        [InlineData("http://localhost:8080/appa/1/apia/2/apib/3/apic", "webexpress.webcore.test.testrestapic")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
 
         public void SearchResource(string uri, string id)
@@ -55,22 +70,22 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            searchResult.Process(UnitTestControlFixture.CrerateRequestMock());
+            componentHub.EndpointManager.HandleRequest(UnitTestControlFixture.CrerateRequestMock(), searchResult.EndpointContext);
 
-            Assert.Equal(id, searchResult.EndpointId);
+            Assert.Equal(id, searchResult?.EndpointContext?.EndpointId);
         }
 
         /// <summary>
         /// Test the GetUri function of the sitemap.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestResourceA1X), "/aca/mca/a1x")]
-        [InlineData(typeof(TestResourceA1Y), "/aca/mca/a1x/a1y")]
-        [InlineData(typeof(TestResourceA2X), "/aca/a2x")]
-        [InlineData(typeof(TestResourceAB1X), "/aca/mcab/ab1x")]
-        [InlineData(typeof(TestPageA1X), "/aca/mca/pa1x")]
-        [InlineData(typeof(TestPageA1Y), "/aca/mca/pa1y")]
-        [InlineData(typeof(TestPageA1Z), "/aca/mca/pa1z")]
+        [InlineData(typeof(TestResourceA), "/appa/resa")]
+        [InlineData(typeof(TestResourceB), "/appa/resa/resb")]
+        [InlineData(typeof(TestResourceC), "/appa/resc")]
+        [InlineData(typeof(TestResourceD), "/appa/resd")]
+        [InlineData(typeof(TestPageA), "/appa/pagea")]
+        [InlineData(typeof(TestPageB), "/appa/resa/pageb")]
+        [InlineData(typeof(TestPageC), "/appa/pagec")]
 
         public void GetUri(Type resourceType, string expected)
         {

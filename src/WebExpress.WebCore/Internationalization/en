@@ -71,6 +71,7 @@ pluginmanager.plugin.processing.start=The plugin '{0}' is running.
 pluginmanager.plugin.processing.end=The running of the plugin '{0}' has been stopped.
 pluginmanager.fulfilleddependencies=The plugin '{0}' fulfills all dependencies.
 pluginmanager.unfulfilleddependencies=The plugin '{0}' does not fulfill a dependency on the plugin '{1}'.
+pluginmanager.applicationless=The plugin '{0}' does not have any information about an application.
 
 applicationmanager.initialization=The application manager has been initialized.
 applicationmanager.registerapplication=The application '{0}' has been created and registered in the application manager.
@@ -81,45 +82,30 @@ applicationmanager.application.processing.start=The application '{0}' is running
 applicationmanager.application.processing.end=The running of the application '{0}' has been stopped.
 applicationmanager.application.boot.notfound=The plugin '{0}' is unknown.
 
-modulemanager.initialization=The module manager has been initialized.
-modulemanager.register=The module '{0}' has been assigned to the application '{1}' and registered in the module manager.
-modulemanager.duplicate=The module '{0}' has already been registered in the application '{1}'.
-modulemanager.applicationless=The module '{0}' does not have any information about the application.
-modulemanager.module=Module: '{0}' for application(s) '{1}'
-modulemanager.module.initialization=The module '{1}' of the application '{0}' has been initialized.
-modulemanager.module.processing.start=The module '{1}' of the application '{0}' is running.
-modulemanager.module.processing.end=The running of the module '{1}' of the application '{0}' has been stopped.
-
 resourcemanager.initialization=The resource manager has been initialized.
-resourcemanager.register={0} resource(s) have been assigned to the module '{1}'.
-resourcemanager.modulenotfound=The module '{1}' could not be found, which was specified in the resource '{0}'.
-resourcemanager.moduleless=The resource '{0}' does not have any information about the module.
-resourcemanager.addresource=The resource '{0}' has been registered in the module '{1}'.
-resourcemanager.addresource.duplicate=The resource '{0}' of module '{1}' has already been added.
-resourcemanager.addresource.error=The resource '{0}' of the module '{1}' could not be added.
+resourcemanager.register={0} resource(s) have been assigned to the application '{1}'.
+resourcemanager.addresource=The resource '{0}' has been registered in the application '{1}'.
+resourcemanager.addresource.duplicate=The resource '{0}' of application '{1}' has already been added.
+resourcemanager.addresource.error=The resource '{0}' of the application '{1}' could not be added.
 resourcemanager.sitemap=Sitemap content resource '{0}' application:
 resourcemanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
-resourcemanager.resource=Resource: '{0}' for module '{1}'
+resourcemanager.resource=Resource: '{0}' for application '{1}'
 
 pagemanager.initialization=The page manager has been initialized.
-pagemanager.moduleless=The page '{0}' does not have any information about the module.
-pagemanager.addresource=The page '{0}' has been registered in the module '{1}'.
-pagemanager.addresource.duplicate=The page '{0}' of module '{1}' has already been added.
-pagemanager.resource=Page: '{0}' for module '{1}'
+pagemanager.addresource=The page '{0}' has been registered in the application '{1}'.
+pagemanager.addresource.duplicate=The page '{0}' of application '{1}' has already been added.
+pagemanager.resource=Page: '{0}' for application '{1}'
 
 restapimanager.initialization=The REST API manager has been initialized.
-restapimanager.moduleless=The REST API '{0}' does not have any information about the module.
-restapimanager.addresource=The REST API '{0}' has been registered in the module '{1}'.
-restapimanager.addresource.duplicate=The REST API '{0}' of module '{1}' has already been added.
-restapimanager.resource=REST API: '{0}' for module '{1}'
+restapimanager.addresource=The REST API '{0}' has been registered in the application '{1}'.
+restapimanager.addresource.duplicate=The REST API '{0}' of application '{1}' has already been added.
+restapimanager.resource=REST API: '{0}' for application '{1}'
 restapimanager.methodnotsupported=The method '{0}' is not supported.
 
 statuspagemanager.initialization=The status page manager has been initialized.
-statuspagemanager.applicationless=The status page '{0}' does not have any information about the application.
-statuspagemanager.applicationrich=The status page '{0}' has too many applications. The first application is used.
 statuspagemanager.register=The status '{0}' has been registered and assigned to the status page '{1}'.
 statuspagemanager.duplicat=The status '{0}' has already been registered. Therefore, the status page '{1}' is not used.
-statuspagemanager.statuscode=A status code has not been assigned to the  resource '{1}' for the application '{0}'.
+statuspagemanager.statuscodeless=A status code has not been assigned to the  resource '{1}' for the application '{0}'.
 statuspagemanager.resource=Status code: '{0}'
 
 sitemapmanager.initialization=The sitemap manager has been initialized.
@@ -134,19 +120,15 @@ sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
 sessionmanager.initialization=The session manager has been initialized.
 
 eventmanager.initialization=The event manager has been initialized.
-eventmanager.applicationless=The event handler '{0}' does not have any information about an application.
-eventmanager.applicationrich=The event handler '{0}' has too many applications. The first application is used.
 eventmanager.register=The event handler '{0}' has been registered in the application '{1}'.
 eventmanager.duplicate=The event handler '{0}' has already been registered. Therefore, the application '{1}' is not used.
 eventmanager.eventless=The event handler '{0}' does not have any information about the event.
 
 jobmanager.initialization=The schedule manager has been initialized.
-eventmanager.applicationless=The job '{0}' does not have any information about an application.
-eventmanager.applicationrich=The job '{0}' has too many applications. The first application is used.
-eventmanager.register=The job '{0}' has been registered in the application '{1}'.
-eventmanager.duplicate=The job '{0}' has already been registered. Therefore, the application '{1}' is not used.
-eventmanager.jobless=The job '{0}' does not have any information about the job.
-jobmanager.job=Job: '{0}' for module '{1}'
+jobmanager.register=The job '{0}' has been registered in the application '{1}'.
+jobmanager.duplicate=The job '{0}' has already been registered. Therefore, the application '{1}' is not used.
+jobmanager.jobless=The job '{0}' does not have any information about the job.
+jobmanager.job=Job: '{0}' for plugin '{1}'
 jobmanager.job.process=The job '{0}' is executed.
 jobmanager.cron.parseerror=Syntax error in the timing of a job. The value '{0}' cannot be processed.
 jobmanager.cron.range=Syntax error in the timing of a job. The value '{0}' is outside the valid range.

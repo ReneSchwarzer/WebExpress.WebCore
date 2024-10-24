@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebCondition;
-using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebRestApi.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebRestApi
@@ -15,25 +14,20 @@ namespace WebExpress.WebCore.WebRestApi
     /// </summary>
     public class RestApiContext : IRestApiContext
     {
-        private readonly IRestApiManager _restApiManager;
-        private readonly RestApiItem _restApiItem;
+        private readonly IEndpointManager _endpointManager;
+        private readonly Type _parentType;
+        private readonly UriResource _contextPath;
+        private readonly IUriPathSegment _pathSegment;
 
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
-        public IPluginContext PluginContext { get; private set; }
+        public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding module context.
+        /// Returns the corresponding application context.
         /// </summary>
-        public IModuleContext ModuleContext { get; private set; }
-
-        /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
-        /// is a string with a name (e.g. global, admin), which can be used by elements to 
-        /// determine whether content and how content should be displayed.
-        /// </summary>
-        public IEnumerable<string> Scopes { get; internal set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
@@ -53,10 +47,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Returns the parent or null if not used.
         /// </summary>
-        public IEndpointContext ParentContext => _restApiManager.RestApis
-            .Where(x => !string.IsNullOrWhiteSpace(_restApiItem.ParentId))
-            .Where(x => x.EndpointId.Equals(_restApiItem.ParentId, StringComparison.OrdinalIgnoreCase))
-            .Where(x => x.ModuleContext.ApplicationContext == ModuleContext.ApplicationContext)
+        public IEndpointContext ParentContext => _endpointManager.GetEndpoints(_parentType, ApplicationContext)
             .FirstOrDefault();
 
         /// <summary>
@@ -84,30 +75,31 @@ namespace WebExpress.WebCore.WebRestApi
                 var parentContext = ParentContext;
                 if (parentContext != null)
                 {
-                    return UriResource.Combine(ParentContext?.Uri, _restApiItem.ContextPath, Version.ToString());
+                    return UriResource.Combine(ParentContext?.Uri, _contextPath, Version.ToString());
                 }
 
-                return UriResource.Combine(ModuleContext.ContextPath, _restApiItem.ContextPath, Version.ToString());
+                return UriResource.Combine(ApplicationContext?.ContextPath, _contextPath, Version.ToString());
             }
         }
 
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_restApiItem.PathSegment);
+        public UriResource Uri => ContextPath.Append(_pathSegment);
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the class with the specified parent type and context path.
         /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        /// <param name="restApiManager">The resource manager.</param>
-        /// <param name="restApiItem">The page item or null.</param>
-        internal RestApiContext(IModuleContext moduleContext, IRestApiManager restApiManager, RestApiItem restApiItem = null)
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        /// <param name="parentType">The type of the parent resource.</param>
+        /// <param name="contextPath">The context path of the resource.</param>
+        /// <param name="pathSegment">The path segment of the resource.</param>
+        public RestApiContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
         {
-            PluginContext = moduleContext?.PluginContext;
-            ModuleContext = moduleContext;
-            _restApiManager = restApiManager;
-            _restApiItem = restApiItem;
+            _endpointManager = endpointManager;
+            _parentType = parentType;
+            _contextPath = contextPath;
+            _pathSegment = pathSegment;
         }
 
         /// <summary>
@@ -116,7 +108,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{ModuleContext?.ApplicationContext?.ApplicationId}:{ModuleContext?.ModuleId}:{EndpointId}";
+            return $"RestApi: {EndpointId}";
         }
     }
 }

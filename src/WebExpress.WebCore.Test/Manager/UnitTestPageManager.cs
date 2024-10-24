@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(3, componentHub.PageManager.Pages.Count());
+            Assert.Equal(9, componentHub.PageManager.Pages.Count());
         }
 
         /// <summary>
@@ -44,15 +44,21 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "webexpress.webcore.test.testpagea1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "webexpress.webcore.test.testpagea1y")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "webexpress.webcore.test.testpagea1z")]
-        public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
+        public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var page = componentHub.PageManager.GetPage(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, page.EndpointId);
@@ -62,16 +68,22 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the title property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "webindex:homepage.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "webindex:homepage.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "webindex:pagea.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "webindex:pageb.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "webindex:pagec.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "webindex:pagea.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "webindex:pageb.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "webindex:pagec.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "webindex:pagea.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "webindex:pageb.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "webindex:pagec.label")]
 
-        public void Title(Type applicationType, Type moduleType, Type resourceType, string id)
+        public void Title(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var page = componentHub.PageManager.GetPage(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, page.PageTitle);
@@ -81,15 +93,21 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1X), "/aca/mca")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Y), "/aca/mca")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestPageA1Z), "/aca/mca")]
-        public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/appa/resa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/appb/resa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/resa")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/")]
+        public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var page = componentHub.PageManager.GetPage(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, page.ContextPath);
@@ -118,9 +136,9 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            foreach (var application in componentHub.PageManager.Pages)
+            foreach (var pages in componentHub.PageManager.Pages)
             {
-                Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Page context {application.GetType().Name} does not implement IContext.");
+                Assert.True(typeof(IContext).IsAssignableFrom(pages.GetType()), $"Page context {pages.GetType().Name} does not implement IContext.");
             }
         }
     }

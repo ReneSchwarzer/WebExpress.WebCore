@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebMessage;
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -12,22 +10,10 @@ namespace WebExpress.WebCore.WebSitemap
     /// </summary>
     public class SearchResult
     {
-        private readonly Func<IEndpoint, IEndpointContext, Request, Response> _handleRequest;
-
-        /// <summary>
-        /// Returns the endpoint id.
-        /// </summary>
-        public string EndpointId { get; internal set; }
-
         /// <summary>
         /// Returns the context of the endpoint.
         /// </summary>
         public IEndpointContext EndpointContext { get; internal set; }
-
-        /// <summary>
-        /// Returns the instance.
-        /// </summary>
-        public IEndpoint Instance { get; internal set; }
 
         /// <summary>
         /// Returns the search context.
@@ -50,29 +36,5 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <returns>The uri.</returns>
         public UriResource Uri { get; internal set; }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="handleRequest">The function to handle requests.</param>
-        internal SearchResult(Func<IEndpoint, IEndpointContext, Request, Response> handleRequest)
-        {
-            _handleRequest = handleRequest;
-        }
-
-        /// <summary>
-        /// Processing of the resource.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns>The response.</returns>
-        public Response Process(Request request)
-        {
-            if (_handleRequest != null)
-            {
-                return _handleRequest(Instance, EndpointContext, request);
-            }
-
-            return new ResponseBadRequest();
-        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebAttribute;
+﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test
@@ -9,6 +10,9 @@ namespace WebExpress.WebCore.Test
     [Name("TestPlugin")]
     [Description("plugin.description")]
     [Icon("/assets/img/Logo.png")]
+    [Application<TestApplicationA>()]
+    [Application<TestApplicationB>()]
+    [Application<IApplication>()]
     public sealed class TestPlugin : IPlugin
     {
         /// <summary>

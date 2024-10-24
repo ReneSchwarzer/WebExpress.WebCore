@@ -35,13 +35,6 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Determines the application contexts for a given application id.
         /// </summary>
-        /// <param name="application">The application type.</param>
-        /// <returns>The context of the application or null.</returns>
-        IApplicationContext GetApplication(Type application);
-
-        /// <summary>
-        /// Determines the application contexts for a given application id.
-        /// </summary>
         /// <typeparam name="T">The application type.</typeparam>
         /// <returns>The context of the application or null.</returns>
         IApplicationContext GetApplication<T>();
@@ -59,5 +52,12 @@ namespace WebExpress.WebCore.WebApplication
         /// <param name="pluginContext">The context of the plugin.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
         IEnumerable<IApplicationContext> GetApplications(IPluginContext pluginContext);
+
+        /// <summary>
+        /// Determines the application contexts for a given application type.
+        /// </summary>
+        /// <param name="application">The application type.</param>
+        /// <returns>The contexts of the applications as an enumeration.</returns>
+        IEnumerable<IApplicationContext> GetApplications(Type application);
     }
 }

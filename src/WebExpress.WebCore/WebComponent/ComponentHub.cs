@@ -4,10 +4,10 @@ using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent.Model;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly InternationalizationManager _internationalizationManager;
         private readonly PluginManager _pluginManager;
         private readonly ApplicationManager _applicationManager;
-        private readonly ModuleManager _moduleManager;
+        private readonly EndpointManager _endpointManager;
         private readonly ResourceManager _resourceManager;
         private readonly PageManager _pageManager;
         private readonly RestApiManager _restApiManager;
@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebComponent
                 PackageManager,
                 _pluginManager,
                 _applicationManager,
-                _moduleManager,
+                _endpointManager,
                 _sitemapManager,
                 _resourceManager,
                 _pageManager,
@@ -101,12 +101,6 @@ namespace WebExpress.WebCore.WebComponent
         public IApplicationManager ApplicationManager => _applicationManager;
 
         /// <summary>
-        /// Returns the module manager.
-        /// </summary>
-        /// <returns>The instance of the module manager.</returns>
-        public IModuleManager ModuleManager => _moduleManager;
-
-        /// <summary>
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
@@ -117,6 +111,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         public IJobManager JobManager => _jobManager;
+
+        /// <summary>
+        /// Returns the endpoint manager.
+        /// </summary>
+        /// <returns>The instance of the endpoint manager.</returns>
+        public IEndpointManager EndpointManager => _endpointManager;
 
         /// <summary>
         /// Returns the resource manager.
@@ -180,8 +180,8 @@ namespace WebExpress.WebCore.WebComponent
             _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager;
             _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
             _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
-            _moduleManager = CreateInstance(typeof(ModuleManager)) as ModuleManager;
             _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
+            _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
@@ -345,7 +345,6 @@ namespace WebExpress.WebCore.WebComponent
         {
             _pluginManager.Boot(pluginContext);
             _applicationManager.Boot(pluginContext);
-            _moduleManager.Boot(pluginContext);
 
             foreach (var component in _dictionary.Values
                 .Where(x => x is IExecutableElements)
@@ -400,7 +399,6 @@ namespace WebExpress.WebCore.WebComponent
         {
             _pluginManager.ShutDown(pluginContext);
             _applicationManager.ShutDown(pluginContext);
-            _moduleManager.ShutDown(pluginContext);
 
             foreach (var component in _dictionary.Values
                 .Where(x => x is IExecutableElements)
@@ -480,7 +478,6 @@ namespace WebExpress.WebCore.WebComponent
                 );
 
                 _applicationManager.PrepareForLog(pluginContext, output, 4);
-                _moduleManager.PrepareForLog(pluginContext, output, 4);
                 _resourceManager.PrepareForLog(pluginContext, output, 4);
                 _statusPageManager.PrepareForLog(pluginContext, output, 4);
                 _jobManager.PrepareForLog(pluginContext, output, 4);
@@ -501,6 +498,13 @@ namespace WebExpress.WebCore.WebComponent
             //}
 
             HttpServerContext.Log.Info(string.Join(Environment.NewLine, output));
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
         }
     }
 }

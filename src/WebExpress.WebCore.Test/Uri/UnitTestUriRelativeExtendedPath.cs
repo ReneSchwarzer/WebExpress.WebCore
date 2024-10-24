@@ -26,8 +26,7 @@ namespace WebExpress.WebCore.Test.Uri
             var resourceUri = new UriResource(Uri, segments);
             resourceUri.ServerRoot = new UriResource("http://user@example.com:80");
             resourceUri.ApplicationRoot = new UriResource("http://user@example.com:80");
-            resourceUri.ModuleRoot = new UriResource("http://user@example.com:80");
-            resourceUri.ResourceRoot = new UriResource("http://user@example.com:80/a/b/c");
+            resourceUri.EndpointRoot = new UriResource("http://user@example.com:80/a/b/c");
 
             Assert.True
             (

@@ -33,18 +33,5 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             Assert.NotNull(componentHub.ApplicationManager);
         }
-
-        /// <summary>
-        /// Test the module manager property of the component manager.
-        /// </summary>
-        [Fact]
-        public void ModuleManager()
-        {
-            // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
-
-            // test execution
-            Assert.NotNull(componentHub.ModuleManager);
-        }
     }
 }

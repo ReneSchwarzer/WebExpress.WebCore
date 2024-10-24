@@ -9,9 +9,9 @@ namespace WebExpress.WebCore.Test
     [Name("TestApplicationA")]
     [Description("application.description")]
     [Icon("/assets/img/Logo.png")]
-    [ContextPath("/aca")]
-    [AssetPath("/aaa")]
-    [DataPath("/ada")]
+    [ContextPath("/appa")]
+    [AssetPath("/asseta")]
+    [DataPath("/dataa")]
     [Dependency("webexpress.webui")]
     public sealed class TestApplicationA : IApplication
     {

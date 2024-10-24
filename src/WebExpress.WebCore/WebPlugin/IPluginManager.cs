@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebPlugin
@@ -37,5 +38,19 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="pluginId">The type of the plugin.</param>
         /// <returns>The plugin context.</returns>
         IPluginContext GetPlugin(Type plugin);
+
+        /// <summary>
+        /// Returns all plugins that have associated applications.
+        /// </summary>
+        /// <param name="applicationContext">The application context to filter plugins.</param>
+        /// <returns>An enumerable collection of plugin contexts with applications.</returns>
+        IEnumerable<IPluginContext> GetPlugins(IApplicationContext applicationContext);
+
+        /// <summary>
+        /// Returns all ApplicationContext instances associated with a plugin.
+        /// </summary>
+        /// <param name="pluginContext">The context of the plugin.</param>
+        /// <returns>A collection of ApplicationContext instances.</returns>
+        IEnumerable<IApplicationContext> GetAssociatedApplications(IPluginContext pluginContext);
     }
 }

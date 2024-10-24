@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(3, componentHub.StatusPageManager.StatusPages.Count());
+            Assert.Equal(12, componentHub.StatusPageManager.StatusPages.Count());
         }
 
         /// <summary>
@@ -44,14 +44,16 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA400), "webexpress.webcore.test.teststatuspagea400")]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA404), "webexpress.webcore.test.teststatuspagea404")]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPageB404), "webexpress.webcore.test.teststatuspageb404")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage301), "webexpress.webcore.test.teststatuspage301")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), "webexpress.webcore.test.teststatuspage400")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), "webexpress.webcore.test.teststatuspage404")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), "webexpress.webcore.test.teststatuspage500")]
+
         public void Id(Type applicationType, Type statusPageType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
             // test execution
@@ -62,13 +64,23 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the title property of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA400), "webindex:homepage.label")]
-
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage301), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage301), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage400), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage404), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage500), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage301), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), "webindex:homepage.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "webindex:homepage.label")]
         public void Title(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, resourceType);
 
             // test execution
@@ -79,16 +91,23 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA400), 400)]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA404), 404)]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPageB404), 404)]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageB500), null)]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPageB500), null)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage301), 301)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), 400)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), 404)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), 500)]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage301), 301)]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage400), 400)]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage404), 404)]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage500), 500)]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage301), 301)]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), 400)]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), 404)]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), 500)]
         public void Code(Type applicationType, Type statusPageType, int? code)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
             // test execution
@@ -99,16 +118,23 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA400), "/aca/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageA404), "/aca/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPageB404), null)]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPageB500), null)]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPageB500), null)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage301), null)]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), "/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), "/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), "/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage301), null)]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage400), "/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage404), "/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage500), "/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage301), null)]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), "/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), "/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "/webexpress/icon.png")]
         public void Icon(Type applicationType, Type statusPageType, string icon)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
             // test execution
@@ -128,7 +154,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusResponse = componentHub.StatusPageManager.CreateStatusResponse("content", statusCode, application, UnitTestControlFixture.CreateHttpContextMock().Request);
 
             // test execution
@@ -140,12 +166,12 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]
-        [InlineData(typeof(TestApplicationA), 500, "content", "content", 7)]
+        [InlineData(typeof(TestApplicationA), 500, "content", "content", 78)]
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestControlFixture.CreateHttpContextMock().Request);
 
             // test execution

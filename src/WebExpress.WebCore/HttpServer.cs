@@ -268,9 +268,8 @@ namespace WebExpress.WebCore
                 resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count)?.PathSegments)
                 {
                     ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments),
-                    ApplicationRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ModuleContext?.ApplicationContext?.ContextPath.PathSegments),
-                    ModuleRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ModuleContext?.ContextPath.PathSegments),
-                    ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
+                    ApplicationRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ApplicationContext?.ContextPath.PathSegments),
+                    EndpointRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
                 };
 
                 request.Uri = resourceUri;
@@ -280,14 +279,9 @@ namespace WebExpress.WebCore
                     // execute resource
                     request.AddParameter(searchResult.Uri.Parameters.Select(x => new Parameter(x.Key, x.Value, ParameterScope.Url)));
 
-                    if (searchResult.Instance != null)
+                    if (searchResult.EndpointContext != null)
                     {
-                        response = searchResult.Process(request);
-
-                        if (searchResult.Instance is IPage)
-                        {
-                            response.Content += $"<!-- {stopwatch.ElapsedMilliseconds} ms -->";
-                        }
+                        response = WebEx.ComponentHub.EndpointManager.HandleRequest(request, searchResult.EndpointContext);
 
                         if (response is ResponseNotFound)
                         {
@@ -468,7 +462,7 @@ namespace WebExpress.WebCore
                 (
                     message,
                     response.Status,
-                    searchResult?.EndpointContext?.ModuleContext?.ApplicationContext,
+                    searchResult?.EndpointContext?.ApplicationContext,
                     request
                 );
             }

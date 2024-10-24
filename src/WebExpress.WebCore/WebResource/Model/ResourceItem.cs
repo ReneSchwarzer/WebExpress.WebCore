@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource.Model
@@ -19,29 +15,9 @@ namespace WebExpress.WebCore.WebResource.Model
         private readonly IResourceManager _resourceManager;
 
         /// <summary>
-        /// An event that fires when an ressource is added.
+        /// Returns or sets the parent type.
         /// </summary>
-        public event EventHandler<IResourceContext> AddResource;
-
-        /// <summary>
-        /// An event that fires when an resource is removed.
-        /// </summary>
-        public event EventHandler<IResourceContext> RemoveResource;
-
-        /// <summary>
-        /// Returns or sets the resource id.
-        /// </summary>
-        public string ResourceId { get; set; }
-
-        /// <summary>
-        /// Returns or sets the resource title.
-        /// </summary>
-        //public string Title { get; set; }
-
-        /// <summary>
-        /// Returns or sets the parent id.
-        /// </summary>
-        public string ParentId { get; set; }
+        public Type ParentType { get; set; }
 
         /// <summary>
         /// Returns or sets the type of resource.
@@ -52,11 +28,6 @@ namespace WebExpress.WebCore.WebResource.Model
         /// Returns or sets the instance of the resource, if the resource is cached, otherwise null.
         /// </summary>
         public IEndpoint Instance { get; set; }
-
-        /// <summary>
-        /// Returns or sets the module id.
-        /// </summary>
-        public string ModuleId { get; set; }
 
         /// <summary>
         /// Returns the scope names that provides the resource. The scope name
@@ -91,30 +62,14 @@ namespace WebExpress.WebCore.WebResource.Model
         public bool Cache { get; set; }
 
         /// <summary>
-        /// Returns whether it is a optional resource.
-        /// </summary>
-        public bool Optional { get; set; }
-
-        /// <summary>
         /// Returns the log to write status messages to the console and to a log file.
         /// </summary>
         public ILog Log { get; internal set; }
 
         /// <summary>
-        /// Returns the directory where the module instances are listed.
+        /// Returns the resource context.
         /// </summary>
-        private IDictionary<IModuleContext, IResourceContext> Dictionary { get; }
-            = new Dictionary<IModuleContext, IResourceContext>();
-
-        /// <summary>
-        /// Returns the associated module contexts.
-        /// </summary>
-        public IEnumerable<IModuleContext> ModuleContexts => Dictionary.Keys;
-
-        /// <summary>
-        /// Returns the resource contexts.
-        /// </summary>
-        public IEnumerable<IResourceContext> ResourceContexts => Dictionary.Values;
+        public IResourceContext ResourceContext { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ResourceItem"/> class.
@@ -126,104 +81,11 @@ namespace WebExpress.WebCore.WebResource.Model
         }
 
         /// <summary>
-        /// Adds an module assignment
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        public void AddModule(IModuleContext moduleContext)
-        {
-            // only if no instance has been created yet
-            if (Dictionary.ContainsKey(moduleContext))
-            {
-                Log.Warning(message: I18N.Translate("webexpress:resourcemanager.addresource.duplicate", ResourceId, moduleContext.ModuleId));
-
-                return;
-            }
-
-            // create context
-            var resourceContext = new ResourceContext(moduleContext, _resourceManager, this)
-            {
-                //Scopes = Scopes,
-                Conditions = Conditions,
-                EndpointId = ResourceId,
-                Cache = Cache,
-                IncludeSubPaths = IncludeSubPaths
-            };
-
-            if
-            (
-                !Optional ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.{ResourceId.ToLower()}") ||
-                moduleContext.ApplicationContext.Options.Contains($"{ModuleId.ToLower()}.*") ||
-                moduleContext.ApplicationContext.Options.Where(x => Regex.Match($"{ModuleId.ToLower()}.{ResourceId.ToLower()}", x).Success).Any()
-            )
-            {
-                Dictionary.Add(moduleContext, resourceContext);
-                OnAddResource(resourceContext);
-            }
-        }
-
-        /// <summary>
-        /// Remove an module assignment.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        public void DetachModule(IModuleContext moduleContext)
-        {
-            // not an assignment has been created yet
-            if (!Dictionary.ContainsKey(moduleContext))
-            {
-                return;
-            }
-
-            foreach (var resourceContext in Dictionary.Values)
-            {
-                OnRemoveResource(resourceContext);
-            }
-
-            Dictionary.Remove(moduleContext);
-        }
-
-        /// <summary>
-        /// Checks whether a module context is already assigned to the item.
-        /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        /// <returns>True a mapping exists, false otherwise.</returns>
-        public bool IsAssociatedWithModule(IModuleContext moduleContext)
-        {
-            return Dictionary.ContainsKey(moduleContext);
-        }
-
-        /// <summary>
-        /// Raises the AddResource event.
-        /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnAddResource(IResourceContext resourceContext)
-        {
-            AddResource?.Invoke(this, resourceContext);
-        }
-
-        /// <summary>
-        /// Raises the RemoveResource event.
-        /// </summary>
-        /// <param name="resourceContext">The resource context.</param>
-        private void OnRemoveResource(IResourceContext resourceContext)
-        {
-            RemoveResource?.Invoke(this, resourceContext);
-        }
-
-        /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            foreach (Delegate d in AddResource.GetInvocationList())
-            {
-                AddResource -= (EventHandler<IResourceContext>)d;
-            }
 
-            foreach (Delegate d in RemoveResource.GetInvocationList())
-            {
-                RemoveResource -= (EventHandler<IResourceContext>)d;
-            }
         }
 
         /// <summary>
@@ -232,7 +94,7 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <returns>The resource element in its string representation.</returns>
         public override string ToString()
         {
-            return $"Resource '{ResourceId}'";
+            return $"Resource '{ResourceContext?.EndpointId}'";
         }
     }
 }

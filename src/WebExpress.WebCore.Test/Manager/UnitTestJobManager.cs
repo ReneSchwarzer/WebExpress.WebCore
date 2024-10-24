@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(1, componentHub.JobManager.Jobs.Count());
+            Assert.Equal(3, componentHub.JobManager.Jobs.Count());
         }
 
         /// <summary>
@@ -73,26 +73,41 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the job.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1X), "webexpress.webcore.test.testresourcea1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1Y), "webexpress.webcore.test.testresourcea1y")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), typeof(TestResourceA2X), "webexpress.webcore.test.testresourcea2x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestPageA1X), null)]
+        [InlineData(typeof(TestApplicationA), typeof(TestJobA), "webexpress.webcore.test.testjoba")]
+        [InlineData(typeof(TestApplicationB), typeof(TestJobA), "webexpress.webcore.test.testjoba")]
+        [InlineData(typeof(TestApplicationC), typeof(TestJobA), "webexpress.webcore.test.testjoba")]
 
-        public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
+        public void Id(Type applicationType, Type jobType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+            var job = componentHub.JobManager.GetJob(application, jobType);
 
             // test execution
-            Assert.Equal(id, resource?.EndpointId);
+            Assert.Equal(id, job?.JobId);
         }
 
+        /// <summary>
+        /// Test the cron property of the job.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestJobA), 50, 8, 31, new[] { 1, 2 }, 0)]
+        [InlineData(typeof(TestApplicationB), typeof(TestJobA), 50, 8, 31, new[] { 1, 2 }, 0)]
+        [InlineData(typeof(TestApplicationC), typeof(TestJobA), 50, 8, 31, new[] { 1, 2 }, 0)]
+        public void Cron(Type applicationType, Type jobType, int minute, int hour, int day, int[] month, int weekday)
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+            var job = componentHub.JobManager.GetJob(application, jobType);
 
-
-
+            // test execution
+            Assert.Equal(minute, job?.Cron.Minute.FirstOrDefault() ?? -1);
+            Assert.Equal(hour, job?.Cron.Hour.FirstOrDefault() ?? -1);
+            Assert.Equal(day, job?.Cron.Day.FirstOrDefault() ?? -1);
+            Assert.True(month.SequenceEqual(job?.Cron.Month ?? []));
+            Assert.Equal(weekday, job?.Cron.Weekday.FirstOrDefault() ?? -1);
+        }
     }
 }

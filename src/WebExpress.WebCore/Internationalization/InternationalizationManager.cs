@@ -301,5 +301,12 @@ namespace WebExpress.WebCore.Internationalization
         {
 
         }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

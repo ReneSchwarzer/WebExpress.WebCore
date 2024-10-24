@@ -1,5 +1,5 @@
 ﻿using System;
-using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 
 namespace WebExpress.WebCore.WebAttribute
 {

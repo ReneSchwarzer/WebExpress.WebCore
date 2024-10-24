@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
-using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebPage
     /// </summary>
     public class PageManager : IPageManager
     {
-        private readonly IComponentHub _componentManager;
+        private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly PageDictionary _dictionary = [];
 
@@ -40,7 +40,8 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         public IEnumerable<IPageContext> Pages => _dictionary.Values
             .SelectMany(x => x.Values)
-            .SelectMany(x => x.PageContexts);
+            .SelectMany(x => x.Values)
+            .Select(x => x.PageContext);
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -49,54 +50,39 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         private PageManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
         {
-            _componentManager = componentManager;
+            _componentHub = componentManager;
 
-            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
-            {
-                Register(pluginContext);
-            };
+            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
-            {
-                Remove(pluginContext);
-            };
-
-            _componentManager.ModuleManager.AddModule += (sender, moduleContext) =>
-            {
-                AssignToModule(moduleContext);
-            };
-
-            _componentManager.ModuleManager.RemoveModule += (sender, moduleContext) =>
-            {
-                DetachFromModule(moduleContext);
-            };
-
-            _componentManager.SitemapManager.Register<PageContext>
+            _componentHub.EndpointManager.Register<PageContext>
             (
                 new EndpointRegistration()
                 {
-                    Factory = (resourceContext, uri, culture) => CreatePageInstance(resourceContext as IPageContext, culture),
-                    ContextResolver = (type, moduleContext) => moduleContext != null ? GetPages(type, moduleContext) : GetPages(type),
-                    EndpointResolver = () => Pages,
-                    HandleRequest = (endpoint, endpontContext, request) =>
+                    EndpointResolver = (type, applicationContext) => applicationContext != null ? GetPages(type, applicationContext) : GetPages(type),
+                    EndpointsResolver = () => Pages,
+                    HandleRequest = (request, endpontContext) =>
                     {
-                        var type = endpoint.GetType();
+                        var page = CreatePageInstance(endpontContext as IPageContext, request.Culture);
+                        var pageType = page.GetType();
                         var context = default(IRenderContext);
                         var pageContetx = endpontContext as IPageContext;
 
-                        if (type.IsGenericType)
+                        if (pageType.IsGenericType)
                         {
-                            var typeOfT = type.GetGenericArguments()[0];
-                            var parameters = new object[] { endpoint as IPage, endpontContext as IPageContext, request };
+                            var typeOfT = pageType.GetGenericArguments()[0];
+                            var parameters = new object[] { page, endpontContext as IPageContext, request };
 
                             context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
                         }
                         else
                         {
-                            context = new RenderContext(endpontContext.ModuleContext?.ApplicationContext, request, pageContetx.Scopes);
+                            context = new RenderContext(endpontContext?.ApplicationContext, request, pageContetx.Scopes);
                         }
 
-                        (endpoint as IPage).Process(context);
+                        page.Process(context);
 
                         return new ResponseOK()
                         {
@@ -121,13 +107,14 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of page contexts.</returns>
         public IEnumerable<IPageContext> GetPages(IPluginContext pluginContext)
         {
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
             {
-                return [];
+                return pluginResources
+                    .SelectMany(x => x.Value)
+                    .Select(x => x.Value.PageContext);
             }
 
-            return _dictionary[pluginContext].Values
-                .SelectMany(x => x.PageContexts);
+            return [];
         }
 
         /// <summary>
@@ -149,7 +136,7 @@ namespace WebExpress.WebCore.WebPage
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts, (x, y) => new { x.PageClass, PageContext = y })
+                .SelectMany(x => x.Values)
                 .Where(x => x.PageClass.Equals(pageType))
                 .Select(x => x.PageContext);
         }
@@ -158,15 +145,15 @@ namespace WebExpress.WebCore.WebPage
         /// Returns an enumeration of page contextes.
         /// </summary>
         /// <param name="pageType">The page type.</param>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of page contextes.</returns>
-        public IEnumerable<IPageContext> GetPages(Type pageType, IModuleContext moduleContext)
+        public IEnumerable<IPageContext> GetPages(Type pageType, IApplicationContext applicationContext)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts, (x, y) => new { x.PageClass, PageContext = y })
-                .Where(x => x.PageContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
                 .Where(x => x.PageClass.Equals(pageType))
+                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
                 .Select(x => x.PageContext);
         }
 
@@ -174,52 +161,31 @@ namespace WebExpress.WebCore.WebPage
         /// Returns an enumeration of page contextes.
         /// </summary>
         /// <typeparam name="T">The page type.</typeparam>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of page contextes.</returns>
-        public IEnumerable<IPageContext> GetPages<T>(IModuleContext moduleContext) where T : IPage
+        public IEnumerable<IPageContext> GetPages<T>(IApplicationContext applicationContext) where T : IPage
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts, (x, y) => new { x.PageClass, PageContext = y })
-                .Where(x => x.PageContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
                 .Where(x => x.PageClass.Equals(typeof(T)))
+                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
                 .Select(x => x.PageContext);
         }
 
         /// <summary>
         /// Returns the page context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <param name="pageId">The page id.</param>
         /// <returns>An page context or null.</returns>
-        public IPageContext GetPage(IModuleContext moduleContext, string pageId)
+        public IPageContext GetPage(IApplicationContext applicationContext, string pageId)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts, (x, y) => new { x.PageClass, PageContext = y })
-                .Where(x => x.PageContext.ModuleContext?.ApplicationContext != null)
-                .Where(x => x.PageContext.ModuleContext.ApplicationContext.ApplicationId.Equals(moduleContext.ApplicationContext.ApplicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.PageContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.PageContext.EndpointId.Equals(pageId, StringComparison.OrdinalIgnoreCase))
-                .Select(x => x.PageContext)
-                .FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the page context.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        /// <param name="pageType">The page type.</param>
-        /// <returns>An page context or null.</returns>
-        public IPageContext GetPage(IModuleContext moduleContext, Type pageType)
-        {
-            return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts, (x, y) => new { x.PageClass, PageContext = y })
-                .Where(x => x.PageContext.ModuleContext?.ApplicationContext != null)
-                .Where(x => x.PageContext.ModuleContext.ApplicationContext.ApplicationId.Equals(moduleContext.ApplicationContext.ApplicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.PageContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.PageClass.Equals(pageType))
+                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
+                .Where(x => x.PageContext.EndpointId.Equals(pageId))
                 .Select(x => x.PageContext)
                 .FirstOrDefault();
         }
@@ -228,18 +194,16 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the page context.
         /// </summary>
         /// <param name="applicationId">The application id.</param>
-        /// <param name="moduleId">The module id.</param>
         /// <param name="pageId">The page id.</param>
         /// <returns>An page context or null.</returns>
-        public IPageContext GetPage(string applicationId, string moduleId, string pageId)
+        public IPageContext GetPage(string applicationId, string pageId)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.PageContexts)
-                .Where(x => x.ModuleContext != null && x.ModuleContext.ApplicationContext != null)
-                .Where(x => x.ModuleContext.ApplicationContext.ApplicationId.Equals(applicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ModuleContext.ModuleId.Equals(moduleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.EndpointId.Equals(pageId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
+                .Where(x => x.PageContext.ApplicationContext.ApplicationId.Equals(applicationId))
+                .Where(x => x.PageContext.EndpointId.Equals(pageId))
+                .Select(x => x.PageContext)
                 .FirstOrDefault();
         }
 
@@ -253,11 +217,12 @@ namespace WebExpress.WebCore.WebPage
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
-                .FirstOrDefault(x => x.PageContexts.Contains(pageContext));
+                .SelectMany(x => x.Values)
+                .FirstOrDefault(x => x.PageContext.Equals(pageContext));
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _componentManager);
+                var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _componentHub);
 
                 if (instance is II18N i18n)
                 {
@@ -276,20 +241,44 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Discovers and registers pages from the specified plugin.
+        /// Discovers and binds pages to an application.
         /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose pages are to be registered.</param>
-        public void Register(IPluginContext pluginContext)
+        /// <param name="pluginContext">The context of the plugin whose pages are to be associated.</param>
+        private void Register(IPluginContext pluginContext)
         {
             if (_dictionary.ContainsKey(pluginContext))
             {
                 return;
             }
 
-            var assembly = pluginContext?.Assembly;
+            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+        }
 
-            _dictionary.Add(pluginContext, []);
-            var dict = _dictionary[pluginContext];
+        /// <summary>
+        /// Discovers and binds pages to an application.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application whose pages are to be associated.</param>
+        private void Register(IApplicationContext applicationContext)
+        {
+            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            {
+                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                {
+                    continue;
+                }
+
+                Register(pluginContext, [applicationContext]);
+            }
+        }
+
+        /// <summary>
+        /// Registers pages for a given plugin and application context.
+        /// </summary>
+        /// <param name="pluginContext">The plugin context.</param>
+        /// <param name="applicationContext">The application context (optional).</param>
+        private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
+        {
+            var assembly = pluginContext?.Assembly;
 
             foreach (var resourceType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
@@ -298,27 +287,23 @@ namespace WebExpress.WebCore.WebPage
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
                 var title = resourceType.Name;
-                var parent = default(string);
+                var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
-                var moduleId = string.Empty;
                 var scopes = new List<string>();
                 var conditions = new List<ICondition>();
-                var optional = false;
                 var cache = false;
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
-                    var buf = typeof(ModuleAttribute<>);
-
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
-                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
+                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                     }
                     else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
                     {
@@ -327,10 +312,6 @@ namespace WebExpress.WebCore.WebPage
                     else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
                     {
                         includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(ModuleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ModuleAttribute<>).Namespace)
-                    {
-                        moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
@@ -341,17 +322,11 @@ namespace WebExpress.WebCore.WebPage
                     {
                         cache = true;
                     }
-                    else if (customAttribute.AttributeType == typeof(OptionalAttribute))
-                    {
-                        optional = true;
-                    }
                 }
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
                 {
-                    var buf = typeof(ModuleAttribute<>);
-
                     if (customAttribute.AttributeType == typeof(TitleAttribute))
                     {
                         title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
@@ -367,80 +342,51 @@ namespace WebExpress.WebCore.WebPage
                     scopes.Add(resourceType.FullName?.ToLower());
                 }
 
-                if (string.IsNullOrEmpty(moduleId))
+                // assign the job to existing applications
+                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {
-                    // no module specified
-                    _httpServerContext.Log.Warning
-                    (
-                        I18N.Translate
-                        (
-                            "webexpress:pagemanager.moduleless",
-                            id
-                        )
-                    );
-
-                    continue;
-                }
-
-                if (!dict.ContainsKey(id))
-                {
-                    var pageItem = new PageItem(_componentManager.PageManager)
+                    var pageContext = new PageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
-                        PageId = id,
+                        PageTitle = title,
+                        EndpointId = resourceType.FullName.ToLower(),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
+                        Cache = cache,
+                        Scopes = scopes,
+                        Conditions = conditions,
+                        IncludeSubPaths = includeSubPaths
+                    };
+
+                    var pageItem = new PageItem(_componentHub.PageManager)
+                    {
                         Title = title,
-                        ParentId = parent,
+                        PageContext = pageContext,
+                        ParentType = parent,
                         PageClass = resourceType,
-                        ModuleId = moduleId,
                         Scopes = scopes,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
                         PathSegment = segment.ToPathSegment(),
-                        Optional = optional,
                         Log = _httpServerContext?.Log
                     };
 
-                    pageItem.AddPage += (s, e) =>
+                    if (_dictionary.AddPageItem(pluginContext, applicationContext, pageItem))
                     {
-                        OnAddPage(e);
-                    };
+                        OnAddPage(pageContext);
 
-                    pageItem.RemovePage += (s, e) =>
-                    {
-                        OnRemovePage(e);
-                    };
-
-                    dict.Add(id, pageItem);
-
-                    _httpServerContext?.Log.Debug
-                    (
-                        I18N.Translate
+                        _httpServerContext?.Log.Debug
                         (
-                            "webexpress:pagemanager.addresource",
-                            id,
-                            moduleId
-                        )
-                    );
+                            I18N.Translate
+                            (
+                                "webexpress:pagemanager.addresource",
+                                id,
+                                applicationContext.ApplicationId
+                            )
+                        );
+                    }
                 }
-
-                // assign the resource to existing modules.
-                foreach (var moduleContext in _componentManager.ModuleManager.GetModules(pluginContext, moduleId))
-                {
-                    AssignToModule(moduleContext);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Discovers and registers resources from the specified plugin.
-        /// </summary>
-        /// <param name="pluginContexts">A list with plugin contexts that contain the resources.</param>
-        public void Register(IEnumerable<IPluginContext> pluginContexts)
-        {
-            foreach (var pluginContext in pluginContexts)
-            {
-                Register(pluginContext);
             }
         }
 
@@ -461,8 +407,10 @@ namespace WebExpress.WebCore.WebPage
                 return;
             }
 
-            foreach (var resourceItem in _dictionary[pluginContext].Values)
+            foreach (var resourceItem in _dictionary[pluginContext].Values
+                .SelectMany(x => x.Values))
             {
+                OnRemovePage(resourceItem.PageContext);
                 resourceItem.Dispose();
             }
 
@@ -470,31 +418,28 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Assign existing resources to the module.
+        /// Removes all jobs associated with the specified application context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void AssignToModule(IModuleContext moduleContext)
+        /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
+        internal void Remove(IApplicationContext applicationContext)
         {
-            foreach (var resourceItem in _dictionary.Values
-                .SelectMany(x => x.Values)
-                .Where(x => x.ModuleId.Equals(moduleContext?.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => !x.IsAssociatedWithModule(moduleContext)))
+            if (applicationContext == null)
             {
-                resourceItem.AddModule(moduleContext);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Remove an existing modules to the application.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void DetachFromModule(IModuleContext moduleContext)
-        {
-            foreach (var resourceItem in _dictionary.Values
-                .SelectMany(x => x.Values)
-                .Where(x => !x.IsAssociatedWithModule(moduleContext)))
+            foreach (var pluginDict in _dictionary.Values)
             {
-                resourceItem.DetachModule(moduleContext);
+                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
+                {
+                    foreach (var resourceItem in appDict.Values)
+                    {
+                        OnRemovePage(resourceItem.PageContext);
+                        resourceItem.Dispose();
+                    }
+                }
+
+                pluginDict.Remove(applicationContext);
             }
         }
 
@@ -505,12 +450,14 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of pages items.</returns>
         private IEnumerable<PageItem> GetPageItems(IPluginContext pluginContext)
         {
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
             {
-                return [];
+                return pluginResources
+                    .SelectMany(x => x.Value)
+                    .Select(x => x.Value);
             }
 
-            return _dictionary[pluginContext].Values;
+            return [];
         }
 
         /// <summary>
@@ -532,6 +479,46 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
+        /// Handles the event when an application is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being removed.</param>
+        private void OnRemoveApplication(object sender, IApplicationContext e)
+        {
+            Remove(e);
+        }
+
+        /// <summary>
+        /// Handles the event when an plugin is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the plugin being added.</param>
+        private void OnAddPlugin(object sender, IPluginContext e)
+        {
+            Register(e);
+        }
+
+        /// <summary>  
+        /// Handles the event when a plugin is removed.  
+        /// </summary>  
+        /// <param name="sender">The source of the event.</param>  
+        /// <param name="e">The context of the plugin being removed.</param>  
+        private void OnRemovePlugin(object sender, IPluginContext e)
+        {
+            Remove(e);
+        }
+
+        /// <summary>
+        /// Handles the event when an application is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being added.</param>
+        private void OnAddApplication(object sender, IApplicationContext e)
+        {
+            Register(e);
+        }
+
+        /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
@@ -547,11 +534,22 @@ namespace WebExpress.WebCore.WebPage
                     I18N.Translate
                     (
                         "webexpress:pagemanager.resource",
-                        resourcenItem.PageId,
-                        string.Join(",", resourcenItem.ModuleId)
+                        resourcenItem?.PageContext?.EndpointId,
+                        string.Join(",", resourcenItem?.PageContext?.ApplicationContext?.ApplicationId)
                     )
                 );
             }
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }
     }
 }

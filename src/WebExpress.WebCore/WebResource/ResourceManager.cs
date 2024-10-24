@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
-using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
-using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
 
@@ -18,9 +18,9 @@ namespace WebExpress.WebCore.WebResource
     /// <summary>
     /// The resource manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
     /// </summary>
-    public sealed class ResourceManager : IResourceManager, IComponentManagerPlugin, ISystemComponent
+    public sealed class ResourceManager : IResourceManager, ISystemComponent
     {
-        private readonly IComponentHub _componentManager;
+        private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly ResourceDictionary _dictionary = [];
 
@@ -39,45 +39,36 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         public IEnumerable<IResourceContext> Resources => _dictionary.Values
             .SelectMany(x => x.Values)
-            .SelectMany(x => x.ResourceContexts);
+            .SelectMany(x => x.Values)
+            .Select(x => x.ResourceContext);
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private ResourceManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private ResourceManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentManager = componentManager;
+            _componentHub = componentHub;
 
-            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
-            {
-                Register(pluginContext);
-            };
+            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
-            {
-                Remove(pluginContext);
-            };
-
-            _componentManager.ModuleManager.AddModule += (sender, moduleContext) =>
-            {
-                AssignToModule(moduleContext);
-            };
-
-            _componentManager.ModuleManager.RemoveModule += (sender, moduleContext) =>
-            {
-                DetachFromModule(moduleContext);
-            };
-
-            _componentManager.SitemapManager.Register<ResourceContext>
+            _componentHub.EndpointManager.Register<ResourceContext>
             (
                 new EndpointRegistration()
                 {
-                    Factory = (resourceContext, uri, culture) => CreateResourceInstance(resourceContext as IResourceContext, culture),
-                    ContextResolver = (type, moduleContext) => moduleContext != null ? GetResorces(type, moduleContext) : GetResorces(type),
-                    EndpointResolver = () => Resources,
-                    HandleRequest = (endpoint, endpointContext, request) => { return (endpoint as IResource).Process(request); }
+                    EndpointResolver = (type, applicationContext) => applicationContext != null ? GetResorces(type, applicationContext) : GetResorces(type),
+                    EndpointsResolver = () => Resources,
+                    HandleRequest = (request, endpointContext) =>
+                    {
+                        var resourceContext = endpointContext as IResourceContext;
+                        var resource = CreateResourceInstance(resourceContext, request.Culture) as IResource;
+
+                        return resource.Process(request);
+                    }
                 }
             );
 
@@ -90,48 +81,68 @@ namespace WebExpress.WebCore.WebResource
         }
 
         /// <summary>
-        /// Discovers and registers resources from the specified plugin.
+        /// Discovers and binds resources to an application.
         /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose resources are to be registered.</param>
-        public void Register(IPluginContext pluginContext)
+        /// <param name="pluginContext">The context of the plugin whose resources are to be associated.</param>
+        private void Register(IPluginContext pluginContext)
         {
             if (_dictionary.ContainsKey(pluginContext))
             {
                 return;
             }
 
+            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+        }
+
+        /// <summary>
+        /// Discovers and binds resources to an application.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
+        private void Register(IApplicationContext applicationContext)
+        {
+            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            {
+                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                {
+                    continue;
+                }
+
+                Register(pluginContext, [applicationContext]);
+            }
+        }
+
+        /// <summary>
+        /// Registers resources for a given plugin and application context.
+        /// </summary>
+        /// <param name="pluginContext">The plugin context.</param>
+        /// <param name="applicationContext">The application context (optional).</param>
+        private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
+        {
             var assembly = pluginContext?.Assembly;
 
-            _dictionary.Add(pluginContext, []);
-            var dict = _dictionary[pluginContext];
-
             foreach (var resourceType in assembly.GetTypes()
-                .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
+                .Where(x => x.IsClass && x.IsSealed && x.IsPublic)
                 .Where(x => x.GetInterface(typeof(IResource).Name) != null)
                 .Where(x => x.GetInterface(typeof(IStatusPage).Name) == null))
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var parent = default(string);
+                var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
-                var moduleId = string.Empty;
                 var conditions = new List<ICondition>();
-                var optional = false;
                 var cache = false;
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
-                    var buf = typeof(ModuleAttribute<>);
-
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
-                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
+                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                     }
                     else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
                     {
@@ -140,10 +151,6 @@ namespace WebExpress.WebCore.WebResource
                     else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
                     {
                         includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(ModuleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ModuleAttribute<>).Namespace)
-                    {
-                        moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
@@ -154,84 +161,42 @@ namespace WebExpress.WebCore.WebResource
                     {
                         cache = true;
                     }
-                    else if (customAttribute.AttributeType == typeof(OptionalAttribute))
-                    {
-                        optional = true;
-                    }
                 }
 
-                if (string.IsNullOrEmpty(moduleId))
+                // assign the job to existing applications
+                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {
-                    // no module specified
-                    _httpServerContext.Log.Warning
-                    (
-                        I18N.Translate
-                        (
-                            "webexpress:resourcemanager.moduleless",
-                            id
-                        )
-                    );
-
-                    continue;
-                }
-
-                if (!dict.ContainsKey(id))
-                {
-                    var resourceItem = new ResourceItem(_componentManager.ResourceManager)
+                    var resourceContext = new ResourceContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
-                        ResourceId = id,
-                        ParentId = parent,
+                        EndpointId = resourceType.FullName.ToLower(),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext
+                    };
+                    var resourceItem = new ResourceItem(_componentHub.ResourceManager)
+                    {
+                        ParentType = parent,
                         ResourceClass = resourceType,
-                        ModuleId = moduleId,
+                        ResourceContext = resourceContext,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
                         PathSegment = segment.ToPathSegment(),
-                        Optional = optional,
                         Log = _httpServerContext?.Log
                     };
 
-                    resourceItem.AddResource += (s, e) =>
+                    if (_dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem))
                     {
-                        OnAddResource(e);
-                    };
-
-                    resourceItem.RemoveResource += (s, e) =>
-                    {
-                        OnRemoveResource(e);
-                    };
-
-                    dict.Add(id, resourceItem);
-
-                    _httpServerContext?.Log.Debug
-                    (
-                        I18N.Translate
-                        (
-                            "webexpress:resourcemanager.addresource",
-                            id,
-                            moduleId
-                        )
-                    );
+                        OnAddResource(resourceContext);
+                        _httpServerContext?.Log.Debug(
+                            I18N.Translate(
+                                "webexpress:resourcemanager.addresource",
+                                id,
+                                applicationContext.ApplicationId
+                            )
+                        );
+                    }
                 }
-
-                // assign the resource to existing modules.
-                foreach (var moduleContext in _componentManager.ModuleManager.GetModules(pluginContext, moduleId))
-                {
-                    AssignToModule(moduleContext);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Discovers and registers resources from the specified plugin.
-        /// </summary>
-        /// <param name="pluginContexts">A list with plugin contexts that contain the resources.</param>
-        public void Register(IEnumerable<IPluginContext> pluginContexts)
-        {
-            foreach (var pluginContext in pluginContexts)
-            {
-                Register(pluginContext);
             }
         }
 
@@ -239,7 +204,7 @@ namespace WebExpress.WebCore.WebResource
         /// Removes all resources associated with the specified plugin context.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin that contains the resources to remove.</param>
-        public void Remove(IPluginContext pluginContext)
+        internal void Remove(IPluginContext pluginContext)
         {
             if (pluginContext == null)
             {
@@ -252,8 +217,10 @@ namespace WebExpress.WebCore.WebResource
                 return;
             }
 
-            foreach (var resourceItem in _dictionary[pluginContext].Values)
+            foreach (var resourceItem in _dictionary[pluginContext].Values
+                .SelectMany(x => x.Values))
             {
+                OnRemoveResource(resourceItem.ResourceContext);
                 resourceItem.Dispose();
             }
 
@@ -261,31 +228,28 @@ namespace WebExpress.WebCore.WebResource
         }
 
         /// <summary>
-        /// Assign existing resources to the module.
+        /// Removes all jobs associated with the specified application context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void AssignToModule(IModuleContext moduleContext)
+        /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
+        internal void Remove(IApplicationContext applicationContext)
         {
-            foreach (var resourceItem in _dictionary.Values
-                .SelectMany(x => x.Values)
-                .Where(x => x.ModuleId.Equals(moduleContext?.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => !x.IsAssociatedWithModule(moduleContext)))
+            if (applicationContext == null)
             {
-                resourceItem.AddModule(moduleContext);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Remove an existing modules to the application.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void DetachFromModule(IModuleContext moduleContext)
-        {
-            foreach (var resourceItem in _dictionary.Values
-                .SelectMany(x => x.Values)
-                .Where(x => !x.IsAssociatedWithModule(moduleContext)))
+            foreach (var pluginDict in _dictionary.Values)
             {
-                resourceItem.DetachModule(moduleContext);
+                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
+                {
+                    foreach (var resourceItem in appDict.Values)
+                    {
+                        OnRemoveResource(resourceItem.ResourceContext);
+                        resourceItem.Dispose();
+                    }
+                }
+
+                pluginDict.Remove(applicationContext);
             }
         }
 
@@ -296,12 +260,14 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>An enumeration of resource items.</returns>
         private IEnumerable<ResourceItem> GetResorceItems(IPluginContext pluginContext)
         {
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
             {
-                return [];
+                return pluginResources
+                    .SelectMany(x => x.Value)
+                    .Select(x => x.Value);
             }
 
-            return _dictionary[pluginContext].Values;
+            return [];
         }
 
         /// <summary>
@@ -311,13 +277,14 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces(IPluginContext pluginContext)
         {
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
             {
-                return [];
+                return pluginResources
+                    .SelectMany(x => x.Value)
+                    .Select(x => x.Value.ResourceContext);
             }
 
-            return _dictionary[pluginContext].Values
-                .SelectMany(x => x.ResourceContexts);
+            return [];
         }
 
         /// <summary>
@@ -339,7 +306,7 @@ namespace WebExpress.WebCore.WebResource
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts, (x, y) => new { x.ResourceClass, ResourceContext = y })
+                .SelectMany(x => x.Values)
                 .Where(x => x.ResourceClass.Equals(resourceType))
                 .Select(x => x.ResourceContext);
         }
@@ -348,15 +315,15 @@ namespace WebExpress.WebCore.WebResource
         /// Returns an enumeration of resource contextes.
         /// </summary>
         /// <param name="resourceType">The resource type.</param>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of resource contextes.</returns>
-        public IEnumerable<IResourceContext> GetResorces(Type resourceType, IModuleContext moduleContext)
+        public IEnumerable<IResourceContext> GetResorces(Type resourceType, IApplicationContext applicationContext)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts, (x, y) => new { x.ResourceClass, ResourceContext = y })
-                .Where(x => x.ResourceContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
                 .Where(x => x.ResourceClass.Equals(resourceType))
+                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
                 .Select(x => x.ResourceContext);
         }
 
@@ -364,52 +331,32 @@ namespace WebExpress.WebCore.WebResource
         /// Returns an enumeration of resource contextes.
         /// </summary>
         /// <typeparam name="T">The resource type.</typeparam>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of resource contextes.</returns>
-        public IEnumerable<IResourceContext> GetResorces<T>(IModuleContext moduleContext) where T : IResource
+        public IEnumerable<IResourceContext> GetResorces<T>(IApplicationContext applicationContext) where T : IResource
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts, (x, y) => new { x.ResourceClass, ResourceContext = y })
-                .Where(x => x.ResourceContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
                 .Where(x => x.ResourceClass.Equals(typeof(T)))
+                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
                 .Select(x => x.ResourceContext);
         }
 
-        /// <summary>
-        /// Returns the resource context.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        /// <param name="resourceType">The resource type.</param>
-        /// <returns>An resource context or null.</returns>
-        public IResourceContext GetResorce(IModuleContext moduleContext, Type resourceType)
-        {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts, (x, y) => new { x.ResourceClass, ResourceContext = y })
-                .Where(x => x.ResourceContext.ModuleContext?.ApplicationContext != null)
-                .Where(x => x.ResourceContext.ModuleContext.ApplicationContext.ApplicationId.Equals(moduleContext.ApplicationContext.ApplicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ResourceContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ResourceClass.Equals(resourceType))
-                .Select(x => x.ResourceContext)
-                .FirstOrDefault();
-        }
 
         /// <summary>
         /// Returns the resource context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <param name="resourceId">The resource id.</param>
         /// <returns>An resource context or null.</returns>
-        public IResourceContext GetResorce(IModuleContext moduleContext, string resourceId)
+        public IResourceContext GetResorce(IApplicationContext applicationContext, string resourceId)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts, (x, y) => new { x.ResourceClass, ResourceContext = y })
-                .Where(x => x.ResourceContext.ModuleContext?.ApplicationContext != null)
-                .Where(x => x.ResourceContext.ModuleContext.ApplicationContext.ApplicationId.Equals(moduleContext.ApplicationContext.ApplicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ResourceContext.ModuleContext.ModuleId.Equals(moduleContext.ModuleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ResourceContext.EndpointId.Equals(resourceId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
+                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
+                .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
                 .Select(x => x.ResourceContext)
                 .FirstOrDefault();
         }
@@ -418,18 +365,16 @@ namespace WebExpress.WebCore.WebResource
         /// Returns the resource context.
         /// </summary>
         /// <param name="applicationId">The application id.</param>
-        /// <param name="moduleId">The module id.</param>
         /// <param name="resourceId">The resource id.</param>
         /// <returns>An resource context or null.</returns>
-        public IResourceContext GetResorce(string applicationId, string moduleId, string resourceId)
+        public IResourceContext GetResorce(string applicationId, string resourceId)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
-                .SelectMany(x => x.ResourceContexts)
-                .Where(x => x.ModuleContext != null && x.ModuleContext.ApplicationContext != null)
-                .Where(x => x.ModuleContext.ApplicationContext.ApplicationId.Equals(applicationId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.ModuleContext.ModuleId.Equals(moduleId, StringComparison.OrdinalIgnoreCase))
-                .Where(x => x.EndpointId.Equals(resourceId, StringComparison.OrdinalIgnoreCase))
+                .SelectMany(x => x.Values)
+                .Where(x => x.ResourceContext.ApplicationContext.ApplicationId.Equals(applicationId))
+                .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
+                .Select(x => x.ResourceContext)
                 .FirstOrDefault();
         }
 
@@ -443,11 +388,12 @@ namespace WebExpress.WebCore.WebResource
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
-                .FirstOrDefault(x => x.ResourceContexts.Contains(resourceContext));
+                .SelectMany(x => x.Values)
+                .FirstOrDefault(x => x.ResourceContext.Equals(resourceContext));
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _componentManager);
+                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _componentHub);
 
                 if (instance is II18N i18n)
                 {
@@ -484,6 +430,45 @@ namespace WebExpress.WebCore.WebResource
         }
 
         /// <summary>
+        /// Handles the event when an plugin is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the plugin being added.</param>
+        private void OnAddPlugin(object sender, IPluginContext e)
+        {
+            Register(e);
+        }
+
+        /// <summary>  
+        /// Handles the event when a plugin is removed.  
+        /// </summary>  
+        /// <param name="sender">The source of the event.</param>  
+        /// <param name="e">The context of the plugin being removed.</param>  
+        private void OnRemovePlugin(object sender, IPluginContext e)
+        {
+            Remove(e);
+        }
+        /// <summary>
+        /// Handles the event when an application is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being removed.</param>
+        private void OnRemoveApplication(object sender, IApplicationContext e)
+        {
+            Remove(e);
+        }
+
+        /// <summary>
+        /// Handles the event when an application is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being added.</param>
+        private void OnAddApplication(object sender, IApplicationContext e)
+        {
+            Register(e);
+        }
+
+        /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
@@ -499,11 +484,22 @@ namespace WebExpress.WebCore.WebResource
                     I18N.Translate
                     (
                         "webexpress:resourcemanager.resource",
-                        resourcenItem.ResourceId,
-                        string.Join(",", resourcenItem.ModuleId)
+                        resourcenItem?.ResourceContext?.EndpointId,
+                        string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
                     )
                 );
             }
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }
     }
 }

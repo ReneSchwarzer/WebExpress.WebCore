@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
@@ -179,7 +179,7 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             var request = CrerateRequestMock();
 
-            return new RenderContext(CreratePageContextMock()?.ModuleContext?.ApplicationContext, request, []);
+            return new RenderContext(CreratePageContextMock()?.ApplicationContext, request, []);
         }
 
         /// <summary>
@@ -188,13 +188,13 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>A fake context for testing.</returns>
         public static PageContext CreratePageContextMock()
         {
-            var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IModuleContext)], null);
+            var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IApplicationContext)], null);
 
-            var moduleContext = WebEx.ComponentHub.ModuleManager.Modules
-                .Where(x => x.ModuleId == typeof(TestModuleA1).FullName.ToLower())
+            var applicationContext = WebEx.ComponentHub.ApplicationManager.Applications
+                .Where(x => x.ApplicationId == typeof(TestApplicationA).FullName.ToLower())
                 .FirstOrDefault();
 
-            var pageContext = (PageContext)ctorPageContext.Invoke([moduleContext]);
+            var pageContext = (PageContext)ctorPageContext.Invoke([applicationContext]);
 
             return pageContext;
         }

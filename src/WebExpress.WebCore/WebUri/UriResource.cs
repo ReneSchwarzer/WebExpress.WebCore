@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebUri
         {
             get
             {
-                return new UriResource(Skip(ResourceRoot.PathSegments.Count()).PathSegments?.ToArray());
+                return new UriResource(Skip(EndpointRoot.PathSegments.Count()).PathSegments?.ToArray());
             }
         }
 
@@ -76,14 +76,9 @@ namespace WebExpress.WebCore.WebUri
         public bool Empty => !PathSegments.Any();
 
         /// <summary>
-        /// Returns the root of the resource.
+        /// Returns the root of the endpoint.
         /// </summary>
-        public virtual UriResource ResourceRoot { get; set; }
-
-        /// <summary>
-        /// Returns the root of the module.
-        /// </summary>
-        public virtual UriResource ModuleRoot { get; set; }
+        public virtual UriResource EndpointRoot { get; set; }
 
         /// <summary>
         /// Returns the root of the application.
@@ -214,8 +209,7 @@ namespace WebExpress.WebCore.WebUri
             Fragment = uri?.Fragment;
             ServerRoot = uri?.ServerRoot;
             ApplicationRoot = uri?.ApplicationRoot;
-            ModuleRoot = uri?.ModuleRoot;
-            ResourceRoot = uri?.ResourceRoot;
+            EndpointRoot = uri?.EndpointRoot;
         }
 
         /// <summary>
@@ -242,8 +236,7 @@ namespace WebExpress.WebCore.WebUri
         {
             ServerRoot = uri.ServerRoot;
             ApplicationRoot = uri.ApplicationRoot;
-            ModuleRoot = uri.ModuleRoot;
-            ResourceRoot = uri.ResourceRoot;
+            EndpointRoot = uri.EndpointRoot;
         }
 
         /// <summary>
@@ -257,8 +250,7 @@ namespace WebExpress.WebCore.WebUri
         {
             ServerRoot = uri.ServerRoot;
             ApplicationRoot = uri.ApplicationRoot;
-            ModuleRoot = uri.ModuleRoot;
-            ResourceRoot = uri.ResourceRoot;
+            EndpointRoot = uri.EndpointRoot;
         }
 
         /// <summary>

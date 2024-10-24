@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class NameAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute
+    public class NameAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

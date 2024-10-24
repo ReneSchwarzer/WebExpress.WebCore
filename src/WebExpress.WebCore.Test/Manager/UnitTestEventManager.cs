@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(2, componentHub.EventManager.EventHandlers.Count());
+            Assert.Equal(6, componentHub.EventManager.EventHandlers.Count());
         }
 
         /// <summary>
@@ -57,15 +57,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the event handler.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestEventA), "webexpress.webcore.test.testeventhandlera1")]
-        [InlineData(typeof(TestApplicationB), typeof(TestEventB), "webexpress.webcore.test.testeventhandlerb1")]
-        [InlineData(typeof(TestApplicationA), typeof(TestEventB), null)]
-        [InlineData(typeof(TestApplicationB), typeof(TestEventA), null)]
+        [InlineData(typeof(TestApplicationA), typeof(TestEventA), "webexpress.webcore.test.testeventhandlera")]
+        [InlineData(typeof(TestApplicationA), typeof(TestEventB), "webexpress.webcore.test.testeventhandlerb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestEventA), "webexpress.webcore.test.testeventhandlera")]
+        [InlineData(typeof(TestApplicationB), typeof(TestEventB), "webexpress.webcore.test.testeventhandlerb")]
         public void Id(Type applicationType, Type eventType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);
@@ -84,14 +84,14 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestEventA), "webexpress.webcore.test.testeventa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestEventB), "webexpress.webcore.test.testeventb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestEventA), "webexpress.webcore.test.testeventa")]
         [InlineData(typeof(TestApplicationB), typeof(TestEventB), "webexpress.webcore.test.testeventb")]
-        [InlineData(typeof(TestApplicationA), typeof(TestEventB), null)]
-        [InlineData(typeof(TestApplicationB), typeof(TestEventA), null)]
         public void EventId(Type applicationType, Type eventType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);

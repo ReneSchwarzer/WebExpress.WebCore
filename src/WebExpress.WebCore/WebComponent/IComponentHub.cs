@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -67,12 +67,6 @@ namespace WebExpress.WebCore.WebComponent
         IApplicationManager ApplicationManager { get; }
 
         /// <summary>
-        /// Returns the module manager.
-        /// </summary>
-        /// <returns>The instance of the module manager.</returns>
-        IModuleManager ModuleManager { get; }
-
-        /// <summary>
         /// Returns the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
@@ -83,6 +77,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         IJobManager JobManager { get; }
+
+        /// <summary>
+        /// Returns the endpoint manager.
+        /// </summary>
+        /// <returns>The instance of the endpoint manager.</returns>
+        IEndpointManager EndpointManager { get; }
 
         /// <summary>
         /// Returns the resource manager.

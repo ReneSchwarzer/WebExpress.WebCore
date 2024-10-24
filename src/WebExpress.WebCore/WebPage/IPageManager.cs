@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebPage
@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebPage
     /// <summary>
     /// The page manager manages page elements, which can be called with a URI (Uniform Resource Identifier).
     /// </summary>
-    public interface IPageManager : IEndpointManager
+    public interface IPageManager : IComponentManager
     {
         /// <summary>
         /// An event that fires when an page is added.
@@ -51,41 +51,32 @@ namespace WebExpress.WebCore.WebPage
         /// Returns an enumeration of page contextes.
         /// </summary>
         /// <param name="pageType">The page type.</param>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of page contextes.</returns>
-        IEnumerable<IPageContext> GetPages(Type pageType, IModuleContext moduleContext);
+        IEnumerable<IPageContext> GetPages(Type pageType, IApplicationContext applicationContext);
 
         /// <summary>
         /// Returns an enumeration of page contextes.
         /// </summary>
         /// <typeparam name="T">The page type.</typeparam>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of page contextes.</returns>
-        IEnumerable<IPageContext> GetPages<T>(IModuleContext moduleContext) where T : IPage;
+        IEnumerable<IPageContext> GetPages<T>(IApplicationContext applicationContext) where T : IPage;
 
         /// <summary>
         /// Returns the page context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <param name="pageId">The page id.</param>
         /// <returns>An page context or null.</returns>
-        IPageContext GetPage(IModuleContext moduleContext, string pageId);
-
-        /// <summary>
-        /// Returns the page context.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        /// <param name="pageType">The page type.</param>
-        /// <returns>An page context or null.</returns>
-        IPageContext GetPage(IModuleContext moduleContext, Type pageType);
+        IPageContext GetPage(IApplicationContext applicationContext, string pageId);
 
         /// <summary>
         /// Returns the page context.
         /// </summary>
         /// <param name="applicationId">The application id.</param>
-        /// <param name="moduleId">The module id.</param>
         /// <param name="pageId">The page id.</param>
         /// <returns>An page context or null.</returns>
-        IPageContext GetPage(string applicationId, string moduleId, string pageId);
+        IPageContext GetPage(string applicationId, string pageId);
     }
 }

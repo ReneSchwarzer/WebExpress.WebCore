@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebStatusPage
     /// <summary>
     /// Management of status pages.
     /// </summary>
-    public interface IStatusPageManager : IComponent
+    public interface IStatusPageManager : IComponentManager
     {
         /// <summary>
         /// An event that fires when an status page is added.

@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(3, componentHub.RestApiManager.RestApis.Count());
+            Assert.Equal(9, componentHub.RestApiManager.RestApis.Count());
         }
 
         /// <summary>
@@ -44,55 +44,67 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), "webexpress.webcore.test.testrestapia1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), "webexpress.webcore.test.testrestapia1y")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), "webexpress.webcore.test.testrestapia1z")]
-        public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
+        public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, api.EndpointId);
+            Assert.Equal(id, api?.EndpointId);
         }
 
         /// <summary>
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), "/aca/mca/1")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), "/aca/mca/1/ra1x/2")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), "/aca/mca/1/ra1x/2/ra1y/3")]
-        public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "/appa/1")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "/appa/1/apia/2")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "/appa/1/apia/2/apib/3")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "/appb/1")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "/appb/1/apia/2")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "/appb/1/apia/2/apib/3")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/1")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/1/apia/2")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/1/apia/2/apib/3")]
+        public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, api.ContextPath);
+            Assert.Equal(id, api?.ContextPath);
         }
 
         /// <summary>
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), CrudMethod.POST)]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1X), CrudMethod.GET)]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Y), CrudMethod.GET)]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestRestApiA1Z), CrudMethod.GET)]
-        public void Method(Type applicationType, Type moduleType, Type resourceType, CrudMethod method)
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), CrudMethod.POST)]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), CrudMethod.GET)]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), CrudMethod.GET)]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), CrudMethod.GET)]
+        public void Method(Type applicationType, Type resourceType, CrudMethod method)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var api = componentHub.RestApiManager.GetRestApi(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Contains(method, api.Methods);
+            Assert.Contains(method, api?.Methods);
         }
 
         /// <summary>

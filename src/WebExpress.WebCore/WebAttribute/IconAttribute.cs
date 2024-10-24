@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class IconAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute, IStatusPageAttribute
+    public class IconAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IStatusPageAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

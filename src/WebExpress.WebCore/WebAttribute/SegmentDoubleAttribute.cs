@@ -32,18 +32,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            //var expression = @"^[+-]?(\d*,\d+|\d+(,\d*)?)( +[eE][+-]?\d+)?$";
-
-            //var callBackDisplay = new Func<string, string, CultureInfo, string>((segment, moduleId, culture) =>
-            //{
-            //    return null;
-            //});
-
-            //var callBackValiables = new Func<string, IDictionary<string, string>>(segment =>
-            //{
-            //    return null;
-            //});
-
             return new UriPathSegmentVariableDouble(VariableName, Display);
         }
     }

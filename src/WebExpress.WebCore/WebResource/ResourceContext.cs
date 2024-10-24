@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebCondition;
-using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource
@@ -15,23 +14,25 @@ namespace WebExpress.WebCore.WebResource
     /// </summary>
     public class ResourceContext : IResourceContext
     {
-        private readonly IResourceManager _resourceManager;
-        private readonly ResourceItem _resourceItem;
+        private readonly IEndpointManager _endpointManager;
+        private readonly Type _parentType;
+        private readonly UriResource _contextPath;
+        private readonly IUriPathSegment _pathSegment;
 
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
-        public IPluginContext PluginContext { get; private set; }
+        public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding module context.
+        /// Returns the corresponding application context.
         /// </summary>
-        public IModuleContext ModuleContext { get; private set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
         /// </summary>
-        public IEnumerable<ICondition> Conditions { get; internal set; } = new List<ICondition>();
+        public IEnumerable<ICondition> Conditions { get; internal set; } = [];
 
         /// <summary>
         /// Returns the resource id.
@@ -41,10 +42,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the parent or null if not used.
         /// </summary>
-        public IEndpointContext ParentContext => _resourceManager.Resources
-            .Where(x => !string.IsNullOrWhiteSpace(_resourceItem.ParentId))
-            .Where(x => x.EndpointId.Equals(_resourceItem.ParentId, StringComparison.OrdinalIgnoreCase))
-            .Where(x => x.ModuleContext.ApplicationContext == ModuleContext.ApplicationContext)
+        public IEndpointContext ParentContext => _endpointManager.GetEndpoints(_parentType, ApplicationContext)
             .FirstOrDefault();
 
         /// <summary>
@@ -67,30 +65,31 @@ namespace WebExpress.WebCore.WebResource
                 var parentContext = ParentContext;
                 if (parentContext != null)
                 {
-                    return UriResource.Combine(ParentContext?.Uri, _resourceItem.ContextPath);
+                    return UriResource.Combine(ParentContext?.Uri, _contextPath);
                 }
 
-                return UriResource.Combine(ModuleContext.ContextPath, _resourceItem.ContextPath);
+                return UriResource.Combine(ApplicationContext.ContextPath, _contextPath);
             }
         }
 
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_resourceItem.PathSegment);
+        public UriResource Uri => ContextPath.Append(_pathSegment);
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
         /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        /// <param name="resourceManager">The resource manager.</param>
-        /// <param name="resourceItem">The resource item or null.</param>
-        internal ResourceContext(IModuleContext moduleContext, IResourceManager resourceManager, ResourceItem resourceItem = null)
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        /// <param name="parentType">The type of the parent resource.</param>
+        /// <param name="contextPath">The context path of the resource.</param>
+        /// <param name="pathSegment">The path segment of the resource.</param>
+        public ResourceContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
         {
-            PluginContext = moduleContext?.PluginContext;
-            ModuleContext = moduleContext;
-            _resourceManager = resourceManager;
-            _resourceItem = resourceItem;
+            _endpointManager = endpointManager;
+            _parentType = parentType;
+            _contextPath = contextPath;
+            _pathSegment = pathSegment;
         }
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{ModuleContext?.ApplicationContext?.ApplicationId}:{ModuleContext?.ModuleId}:{EndpointId}";
+            return $"Resource: {EndpointId}";
         }
     }
 }

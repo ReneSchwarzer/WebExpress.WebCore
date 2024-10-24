@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class AssetPathAttribute : System.Attribute, IApplicationAttribute, IModuleAttribute
+    public class AssetPathAttribute : System.Attribute, IApplicationAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

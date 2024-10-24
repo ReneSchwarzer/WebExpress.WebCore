@@ -25,9 +25,9 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.Register();
 
             Assert.Equal(3, componentHub.ApplicationManager.Applications.Count());
-            Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationA))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationB))?.ApplicationId);
-            Assert.Equal("webexpress.webcore.test.testapplicationc", componentHub.ApplicationManager.GetApplication(typeof(TestApplicationC))?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault()?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplications(typeof(TestApplicationB)).FirstOrDefault()?.ApplicationId);
+            Assert.Equal("webexpress.webcore.test.testapplicationc", componentHub.ApplicationManager.GetApplications(typeof(TestApplicationC)).FirstOrDefault()?.ApplicationId);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(id, application.ApplicationId);
@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(name, application.ApplicationName);
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(description, application.Description);
@@ -102,14 +102,14 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/aca/assets/img/Logo.png")]
-        [InlineData(typeof(TestApplicationB), "/acb/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationA), "/appa/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationB), "/appb/assets/img/Logo.png")]
         [InlineData(typeof(TestApplicationC), "/assets/img/Logo.png")]
         public void Icon(Type applicationType, string icon)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(icon, application.Icon);
@@ -119,14 +119,14 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/aca")]
-        [InlineData(typeof(TestApplicationB), "/acb")]
+        [InlineData(typeof(TestApplicationA), "/appa")]
+        [InlineData(typeof(TestApplicationB), "/appb")]
         [InlineData(typeof(TestApplicationC), "/")]
         public void ContextPath(Type applicationType, string contextPath)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(contextPath, application.ContextPath);
@@ -136,14 +136,14 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the asset path property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/aaa")]
-        [InlineData(typeof(TestApplicationB), "/aab")]
+        [InlineData(typeof(TestApplicationA), "/asseta")]
+        [InlineData(typeof(TestApplicationB), "/assetb")]
         [InlineData(typeof(TestApplicationC), "/")]
         public void AssetPath(Type applicationType, string assetPath)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(assetPath, application.AssetPath);
@@ -153,14 +153,14 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the data path property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/ada")]
-        [InlineData(typeof(TestApplicationB), "/adb")]
+        [InlineData(typeof(TestApplicationA), "/dataa")]
+        [InlineData(typeof(TestApplicationB), "/datab")]
         [InlineData(typeof(TestApplicationC), "/")]
         public void DataPath(Type applicationType, string dataPath)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var application = componentHub.ApplicationManager.GetApplication(applicationType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
             Assert.Equal(dataPath, application.DataPath);

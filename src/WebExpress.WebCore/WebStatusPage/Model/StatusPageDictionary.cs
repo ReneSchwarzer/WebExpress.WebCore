@@ -113,9 +113,12 @@ namespace WebExpress.WebCore.WebStatusPage.Model
         /// <returns>The status page item if found, otherwise null.</returns>
         public StatusPageItem GetStatusPageItem(IApplicationContext applicationContext, Type statusPageType)
         {
-            return Values.SelectMany(applicationDict => applicationDict.Values)
-                         .SelectMany(statusDict => statusDict.Values)
-                         .FirstOrDefault(statusPageItem => statusPageItem.StatusPageClass == statusPageType);
+            return Values
+                .SelectMany(x => x)
+                .Where(x => x.Key == applicationContext)
+                .Select(x => x.Value)
+                .SelectMany(x => x.Values)
+                .FirstOrDefault(x => x.StatusPageClass == statusPageType);
         }
 
         /// <summary>

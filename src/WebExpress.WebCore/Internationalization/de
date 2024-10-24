@@ -71,6 +71,7 @@ pluginmanager.plugin.processing.start=Das Plugin '{0}' wird ausgeführt.
 pluginmanager.plugin.processing.end=Die Ausführung des Plugin '{0}' wurde beendet.
 pluginmanager.fulfilleddependencies=Das Plugin '{0}' erfüllt alle Abhängigkeiten.
 pluginmanager.unfulfilleddependencies=Das Plugin '{0}' erfüllt eine Abhängigkeit zu dem Plugin '{1}' nicht.
+pluginmanager.applicationless=Das Plugin '{0}' besitzt keine Angaben zur Anwendung.
 
 applicationmanager.initialization=Der Anwendungsmanager wurde initialisiert.
 applicationmanager.register=Die Anwendung '{0}' wurde erstellt und im Anwendungsmanager registriert.
@@ -81,45 +82,30 @@ applicationmanager.application.processing.start=Die Anwendung '{0}' wird ausgef�
 applicationmanager.application.processing.end=Die Ausführung der Anwendung '{0}' wurde beendet.
 applicationmanager.application.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
 
-modulemanager.initialization=Der Modulmanager wurde initialisiert.
-modulemanager.register=Das Modul '{0}' wurde der Anwendung '{1}' zugewiesen und im Modulmanager registriert.
-modulemanager.duplicat=Das Modul '{0}' wurde bereits in der Anwendung '{1}' registriert.
-modulemanager.applicationless=Das Modul '{0}' besitzt keine Angaben zur Anwendung.
-modulemanager.module=Module: '{0}' für die Anwendung(n) '{1}'
-modulemanager.module.initialization=Das Modul '{1}' der Anwendung {0} wurde initialisiert.
-modulemanager.module.processing.start=Das Modul '{1}' der Anwendung {0} wird ausgeführt.
-modulemanager.module.processing.end=Die Ausführung des Modul '{1}' der Anwendung {0} wurde beendet.
-
 resourcemanager.initialization=Der Ressourcenmanager wurde initialisiert.
-resourcemanager.register={0} Ressource(n) wurden dem Modul '{1}' zugewiesen.
-resourcemanager.modulenotfound=Das Modul '{1}' wurde nicht gefunden, welches in der Ressource '{0}' angegeben wurde.
-resourcemanager.moduleless=Die Ressource '{0}' besitzt keine Angaben zum Modul.
-resourcemanager.addresource=Die Ressource '{0}' wurde in dem Modul '{1}' registiert.
-resourcemanager.addresource.duplicate=Die Ressource '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
-resourcemanager.addresource.error=Die Ressource '{0}' des Moduls '{1}' konnte nicht hinzugefügt werden.
-resourcemanager.sitemap=Inhalt der Sitemap für das Modul '{0}':
+resourcemanager.register={0} Ressource(n) wurden der Anwendung '{1}' zugewiesen.
+resourcemanager.addresource=Die Ressource '{0}' wurde in der Anwendung '{1}' registiert.
+resourcemanager.addresource.duplicate=Die Ressource '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.
+resourcemanager.addresource.error=Die Ressource '{0}' der Anwendung '{1}' konnte nicht hinzugefügt werden.
+resourcemanager.sitemap=Inhalt der Sitemap für die Anwendung '{0}':
 resourcemanager.wrongtype=Der Type '{0}' implementiert die Schnittstelle '{1}' nicht.
-resourcemanager.resource=Ressource: '{0}' für das Modul '{1}'
+resourcemanager.resource=Ressource: '{0}' für die Anwednung '{1}'
 
-pagemanager.initialization=Der Pagemanager wurde initialisiert.
-pagemanager.moduleless=Die Seite '{0}' besitzt keine Angaben zum Modul.
-pagemanager.addresource=Die Seite '{0}' wurde in dem Modul '{1}' registiert.
-pagemanager.addresource.duplicate=Die Seite '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
-pagemanager.resource=Seite: '{0}' für das Modul '{1}'
+pagemanager.initialization=Der Pagemanager wurde initialisiert.  
+pagemanager.addresource=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
+pagemanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.  
+pagemanager.resource=Seite: '{0}' für die Anwendung '{1}'  
 
-restapimanager.initialization=Der RestApiManager wurde initialisiert.
-restapimanager.moduleless=Die Seite '{0}' besitzt keine Angaben zum Modul.
-restapimanager.addresource=Die Seite '{0}' wurde in dem Modul '{1}' registiert.
-restapimanager.addresource.duplicate=Die Seite '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
-restapimanager.resource=Seite: '{0}' für das Modul '{1}'
+restapimanager.initialization=Der RestApiManager wurde initialisiert.  
+restapimanager.addresource=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
+restapimanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.  
+restapimanager.resource=Seite: '{0}' für die Anwendung '{1}'  
 restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
 
 statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
-statuspagemanager.applicationless=Die Statusseite '{0}' besitzt keine Angaben zur Anwendung.
-statuspagemanager.applicationrich=Die Statusseite '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
 statuspagemanager.register=Der Status '{0}' wurde registriert und der Statusseite '{1}' zugewiesen.
 statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
-statuspagemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
+statuspagemanager.statuscodeless=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
 statuspagemanager.statuspage=Statuscode: '{0}'
 
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
@@ -134,15 +120,11 @@ sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gem
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
 
 eventmanager.initialization=Der Eventmanager wurde initialisiert.
-eventmanager.applicationless=Der Eventhandler '{0}' besitzt keine Angaben zur Anwendung.
-eventmanager.applicationrich=Der Eventhandler '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
 eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiesen und im Eventmanager registriert.
 eventmanager.duplicate=Der Eventhandler '{0}' wurde bereits in der Anwendung '{1}' registriert.
 eventmanager.eventless=Der Eventhandler '{0}' besitzt keine Angaben zu einem Event.
 
 jobmanager.initialization=Der Jobmanager wurde initialisiert.
-jobmanager.applicationless=Der Job '{0}' besitzt keine Angaben zur Anwendung.
-jobmanager.applicationrich=Der Job '{0}' besitzt zu viele Anwendungen. Es wird die erste Anwendung verwendet.
 jobmanager.register=Der Job '{0}' wurde der Anwendung '{1}' zugewiesen und im Jobmanager registriert.
 jobmanager.duplicate=Der Job '{0}' wurde bereits in der Anwendung '{1}' registriert.
 jobmanager.jobless=Der Job '{0}' besitzt keine Angaben zu einem Job.

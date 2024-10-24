@@ -1,4 +1,4 @@
-﻿using WebExpress.WebCore.WebComponent;
+﻿using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebResource

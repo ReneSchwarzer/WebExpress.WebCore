@@ -20,8 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            // resources (3 unique + 2 ambiguous) 
-            Assert.Equal(5, componentHub.ResourceManager.Resources.Count());
+            Assert.Equal(12, componentHub.ResourceManager.Resources.Count());
         }
 
         /// <summary>
@@ -45,19 +44,24 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the resource.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1X), "webexpress.webcore.test.testresourcea1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1Y), "webexpress.webcore.test.testresourcea1y")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), typeof(TestResourceA2X), "webexpress.webcore.test.testresourcea2x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestResourceAB1X), "webexpress.webcore.test.testresourceab1x")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestPageA1X), null)]
-
-        public void Id(Type applicationType, Type moduleType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
+        public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, resource?.EndpointId);
@@ -67,18 +71,25 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the resource.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1X), "/aca/mca")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA1), typeof(TestResourceA1Y), "/aca/mca/a1x")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleA2), typeof(TestResourceA2X), "/aca")]
-        [InlineData(typeof(TestApplicationA), typeof(TestModuleAB1), typeof(TestResourceAB1X), "/aca/mcab")]
-        [InlineData(typeof(TestApplicationB), typeof(TestModuleAB1), typeof(TestResourceAB1X), "/acb/mcab")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "/appa/resa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "/appb/resa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "/")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "/resa")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/")]
 
-        public void ContextPath(Type applicationType, Type moduleType, Type resourceType, string id)
+        public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var module = componentHub.ModuleManager.GetModule(applicationType, moduleType);
-            var resource = componentHub.ResourceManager.GetResorce(module, resourceType);
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, resource.ContextPath);
@@ -107,9 +118,9 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            foreach (var application in componentHub.ResourceManager.Resources)
+            foreach (var resources in componentHub.ResourceManager.Resources)
             {
-                Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Resource context {application.GetType().Name} does not implement IContext.");
+                Assert.True(typeof(IContext).IsAssignableFrom(resources.GetType()), $"Resource context {resources.GetType().Name} does not implement IContext.");
             }
         }
     }

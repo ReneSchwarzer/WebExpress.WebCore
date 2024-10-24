@@ -35,6 +35,11 @@ namespace WebExpress.WebCore.WebPlugin.Model
         public IEnumerable<string> Dependencies { get; internal set; } = [];
 
         /// <summary>
+        /// The types of applications that the plugin supports.
+        /// </summary>
+        public IEnumerable<Type> ApplicationTypes { get; internal set; } = [];
+
+        /// <summary>
         /// Thread termination token.
         /// </summary>
         public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();

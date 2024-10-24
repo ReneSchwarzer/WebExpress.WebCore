@@ -84,5 +84,12 @@ namespace WebExpress.WebCore.WebSession
         public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
         {
         }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+        }
     }
 }

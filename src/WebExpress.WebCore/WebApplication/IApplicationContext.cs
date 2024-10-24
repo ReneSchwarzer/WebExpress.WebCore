@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebComponent;
+﻿using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -29,11 +28,6 @@ namespace WebExpress.WebCore.WebApplication
         /// Provides the description.
         /// </summary>
         string Description { get; }
-
-        /// <summary>
-        /// Returns an enumeration of options. Options enable optional resources.
-        /// </summary>
-        IEnumerable<string> Options { get; }
 
         /// <summary>
         /// Returns the asset directory. This is mounted in the asset directory of the server.

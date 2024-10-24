@@ -32,23 +32,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            //var expression = @"^\d$";
-
-            //var callBackDisplay = new Func<string, string, CultureInfo, string>((segment, moduleId, culture) =>
-            //{
-            //    return Display;
-            //});
-
-            //var callBackValiables = new Func<string, IDictionary<string, string>>(segment =>
-            //{
-            //    var dict = new Dictionary<string, string>
-            //    {
-            //        { VariableName, segment }
-            //    };
-
-            //    return dict;
-            //});
-
             return new UriPathSegmentVariableUInt(VariableName, Display);
         }
     }

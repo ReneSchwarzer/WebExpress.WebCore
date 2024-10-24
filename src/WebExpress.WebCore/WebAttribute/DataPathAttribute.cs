@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class DataPathAttribute : System.Attribute, IApplicationAttribute, IModuleAttribute
+    public class DataPathAttribute : System.Attribute, IApplicationAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.
