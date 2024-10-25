@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebTask.Model
     /// Key = The task id.
     /// Value = The task.
     /// </summary>
-    internal class TaskDictionary : Dictionary<string, Task>
+    internal class TaskDictionary : Dictionary<string, ITask>
     {
     }
 }

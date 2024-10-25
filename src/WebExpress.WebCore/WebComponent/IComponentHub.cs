@@ -79,6 +79,12 @@ namespace WebExpress.WebCore.WebComponent
         IJobManager JobManager { get; }
 
         /// <summary>
+        /// Returns the task manager.
+        /// </summary>
+        /// <returns>The instance of the task manager.</returns>
+        ITaskManager TaskManager { get; }
+
+        /// <summary>
         /// Returns the endpoint manager.
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
@@ -125,12 +131,6 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         ISessionManager SessionManager { get; }
-
-        /// <summary>
-        /// Returns the task manager.
-        /// </summary>
-        /// <returns>The instance of the task manager manager.</returns>
-        TaskManager TaskManager { get; }
 
         /// <summary>
         /// Returns a component based on its id.

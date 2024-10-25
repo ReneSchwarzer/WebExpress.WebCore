@@ -38,6 +38,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly SessionManager _sessionManager;
         private readonly EventManager _eventManager;
         private readonly JobManager _jobManager;
+        private readonly TaskManager _taskManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -73,7 +74,7 @@ namespace WebExpress.WebCore.WebComponent
                 _statusPageManager,
                 _internationalizationManager,
                 _sessionManager,
-                TaskManager
+                _taskManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
         /// <summary>
@@ -111,6 +112,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         public IJobManager JobManager => _jobManager;
+
+        /// <summary>
+        /// Returns the task manager.
+        /// </summary>
+        /// <returns>The instance of the task manager.</returns>
+        public ITaskManager TaskManager => _taskManager;
 
         /// <summary>
         /// Returns the endpoint manager.
@@ -161,12 +168,6 @@ namespace WebExpress.WebCore.WebComponent
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
-        /// Returns the task manager.
-        /// </summary>
-        /// <returns>The instance of the task manager manager.</returns>
-        public TaskManager TaskManager { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
@@ -189,7 +190,7 @@ namespace WebExpress.WebCore.WebComponent
             _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
             _jobManager = CreateInstance(typeof(JobManager)) as JobManager;
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
-            TaskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
+            _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, "webexpress");
 

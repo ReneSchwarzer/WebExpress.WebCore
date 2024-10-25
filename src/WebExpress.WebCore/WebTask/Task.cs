@@ -25,17 +25,17 @@ namespace WebExpress.WebCore.WebTask
         /// <summary>
         /// Returns the id of the task.
         /// </summary>
-        public string Id { get; internal set; }
+        public string Id { get; private set; }
 
         /// <summary>
         /// Returns the state in which the task is located.
         /// </summary>
-        public TaskState State { get; internal set; }
+        public TaskState State { get; protected set; } = TaskState.Created;
 
         /// <summary>
         /// The arguments.
         /// </summary>
-        public ICollection<object> Arguments { get; internal set; }
+        public ICollection<object> Arguments { get; private set; }
 
         /// <summary>
         /// Thread termination of the task.
@@ -57,10 +57,14 @@ namespace WebExpress.WebCore.WebTask
         public string Message { get; set; }
 
         /// <summary>
-        /// Initialization
+        /// Initializes a new instance of the class.
         /// </summary>
-        public virtual void Initialization()
+        /// <param name="id">The unique identifier for the task.</param>
+        /// <param name="args">The arguments for the task.</param>
+        public Task(string id, params object[] args)
         {
+            Id = id;
+            Arguments = args;
         }
 
         /// <summary>
@@ -113,6 +117,14 @@ namespace WebExpress.WebCore.WebTask
             State = TaskState.Canceled;
 
             WebEx.ComponentHub.TaskManager.RemoveTask(this);
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+            Cancel();
         }
     }
 }

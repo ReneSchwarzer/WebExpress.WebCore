@@ -1,8 +1,12 @@
 ﻿using System;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebTask
 {
-    public interface ITask
+    /// <summary>
+    /// Represents a task that can be executed, monitored, and controlled.
+    /// </summary>
+    public interface ITask : IComponent
     {
         /// <summary>
         /// Event is triggered when the task is executed.
@@ -33,11 +37,6 @@ namespace WebExpress.WebCore.WebTask
         /// Returns or sets a message that provides information about the processing.
         /// </summary>
         string Message { get; set; }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        void Initialization();
 
         /// <summary>
         /// Starts the execution concurrently.

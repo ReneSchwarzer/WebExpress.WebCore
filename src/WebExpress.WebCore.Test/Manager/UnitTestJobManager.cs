@@ -63,9 +63,9 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            foreach (var application in componentHub.ResourceManager.Resources)
+            foreach (var job in componentHub.JobManager.Jobs)
             {
-                Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Resource context {application.GetType().Name} does not implement IContext.");
+                Assert.True(typeof(IContext).IsAssignableFrom(job.GetType()), $"Job context {job.GetType().Name} does not implement IContext.");
             }
         }
 
