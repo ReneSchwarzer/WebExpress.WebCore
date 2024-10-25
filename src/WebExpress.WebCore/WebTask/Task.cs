@@ -4,7 +4,6 @@ using System.Threading;
 
 namespace WebExpress.WebCore.WebTask
 {
-
     /// <summary>
     /// Represents a task that can be executed asynchronously.
     /// </summary>
