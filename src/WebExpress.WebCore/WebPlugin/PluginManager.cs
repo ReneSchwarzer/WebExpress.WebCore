@@ -48,16 +48,6 @@ namespace WebExpress.WebCore.WebPlugin
         {
             _componentManager = componentManager;
 
-            _componentManager.AddComponent += (s, e) =>
-            {
-                //AssignToComponent(e);
-            };
-
-            _componentManager.RemoveComponent += (s, e) =>
-            {
-                //DetachFromcomponent(e);
-            };
-
             _httpServerContext = httpServerContext;
 
             _httpServerContext.Log.Debug

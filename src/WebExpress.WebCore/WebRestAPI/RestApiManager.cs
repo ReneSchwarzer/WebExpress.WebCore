@@ -59,57 +59,59 @@ namespace WebExpress.WebCore.WebRestApi
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _componentHub.EndpointManager.Register<RestApiContext>
-            (
-                new EndpointRegistration()
+            var endpointtRegistration = new EndpointRegistration()
+            {
+                EndpointResolver = (type, applicationContext) => applicationContext != null ? GetRestApi(type, applicationContext) : GetRestApi(type),
+                EndpointsResolver = () => RestApis,
+                HandleRequest = (request, endpointContext) =>
                 {
-                    EndpointResolver = (type, applicationContext) => applicationContext != null ? GetRestApi(type, applicationContext) : GetRestApi(type),
-                    EndpointsResolver = () => RestApis,
-                    HandleRequest = (request, endpointContext) =>
+                    var restApiContext = endpointContext as IRestApiContext;
+                    var restApi = CreatePageInstance(restApiContext, request.Culture) as IRestApi;
+
+                    if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
                     {
-                        var restApiContext = endpointContext as IRestApiContext;
-                        var restApi = CreatePageInstance(restApiContext, request.Culture) as IRestApi;
-
-                        if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
+                        switch (request.Method)
                         {
-                            switch (request.Method)
-                            {
-                                case RequestMethod.POST:
-                                    restApi.CreateData(request);
+                            case RequestMethod.POST:
+                                restApi.CreateData(request);
 
-                                    return new ResponseOK();
-                                case RequestMethod.GET:
-                                    var data = restApi.GetData(request);
-                                    if (data != null)
+                                return new ResponseOK();
+                            case RequestMethod.GET:
+                                var data = restApi.GetData(request);
+                                if (data != null)
+                                {
+                                    var jsonData = JsonSerializer.Serialize(data, _jsonOptions);
+                                    var content = Encoding.UTF8.GetBytes(jsonData);
+
+                                    return new ResponseOK
                                     {
-                                        var jsonData = JsonSerializer.Serialize(data, _jsonOptions);
-                                        var content = Encoding.UTF8.GetBytes(jsonData);
+                                        Content = content
+                                    };
+                                }
 
-                                        return new ResponseOK
-                                        {
-                                            Content = content
-                                        };
-                                    }
+                                return new ResponseOK();
+                            case RequestMethod.PATCH:
+                                restApi.UpdateData(request);
 
-                                    return new ResponseOK();
-                                case RequestMethod.PATCH:
-                                    restApi.UpdateData(request);
+                                return new ResponseOK();
+                            case RequestMethod.DELETE:
+                                restApi.DeleteData(request);
 
-                                    return new ResponseOK();
-                                case RequestMethod.DELETE:
-                                    restApi.DeleteData(request);
-
-                                    return new ResponseOK();
-                            }
+                                return new ResponseOK();
                         }
-
-                        return new ResponseBadRequest()
-                        {
-                            Content = I18N.Translate("webexpress:restapimanager.methodnotsupported", request.Method.ToString())
-                        };
                     }
+
+                    return new ResponseBadRequest()
+                    {
+                        Content = I18N.Translate("webexpress:restapimanager.methodnotsupported", request.Method.ToString())
+                    };
                 }
-            );
+            };
+
+            AddRestApi += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
+            RemoveRestApi += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+
+            _componentHub.EndpointManager.Register<RestApiContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 

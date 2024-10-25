@@ -5,7 +5,6 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebEndpoint
 {
@@ -19,14 +18,14 @@ namespace WebExpress.WebCore.WebEndpoint
         private readonly Dictionary<Type, EndpointRegistration> _registrations = [];
 
         /// <summary>
-        /// An event that fires when an resource is added.
+        /// An event that fires when an endpoint is added.
         /// </summary>
-        public event EventHandler<IEndpointContext> AddResource;
+        public event EventHandler<IEndpointContext> AddEndpoint;
 
         /// <summary>
-        /// An event that fires when an resource is removed.
+        /// An event that fires when an endpoint is removed.
         /// </summary>
-        public event EventHandler<IEndpointContext> RemoveResource;
+        public event EventHandler<IEndpointContext> RemoveEndpoint;
 
         /// <summary>
         /// Returns all endpoints contexts.
@@ -54,13 +53,16 @@ namespace WebExpress.WebCore.WebEndpoint
         /// Registers an endpoint context type.
         /// </summary>
         /// <typeparam name="T">The type of the endpoint context.</typeparam>
-        /// <param name="registration">The registration details containing the callback functions.</param>
-        public void Register<T>(EndpointRegistration registration) where T : IEndpointContext
+        /// <param name="endpointRegistration">The registration details containing the callback functions.</param>
+        public void Register<T>(EndpointRegistration endpointRegistration) where T : IEndpointContext
         {
             var type = typeof(T);
             if (!_registrations.ContainsKey(type))
             {
-                _registrations[type] = registration;
+                _registrations[type] = endpointRegistration;
+
+                endpointRegistration.AddEndpoint += OnAddEndpoint;
+                endpointRegistration.RemoveEndpoint += OnRemoveEndpoint;
             }
         }
 
@@ -71,7 +73,10 @@ namespace WebExpress.WebCore.WebEndpoint
         public void Remove<T>() where T : IEndpointContext
         {
             var type = typeof(T);
-            _registrations.Remove(type);
+            _registrations.Remove(type, out var endpointRegistration);
+
+            endpointRegistration.AddEndpoint -= OnAddEndpoint;
+            endpointRegistration.RemoveEndpoint -= OnRemoveEndpoint;
         }
 
         //// <summary>
@@ -84,30 +89,6 @@ namespace WebExpress.WebCore.WebEndpoint
         {
             return _registrations.SelectMany(x => x.Value.EndpointResolver(endpointType, applicationContext));
         }
-
-        ///// <summary>
-        ///// Creates a new instance or if caching is active, a possibly existing instance is returned.
-        ///// </summary>
-        ///// <param name="endpointContext">The endpoint context.</param>
-        ///// <param name="uri">The uri.</param>
-        ///// <param name="searchContext">The search context.</param>
-        ///// <returns>The created endpoint.</returns>
-        //private IEndpoint CreateEndpoint(IEndpointContext endpointContext, UriResource uri, SearchContext searchContext)
-        //{
-        //    if (endpointContext == null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var type = endpointContext.GetType();
-
-        //    if (_registrations.TryGetValue(type, out var registration))
-        //    {
-        //        return registration.Factory(endpointContext, uri, searchContext.Culture);
-        //    }
-
-        //    throw new InvalidOperationException($"No factory registered for type {type}");
-        //}
 
         /// <summary>
         /// Handles a request and returns a response.
@@ -126,13 +107,23 @@ namespace WebExpress.WebCore.WebEndpoint
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
+        /// Handles the event when an endpoint is added.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="endpointContext">The context of the endpoint being added.</param>
+        private void OnAddEndpoint(object sender, IEndpointContext endpointContext)
         {
+            AddEndpoint?.Invoke(sender, endpointContext);
+        }
+
+        /// <summary>
+        /// Handles the event when an endpoint is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="endpointContext">The context of the endpoint being removed.</param>
+        private void OnRemoveEndpoint(object sender, IEndpointContext endpointContext)
+        {
+            RemoveEndpoint?.Invoke(sender, endpointContext);
         }
 
         /// <summary>

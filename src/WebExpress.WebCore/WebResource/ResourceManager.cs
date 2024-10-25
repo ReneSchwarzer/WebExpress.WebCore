@@ -56,21 +56,23 @@ namespace WebExpress.WebCore.WebResource
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _componentHub.EndpointManager.Register<ResourceContext>
-            (
-                new EndpointRegistration()
+            var endpointtRegistration = new EndpointRegistration()
+            {
+                EndpointResolver = (type, applicationContext) => applicationContext != null ? GetResorces(type, applicationContext) : GetResorces(type),
+                EndpointsResolver = () => Resources,
+                HandleRequest = (request, endpointContext) =>
                 {
-                    EndpointResolver = (type, applicationContext) => applicationContext != null ? GetResorces(type, applicationContext) : GetResorces(type),
-                    EndpointsResolver = () => Resources,
-                    HandleRequest = (request, endpointContext) =>
-                    {
-                        var resourceContext = endpointContext as IResourceContext;
-                        var resource = CreateResourceInstance(resourceContext, request.Culture) as IResource;
+                    var resourceContext = endpointContext as IResourceContext;
+                    var resource = CreateResourceInstance(resourceContext, request.Culture);
 
-                        return resource.Process(request);
-                    }
+                    return resource.Process(request);
                 }
-            );
+            };
+
+            AddResource += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
+            RemoveResource += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+
+            _componentHub.EndpointManager.Register<ResourceContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 

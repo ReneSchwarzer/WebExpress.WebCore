@@ -57,40 +57,42 @@ namespace WebExpress.WebCore.WebPage
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _componentHub.EndpointManager.Register<PageContext>
-            (
-                new EndpointRegistration()
+            var endpointtRegistration = new EndpointRegistration()
+            {
+                EndpointResolver = (type, applicationContext) => applicationContext != null ? GetPages(type, applicationContext) : GetPages(type),
+                EndpointsResolver = () => Pages,
+                HandleRequest = (request, endpontContext) =>
                 {
-                    EndpointResolver = (type, applicationContext) => applicationContext != null ? GetPages(type, applicationContext) : GetPages(type),
-                    EndpointsResolver = () => Pages,
-                    HandleRequest = (request, endpontContext) =>
+                    var page = CreatePageInstance(endpontContext as IPageContext, request.Culture);
+                    var pageType = page.GetType();
+                    var context = default(IRenderContext);
+                    var pageContetx = endpontContext as IPageContext;
+
+                    if (pageType.IsGenericType)
                     {
-                        var page = CreatePageInstance(endpontContext as IPageContext, request.Culture);
-                        var pageType = page.GetType();
-                        var context = default(IRenderContext);
-                        var pageContetx = endpontContext as IPageContext;
+                        var typeOfT = pageType.GetGenericArguments()[0];
+                        var parameters = new object[] { page, endpontContext as IPageContext, request };
 
-                        if (pageType.IsGenericType)
-                        {
-                            var typeOfT = pageType.GetGenericArguments()[0];
-                            var parameters = new object[] { page, endpontContext as IPageContext, request };
-
-                            context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
-                        }
-                        else
-                        {
-                            context = new RenderContext(endpontContext?.ApplicationContext, request, pageContetx.Scopes);
-                        }
-
-                        page.Process(context);
-
-                        return new ResponseOK()
-                        {
-                            Content = context.VisualTree.Render(new VisualTreeContext(context))
-                        };
+                        context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
                     }
+                    else
+                    {
+                        context = new RenderContext(endpontContext?.ApplicationContext, request, pageContetx.Scopes);
+                    }
+
+                    page.Process(context);
+
+                    return new ResponseOK()
+                    {
+                        Content = context.VisualTree.Render(new VisualTreeContext(context))
+                    };
                 }
-            );
+            };
+
+            AddPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
+            RemovePage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+
+            _componentHub.EndpointManager.Register<PageContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 

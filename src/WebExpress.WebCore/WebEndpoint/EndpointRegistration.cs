@@ -11,6 +11,16 @@ namespace WebExpress.WebCore.WebEndpoint
     public class EndpointRegistration
     {
         /// <summary>
+        /// Stores the event handler for adding an endpoint.
+        /// </summary>
+        public EventHandler<IEndpointContext> AddEndpoint { get; set; }
+
+        /// <summary>
+        /// Stores the event handler for removing an endpoint.
+        /// </summary>
+        public EventHandler<IEndpointContext> RemoveEndpoint { get; set; }
+
+        /// <summary>
         /// Returns or sets the context resolver function to resolve the corresponding endpoint contexts.
         /// </summary>
         public Func<Type, IApplicationContext, IEnumerable<IEndpointContext>> EndpointResolver { get; set; }
@@ -24,7 +34,5 @@ namespace WebExpress.WebCore.WebEndpoint
         /// Returns or sets the function to handle requests.
         /// </summary>
         public Func<Request, IEndpointContext, Response> HandleRequest { get; set; }
-
-
     }
 }
