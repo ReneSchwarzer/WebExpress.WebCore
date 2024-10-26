@@ -8,6 +8,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication.Model;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -49,7 +50,7 @@ namespace WebExpress.WebCore.WebApplication
             _componentHub.PluginManager.AddPlugin += OnAddPlugin;
             _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
 
-            _httpServerContext = _componentHub.HttpServerContext;
+            _httpServerContext = httpServerContext;
 
             _httpServerContext.Log.Debug
             (
@@ -138,6 +139,7 @@ namespace WebExpress.WebCore.WebApplication
                 (
                     type,
                     applicationContext,
+                    _httpServerContext,
                     _componentHub
                 );
 
@@ -166,6 +168,8 @@ namespace WebExpress.WebCore.WebApplication
                     );
                 }
             }
+
+            Log();
         }
 
         /// <summary>
@@ -179,17 +183,17 @@ namespace WebExpress.WebCore.WebApplication
                 return;
             }
 
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
             {
-                return;
+                foreach (var applicationContext in value)
+                {
+                    OnRemoveApplication(applicationContext.Value.ApplicationContext);
+                }
+
+                _dictionary.Remove(pluginContext);
             }
 
-            foreach (var applicationContext in _dictionary[pluginContext])
-            {
-                OnRemoveApplication(applicationContext.Value.ApplicationContext);
-            }
-
-            _dictionary.Remove(pluginContext);
+            Log();
         }
 
         /// <summary>
@@ -263,12 +267,12 @@ namespace WebExpress.WebCore.WebApplication
         /// <returns>The contexts of the applications as an enumeration.</returns>
         public IEnumerable<IApplicationContext> GetApplications(IPluginContext pluginContext)
         {
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
             {
-                return new List<IApplicationContext>();
+                return value.Values.Select(x => x.ApplicationContext);
             }
 
-            return _dictionary[pluginContext].Values.Select(x => x.ApplicationContext);
+            return [];
         }
 
         /// <summary>
@@ -298,7 +302,39 @@ namespace WebExpress.WebCore.WebApplication
                 return;
             }
 
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
+            {
+                foreach (var applicationItem in value?.Values ?? Enumerable.Empty<ApplicationItem>())
+                {
+                    var token = applicationItem.CancellationTokenSource.Token;
+
+                    // Run the application concurrently
+                    Task.Run(() =>
+                    {
+                        _httpServerContext.Log.Debug
+                        (
+                            I18N.Translate
+                            (
+                                "webexpress:applicationmanager.application.processing.start",
+                                applicationItem.ApplicationContext.ApplicationId)
+                            );
+
+                        applicationItem.Application.Run();
+
+                        _httpServerContext.Log.Debug
+                        (
+                            I18N.Translate
+                            (
+                                "webexpress:applicationmanager.application.processing.end",
+                                applicationItem.ApplicationContext.ApplicationId
+                            )
+                        );
+
+                        token.ThrowIfCancellationRequested();
+                    }, token);
+                }
+            }
+            else
             {
                 _httpServerContext.Log.Warning
                 (
@@ -308,38 +344,6 @@ namespace WebExpress.WebCore.WebApplication
                         pluginContext.PluginId
                     )
                 );
-
-                return;
-            }
-
-            foreach (var applicationItem in _dictionary[pluginContext]?.Values ?? Enumerable.Empty<ApplicationItem>())
-            {
-                var token = applicationItem.CancellationTokenSource.Token;
-
-                // Run the application concurrently
-                Task.Run(() =>
-                {
-                    _httpServerContext.Log.Debug
-                    (
-                        I18N.Translate
-                        (
-                            "webexpress:applicationmanager.application.processing.start",
-                            applicationItem.ApplicationContext.ApplicationId)
-                        );
-
-                    applicationItem.Application.Run();
-
-                    _httpServerContext.Log.Debug
-                    (
-                        I18N.Translate
-                        (
-                            "webexpress:applicationmanager.application.processing.end",
-                            applicationItem.ApplicationContext.ApplicationId
-                        )
-                    );
-
-                    token.ThrowIfCancellationRequested();
-                }, token);
             }
         }
 
@@ -396,19 +400,23 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
-            foreach (var applicationContext in GetApplications(pluginContext))
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
             {
-                output.Add
+                I18N.Translate("webexpress:applicationmanager")
+            };
+
+            foreach (var applicationContext in Applications)
+            {
+                list.Add
                 (
-                    string.Empty.PadRight(deep) +
                     I18N.Translate("webexpress:applicationmanager.application", applicationContext.ApplicationId)
                 );
             }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

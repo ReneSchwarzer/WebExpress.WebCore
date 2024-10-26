@@ -46,11 +46,11 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private PageManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private PageManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentHub = componentManager;
+            _componentHub = componentHub;
 
             _componentHub.PluginManager.AddPlugin += OnAddPlugin;
             _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
@@ -224,7 +224,7 @@ namespace WebExpress.WebCore.WebPage
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _httpServerContext, _componentHub);
 
                 if (instance is II18N i18n)
                 {
@@ -404,19 +404,17 @@ namespace WebExpress.WebCore.WebPage
             }
 
             // the plugin has not been registered in the manager
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
             {
-                return;
-            }
+                foreach (var resourceItem in value.Values
+                    .SelectMany(x => x.Values))
+                {
+                    OnRemovePage(resourceItem.PageContext);
+                    resourceItem.Dispose();
+                }
 
-            foreach (var resourceItem in _dictionary[pluginContext].Values
-                .SelectMany(x => x.Values))
-            {
-                OnRemovePage(resourceItem.PageContext);
-                resourceItem.Dispose();
+                _dictionary.Remove(pluginContext);
             }
-
-            _dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -481,16 +479,6 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Handles the event when an application is removed.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The context of the application being removed.</param>
-        private void OnRemoveApplication(object sender, IApplicationContext e)
-        {
-            Remove(e);
-        }
-
-        /// <summary>
         /// Handles the event when an plugin is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -518,6 +506,16 @@ namespace WebExpress.WebCore.WebPage
         private void OnAddApplication(object sender, IApplicationContext e)
         {
             Register(e);
+        }
+
+        /// <summary>
+        /// Handles the event when an application is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being removed.</param>
+        private void OnRemoveApplication(object sender, IApplicationContext e)
+        {
+            Remove(e);
         }
 
         /// <summary>
@@ -552,6 +550,8 @@ namespace WebExpress.WebCore.WebPage
             _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+
+            GC.SuppressFinalize(this);
         }
     }
 }

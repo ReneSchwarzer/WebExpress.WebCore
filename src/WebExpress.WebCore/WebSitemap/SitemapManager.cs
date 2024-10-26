@@ -7,7 +7,6 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -95,10 +94,7 @@ namespace WebExpress.WebCore.WebSitemap
 
             _root = newSiteMapNode;
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
-            var list = new List<string>();
-            PrepareForLog(null, list, 2);
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            Log();
         }
 
         /// <summary>
@@ -113,7 +109,7 @@ namespace WebExpress.WebCore.WebSitemap
             var result = SearchNode
             (
                 _root,
-                new Queue<string>(requestUri.Segments.Select(x => x == "/" ? x : (x.EndsWith("/") ? x[..^1] : x))),
+                new Queue<string>(requestUri.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
                 new Queue<IUriPathSegment>(),
                 searchContext
             );
@@ -241,7 +237,7 @@ namespace WebExpress.WebCore.WebSitemap
             SitemapNode parent
         )
         {
-            var pathSegment = contextPathSegments.Any() ? contextPathSegments.Dequeue() : null;
+            var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
             if (pathSegment == null)
             {
@@ -254,7 +250,7 @@ namespace WebExpress.WebCore.WebSitemap
                 Parent = parent,
             };
 
-            if (contextPathSegments.Any())
+            if (contextPathSegments.Count != 0)
             {
                 node.Children.Add(CreateSiteMap(contextPathSegments, applicationContext, node));
             }
@@ -264,7 +260,7 @@ namespace WebExpress.WebCore.WebSitemap
 
         /// <summary>
         /// Creates the sitemap. Works recursively.
-        /// It is important for the algorithm that the addition of module is sorted 
+        /// It is important for the algorithm that the addition is sorted 
         /// by the number of path segments in ascending order.
         /// </summary>
         /// <param name="contextPathSegments">The path segments of the context path.</param>
@@ -303,7 +299,7 @@ namespace WebExpress.WebCore.WebSitemap
             SitemapNode parent = null
         )
         {
-            var pathSegment = contextPathSegments.Any() ? contextPathSegments.Dequeue() : null;
+            var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
             if (pathSegment == null)
             {
@@ -317,7 +313,7 @@ namespace WebExpress.WebCore.WebSitemap
                 EndpointContext = endpointContext
             };
 
-            if (contextPathSegments.Any())
+            if (contextPathSegments.Count != 0)
             {
                 node.Children.Add(CreateSiteMap(contextPathSegments, endpointContext, node));
             }
@@ -338,11 +334,7 @@ namespace WebExpress.WebCore.WebSitemap
                 {
                     foreach (var fc in first.Children.Where(x => x.PathSegment.Equals(sc.PathSegment)))
                     {
-                        if (fc.EndpointContext == null)
-                        {
-                            fc.EndpointContext = sc.EndpointContext;
-                            //fc.Parent = sc.Parent;
-                        }
+                        fc.EndpointContext ??= sc.EndpointContext;
 
                         MergeSitemap(fc, sc);
                         return;
@@ -363,7 +355,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="outPathSegments">The path segments.</param>
         /// <param name="searchContext">The search context.</param>
         /// <returns>The search result with the found resource</returns>
-        private SearchResult SearchNode
+        private static SearchResult SearchNode
         (
             SitemapNode node,
             Queue<string> inPathSegments,
@@ -439,18 +431,16 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
-            output.Add
-            (
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
                 I18N.Translate
                 (
                     "webexpress:sitemapmanager.sitemap"
                 )
-            );
+            };
 
             var preorder = _root
                 .GetPreOrder()
@@ -463,8 +453,10 @@ namespace WebExpress.WebCore.WebSitemap
 
             foreach (var node in preorder)
             {
-                output.Add(node);
+                list.Add(node);
             }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

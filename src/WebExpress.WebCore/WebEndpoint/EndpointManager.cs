@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentHub">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         private EndpointManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {

@@ -71,15 +71,15 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (!_dictionary.ContainsKey(id))
+            if (_dictionary.TryGetValue(id, out var value))
             {
-                var task = ComponentActivator.CreateInstance<Task>(_componentHub, [id, args]);
-                _dictionary.Add(key, task);
-
-                return task;
+                return value;
             }
 
-            return _dictionary[id];
+            var task = ComponentActivator.CreateInstance<Task>(_httpServerContext, _componentHub, [id, args]);
+            _dictionary.Add(key, task);
+
+            return task;
         }
 
         /// <summary>
@@ -105,17 +105,17 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (!_dictionary.ContainsKey(id))
+            if (_dictionary.TryGetValue(id, out var value))
             {
-                var task = ComponentActivator.CreateInstance<T>(_componentHub, [id, args]);
-                _dictionary.Add(key, task);
-
-                task.Process += handler;
-
-                return task;
+                return value;
             }
 
-            return _dictionary[id];
+            var task = ComponentActivator.CreateInstance<T>(_httpServerContext, _componentHub, [id, args]);
+            _dictionary.Add(key, task);
+
+            task.Process += handler;
+
+            return task;
         }
 
         /// <summary>
@@ -134,6 +134,7 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

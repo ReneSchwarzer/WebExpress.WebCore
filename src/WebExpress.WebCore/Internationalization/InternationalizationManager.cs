@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Internationalization
     /// </summary>
     public sealed class InternationalizationManager : IInternationalizationManager, IComponentManagerPlugin, ISystemComponent
     {
-        private readonly IComponentHub _componentManager;
+        private readonly IComponentHub _componentHub;
 
         /// <summary>
         /// Returns the default language.
@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Returns the directory by listing the internationalization key-value pairs.
         /// </summary>
-        private static InternationalizationDictionary Dictionary { get; } = new InternationalizationDictionary();
+        private static InternationalizationDictionary Dictionary { get; } = [];
 
         /// <summary>
         /// Returns or sets the reference to the context of the host.
@@ -35,18 +35,18 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private InternationalizationManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private InternationalizationManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentManager = componentManager;
+            _componentHub = componentHub;
 
-            _componentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            _componentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
@@ -102,12 +102,13 @@ namespace WebExpress.WebCore.Internationalization
             {
                 var language = languageResource.Split('.').LastOrDefault()?.ToLower();
 
-                if (!Dictionary.ContainsKey(language))
+                if (!Dictionary.TryGetValue(language, out InternationalizationItem value))
                 {
-                    Dictionary.Add(language, []);
+                    value = ([]);
+                    Dictionary.Add(language, value);
                 }
 
-                var dictItem = Dictionary[language];
+                var dictItem = value;
 
                 using var stream = assembly.GetManifestResourceStream(languageResource);
                 using var streamReader = new StreamReader(stream);
@@ -126,6 +127,8 @@ namespace WebExpress.WebCore.Internationalization
                     }
                 }
             }
+
+            Log();
         }
 
         /// <summary>
@@ -148,6 +151,8 @@ namespace WebExpress.WebCore.Internationalization
                     dictionary.Remove(key);
                 }
             }
+
+            Log();
         }
 
         /// <summary>
@@ -294,10 +299,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
 
         }

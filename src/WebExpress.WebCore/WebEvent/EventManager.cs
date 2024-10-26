@@ -196,7 +196,7 @@ namespace WebExpress.WebCore.WebEvent
                     (
                         pluginContext,
                         applicationContext,
-                        new EventItem(_componentHub, pluginContext, applicationContext, eventHandlerContext, eventHandlerType, eventType)
+                        new EventItem(_componentHub, _httpServerContext, pluginContext, applicationContext, eventHandlerContext, eventHandlerType, eventType)
                     ))
                     {
                         OnAddEventHandler(eventHandlerContext);

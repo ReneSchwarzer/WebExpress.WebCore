@@ -45,11 +45,11 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private StatusPageManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private StatusPageManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentHub = componentManager;
+            _componentHub = componentHub;
 
             _componentHub.PluginManager.AddPlugin += OnAddPlugin;
             _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
@@ -288,25 +288,21 @@ namespace WebExpress.WebCore.WebStatusPage
 
             if (statusPageItem == null)
             {
-                switch (status)
+                return status switch
                 {
-                    case 400:
-                        return new ResponseBadRequest(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
-                    case 401:
-                        return new ResponseUnauthorized(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
-                    case 404:
-                        return new ResponseNotFound(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
-                    case 500:
-                        return new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
-                    default:
-                        return new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null);
-                }
+                    400 => new ResponseBadRequest(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null),
+                    401 => new ResponseUnauthorized(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null),
+                    404 => new ResponseNotFound(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null),
+                    500 => new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null),
+                    _ => new ResponseInternalServerError(!string.IsNullOrWhiteSpace(message) ? new StatusMessage(message) : null),
+                };
             }
 
             var instance = ComponentActivator.CreateInstance<IStatusPage, IStatusPageContext>
             (
                 statusPageItem.StatusPageClass,
                 statusPageItem.StatusPageContext,
+                _httpServerContext,
                 _componentHub,
                 new StatusMessage(message)
             );
@@ -328,7 +324,7 @@ namespace WebExpress.WebCore.WebStatusPage
             instance.Process(renderContext);
 
 
-            var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _componentHub, new StatusMessage(message));
+            var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _httpServerContext, _componentHub, new StatusMessage(message));
             var content = renderContext.VisualTree.Render(new VisualTreeContext(request))?.ToString();
 
             response.Content = content;
@@ -471,6 +467,8 @@ namespace WebExpress.WebCore.WebStatusPage
             _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+
+            GC.SuppressFinalize(this);
         }
     }
 }

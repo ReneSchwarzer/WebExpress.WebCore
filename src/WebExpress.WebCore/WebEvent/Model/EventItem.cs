@@ -39,12 +39,13 @@ namespace WebExpress.WebCore.WebEvent.Model
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentHub">The associated component hub.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
         /// <param name="pluginContext">The associated plugin context.</param>
         /// <param name="applicationContext">The corresponding application context.</param>
         /// <param name="eventHandlerContext">The event handler context.</param>
         /// <param name="eventHandlerType">The event handler type.</param>
         /// <param name="eventClass">The event class.</param>
-        public EventItem(IComponentHub componentHub, IPluginContext pluginContext, IApplicationContext applicationContext, IEventHandlerContext eventHandlerContext, Type eventHandlerType, Type eventClass)
+        public EventItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, IEventHandlerContext eventHandlerContext, Type eventHandlerType, Type eventClass)
         {
             _componentHub = componentHub;
             PluginContext = pluginContext;
@@ -58,6 +59,7 @@ namespace WebExpress.WebCore.WebEvent.Model
                  (
                      eventHandlerType,
                      eventHandlerContext,
+                     httpServerContext,
                      _componentHub,
                      pluginContext,
                      applicationContext
@@ -70,6 +72,7 @@ namespace WebExpress.WebCore.WebEvent.Model
             (
                 eventHandlerType,
                 eventHandlerContext,
+                httpServerContext,
                 _componentHub,
                 pluginContext,
                 applicationContext

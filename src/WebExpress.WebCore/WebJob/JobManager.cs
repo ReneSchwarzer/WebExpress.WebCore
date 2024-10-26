@@ -47,11 +47,11 @@ namespace WebExpress.WebCore.WebJob
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private JobManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private JobManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentHub = componentManager;
+            _componentHub = componentHub;
 
             _componentHub.PluginManager.AddPlugin += OnAddPlugin;
             _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
@@ -84,9 +84,9 @@ namespace WebExpress.WebCore.WebJob
                 Cron = cron
             };
 
-            var item = new ScheduleItem(_componentHub, pluginContext, null, jobContext, typeof(T));
+            var item = new ScheduleItem(_componentHub, _httpServerContext, pluginContext, null, jobContext, typeof(T));
 
-            _dynamicScheduleList.Append(item);
+            _ = _dynamicScheduleList.Append(item);
 
             OnAddJob(jobContext);
 
@@ -175,7 +175,7 @@ namespace WebExpress.WebCore.WebJob
                         (
                             pluginContext,
                             applicationContext,
-                            new ScheduleItem(_componentHub, pluginContext, applicationContext, jobContext, job)
+                            new ScheduleItem(_componentHub, _httpServerContext, pluginContext, applicationContext, jobContext, job)
                         ))
                         {
                             OnAddJob(jobContext);
@@ -230,20 +230,18 @@ namespace WebExpress.WebCore.WebJob
             }
 
             // the plugin has not been registered in the manager
-            if (!_staticScheduleDictionary.ContainsKey(pluginContext))
+            if (_staticScheduleDictionary.TryGetValue(pluginContext, out var value))
             {
-                return;
-            }
+                foreach (var scheduleItem in value.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x))
+                {
+                    OnRemoveJob(scheduleItem.JobContext);
+                    scheduleItem.Dispose();
+                }
 
-            foreach (var scheduleItem in _staticScheduleDictionary[pluginContext].Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x))
-            {
-                OnRemoveJob(scheduleItem.JobContext);
-                scheduleItem.Dispose();
+                _staticScheduleDictionary.Remove(pluginContext);
             }
-
-            _staticScheduleDictionary.Remove(pluginContext);
         }
 
         /// <summary>

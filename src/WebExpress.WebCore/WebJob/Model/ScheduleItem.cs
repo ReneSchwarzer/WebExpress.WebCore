@@ -11,8 +11,6 @@ namespace WebExpress.WebCore.WebJob.Model
     /// </summary>
     internal class ScheduleItem : IDisposable
     {
-        private readonly IComponentHub _componentHub;
-
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
@@ -47,13 +45,13 @@ namespace WebExpress.WebCore.WebJob.Model
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="componentHub">The associated component hub.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
         /// <param name="pluginContext">The associated plugin context.</param>
         /// <param name="applicationContext">The corresponding application context.</param>
         /// <param name="jobContext">The job context.</param>
         /// <param name="jobClass">The job class.</param>
-        public ScheduleItem(IComponentHub componentHub, IPluginContext pluginContext, IApplicationContext applicationContext, IJobContext jobContext, Type jobClass)
+        public ScheduleItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, IJobContext jobContext, Type jobClass)
         {
-            _componentHub = componentHub;
             PluginContext = pluginContext;
             ApplicationContext = applicationContext;
             JobContext = jobContext;
@@ -63,7 +61,8 @@ namespace WebExpress.WebCore.WebJob.Model
             (
                 jobClass,
                 jobContext,
-                _componentHub,
+                httpServerContext,
+                componentHub,
                 pluginContext,
                 applicationContext
             );

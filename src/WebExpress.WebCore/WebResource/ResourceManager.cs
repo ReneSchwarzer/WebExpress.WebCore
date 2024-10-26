@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentHub">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         private ResourceManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
@@ -214,19 +214,17 @@ namespace WebExpress.WebCore.WebResource
             }
 
             // the plugin has not been registered in the manager
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
             {
-                return;
-            }
+                foreach (var resourceItem in value.Values
+                    .SelectMany(x => x.Values))
+                {
+                    OnRemoveResource(resourceItem.ResourceContext);
+                    resourceItem.Dispose();
+                }
 
-            foreach (var resourceItem in _dictionary[pluginContext].Values
-                .SelectMany(x => x.Values))
-            {
-                OnRemoveResource(resourceItem.ResourceContext);
-                resourceItem.Dispose();
+                _dictionary.Remove(pluginContext);
             }
-
-            _dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -395,7 +393,7 @@ namespace WebExpress.WebCore.WebResource
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _httpServerContext, _componentHub);
 
                 if (instance is II18N i18n)
                 {

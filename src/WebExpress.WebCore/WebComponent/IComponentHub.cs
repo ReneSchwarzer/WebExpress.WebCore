@@ -34,11 +34,6 @@ namespace WebExpress.WebCore.WebComponent
         event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
-        /// Returns the reference to the context of the host.
-        /// </summary>
-        IHttpServerContext HttpServerContext { get; }
-
-        /// <summary>
         /// Returns all registered components.
         /// </summary>
         IEnumerable<IComponentManager> Managers { get; }
@@ -47,19 +42,20 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the log manager.
         /// </summary>
         /// <returns>The instance of the log manager.</returns>
-        LogManager LogManager { get; }
+        ILogManager LogManager { get; }
 
         /// <summary>
         /// Returns the package manager.
         /// </summary>
         /// <returns>The instance of the package manager.</returns>
-        PackageManager PackageManager { get; }
+        IPackageManager PackageManager { get; }
 
         /// <summary>
         /// Returns the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager.</returns>
         public IPluginManager PluginManager { get; }
+
         /// <summary>
         /// Returns the application manager.
         /// </summary>

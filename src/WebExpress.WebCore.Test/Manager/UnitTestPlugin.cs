@@ -235,7 +235,7 @@ namespace WebExpress.WebCore.Test.Manager
             var pluginManager = componentHub.PluginManager as PluginManager;
 
             // test execution
-            Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.PluginManager.GetType()));
+            Assert.True(typeof(IComponentManager).IsAssignableFrom(pluginManager.GetType()));
         }
 
         /// <summary>

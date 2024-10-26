@@ -243,7 +243,7 @@ namespace WebExpress.WebCore.WebRestApi
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>(resourceItem.RestApiClass, pageContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>(resourceItem.RestApiClass, pageContext, _httpServerContext, _componentHub);
 
                 if (instance is II18N i18n)
                 {
@@ -421,19 +421,17 @@ namespace WebExpress.WebCore.WebRestApi
             }
 
             // the plugin has not been registered in the manager
-            if (!_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.TryGetValue(pluginContext, out var value))
             {
-                return;
-            }
+                foreach (var resourceItem in value.Values
+                    .SelectMany(x => x.Values))
+                {
+                    OnRemoveRestApi(resourceItem.RestApiContext);
+                    resourceItem.Dispose();
+                }
 
-            foreach (var resourceItem in _dictionary[pluginContext].Values
-                .SelectMany(x => x.Values))
-            {
-                OnRemoveRestApi(resourceItem.RestApiContext);
-                resourceItem.Dispose();
+                _dictionary.Remove(pluginContext);
             }
-
-            _dictionary.Remove(pluginContext);
         }
 
         /// <summary>
@@ -569,6 +567,8 @@ namespace WebExpress.WebCore.WebRestApi
             _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+
+            GC.SuppressFinalize(this);
         }
     }
 }

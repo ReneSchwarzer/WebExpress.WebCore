@@ -25,7 +25,10 @@ namespace WebExpress.WebCore.WebComponent
     /// </summary>
     public class ComponentHub : IComponentHub
     {
+        private readonly IHttpServerContext _httpServerContext;
         private readonly ComponentDictionary _dictionary = [];
+        private readonly LogManager _logManager;
+        private readonly PackageManager _packageManager;
         private readonly InternationalizationManager _internationalizationManager;
         private readonly PluginManager _pluginManager;
         private readonly ApplicationManager _applicationManager;
@@ -51,17 +54,12 @@ namespace WebExpress.WebCore.WebComponent
         public event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
-        /// Returns the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
-
-        /// <summary>
         /// Returns all registered managers.
         /// </summary>
         public IEnumerable<IComponentManager> Managers => new IComponentManager[]
             {
-                LogManager,
-                PackageManager,
+                _logManager,
+                _packageManager,
                 _pluginManager,
                 _applicationManager,
                 _endpointManager,
@@ -81,13 +79,13 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the log manager.
         /// </summary>
         /// <returns>The instance of the log manager.</returns>
-        public LogManager LogManager { get; private set; }
+        public ILogManager LogManager => _logManager;
 
         /// <summary>
         /// Returns the package manager.
         /// </summary>
         /// <returns>The instance of the package manager.</returns>
-        public PackageManager PackageManager { get; private set; }
+        public IPackageManager PackageManager => _packageManager;
 
         /// <summary>
         /// Returns the plugin manager.
@@ -173,12 +171,13 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         internal ComponentHub(IHttpServerContext httpServerContext)
         {
-            HttpServerContext = httpServerContext;
+            _httpServerContext = httpServerContext;
 
             // order is relevant
-            LogManager = CreateInstance(typeof(LogManager)) as LogManager;
-            PackageManager = CreateInstance(typeof(PackageManager)) as PackageManager;
             _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager;
+            _packageManager = CreateInstance(typeof(PackageManager)) as PackageManager;
+
+            _logManager = CreateInstance(typeof(LogManager)) as LogManager;
             _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
             _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
             _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
@@ -194,7 +193,7 @@ namespace WebExpress.WebCore.WebComponent
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, "webexpress");
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
                 _internationalizationManager.Translate("webexpress:componentmanager.initialization")
             );
@@ -223,7 +222,7 @@ namespace WebExpress.WebCore.WebComponent
             }
             else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
             {
-                HttpServerContext.Log.Warning
+                _httpServerContext.Log.Warning
                 (
                     _internationalizationManager.Translate
                     (
@@ -237,11 +236,11 @@ namespace WebExpress.WebCore.WebComponent
 
             try
             {
-                return ComponentActivator.CreateInstance<IComponentManager>(componentType, this);
+                return ComponentActivator.CreateInstance<IComponentManager>(componentType, _httpServerContext, this);
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                _httpServerContext.Log.Exception(ex);
             }
 
             return null;
@@ -308,7 +307,7 @@ namespace WebExpress.WebCore.WebComponent
                         ComponentInstance = componentInstance
                     }]);
 
-                    HttpServerContext.Log.Debug
+                    _httpServerContext.Log.Debug
                     (
                         _internationalizationManager.Translate("webexpress:componentmanager.register", id)
                     );
@@ -318,7 +317,7 @@ namespace WebExpress.WebCore.WebComponent
                 }
                 else
                 {
-                    HttpServerContext.Log.Warning
+                    _httpServerContext.Log.Warning
                     (
                         _internationalizationManager.Translate("webexpress:componentmanager.duplicate", id)
                     );
@@ -372,12 +371,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         internal void Execute()
         {
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
                 _internationalizationManager.Translate("webexpress:componentmanager.execute")
             );
 
-            PackageManager.Execute();
+            _packageManager.Execute();
             _jobManager.Execute();
         }
 
@@ -386,7 +385,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         internal void ShutDown()
         {
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
                 _internationalizationManager.Translate("webexpress:componentmanager.shutdown")
             );
@@ -431,7 +430,7 @@ namespace WebExpress.WebCore.WebComponent
                 {
                     OnRemoveComponent(componentItem.ComponentInstance);
 
-                    HttpServerContext.Log.Debug
+                    _httpServerContext.Log.Debug
                     (
                         _internationalizationManager.Translate("webexpress:componentmanager.remove")
                     );
@@ -462,9 +461,9 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Output of the components to the log.
         /// </summary>
-        internal void LogStatus()
+        private void Log()
         {
-            using var frame = new LogFrameSimple(HttpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
             var output = new List<string>
             {
                 _internationalizationManager.Translate("webexpress:componentmanager.component")
@@ -477,28 +476,9 @@ namespace WebExpress.WebCore.WebComponent
                    string.Empty.PadRight(2) +
                    _internationalizationManager.Translate("webexpress:pluginmanager.plugin", pluginContext.PluginId)
                 );
-
-                _applicationManager.PrepareForLog(pluginContext, output, 4);
-                _resourceManager.PrepareForLog(pluginContext, output, 4);
-                _statusPageManager.PrepareForLog(pluginContext, output, 4);
-                _jobManager.PrepareForLog(pluginContext, output, 4);
             }
 
-            //foreach (var item in Dictionary)
-            //{
-            //    foreach (var component in item.Value)
-            //    {
-            //        output.Add
-            //        (
-            //           string.Empty.PadRight(2) +
-            //           I18N.Translate("webexpress:pluginmanager.plugin", item.Key.PluginId)
-            //        );
-
-            //        component.ComponentInstance?.PrepareForLog(item.Key, output, 4);
-            //    }
-            //}
-
-            HttpServerContext.Log.Info(string.Join(Environment.NewLine, output));
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, output));
         }
 
         /// <summary>
@@ -506,6 +486,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

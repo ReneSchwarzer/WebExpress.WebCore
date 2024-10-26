@@ -60,13 +60,14 @@ namespace WebExpress.WebCore.Test.Manager
             // preconditions
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
             var context = UnitTestControlFixture.CreateHttpContextMock();
+            var httpServerContext = UnitTestControlFixture.CreateHttpServerContextMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
             var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
             {
-                HttpServerContext = componentHub.HttpServerContext,
-                Culture = componentHub.HttpServerContext.Culture,
+                HttpServerContext = httpServerContext,
+                Culture = httpServerContext.Culture,
                 HttpContext = context
             });
 

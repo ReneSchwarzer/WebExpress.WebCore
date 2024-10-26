@@ -14,12 +14,18 @@ using WebExpress.WebCore.WebResource;
 
 namespace WebExpress.WebCore.Test.Fixture
 {
+    /// <summary>
+    /// A fixture class for unit tests, providing various mock objects and utility methods.
+    /// </summary>
     public class UnitTestControlFixture : IDisposable
     {
+        private static readonly string[] _separator = ["\r\n", "\r", "\n"];
+
         /// <summary>
-        /// Returns the 
+        /// Returns the list of resources. 
         /// </summary>
-        private static List<IResource> Ressources { get; } = new List<IResource>();
+        private static List<IResource> Ressources { get; } = [];
+
 
         /// <summary>
         /// Initializes a new instance of the class and boot the component manager.
@@ -52,7 +58,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <summary>
         /// Create a component hub.
         /// </summary>
-        /// <returns>The component manager.</returns>
+        /// <returns>The component hub.</returns>
         public static ComponentHub CreateComponentHubMock()
         {
             var ctorComponentManager = typeof(ComponentHub).GetConstructor
@@ -77,7 +83,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <summary>
         /// Create a component hub and register the plugins.
         /// </summary>
-        /// <returns>The component manager.</returns>
+        /// <returns>The component hub.</returns>
         public static ComponentHub CreateAndRegisterComponentHubMock()
         {
             var componentManager = CreateComponentHubMock();
@@ -110,10 +116,10 @@ namespace WebExpress.WebCore.Test.Fixture
             var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
             var featureCollection = new FeatureCollection();
             var firstLine = content.Split('\n').FirstOrDefault();
-            var lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            var lines = content.Split(_separator, StringSplitOptions.None);
             var filteredLines = lines.Skip(1).TakeWhile(line => !string.IsNullOrWhiteSpace(line));
             var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault()) + filteredLines.LastOrDefault().Length + 4 : 0;
-            var innerContent = pos < content.Length ? content.Substring(pos) : "";
+            var innerContent = pos < content.Length ? content[pos..] : "";
             var contentBytes = Encoding.UTF8.GetBytes(innerContent);
 
             var requestFeature = new HttpRequestFeature
@@ -166,7 +172,7 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
             var componentManager = CreateComponentHubMock();
-            var context = new WebMessage.HttpContext(featureCollection, componentManager.HttpServerContext);
+            var context = new WebMessage.HttpContext(featureCollection, CreateHttpServerContextMock());
 
             return context;
         }
@@ -191,7 +197,7 @@ namespace WebExpress.WebCore.Test.Fixture
             var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IApplicationContext)], null);
 
             var applicationContext = WebEx.ComponentHub.ApplicationManager.Applications
-                .Where(x => x.ApplicationId == typeof(TestApplicationA).FullName.ToLower())
+                .Where(x => x.ApplicationId.Equals(typeof(TestApplicationA).FullName, StringComparison.CurrentCultureIgnoreCase))
                 .FirstOrDefault();
 
             var pageContext = (PageContext)ctorPageContext.Invoke([applicationContext]);
@@ -221,6 +227,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

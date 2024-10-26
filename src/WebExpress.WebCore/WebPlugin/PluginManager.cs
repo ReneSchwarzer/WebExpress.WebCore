@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebPlugin
     /// </summary>
     public sealed class PluginManager : IPluginManager, IExecutableElements, ISystemComponent
     {
-        private readonly IComponentHub _componentManager;
+        private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly PluginDictionary _dictionary = [];
         private readonly PluginDictionary _unfulfilledDependencies = [];
@@ -42,11 +42,11 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentManager">The component manager.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        private PluginManager(IComponentHub componentManager, IHttpServerContext httpServerContext)
+        private PluginManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentManager = componentManager;
+            _componentHub = componentHub;
 
             _httpServerContext = httpServerContext;
 
@@ -98,7 +98,7 @@ namespace WebExpress.WebCore.WebPlugin
                 Register(assembly);
             }
 
-            Logging();
+            Log();
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace WebExpress.WebCore.WebPlugin
                 pluginContexts.AddRange(pluginContext);
             }
 
-            Logging();
+            Log();
 
             return pluginContexts;
         }
@@ -203,7 +203,7 @@ namespace WebExpress.WebCore.WebPlugin
                         }
                     }
 
-                    if (!applicationTypes.Any())
+                    if (applicationTypes.Count == 0)
                     {
                         // no application specified
                         _httpServerContext.Log.Warning
@@ -236,7 +236,7 @@ namespace WebExpress.WebCore.WebPlugin
                             PluginLoadContext = loadContext,
                             PluginClass = type,
                             PluginContext = pluginContext,
-                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _componentManager),
+                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _httpServerContext, _componentHub),
                             Dependencies = dependencies
                         });
                     }
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.WebPlugin
                             PluginLoadContext = loadContext,
                             PluginClass = type,
                             PluginContext = pluginContext,
-                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _componentManager),
+                            Plugin = ComponentActivator.CreateInstance<IPlugin, IPluginContext>(type, pluginContext, _httpServerContext, _componentHub),
                             Dependencies = dependencies,
                             ApplicationTypes = applicationTypes
                         });
@@ -269,7 +269,7 @@ namespace WebExpress.WebCore.WebPlugin
                         );
                     }
 
-                    if (plugins.Any())
+                    if (plugins.Count != 0)
                     {
                         plugins.Add(pluginContext);
                     }
@@ -422,7 +422,7 @@ namespace WebExpress.WebCore.WebPlugin
         {
             return _dictionary.Values
                 .Where(x => x.ApplicationTypes != null)
-                .Where(x => x.ApplicationTypes.Select(x => _componentManager.ApplicationManager.GetApplications(x))
+                .Where(x => x.ApplicationTypes.Select(x => _componentHub.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
                 .Where(x => x.ApplicationId == applicationContext.ApplicationId)
                 .Any())
@@ -444,7 +444,7 @@ namespace WebExpress.WebCore.WebPlugin
             }
 
             return pluginItem.ApplicationTypes?
-                .Select(x => _componentManager.ApplicationManager.GetApplications(x))
+                .Select(x => _componentHub.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
                 .Where(x => x != null) ?? [];
         }
@@ -585,7 +585,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Output of the loaded plugins to the log.
         /// </summary>
-        private void Logging()
+        private void Log()
         {
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>();
@@ -635,16 +635,6 @@ namespace WebExpress.WebCore.WebPlugin
             {
                 _httpServerContext.Log.Info(string.Join(Environment.NewLine, item));
             }
-        }
-
-        /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
         }
 
         /// <summary>
