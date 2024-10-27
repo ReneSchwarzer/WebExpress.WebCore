@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.SettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent.Model;
 using WebExpress.WebCore.WebEndpoint;
@@ -35,6 +36,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly EndpointManager _endpointManager;
         private readonly ResourceManager _resourceManager;
         private readonly PageManager _pageManager;
+        private readonly SettingPageManager _settingPageManager;
         private readonly RestApiManager _restApiManager;
         private readonly SitemapManager _sitemapManager;
         private readonly StatusPageManager _statusPageManager;
@@ -66,6 +68,7 @@ namespace WebExpress.WebCore.WebComponent
                 _sitemapManager,
                 _resourceManager,
                 _pageManager,
+                _settingPageManager,
                 _restApiManager,
                 _eventManager,
                 _jobManager,
@@ -136,6 +139,12 @@ namespace WebExpress.WebCore.WebComponent
         public IPageManager PageManager => _pageManager;
 
         /// <summary>
+        /// Returns the setting page manager.
+        /// </summary>
+        /// <returns>The instance of the setting page manager.</returns>
+        public ISettingPageManager SettingPageManager => _settingPageManager;
+
+        /// <summary>
         /// Returns the rest api manager.
         /// </summary>
         /// <returns>The instance of the rest api manager.</returns>
@@ -184,6 +193,7 @@ namespace WebExpress.WebCore.WebComponent
             _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
+            _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager;
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
             _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
             _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
@@ -251,7 +261,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component or null.</returns>
-        public IComponentManager GetComponent(string id)
+        public IComponentManager GetComponentManager(string id)
         {
             return _dictionary.Values
                 .SelectMany(x => x)

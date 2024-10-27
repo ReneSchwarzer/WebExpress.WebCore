@@ -228,9 +228,9 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Removes all jobs associated with the specified plugin context.
+        /// Removes all events associated with the specified plugin context.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin that contains the event to remove.</param>
+        /// <param name="pluginContext">The context of the plugin that contains the events to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
             // the plugin has not been registered in the manager
@@ -248,9 +248,9 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Removes all jobs associated with the specified application context.
+        /// Removes all events associated with the specified application context.
         /// </summary>
-        /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
+        /// <param name="applicationContext">The context of the application that contains the events to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
             if (applicationContext == null)
@@ -292,7 +292,7 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Handles the event when an plugin is added.
+        /// Raises the event when an plugin is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the plugin being added.</param>
@@ -302,7 +302,7 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>  
-        /// Handles the event when a plugin is removed.  
+        /// Raises the event when a plugin is removed.  
         /// </summary>  
         /// <param name="sender">The source of the event.</param>  
         /// <param name="e">The context of the plugin being removed.</param>  
@@ -312,7 +312,7 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Handles the event when an application is removed.
+        /// Raises the event when an application is removed.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the application being removed.</param>
@@ -322,7 +322,7 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Handles the event when an application is added.
+        /// Raises the event when an application is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the application being added.</param>

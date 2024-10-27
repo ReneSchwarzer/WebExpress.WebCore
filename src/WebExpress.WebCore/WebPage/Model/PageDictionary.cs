@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebPage.Model
     /// <summary>
     /// Represents a dictionary that maps plugin contexts to application contexts, page types, and page items.
     /// key = plugin context
-    /// value = { key = page type, value = page item }
+    /// value = application context { key = page type, value = page item }
     /// </summary>
     internal class PageDictionary : Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, PageItem>>>
     {

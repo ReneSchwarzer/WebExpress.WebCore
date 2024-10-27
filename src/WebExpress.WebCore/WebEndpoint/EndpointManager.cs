@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebEndpoint
         }
 
         /// <summary>
-        /// Handles the event when an endpoint is added.
+        /// Raises the event when an endpoint is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="endpointContext">The context of the endpoint being added.</param>
@@ -117,7 +117,7 @@ namespace WebExpress.WebCore.WebEndpoint
         }
 
         /// <summary>
-        /// Handles the event when an endpoint is removed.
+        /// Raises the event when an endpoint is removed.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="endpointContext">The context of the endpoint being removed.</param>

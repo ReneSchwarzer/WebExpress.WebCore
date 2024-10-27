@@ -344,7 +344,7 @@ namespace WebExpress.WebCore.WebPage
                     scopes.Add(resourceType.FullName?.ToLower());
                 }
 
-                // assign the job to existing applications
+                // assign the page to existing applications
                 foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {
                     var pageContext = new PageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
@@ -370,8 +370,7 @@ namespace WebExpress.WebCore.WebPage
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment(),
-                        Log = _httpServerContext?.Log
+                        PathSegment = segment.ToPathSegment()
                     };
 
                     if (_dictionary.AddPageItem(pluginContext, applicationContext, pageItem))
@@ -418,9 +417,9 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Removes all jobs associated with the specified application context.
+        /// Removes all pages associated with the specified application context.
         /// </summary>
-        /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
+        /// <param name="applicationContext">The context of the application that contains the page to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
             if (applicationContext == null)
@@ -479,7 +478,7 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Handles the event when an plugin is added.
+        /// Raises the event when an plugin is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the plugin being added.</param>
@@ -489,7 +488,7 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>  
-        /// Handles the event when a plugin is removed.  
+        /// Raises the event when a plugin is removed.  
         /// </summary>  
         /// <param name="sender">The source of the event.</param>  
         /// <param name="e">The context of the plugin being removed.</param>  
@@ -499,7 +498,7 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Handles the event when an application is added.
+        /// Raises the event when an application is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the application being added.</param>
@@ -509,7 +508,7 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Handles the event when an application is removed.
+        /// Raises the event when an application is removed.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the application being removed.</param>

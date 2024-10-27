@@ -297,7 +297,7 @@ namespace WebExpress.WebCore
         /// <returns>The instance of the component or null.</returns>
         public static IComponentManager GetComponent(string id)
         {
-            return _componentHub.GetComponent(id);
+            return _componentHub.GetComponentManager(id);
         }
 
         /// <summary>

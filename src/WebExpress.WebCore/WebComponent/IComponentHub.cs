@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.SettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
@@ -99,6 +100,12 @@ namespace WebExpress.WebCore.WebComponent
         IPageManager PageManager { get; }
 
         /// <summary>
+        /// Returns the setting page manager.
+        /// </summary>
+        /// <returns>The instance of the setting page manager.</returns>
+        ISettingPageManager SettingPageManager { get; }
+
+        /// <summary>
         /// Returns the rest api manager.
         /// </summary>
         /// <returns>The instance of the rest api manager.</returns>
@@ -133,7 +140,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <param name="id">The id.</param>
         /// <returns>The instance of the component.</returns>
-        IComponentManager GetComponent(string id);
+        IComponentManager GetComponentManager(string id);
 
         /// <summary>
         /// Returns a component based on its type.

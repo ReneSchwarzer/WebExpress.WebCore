@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.WebLog
         }
 
         /// <summary>
-        /// Handles the event when an plugin is added.
+        /// Raises the event when an plugin is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The context of the plugin being added.</param>
@@ -94,7 +94,7 @@ namespace WebExpress.WebCore.WebLog
         }
 
         /// <summary>  
-        /// Handles the event when a plugin is removed.  
+        /// Raises the event when a plugin is removed.  
         /// </summary>  
         /// <param name="sender">The source of the event.</param>  
         /// <param name="e">The context of the plugin being removed.</param>  
