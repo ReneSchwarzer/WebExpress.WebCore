@@ -87,6 +87,11 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>An enumeration of endpoint contexts.</returns>
         public IEnumerable<IEndpointContext> GetEndpoints(Type endpointType, IApplicationContext applicationContext = null)
         {
+            if (endpointType == null)
+            {
+                return [];
+            }
+
             return _registrations.SelectMany(x => x.Value.EndpointResolver(endpointType, applicationContext));
         }
 

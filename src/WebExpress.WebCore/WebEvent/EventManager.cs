@@ -181,7 +181,7 @@ namespace WebExpress.WebCore.WebEvent
                     break;
                 }
 
-                // assign the job to existing applications
+                // assign the event to existing applications
                 foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {
                     var eventHandlerContext = new EventHandlerContext()

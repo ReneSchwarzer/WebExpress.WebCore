@@ -165,7 +165,7 @@ namespace WebExpress.WebCore.WebResource
                     }
                 }
 
-                // assign the job to existing applications
+                // assign the resource to existing applications
                 foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {
                     var resourceContext = new ResourceContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
@@ -183,8 +183,7 @@ namespace WebExpress.WebCore.WebResource
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment(),
-                        Log = _httpServerContext?.Log
+                        PathSegment = segment.ToPathSegment()
                     };
 
                     if (_dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem))

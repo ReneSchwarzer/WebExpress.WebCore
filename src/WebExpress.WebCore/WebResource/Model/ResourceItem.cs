@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource.Model
@@ -62,11 +61,6 @@ namespace WebExpress.WebCore.WebResource.Model
         public bool Cache { get; set; }
 
         /// <summary>
-        /// Returns the log to write status messages to the console and to a log file.
-        /// </summary>
-        public ILog Log { get; internal set; }
-
-        /// <summary>
         /// Returns the resource context.
         /// </summary>
         public IResourceContext ResourceContext { get; internal set; }
@@ -94,7 +88,7 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <returns>The resource element in its string representation.</returns>
         public override string ToString()
         {
-            return $"Resource '{ResourceContext?.EndpointId}'";
+            return $"Resource: '{ResourceContext?.EndpointId}'";
         }
     }
 }

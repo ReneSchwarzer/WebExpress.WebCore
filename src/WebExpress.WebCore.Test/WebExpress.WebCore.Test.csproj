@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\css\mycss.css" />
+    <None Remove="Assets\js\myjavascript.js" />
+    <None Remove="Assets\js\myjavascript.mini.js" />
     <None Remove="Internationalization\de" />
     <None Remove="Internationalization\en" />
     <None Remove="test\contentTypeMultipartFormData1.post" />
@@ -29,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\css\mycss.css" />
+    <EmbeddedResource Include="Assets\js\myjavascript.mini.js" />
+    <EmbeddedResource Include="Assets\js\myjavascript.js" />
     <EmbeddedResource Include="Internationalization\de" />
     <EmbeddedResource Include="Internationalization\en" />
     <EmbeddedResource Include="test\contentTypeMultipartFormData1.post" />

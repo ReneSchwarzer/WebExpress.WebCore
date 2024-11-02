@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.SettingPage;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebJob;
@@ -86,6 +87,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
         IEndpointManager EndpointManager { get; }
+
+        /// <summary>
+        /// Returns the asset manager.
+        /// </summary>
+        /// <returns>The instance of the asset manager.</returns>
+        public IAssetManager AssetManager { get; }
 
         /// <summary>
         /// Returns the resource manager.

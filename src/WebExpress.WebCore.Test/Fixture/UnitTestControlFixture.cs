@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Fixture
 {
@@ -97,13 +98,21 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <summary>
         /// Create a fake request.
         /// </summary>
-        /// <param name="content">The content.</param>
+        /// <param name="content">The content of the request.</param>
+        /// <param name="uri">The URI of the request.</param>
         /// <returns>A fake request for testing.</returns>
-        public static WebMessage.Request CrerateRequestMock(string content = "")
+        public static WebMessage.Request CrerateRequestMock(string content = "", string uri = "")
         {
             var context = CreateHttpContextMock(content);
 
-            return context.Request;
+            var request = context.Request;
+
+            if (!string.IsNullOrEmpty(uri))
+            {
+                request.Uri = new UriResource(uri);
+            }
+
+            return request;
         }
 
         /// <summary>
@@ -216,10 +225,12 @@ namespace WebExpress.WebCore.Test.Fixture
             var resourceName = assembly.GetManifestResourceNames()
                                    .FirstOrDefault(name => name.EndsWith(fileName, StringComparison.OrdinalIgnoreCase));
 
-            using Stream stream = assembly.GetManifestResourceStream(resourceName);
-            using StreamReader reader = new(stream);
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            using var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            var data = memoryStream.ToArray();
 
-            return reader.ReadToEnd();
+            return Encoding.UTF8.GetString(data);
         }
 
         /// <summary>

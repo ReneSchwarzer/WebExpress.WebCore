@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(42, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(45, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -53,6 +53,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/appa/1/apia", "webexpress.webcore.test.testrestapia")]
         [InlineData("http://localhost:8080/appa/1/apia/2/apib", "webexpress.webcore.test.testrestapib")]
         [InlineData("http://localhost:8080/appa/1/apia/2/apib/3/apic", "webexpress.webcore.test.testrestapic")]
+        [InlineData("http://localhost:8080/appa/assets/css/mycss.css", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/appa/assets/js/myjavascript.js", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/appa/assets/css.mycss.css", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/appa/assets/js.myjavascript.js", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
 
         public void SearchResource(string uri, string id)
@@ -87,7 +93,6 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestPageA), "/appa/pagea")]
         [InlineData(typeof(TestPageB), "/appa/resa/pageb")]
         [InlineData(typeof(TestPageC), "/appa/pagec")]
-
         public void GetUri(Type resourceType, string expected)
         {
             // preconditions

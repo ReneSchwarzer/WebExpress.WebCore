@@ -1,0 +1,84 @@
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebUri;
+
+namespace WebExpress.WebCore.WebAsset
+{
+    /// <summary>
+    /// Represents the context of a asset.
+    /// </summary>
+    public class AssetContext : IAssetContext
+    {
+        private readonly UriResource _contextPath;
+        private readonly IUriPathSegment _pathSegment;
+
+        /// <summary>
+        /// Returns the associated plugin context.
+        /// </summary>
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the corresponding application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the conditions that must be met for the resource to be active.
+        /// </summary>
+        public IEnumerable<ICondition> Conditions => [];
+
+        /// <summary>
+        /// Returns the resource id.
+        /// </summary>
+        public string EndpointId { get; internal set; }
+
+        /// <summary>
+        /// Returns the parent or null if not used.
+        /// </summary>
+        public IEndpointContext ParentContext => null;
+
+        /// <summary>
+        /// Returns whether the resource is created once and reused each time it is called.
+        /// </summary>
+        public bool Cache => true;
+
+        /// <summary>
+        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// </summary>
+        public bool IncludeSubPaths { get; internal set; }
+
+        /// <summary>
+        /// Returns the context path.
+        /// </summary>
+        public UriResource ContextPath => UriResource.Combine(ApplicationContext.ContextPath, _contextPath);
+
+        /// <summary>
+        /// Returns the uri.
+        /// </summary>
+        public UriResource Uri => ContextPath.Append(_pathSegment);
+
+        /// <summary>
+        /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
+        /// </summary>
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        /// <param name="contextPath">The context path of the resource.</param>
+        /// <param name="pathSegment">The path segment of the resource.</param>
+        public AssetContext(UriResource contextPath, IUriPathSegment pathSegment)
+        {
+            _contextPath = contextPath;
+            _pathSegment = pathSegment;
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"Asset: {EndpointId}";
+        }
+    }
+}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.WebCondition;
-using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebRestApi.Model
@@ -67,11 +66,6 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// Returns whether it is a optional rest api resource.
         /// </summary>
         public bool Optional { get; set; }
-
-        /// <summary>
-        /// Returns the log to write status messages to the console and to a log file.
-        /// </summary>
-        public ILog Log { get; internal set; }
 
         /// <summary>
         /// Returns the rest api contexts.

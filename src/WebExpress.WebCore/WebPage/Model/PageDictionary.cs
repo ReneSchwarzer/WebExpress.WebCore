@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
@@ -38,7 +37,7 @@ namespace WebExpress.WebCore.WebPage.Model
 
             if (!appContextDict.ContainsKey(applicationContext))
             {
-                appContextDict[applicationContext] = new Dictionary<Type, PageItem>();
+                appContextDict[applicationContext] = [];
             }
 
             var pageDict = appContextDict[applicationContext];
@@ -108,7 +107,7 @@ namespace WebExpress.WebCore.WebPage.Model
         {
             if (!typeof(IPage).IsAssignableFrom(pageType))
             {
-                return Enumerable.Empty<PageItem>();
+                return [];
             }
 
             if (ContainsKey(applicationContext?.PluginContext))
@@ -127,19 +126,6 @@ namespace WebExpress.WebCore.WebPage.Model
             }
 
             return [];
-        }
-
-        /// <summary>
-        /// Returns all page contexts for a given plugin context.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <returns>An IEnumerable of page contexts.</returns>
-        public IEnumerable<IPageContext> GetPages(IPluginContext pluginContext)
-        {
-            return this.Where(entry => entry.Key == pluginContext)
-                       .SelectMany(entry => entry.Value.Values)
-                       .SelectMany(dict => dict.Values)
-                       .Select(x => x.ContextPath as IPageContext);
         }
     }
 }

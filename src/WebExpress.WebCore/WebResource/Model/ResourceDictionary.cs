@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
@@ -31,14 +30,14 @@ namespace WebExpress.WebCore.WebResource.Model
 
             if (!ContainsKey(pluginContext))
             {
-                this[pluginContext] = new Dictionary<IApplicationContext, Dictionary<Type, ResourceItem>>();
+                this[pluginContext] = [];
             }
 
             var appContextDict = this[pluginContext];
 
             if (!appContextDict.ContainsKey(applicationContext))
             {
-                appContextDict[applicationContext] = new Dictionary<Type, ResourceItem>();
+                appContextDict[applicationContext] = [];
             }
 
             var resourceDict = appContextDict[applicationContext];
@@ -108,7 +107,7 @@ namespace WebExpress.WebCore.WebResource.Model
         {
             if (!typeof(IResource).IsAssignableFrom(resourceType))
             {
-                return Enumerable.Empty<ResourceItem>();
+                return [];
             }
 
             if (ContainsKey(applicationContext?.PluginContext))
@@ -121,25 +120,12 @@ namespace WebExpress.WebCore.WebResource.Model
 
                     if (resourceDict.ContainsKey(resourceType))
                     {
-                        return new List<ResourceItem> { resourceDict[resourceType] };
+                        return [resourceDict[resourceType]];
                     }
                 }
             }
 
             return [];
-        }
-
-        /// <summary>
-        /// Returns all resource contexts for a given plugin context.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <returns>An IEnumerable of resource contexts.</returns>
-        public IEnumerable<IResourceContext> GetResources(IPluginContext pluginContext)
-        {
-            return this.Where(entry => entry.Key == pluginContext)
-                       .SelectMany(entry => entry.Value.Values)
-                       .SelectMany(dict => dict.Values)
-                       .Select(x => x.ContextPath as IResourceContext);
         }
     }
 }

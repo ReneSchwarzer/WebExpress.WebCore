@@ -4,6 +4,7 @@ using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.SettingPage;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebComponent.Model;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
@@ -34,6 +35,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly PluginManager _pluginManager;
         private readonly ApplicationManager _applicationManager;
         private readonly EndpointManager _endpointManager;
+        private readonly AssetManager _assetManager;
         private readonly ResourceManager _resourceManager;
         private readonly PageManager _pageManager;
         private readonly SettingPageManager _settingPageManager;
@@ -66,6 +68,7 @@ namespace WebExpress.WebCore.WebComponent
                 _applicationManager,
                 _endpointManager,
                 _sitemapManager,
+                _assetManager,
                 _resourceManager,
                 _pageManager,
                 _settingPageManager,
@@ -125,6 +128,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
         public IEndpointManager EndpointManager => _endpointManager;
+
+        /// <summary>
+        /// Returns the asset manager.
+        /// </summary>
+        /// <returns>The instance of the asset manager.</returns>
+        public IAssetManager AssetManager => _assetManager;
 
         /// <summary>
         /// Returns the resource manager.
@@ -191,6 +200,7 @@ namespace WebExpress.WebCore.WebComponent
             _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
             _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
             _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
+            _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager;

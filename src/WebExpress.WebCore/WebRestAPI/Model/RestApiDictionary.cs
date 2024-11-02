@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
@@ -31,14 +30,14 @@ namespace WebExpress.WebCore.WebRestApi.Model
 
             if (!ContainsKey(pluginContext))
             {
-                this[pluginContext] = new Dictionary<IApplicationContext, Dictionary<Type, RestApiItem>>();
+                this[pluginContext] = [];
             }
 
             var appContextDict = this[pluginContext];
 
             if (!appContextDict.ContainsKey(applicationContext))
             {
-                appContextDict[applicationContext] = new Dictionary<Type, RestApiItem>();
+                appContextDict[applicationContext] = [];
             }
 
             var restApiDict = appContextDict[applicationContext];
@@ -108,7 +107,7 @@ namespace WebExpress.WebCore.WebRestApi.Model
         {
             if (!typeof(IRestApi).IsAssignableFrom(restApiType))
             {
-                return Enumerable.Empty<RestApiItem>();
+                return [];
             }
 
             if (ContainsKey(applicationContext?.PluginContext))
@@ -121,25 +120,12 @@ namespace WebExpress.WebCore.WebRestApi.Model
 
                     if (restApiDict.ContainsKey(restApiType))
                     {
-                        return new List<RestApiItem> { restApiDict[restApiType] };
+                        return [restApiDict[restApiType]];
                     }
                 }
             }
 
-            return Enumerable.Empty<RestApiItem>();
-        }
-
-        /// <summary>
-        /// Returns all rest api contexts for a given plugin context.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <returns>An IEnumerable of rest api contexts.</returns>
-        public IEnumerable<IRestApiContext> GetRestApis(IPluginContext pluginContext)
-        {
-            return this.Where(entry => entry.Key == pluginContext)
-                       .SelectMany(entry => entry.Value.Values)
-                       .SelectMany(dict => dict.Values)
-                       .Select(x => x.ContextPath as IRestApiContext);
+            return [];
         }
     }
 }
