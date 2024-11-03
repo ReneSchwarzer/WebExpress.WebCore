@@ -34,12 +34,13 @@ namespace WebExpress.WebCore.WebAsset.Model
 
             var appContextDict = this[pluginContext];
 
-            if (!appContextDict.ContainsKey(applicationContext))
+            if (!appContextDict.TryGetValue(applicationContext, out List<AssetItem> value))
             {
-                appContextDict[applicationContext] = [];
+                value = ([]);
+                appContextDict[applicationContext] = value;
             }
 
-            var assetList = appContextDict[applicationContext];
+            var assetList = value;
 
             assetList.RemoveAll(x => x.AssetContext?.EndpointId == assetItem.AssetContext.EndpointId);
             assetList.Add(assetItem);
@@ -58,9 +59,9 @@ namespace WebExpress.WebCore.WebAsset.Model
             {
                 var appContextDict = this[applicationContext?.PluginContext];
 
-                if (appContextDict.ContainsKey(applicationContext))
+                if (appContextDict.TryGetValue(applicationContext, out List<AssetItem> value))
                 {
-                    var assetList = appContextDict[applicationContext];
+                    var assetList = value;
 
                     return assetList;
                 }

@@ -145,7 +145,7 @@ namespace WebExpress.WebCore.WebAsset
                     var id = resource[(assemblName.Length + 8)..];
 
                     // assign the asset to existing applications
-                    foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                    foreach (var applicationContext in applicationContexts)
                     {
                         var assetContext = new AssetContext(new UriResource(), new UriPathSegmentConstant($"assets/{id}"))
                         {

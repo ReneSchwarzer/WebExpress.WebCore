@@ -345,7 +345,7 @@ namespace WebExpress.WebCore.WebPage
                 }
 
                 // assign the page to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     var pageContext = new PageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {

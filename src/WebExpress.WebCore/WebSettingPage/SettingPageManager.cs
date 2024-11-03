@@ -10,10 +10,9 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSettingPage.Model;
 
-namespace WebExpress.WebCore.SettingPage
+namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Management of settings pages.
@@ -210,13 +209,15 @@ namespace WebExpress.WebCore.SettingPage
                         cache = true;
                     }
                 }
+
                 // assign the fragment to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     var settingPageContext = new SettingPageContext()
                     {
                         ApplicationContext = applicationContext,
                         PluginContext = pluginContext,
+                        EndpointId = id,
                         Context = context,
                         Section = section,
                         Group = group,

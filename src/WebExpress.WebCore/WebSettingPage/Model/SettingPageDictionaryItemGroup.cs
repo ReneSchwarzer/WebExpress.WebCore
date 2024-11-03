@@ -1,35 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.SettingPage;
 
 namespace WebExpress.WebCore.WebSettingPage.Model
 {
+    /// <summary>
+    /// Represents a group of setting page dictionary items.
+    /// </summary>
     public class SettingPageDictionaryItemGroup : Dictionary<string, List<SettingPageItem>>
     {
         /// <summary>
-        /// Adds a page.
+        /// Adds a setting page item to the specified group.
         /// </summary>
-        /// <param name="group">The group.</param>
-        /// <param name="page">The item to insert.</param>
-        public void AddPage(string group, SettingPageItem page)
+        /// <param name="group">The group to which the item should be added.</param>
+        /// <param name="page">The setting page item to add.</param>
+        /// <returns>True if the setting page item was added successfully; otherwise, false.</returns>
+        public bool AddSettingPageItem(string group, SettingPageItem page)
         {
             group ??= string.Empty;
 
-            // register group.
+            // Register group if it does not exist.
             if (!ContainsKey(group))
             {
                 Add(group, new List<SettingPageItem>());
             }
 
-            this[group].Add(page);
+            var list = this[group];
+
+            if (!list.Any(x => x.SettingPageContext.EndpointId == page.SettingPageContext.EndpointId))
+            {
+                list.Add(page);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
-        /// Searches for an item based on its Id.
+        /// Searches for a setting page item based on its ID.
         /// </summary>
-        /// <param name="pageId">The setting site.</param>
-        /// <returns>The setting page found or null.</returns>
+        /// <param name="pageId">The ID of the setting page item to search for.</param>
+        /// <returns>A <see cref="SettingPageSearchResult"/> containing the group and item if found; otherwise, null.</returns>
         public SettingPageSearchResult FindPage(string pageId)
         {
             foreach (var v in this)
@@ -45,9 +56,9 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         }
 
         /// <summary>
-        /// Returns the first setting page.
+        /// Returns the first setting page item in the dictionary.
         /// </summary>
-        /// <returns>The first setting page.</returns>
+        /// <returns>A <see cref="SettingPageSearchResult"/> containing the group and first item if found; otherwise, null.</returns>
         public SettingPageSearchResult FindFirstPage()
         {
             var firstItem = default(SettingPageItem);
@@ -66,10 +77,10 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         }
 
         /// <summary>
-        /// Returns all setting pages that are in the given group.
+        /// Returns all setting page items in the specified group.
         /// </summary>
-        /// <param name="group">The group.</param>
-        /// <returns>A listing of all pages in the same group.</returns>
+        /// <param name="group">The group whose items should be returned.</param>
+        /// <returns>A list of <see cref="SettingPageItem"/> in the specified group; otherwise, null if the group does not exist.</returns>
         public List<SettingPageItem> GetPages(string group)
         {
             if (ContainsKey(group))

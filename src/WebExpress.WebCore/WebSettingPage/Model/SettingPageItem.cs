@@ -1,5 +1,5 @@
 ﻿using System;
-using WebExpress.WebCore.SettingPage;
+using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 

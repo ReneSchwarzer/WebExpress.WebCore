@@ -166,7 +166,7 @@ namespace WebExpress.WebCore.WebResource
                 }
 
                 // assign the resource to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     var resourceContext = new ResourceContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {

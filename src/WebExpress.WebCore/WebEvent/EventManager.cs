@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.WebEvent
                 }
 
                 // assign the event to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     var eventHandlerContext = new EventHandlerContext()
                     {

@@ -6,7 +6,7 @@ using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSettingPage.Model;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.SettingPage
+namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Interface representing the context of a setting page.

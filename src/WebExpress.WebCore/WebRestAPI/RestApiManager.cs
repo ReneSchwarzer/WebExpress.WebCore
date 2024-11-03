@@ -362,7 +362,7 @@ namespace WebExpress.WebCore.WebRestApi
                 }
 
                 // assign the rest api to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     var restApiContext = new RestApiContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {

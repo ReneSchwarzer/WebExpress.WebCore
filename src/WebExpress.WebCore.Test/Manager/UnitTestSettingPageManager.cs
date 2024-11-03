@@ -1,6 +1,6 @@
-﻿using WebExpress.WebCore.SettingPage;
-using WebExpress.WebCore.Test.Fixture;
+﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebSettingPage;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(0, componentHub.SettingPageManager.SettingPages.Count());
+            Assert.Equal(6, componentHub.SettingPageManager.SettingPages.Count());
         }
 
         /// <summary>

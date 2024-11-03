@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebSettingPage
     /// Defines the contract for a setting page resource that can be rendered using a specific context.
     /// </summary>
     /// <typeparam name="T">The type of the render context.</typeparam>
-    public interface ISettingPage<T> : IPage where T : IRenderContext
+    public interface ISettingPage<T> : ISettingPage where T : IRenderContext
     {
     }
 }

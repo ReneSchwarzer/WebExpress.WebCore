@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
 
                 // assign the status pages to existing applications.
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in applicationContexts)
                 {
                     if (statusResponse?.GetCustomAttribute<StatusCodeAttribute>()?.StatusCode == null)
                     {

@@ -1,7 +1,7 @@
 ﻿using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebSettingPage.Model;
 
-namespace WebExpress.WebCore.SettingPage
+namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Interface representing the context of a setting page.

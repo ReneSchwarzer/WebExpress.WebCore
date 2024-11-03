@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using WebExpress.WebCore.WebComponent;
 
-namespace WebExpress.WebCore.SettingPage
+namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Interface for managing setting pages.

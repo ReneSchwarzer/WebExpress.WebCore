@@ -1,6 +1,6 @@
 ﻿using WebExpress.WebCore.WebSettingPage.Model;
 
-namespace WebExpress.WebCore.SettingPage
+namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Represents the result of a search on the settings page.

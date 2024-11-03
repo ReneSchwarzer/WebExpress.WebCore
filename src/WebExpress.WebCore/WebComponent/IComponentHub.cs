@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.SettingPage;
+using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebEndpoint;

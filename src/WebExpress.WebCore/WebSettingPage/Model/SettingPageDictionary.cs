@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.SettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
@@ -26,6 +25,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// Adds a settings page.
         /// </summary>
         /// <param name="item">The settings page to insert.</param>
+        /// <returns>True if the settings page was added successfully; otherwise, false.</returns>
         public bool AddSettingPageItem(SettingPageItem item)
         {
             if (!TryGetValue(item.PluginContext, out var appDict))
@@ -40,9 +40,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
                 appDict.Add(item.ApplicationContext, contextDict);
             }
 
-            contextDict.AddPage(item.Context, item.Section, item.Group, item);
-
-            return true;
+            return contextDict.AddSettingPageItem(item.Context, item.Section, item.Group, item);
         }
     }
 }
