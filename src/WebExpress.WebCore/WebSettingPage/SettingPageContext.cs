@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
@@ -14,6 +16,11 @@ namespace WebExpress.WebCore.WebSettingPage
     /// </summary>
     public class SettingPageContext : ISettingPageContext
     {
+        private readonly IEndpointManager _endpointManager;
+        private readonly Type _parentType;
+        private readonly UriResource _contextPath;
+        private readonly IUriPathSegment _pathSegment;
+
         /// <summary>
         /// Returns the context of the associated plugin.
         /// </summary>
@@ -28,6 +35,18 @@ namespace WebExpress.WebCore.WebSettingPage
         /// Returns the unique identifier for the setting page.
         /// </summary>
         public string EndpointId { get; internal set; }
+
+        /// <summary>
+        /// Returns the setting page title.
+        /// </summary>
+        public string SettingPageTitle { get; internal set; }
+
+        /// <summary>
+        /// Returns the scope names that provides the setting page. The scope name
+        /// is a string with a name (e.g. global, admin), which can be used by elements to 
+        /// determine whether content and how content should be displayed.
+        /// </summary>
+        public IEnumerable<string> Scopes { get; internal set; } = [];
 
         /// <summary>
         /// Returns the group to which the setting page belongs.
@@ -67,22 +86,49 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>  
         /// Returns the parent context of the endpoint.  
         /// </summary>  
-        public IEndpointContext ParentContext { get; internal set; }
+        public IEndpointContext ParentContext => _endpointManager.GetEndpoints(_parentType, ApplicationContext)
+            .FirstOrDefault();
 
         /// <summary>  
         /// Returns a value indicating whether to include sub-paths.  
         /// </summary>  
         public bool IncludeSubPaths { get; internal set; }
 
-        /// <summary>  
-        /// Returns the context path of the URI resource.  
-        /// </summary>  
-        public UriResource ContextPath { get; internal set; }
+        /// <summary>
+        /// Returns the context path.
+        /// </summary>
+        public UriResource ContextPath
+        {
+            get
+            {
+                var parentContext = ParentContext;
+                if (parentContext != null)
+                {
+                    return UriResource.Combine(ParentContext?.Uri, _contextPath);
+                }
+
+                return UriResource.Combine(ApplicationContext.ContextPath, _contextPath);
+            }
+        }
 
         /// <summary>  
         /// Returns the URI of the setting page.  
         /// </summary>  
-        public UriResource Uri { get; internal set; }
+        public UriResource Uri => ContextPath.Append(_pathSegment);
 
+        /// <summary>
+        /// Initializes a new instance of the class with the specified parent type and context path.
+        /// </summary>
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        /// <param name="parentType">The type of the parent resource.</param>
+        /// <param name="contextPath">The context path of the resource.</param>
+        /// <param name="pathSegment">The path segment of the resource.</param>
+        public SettingPageContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
+        {
+            _endpointManager = endpointManager;
+            _parentType = parentType;
+            _contextPath = contextPath;
+            _pathSegment = pathSegment;
+        }
     }
 }

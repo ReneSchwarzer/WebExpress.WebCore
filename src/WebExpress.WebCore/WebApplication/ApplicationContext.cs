@@ -3,6 +3,9 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebApplication
 {
+    /// <summary>
+    /// Represents the context of an application.
+    /// </summary>
     public class ApplicationContext : IApplicationContext
     {
         /// <summary>
@@ -53,12 +56,12 @@ namespace WebExpress.WebCore.WebApplication
         }
 
         /// <summary>
-        /// Conversion of the apllication context into its string representation.
+        /// Conversion of the application context into its string representation.
         /// </summary>
         /// <returns>The string that uniquely represents the application.</returns>
         public override string ToString()
         {
-            return $"{ApplicationId}";
+            return $"Application: {ApplicationId}";
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
-    public class TitleAttribute : System.Attribute, IPageAttribute, IStatusPageAttribute
+    public class TitleAttribute : System.Attribute, IPageAttribute, ISettingPageAttribute, IStatusPageAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

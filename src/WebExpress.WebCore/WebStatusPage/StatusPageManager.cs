@@ -135,8 +135,6 @@ namespace WebExpress.WebCore.WebStatusPage
                     }
                 }
 
-
-
                 // assign the status pages to existing applications.
                 foreach (var applicationContext in applicationContexts)
                 {
@@ -242,18 +240,8 @@ namespace WebExpress.WebCore.WebStatusPage
 
                 }
             }
-        }
 
-        /// <summary>
-        /// Discovers and registers entries from the specified plugin.
-        /// </summary>
-        /// <param name="pluginContexts">A list with plugin contexts that contain the status pages.</param>
-        private void Register(IEnumerable<IPluginContext> pluginContexts)
-        {
-            foreach (var pluginContext in pluginContexts)
-            {
-                Register(pluginContext);
-            }
+            Log();
         }
 
         /// <summary>
@@ -439,23 +427,20 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
-            foreach (var statusCode in _dictionary.GetStatusPageContexts(pluginContext).Select(x => x.StatusCode))
-            {
-                output.Add
-                (
-                    string.Empty.PadRight(4) +
-                    I18N.Translate
-                    (
-                        "webexpress:statuspagemanager.statuspage",
-                        statusCode
-                    )
-                );
-            }
+            //foreach (var statusCode in _dictionary.GetStatusPageContexts(pluginContext).Select(x => x.StatusCode))
+            //{
+            //    output.Add
+            //    (
+            //        string.Empty.PadRight(4) +
+            //        I18N.Translate
+            //        (
+            //            "webexpress:statuspagemanager.statuspage",
+            //            statusCode
+            //        )
+            //    );
+            //}
         }
 
         /// <summary>

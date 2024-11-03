@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebEndpoint;
+﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.WebSettingPage
@@ -9,6 +10,18 @@ namespace WebExpress.WebCore.WebSettingPage
     /// </summary>
     public interface ISettingPageContext : IEndpointContext
     {
+        /// <summary>
+        /// Returns the setting page title.
+        /// </summary>
+        string SettingPageTitle { get; }
+
+        /// <summary>
+        /// Returns the scope names that provides the setting page. The scope name
+        /// is a string with a name (e.g. global, admin), which can be used by elements to 
+        /// determine whether content and how content should be displayed.
+        /// </summary>
+        IEnumerable<string> Scopes { get; }
+
         /// <summary>
         /// Returns the group to which the setting page belongs.
         /// </summary>

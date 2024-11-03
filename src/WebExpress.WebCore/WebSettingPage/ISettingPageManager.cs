@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebSettingPage
@@ -23,5 +24,20 @@ namespace WebExpress.WebCore.WebSettingPage
         /// Returns the collection of setting pages.
         /// </summary>
         IEnumerable<ISettingPageContext> SettingPages { get; }
+
+        /// <summary>
+        /// Returns an enumeration of setting page contextes.
+        /// </summary>
+        /// <param name="settingPageType">The setting page type.</param>
+        /// <returns>An enumeration of setting page contextes.</returns>
+        IEnumerable<ISettingPageContext> GetSettingPages(Type settingPageType);
+
+        /// <summary>
+        /// Returns an enumeration of setting page contextes.
+        /// </summary>
+        /// <param name="settingPageType">The setting page type.</param>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <returns>An enumeration of setting page contextes.</returns>
+        IEnumerable<ISettingPageContext> GetSettingPages(Type settingPageType, IApplicationContext applicationContext);
     }
 }

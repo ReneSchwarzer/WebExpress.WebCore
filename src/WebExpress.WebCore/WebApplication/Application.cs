@@ -1,4 +1,6 @@
-﻿namespace WebExpress.WebCore.WebApplication
+﻿using System;
+
+namespace WebExpress.WebCore.WebApplication
 {
     /// <summary>
     /// This represents an application.
@@ -38,6 +40,7 @@
         /// </summary>
         public virtual void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

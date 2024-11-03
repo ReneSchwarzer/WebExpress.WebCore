@@ -27,28 +27,25 @@ namespace WebExpress.WebCore.WebEvent.Model
                 return false;
             }
 
-            if (!ContainsKey(pluginContext))
+            if (!TryGetValue(pluginContext, out var appContextDict))
             {
-                this[pluginContext] = [];
+                appContextDict = [];
+                this[pluginContext] = appContextDict;
             }
 
-            var appContextDict = this[pluginContext];
-
-            if (!appContextDict.ContainsKey(applicationContext))
+            if (!appContextDict.TryGetValue(applicationContext, out var eventDict))
             {
-                appContextDict[applicationContext] = [];
+                eventDict = [];
+                appContextDict[applicationContext] = eventDict;
             }
 
-            var eventDict = appContextDict[applicationContext];
-
-            if (!eventDict.ContainsKey(type))
+            if (!eventDict.TryGetValue(type, out var eventList))
             {
-                eventDict[type] = [];
+                eventList = [];
+                eventDict[type] = eventList;
             }
 
-            var eventList = eventDict[type];
-
-            if (eventList.Where(x => x.EventClass == type).Any())
+            if (eventList.Any(x => x.EventClass == type))
             {
                 return false; // item with the same event handler already exists
             }

@@ -8,8 +8,22 @@ namespace WebExpress.WebCore.WebUri
     /// <summary>
     /// A resource uri (e.g. /image.png).
     /// </summary>
-    public class UriResource
+    public partial class UriResource
     {
+        /// <summary>
+        /// A regular expression to match URIs.
+        /// </summary>
+        /// <returns>A Regex object for matching URIs.</returns>
+        [GeneratedRegex("^([a-z0-9+.-]+):(?://(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\\d*))?(.*)?)$")]
+        private static partial Regex UriRegex();
+
+        /// <summary>
+        /// Regular expression to match relative URIs.
+        /// </summary>
+        /// <returns>A Regex object for matching relative URIs.</returns>
+        [GeneratedRegex(@"^(\/([a-zA-Z0-9-+*%()=._/$]*))(#([a-zA-Z0-9-+*%()=._/$]*))?(\?(.*))?$")]
+        private static partial Regex RelativeUriRegex();
+
         /// <summary>
         /// The scheme (e.g. Http, FTP).
         /// </summary>
@@ -23,7 +37,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The path (e.g. /over/there).
         /// </summary>
-        public ICollection<IUriPathSegment> PathSegments { get; } = new List<IUriPathSegment>();
+        public ICollection<IUriPathSegment> PathSegments { get; } = [];
 
         /// <summary>
         /// Returns the extended path. The extended path is the postfix of the resource's path.
@@ -32,14 +46,14 @@ namespace WebExpress.WebCore.WebUri
         {
             get
             {
-                return new UriResource(Skip(EndpointRoot.PathSegments.Count()).PathSegments?.ToArray());
+                return new UriResource(Skip(EndpointRoot.PathSegments.Count).PathSegments?.ToArray());
             }
         }
 
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier&action=submit).
         /// </summary>
-        public ICollection<UriQuerry> Query { get; } = new List<UriQuerry>();
+        public ICollection<UriQuerry> Query { get; } = [];
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
@@ -73,7 +87,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Determines if the uri is empty.
         /// </summary>
-        public bool Empty => !PathSegments.Any();
+        public bool Empty => PathSegments.Count == 0;
 
         /// <summary>
         /// Returns the root of the endpoint.
@@ -93,7 +107,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Determines if the Uri is the root.
         /// </summary>
-        public bool IsRoot => PathSegments.Count() == 1;
+        public bool IsRoot => PathSegments.Count == 1;
 
         /// <summary>
         /// Checks if it is a relative uri.
@@ -155,7 +169,7 @@ namespace WebExpress.WebCore.WebUri
 
             if (Enum.GetNames(typeof(UriScheme)).Where(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)).Any())
             {
-                var match = Regex.Match(uri, "^([a-z0-9+.-]+):(?://(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\\d*))?(.*)?)$");
+                var match = UriRegex().Match(uri);
 
                 try
                 {
@@ -177,7 +191,7 @@ namespace WebExpress.WebCore.WebUri
 
             }
 
-            var relativeMatch = Regex.Match(uri, @"^(\/([a-zA-Z0-9-+*%()=._/$]*))(#([a-zA-Z0-9-+*%()=._/$]*))?(\?(.*))?$");
+            var relativeMatch = RelativeUriRegex().Match(uri);
 
             PathSegments.Add(new UriPathSegmentRoot());
 
@@ -220,7 +234,7 @@ namespace WebExpress.WebCore.WebUri
         {
             PathSegments.Add(new UriPathSegmentRoot());
 
-            foreach (var segment in segments.Where(x => !(x is UriPathSegmentRoot)))
+            foreach (var segment in segments.Where(x => x is not UriPathSegmentRoot))
             {
                 PathSegments.Add(segment);
             }
@@ -267,7 +281,7 @@ namespace WebExpress.WebCore.WebUri
             Authority = authority;
             PathSegments.Add(new UriPathSegmentRoot());
 
-            foreach (var segment in segments != null ? segments.Where(x => !(x is UriPathSegmentRoot)) : Enumerable.Empty<IUriPathSegment>())
+            foreach (var segment in segments != null ? segments.Where(x => x is not UriPathSegmentRoot) : [])
             {
                 PathSegments.Add(segment.Copy());
             }
@@ -448,7 +462,7 @@ namespace WebExpress.WebCore.WebUri
             var uri = "/" + string.Join
             (
                 "/",
-                PathSegments.Where(x => !(x is UriPathSegmentRoot)).Select(x => x.ToString())
+                PathSegments.Where(x => x is not UriPathSegmentRoot).Select(x => x.ToString())
             );
 
             if (!string.IsNullOrWhiteSpace(Fragment))
@@ -456,7 +470,7 @@ namespace WebExpress.WebCore.WebUri
                 uri += "#" + Fragment;
             }
 
-            if (Query.Any())
+            if (Query.Count != 0)
             {
                 uri += "?" + string.Join("&", Query.Select(x => $"{x.Key}={x.Value}"));
             }
@@ -520,5 +534,7 @@ namespace WebExpress.WebCore.WebUri
         {
             return uri?.ToString();
         }
+
+
     }
 }

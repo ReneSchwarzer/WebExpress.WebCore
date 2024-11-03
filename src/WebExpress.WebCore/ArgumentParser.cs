@@ -26,10 +26,7 @@ namespace WebExpress.WebCore
         {
             get
             {
-                if (m_this == null)
-                {
-                    m_this = new ArgumentParser();
-                }
+                m_this ??= new ArgumentParser();
 
                 return m_this;
             }
@@ -40,7 +37,7 @@ namespace WebExpress.WebCore
         /// </summary>
         public ArgumentParser()
         {
-            Commands = new List<ArgumentParserCommand>();
+            Commands = [];
         }
 
         /// <summary>
@@ -72,7 +69,7 @@ namespace WebExpress.WebCore
                 if (s.StartsWith("--") == true)
                 {
                 }
-                else if (s.StartsWith("-") == true)
+                else if (s.StartsWith('-') == true)
                 {
                     if (!string.IsNullOrEmpty(key))
                     {

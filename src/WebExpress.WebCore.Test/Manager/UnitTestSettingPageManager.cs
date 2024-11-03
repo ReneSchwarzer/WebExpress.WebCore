@@ -40,78 +40,69 @@ namespace WebExpress.WebCore.Test.Manager
             Assert.Empty(componentHub.SettingPageManager.SettingPages);
         }
 
-        ///// <summary>
-        ///// Test the id property of the setting page.
-        ///// </summary>
-        //[Theory]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        //public void Id(Type applicationType, Type resourceType, string id)
-        //{
-        //    // preconditions
-        //    var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-        //    var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-        //    var settingPage = componentHub.SettingPageManager.GetPages(resourceType, application)?.FirstOrDefault();
+        /// <summary>
+        /// Test the id property of the setting page.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
+        public void Id(Type applicationType, Type resourceType, string id)
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-        //    // test execution
-        //    Assert.Equal(id, settingPage.EndpointId);
-        //}
+            // test execution
+            Assert.Equal(id, settingPage.EndpointId);
+        }
 
-        ///// <summary>
-        ///// Test the title property of the setting page.
-        ///// </summary>
-        //[Theory]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageA), "webindex:pagea.label")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageB), "webindex:pageb.label")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageC), "webindex:pagec.label")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageA), "webindex:pagea.label")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageB), "webindex:pageb.label")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageC), "webindex:pagec.label")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageA), "webindex:pagea.label")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageB), "webindex:pageb.label")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageC), "webindex:pagec.label")]
+        /// <summary>
+        /// Test the title property of the setting page.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "webindex:settingpagea.label")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "webindex:settingpageb.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "webindex:settingpagea.label")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "webindex:settingpageb.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webindex:settingpagea.label")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webindex:settingpageb.label")]
 
-        //public void Title(Type applicationType, Type resourceType, string id)
-        //{
-        //    // preconditions
-        //    var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-        //    var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-        //    var settingPage = componentHub.SettingPageManager.GetPages(resourceType, application)?.FirstOrDefault();
+        public void Title(Type applicationType, Type resourceType, string id)
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-        //    // test execution
-        //    Assert.Equal(id, settingPage.PageTitle);
-        //}
+            // test execution
+            Assert.Equal(id, settingPage.SettingPageTitle);
+        }
 
-        ///// <summary>
-        ///// Test the context path property of the setting page.
-        ///// </summary>
-        //[Theory]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageA), "/appa")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageB), "/appa/resa")]
-        //[InlineData(typeof(TestApplicationA), typeof(TestPageC), "/appa")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageA), "/appb")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageB), "/appb/resa")]
-        //[InlineData(typeof(TestApplicationB), typeof(TestPageC), "/appb")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageA), "/")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageB), "/resa")]
-        //[InlineData(typeof(TestApplicationC), typeof(TestPageC), "/")]
-        //public void ContextPath(Type applicationType, Type resourceType, string id)
-        //{
-        //    // preconditions
-        //    var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-        //    var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-        //    var settingPage = componentHub.SettingPageManager.GetPages(resourceType, application)?.FirstOrDefault();
+        /// <summary>
+        /// Test the context path property of the setting page.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/")]
+        public void ContextPath(Type applicationType, Type resourceType, string id)
+        {
+            // preconditions
+            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-        //    // test execution
-        //    Assert.Equal(id, settingPage.ContextPath);
-        //}
+            // test execution
+            Assert.Equal(id, settingPage.ContextPath);
+        }
 
         /// <summary>
         /// Tests whether the setting page manager implements interface IComponentManager.

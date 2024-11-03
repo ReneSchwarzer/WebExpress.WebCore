@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebPage
     public interface IPageContext : IEndpointContext
     {
         /// <summary>
-        /// Returns the resource title.
+        /// Returns the page title.
         /// </summary>
         string PageTitle { get; }
 
         /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
+        /// Returns the scope names that provides the page. The scope name
         /// is a string with a name (e.g. global, admin), which can be used by elements to 
         /// determine whether content and how content should be displayed.
         /// </summary>

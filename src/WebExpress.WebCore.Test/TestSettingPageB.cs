@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.WebSettingPage;
-using WebExpress.WebCore.WebAttribute;
+﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebSettingPage;
 

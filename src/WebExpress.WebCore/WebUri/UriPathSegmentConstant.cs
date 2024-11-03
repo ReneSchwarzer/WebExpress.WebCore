@@ -5,7 +5,7 @@ using WebExpress.WebCore.Internationalization;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// constant path segment.
+    /// Constant path segment.
     /// </summary>
     public class UriPathSegmentConstant : IUriPathSegmentConstant
     {

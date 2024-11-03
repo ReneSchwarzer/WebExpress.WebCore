@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSettingPage.Model;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSettingPage
 {
@@ -173,6 +174,11 @@ namespace WebExpress.WebCore.WebSettingPage
                     .Where(x => x.IsClass && x.IsSealed && (x.GetInterfaces().Contains(typeof(ISettingPage)))))
             {
                 var id = settingPageType.FullName?.ToLower();
+                var title = settingPageType.Name;
+                var segment = default(ISegmentAttribute);
+                var parent = default(Type);
+                var contextPath = string.Empty;
+                var scopes = new List<string>();
                 var context = default(string);
                 var group = default(string);
                 var section = SettingSection.Primary;
@@ -184,7 +190,19 @@ namespace WebExpress.WebCore.WebSettingPage
                 foreach (var customAttribute in settingPageType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(SettingContextAttribute))
+                    if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                    {
+                        segment = settingPageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
+                    {
+                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    }
+                    else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
+                    {
+                        contextPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType == typeof(SettingContextAttribute))
                     {
                         context = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
@@ -210,14 +228,29 @@ namespace WebExpress.WebCore.WebSettingPage
                     }
                 }
 
+                foreach (var customAttribute in settingPageType.CustomAttributes
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISettingPageAttribute))))
+                {
+                    if (customAttribute.AttributeType == typeof(TitleAttribute))
+                    {
+                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
+                    {
+                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
+                    }
+                }
+
                 // assign the fragment to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var settingPageContext = new SettingPageContext()
+                    var settingPageContext = new SettingPageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
                         ApplicationContext = applicationContext,
                         PluginContext = pluginContext,
                         EndpointId = id,
+                        SettingPageTitle = title,
+                        Scopes = scopes,
                         Context = context,
                         Section = section,
                         Group = group,
