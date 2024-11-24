@@ -1,22 +1,23 @@
-﻿using WebExpress.WebCore.WebApplication;
+﻿using System;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
-namespace WebExpress.WebCore.WebEvent
+namespace WebExpress.WebCore.WebIdentity
 {
     /// <summary>
-    /// Represents the context of an event.
+    /// Defines the context for a permission, providing access to various related contexts and properties.
     /// </summary>
-    public class EventHandlerContext : IEventHandlerContext
+    public class IdentityPermissionContext : IIdentityPermissionContext
     {
         /// <summary>
-        /// Returns the event id.
+        /// Returns the permission id.
         /// </summary>
-        public string EventId { get; internal set; }
+        public string PermissionId { get; internal set; }
 
         /// <summary>
-        /// Returns the event handler id.
+        /// Returns the permission.
         /// </summary>
-        public string EventHandlerId { get; internal set; }
+        public Type Permission { get; internal set; }
 
         /// <summary>
         /// Returns the associated plugin context.
@@ -34,7 +35,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Event: {EventId}";
+            return $"Permission: {PermissionId}";
         }
     }
 }

@@ -145,7 +145,8 @@ namespace WebExpress.WebCore.Test.Fixture
                     ["AcceptEncoding"] = "gzip, deflate, br, zstd",
                     ["AcceptLanguage"] = "de,de-DE;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
                     ["UserAgent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
-                    ["Referer"] = "0HN50661TV8TP"
+                    ["Referer"] = "0HN50661TV8TP",
+                    ["Cookie"] = "session=AB333C76-E73F-45E0-85FD-123320D9B85F"
                 },
                 Body = contentBytes.Length > 0 ? new MemoryStream(contentBytes) : null,
                 Method = firstLine.Split(' ')?.Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault() ?? "GET",

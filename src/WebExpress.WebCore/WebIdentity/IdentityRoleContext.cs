@@ -1,22 +1,17 @@
 ﻿using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
-namespace WebExpress.WebCore.WebEvent
+namespace WebExpress.WebCore.WebIdentity
 {
     /// <summary>
-    /// Represents the context of an event.
+    /// Defines the context for a role, providing access to various related contexts and properties.
     /// </summary>
-    public class EventHandlerContext : IEventHandlerContext
+    public class IdentityRoleContext : IIdentityRoleContext
     {
         /// <summary>
-        /// Returns the event id.
+        /// Returns the role id.
         /// </summary>
-        public string EventId { get; internal set; }
-
-        /// <summary>
-        /// Returns the event handler id.
-        /// </summary>
-        public string EventHandlerId { get; internal set; }
+        public string RoleId { get; internal set; }
 
         /// <summary>
         /// Returns the associated plugin context.
@@ -34,7 +29,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Event: {EventId}";
+            return $"Role: {RoleId}";
         }
     }
 }

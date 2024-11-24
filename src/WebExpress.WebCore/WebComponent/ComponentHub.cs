@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebComponent.Model;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPackage;
@@ -16,6 +16,7 @@ using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
+using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
@@ -46,6 +47,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly EventManager _eventManager;
         private readonly JobManager _jobManager;
         private readonly TaskManager _taskManager;
+        private readonly IdentityManager _identityManager;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -77,6 +79,7 @@ namespace WebExpress.WebCore.WebComponent
                 _jobManager,
                 _statusPageManager,
                 _internationalizationManager,
+                _identityManager,
                 _sessionManager,
                 _taskManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
@@ -178,6 +181,12 @@ namespace WebExpress.WebCore.WebComponent
         public IInternationalizationManager InternationalizationManager => _internationalizationManager;
 
         /// <summary>
+        /// Returns the identity manager.
+        /// </summary>
+        /// <returns>The instance of the identity manager.</returns>
+        public IIdentityManager IdentityManager => _identityManager;
+
+        /// <summary>
         /// Returns the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
@@ -210,6 +219,7 @@ namespace WebExpress.WebCore.WebComponent
             _jobManager = CreateInstance(typeof(JobManager)) as JobManager;
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
+            _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, "webexpress");
 

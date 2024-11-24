@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPackage;
@@ -14,6 +14,7 @@ using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
+using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
@@ -135,6 +136,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the internationalization manager.</returns>
         IInternationalizationManager InternationalizationManager { get; }
+
+        /// <summary>
+        /// Returns the identity manager.
+        /// </summary>
+        /// <returns>The instance of the identity manager.</returns>
+        IIdentityManager IdentityManager { get; }
 
         /// <summary>
         /// Returns the session manager.

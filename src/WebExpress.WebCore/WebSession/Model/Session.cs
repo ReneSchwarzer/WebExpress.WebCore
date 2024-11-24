@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace WebExpress.WebCore.WebSession.Model
 {
@@ -56,7 +58,7 @@ namespace WebExpress.WebCore.WebSession.Model
         /// </summary>
         /// <typeparam name="T">The type of the property.</typeparam>
         /// <returns>The property or null.</returns>
-        public T GetProperty<T>() where T : class, ISessionProperty, new()
+        public T GetProperty<T>() where T : class, ISessionProperty
         {
             lock (Properties)
             {
@@ -73,17 +75,47 @@ namespace WebExpress.WebCore.WebSession.Model
         /// Returns a property if it already exists. Otherwise, a new property will be created.
         /// </summary>
         /// <typeparam name="T">The type of the property.</typeparam>
-        /// <returns>The property or null.</returns>
-        public T GetOrCreateProperty<T>() where T : class, ISessionProperty, new()
+        /// <param name="parameters">The parameters to pass to the constructor of the property if it needs to be created.</param>
+        /// <returns>The property or null if it cannot be created.</returns>
+        public T GetOrCreateProperty<T>(params object[] parameters) where T : class, ISessionProperty
         {
+            var type = typeof(T);
             lock (Properties)
             {
                 if (Properties.ContainsKey(typeof(T)))
                 {
-                    return Properties[typeof(T)] as T;
+                    return Properties[type] as T;
                 }
 
-                var property = new T();
+                var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+                var constructors = type.GetConstructors(flags);
+
+                if (constructors != null || parameters.Length > 0)
+                {
+                    foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                    {
+                        // injection
+                        var constructorParameters = constructor.GetParameters();
+                        var parameterValues = constructorParameters.Select
+                        (
+                            x => parameters.Where
+                            (
+                                y => y.GetType() == x.ParameterType ||
+                                x.ParameterType.IsAssignableFrom(y.GetType()) ||
+                                y.GetType().IsSubclassOf(x.ParameterType)
+                            ).FirstOrDefault() ?? null
+                        ).ToArray();
+
+                        if (constructor.Invoke(parameterValues) is T injectionProperty)
+                        {
+                            SetProperty(injectionProperty);
+
+                            return injectionProperty;
+                        }
+                    }
+                }
+
+                var property = Activator.CreateInstance<T>();
                 SetProperty(property);
 
                 return property;
@@ -111,7 +143,7 @@ namespace WebExpress.WebCore.WebSession.Model
         /// Removes a property.
         /// </summary>
         /// <typeparam name="T">The type of the property.</typeparam>
-        public void RemoveProperty<T>() where T : class, ISessionProperty, new()
+        public void RemoveProperty<T>() where T : class, ISessionProperty
         {
             lock (Properties)
             {

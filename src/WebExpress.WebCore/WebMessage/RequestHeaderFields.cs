@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the cookies.
         /// </summary>
-        public ICollection<Cookie> Cookies { get; } = new List<Cookie>();
+        public ICollection<Cookie> Cookies { get; } = [];
 
         /// <summary>
         /// Returns the referer. The referer header echoes the absolute or partial address from 
