@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -60,7 +59,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 EndpointsResolver = () => SettingPages,
                 HandleRequest = (request, endpontContext) =>
                 {
-                    var settingPage = CreateSettingPageInstance(endpontContext as ISettingPageContext, request.Culture);
+                    var settingPage = CreateSettingPageInstance(endpontContext as ISettingPageContext);
                     var settingPageType = settingPage.GetType();
                     var context = default(IRenderContext);
                     var pageContetx = endpontContext as IPageContext;
@@ -98,9 +97,8 @@ namespace WebExpress.WebCore.WebSettingPage
         /// Creates a new setting page and returns it. If a page already exists (through caching), the existing instance is returned.
         /// </summary>
         /// <param name="settinPageContext">The context used for setting page creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
         /// <returns>The created or cached page.</returns>
-        private ISettingPage CreateSettingPageInstance(ISettingPageContext settinPageContext, CultureInfo culture)
+        private ISettingPage CreateSettingPageInstance(ISettingPageContext settinPageContext)
         {
             var settingPageItem = _dictionary.Values
                 .SelectMany(a => a.Values)
@@ -113,11 +111,6 @@ namespace WebExpress.WebCore.WebSettingPage
             if (settingPageItem != null && settingPageItem.Instance == null)
             {
                 var instance = ComponentActivator.CreateInstance<ISettingPage, ISettingPageContext>(settingPageItem.SettingPageClass, settinPageContext, _httpServerContext, _componentHub);
-
-                if (instance is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
 
                 if (settingPageItem.Cache)
                 {
@@ -212,7 +205,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     }
                     else if (customAttribute.AttributeType == typeof(SettingSectionAttribute))
                     {
-                        section = (SettingSection)Enum.Parse(typeof(SettingSection), customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
+                        section = Enum.Parse<SettingSection>(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
                     }
                     else if (customAttribute.AttributeType == typeof(SettingHideAttribute))
                     {

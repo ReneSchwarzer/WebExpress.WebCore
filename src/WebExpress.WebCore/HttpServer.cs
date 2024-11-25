@@ -29,7 +29,7 @@ namespace WebExpress.WebCore
     /// <summary>
     /// The web server for processing http requests (see RFC 2616). The web server uses Kestrel internally.
     /// </summary>
-    public class HttpServer : IHost, II18N, IHttpApplication<HttpContext>
+    public class HttpServer : IHost, IHttpApplication<HttpContext>
     {
         /// <summary>
         /// Event is triggered after the web server is started.
@@ -101,12 +101,12 @@ namespace WebExpress.WebCore
         {
             if (HttpServerContext != null && HttpServerContext.Log != null)
             {
-                HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.run"));
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.run"));
             }
 
             if (!HttpListener.IsSupported)
             {
-                HttpServerContext.Log.Error(message: this.I18N("webexpress:httpserver.notsupported"));
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress:httpserver.notsupported"));
             }
 
             var logger = new LogFactory();
@@ -146,7 +146,7 @@ namespace WebExpress.WebCore
 
             Kestrel.StartAsync(this, ServerToken);
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
 
             Started?.Invoke(this, new EventArgs());
         }
@@ -169,7 +169,7 @@ namespace WebExpress.WebCore
                     .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
-                HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.endpoint"), args: endPoint.Uri);
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.endpoint"), args: endPoint.Uri);
 
                 foreach (var ipAddress in addressList)
                 {
@@ -185,7 +185,7 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Error(message: this.I18N("webexpress:httpserver.listen.exeption"), args: endPoint);
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress:httpserver.listen.exeption"), args: endPoint);
                 HttpServerContext.Log.Exception(ex);
 
             }
@@ -200,26 +200,26 @@ namespace WebExpress.WebCore
         {
             serverOptions.Value.Listen(endPoint);
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
-        /// Adds an endpoint.
+        /// Adds an endpoint with HTTPS configuration.
         /// </summary>
         /// <param name="serverOptions">The server options.</param>
-        /// <param name="pfxFile">The certificate.</param>
-        /// <param name="password">The password to the certificate.</param>
         /// <param name="endPoint">The endpoint.</param>
+        /// <param name="pfxFile">The path to the PFX file containing the certificate.</param>
+        /// <param name="password">The password for the PFX file.</param>
         private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint, string pfxFile, string password)
         {
             serverOptions.Value.Listen(endPoint, configure =>
             {
-                var cert = new X509Certificate2(pfxFile, password);
+                var cert = X509CertificateLoader.LoadPkcs12FromFile(pfxFile, password, X509KeyStorageFlags.DefaultKeySet);
 
                 configure.UseHttps(cert);
             });
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace WebExpress.WebCore
             var culture = request.Culture;
             var uri = request?.Uri;
 
-            HttpServerContext.Log.Debug(message: this.I18N("webexpress:httpserver.connected"), args: context.RemoteEndPoint);
+            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress:httpserver.connected"), args: context.RemoteEndPoint);
             HttpServerContext.Log.Info(I18N.Translate
             (
                 "webexpress:httpserver.request",
@@ -443,18 +443,9 @@ namespace WebExpress.WebCore
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
+        private static Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
         {
             var response = new T() as Response;
-            var culture = Culture;
-
-            try
-            {
-                culture = new CultureInfo(request?.Header?.AcceptLanguage?.FirstOrDefault()?.ToLower());
-            }
-            catch
-            {
-            }
 
             if (searchResult != null)
             {

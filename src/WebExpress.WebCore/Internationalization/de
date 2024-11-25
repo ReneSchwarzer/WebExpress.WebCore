@@ -133,6 +133,12 @@ jobmanager.job.process=Der Job '{0}' wird ausgeführt.
 jobmanager.cron.parseerror=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' kann nicht verarbeitet werden.
 jobmanager.cron.range=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' ist außerhalb des gültigen Bereiches.
 
+identitymanager.initialization=Der Identitymanager wurde initialisiert.
+identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
+identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der Anwendung '{1}' registriert.
+identitymanager.registerrole=Die Rolle '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
+identitymanager.duplicaterole=Die Rolle '{0}' wurde bereits in der Anwendung '{1}' registriert.
+
 resource.variable.duplicate=Variable '{0}' bereits vorhanden!
 resource.file={0}: Datei '{1}' wurde geladen.
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -66,7 +65,7 @@ namespace WebExpress.WebCore.WebRestApi
                 HandleRequest = (request, endpointContext) =>
                 {
                     var restApiContext = endpointContext as IRestApiContext;
-                    var restApi = CreatePageInstance(restApiContext, request.Culture) as IRestApi;
+                    var restApi = CreatePageInstance(restApiContext) as IRestApi;
 
                     if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
                     {
@@ -232,9 +231,8 @@ namespace WebExpress.WebCore.WebRestApi
         /// Creates a new rest api resource and returns it. If a rest api resource already exists (through caching), the existing instance is returned.
         /// </summary>
         /// <param name="pageContext">The context used for rest api resource creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
         /// <returns>The created or cached rest api resource.</returns>
-        private IRestApi CreatePageInstance(IRestApiContext pageContext, CultureInfo culture)
+        private IRestApi CreatePageInstance(IRestApiContext pageContext)
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
@@ -244,11 +242,6 @@ namespace WebExpress.WebCore.WebRestApi
             if (resourceItem != null && resourceItem.Instance == null)
             {
                 var instance = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>(resourceItem.RestApiClass, pageContext, _httpServerContext, _componentHub);
-
-                if (instance is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
 
                 if (resourceItem.Cache)
                 {

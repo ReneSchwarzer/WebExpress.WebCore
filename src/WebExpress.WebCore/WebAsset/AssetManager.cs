@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -281,9 +280,8 @@ namespace WebExpress.WebCore.WebAsset
         /// Creates a new resource and returns it. If a resource already exists (through caching), the existing instance is returned.
         /// </summary>
         /// <param name="assetContext">The context used for asset creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
         /// <returns>The created or cached resource.</returns>
-        private IAsset CreateAssetInstance(IAssetContext assetContext, CultureInfo culture)
+        private IAsset CreateAssetInstance(IAssetContext assetContext)
         {
             var resourceItem = _itemDictionary.Values
                 .SelectMany(x => x.Values)
@@ -293,12 +291,6 @@ namespace WebExpress.WebCore.WebAsset
             if (resourceItem != null && resourceItem.Instance == null)
             {
                 var instance = ComponentActivator.CreateInstance<IAsset, IAssetContext>(resourceItem.AssetClass, assetContext, _httpServerContext, _componentHub);
-
-                if (instance is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
-
                 resourceItem.Instance = instance;
 
                 return instance;

@@ -27,23 +27,6 @@ namespace WebExpress.WebCore.Internationalization
         /// <summary>
         /// Translates a given key to the specified language.
         /// </summary>
-        /// <param name="obj">An internationalization object that is being extended.</param>
-        /// <param name="key">The internationalization key.</param>
-        /// <returns>The value of the key in the current language.</returns>
-        string Translate(II18N obj, string key);
-
-        /// <summary>
-        /// Translates a given key to the specified language.
-        /// </summary>
-        /// <param name="obj">An internationalization object that is being extended.</param>
-        /// <param name="key">The internationalization key.</param>
-        /// <param name="args">The formatting arguments.</param>
-        /// <returns>The value of the key in the current language.</returns>
-        string Translate(II18N obj, string key, params object[] args);
-
-        /// <summary>
-        /// Translates a given key to the specified language.
-        /// </summary>
         /// <param name="request">The request with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>

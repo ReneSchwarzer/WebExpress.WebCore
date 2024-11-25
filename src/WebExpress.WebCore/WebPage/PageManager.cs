@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -63,7 +62,7 @@ namespace WebExpress.WebCore.WebPage
                 EndpointsResolver = () => Pages,
                 HandleRequest = (request, endpontContext) =>
                 {
-                    var page = CreatePageInstance(endpontContext as IPageContext, request.Culture);
+                    var page = CreatePageInstance(endpontContext as IPageContext);
                     var pageType = page.GetType();
                     var context = default(IRenderContext);
                     var pageContetx = endpontContext as IPageContext;
@@ -213,9 +212,8 @@ namespace WebExpress.WebCore.WebPage
         /// Creates a new page and returns it. If a page already exists (through caching), the existing instance is returned.
         /// </summary>
         /// <param name="pageContext">The context used for page creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
         /// <returns>The created or cached page.</returns>
-        private IPage CreatePageInstance(IPageContext pageContext, CultureInfo culture)
+        private IPage CreatePageInstance(IPageContext pageContext)
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
@@ -225,11 +223,6 @@ namespace WebExpress.WebCore.WebPage
             if (resourceItem != null && resourceItem.Instance == null)
             {
                 var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _httpServerContext, _componentHub);
-
-                if (instance is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
 
                 if (resourceItem.Cache)
                 {

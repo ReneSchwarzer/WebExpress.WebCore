@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -63,7 +62,7 @@ namespace WebExpress.WebCore.WebResource
                 HandleRequest = (request, endpointContext) =>
                 {
                     var resourceContext = endpointContext as IResourceContext;
-                    var resource = CreateResourceInstance(resourceContext, request.Culture);
+                    var resource = CreateResourceInstance(resourceContext);
 
                     return resource.Process(request);
                 }
@@ -381,9 +380,8 @@ namespace WebExpress.WebCore.WebResource
         /// Creates a new resource and returns it. If a resource already exists (through caching), the existing instance is returned.
         /// </summary>
         /// <param name="resourceContext">The context used for resource creation.</param>
-        /// <param name="culture">The culture with the language settings.</param>
         /// <returns>The created or cached resource.</returns>
-        private IResource CreateResourceInstance(IResourceContext resourceContext, CultureInfo culture)
+        private IResource CreateResourceInstance(IResourceContext resourceContext)
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
@@ -393,11 +391,6 @@ namespace WebExpress.WebCore.WebResource
             if (resourceItem != null && resourceItem.Instance == null)
             {
                 var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _httpServerContext, _componentHub);
-
-                if (instance is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
 
                 if (resourceItem.Cache)
                 {
