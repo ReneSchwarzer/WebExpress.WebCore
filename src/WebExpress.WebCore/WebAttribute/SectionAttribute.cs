@@ -1,20 +1,19 @@
 ﻿using System;
-using WebExpress.WebCore.WebScope;
+using WebExpress.WebCore.WebSection;
 
 namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
-    /// The range in which the component is valid.
+    /// Attribute to identify a section.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ScopeAttribute<T> : Attribute, IPageAttribute, ISettingPageAttribute where T : class, IScope
+    public class SectionAttribute<T> : Attribute, IFragmentAttribute where T : class, ISection
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ScopeAttribute()
+        public SectionAttribute()
         {
-
         }
     }
 }

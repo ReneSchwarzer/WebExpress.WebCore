@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     }
                     else
                     {
-                        context = new RenderContext(endpontContext?.ApplicationContext, request, pageContetx.Scopes);
+                        context = new RenderContext(pageContetx, request);
                     }
 
                     settingPage.Process(context);

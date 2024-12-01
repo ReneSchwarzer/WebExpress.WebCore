@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -10,19 +8,14 @@ namespace WebExpress.WebCore.WebPage
     public interface IRenderContext
     {
         /// <summary>
-        /// Returns the application context.
+        /// Returns the page context.
         /// </summary>
-        IApplicationContext ApplicationContext { get; }
+        IPageContext PageContext { get; }
 
         /// <summary>
         /// Returns the request.
         /// </summary>
         Request Request { get; }
-
-        /// <summary>
-        /// Returns the scopes.
-        /// </summary>
-        IEnumerable<string> Scopes { get; }
 
         /// <summary>
         /// Returns the contents of a page.

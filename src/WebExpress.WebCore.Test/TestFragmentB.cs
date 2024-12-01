@@ -1,0 +1,54 @@
+﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebFragment;
+using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebPage;
+
+namespace WebExpress.WebCore.Test
+{
+    /// <summary>
+    /// Represents a test fragment.
+    /// </summary>
+    [Section<TestSectionA>()]
+    [Scope<TestScopeB>]
+    [Order(0)]
+    public sealed class TestFragmentB : IFragment
+    {
+        /// <summary>
+        /// Initialization of the fragment. Here, for example, managed resources can be loaded. 
+        /// </summary>
+        /// <param name="componentHub">The component hub.</param>
+        /// <param name="fragmentContext">The context of the fragment.</param>
+        public TestFragmentB(IComponentHub componentHub, IFragmentContext fragmentContext)
+        {
+            // test the injection
+            if (componentHub == null)
+            {
+                throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
+            }
+
+            // test the injection
+            if (fragmentContext == null)
+            {
+                throw new ArgumentNullException(nameof(fragmentContext), "Parameter cannot be null or empty.");
+            }
+        }
+
+        /// <summary>
+        /// Processes the fragments in the specified render context.
+        /// </summary>
+        /// <param name="renderContext">The context in which rendering occurs.</param>
+        public void Process(IRenderContext renderContext)
+        {
+            renderContext.VisualTree.Content = new HtmlText("TestFragmentB");
+        }
+
+        /// <summary>
+        /// Disposes the resources used by the fragment.
+        /// </summary>
+        public void Dispose()
+        {
+
+        }
+    }
+}

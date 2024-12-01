@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
@@ -188,29 +189,31 @@ namespace WebExpress.WebCore.Test.Fixture
         }
 
         /// <summary>
-        /// Create a fake render context.
+        /// Creates a mock render context for unit testing.
         /// </summary>
-        /// <returns>A fake context for testing.</returns>
-        public static RenderContext CrerateContextMock()
+        /// <param name="applicationContext">The application context. If null, defaults to null.</param>
+        /// <param name="scopes">The scopes of the page. If null, defaults to null.</param>
+        /// <returns>A mock render context for testing.</returns>
+        public static RenderContext CrerateRenderContextMock(IApplicationContext applicationContext = null, IEnumerable<Type> scopes = null)
         {
             var request = CrerateRequestMock();
 
-            return new RenderContext(CreratePageContextMock()?.ApplicationContext, request, []);
-        }
+            return new RenderContext(CreratePageContextMock(applicationContext, scopes), request);
+        }
 
         /// <summary>
-        /// Create a fake page context.
+        /// Create a fake page context for unit testing.
         /// </summary>
+        /// <param name="applicationContext">The application context. If null, defaults to null.</param>
+        /// <param name="scopes">The scopes of the page.</param></param>
         /// <returns>A fake context for testing.</returns>
-        public static PageContext CreratePageContextMock()
+        public static PageContext CreratePageContextMock(IApplicationContext applicationContext = null, IEnumerable<Type> scopes = null)
         {
-            var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IApplicationContext)], null);
+            var ctorPageContext = typeof(PageContext).GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IEndpointManager), typeof(Type), typeof(UriResource), typeof(IUriPathSegment)], null);
 
-            var applicationContext = WebEx.ComponentHub.ApplicationManager.Applications
-                .Where(x => x.ApplicationId.Equals(typeof(TestApplicationA).FullName, StringComparison.CurrentCultureIgnoreCase))
-                .FirstOrDefault();
-
-            var pageContext = (PageContext)ctorPageContext.Invoke([applicationContext]);
+            var pageContext = (PageContext)ctorPageContext.Invoke([WebEx.ComponentHub.EndpointManager, null, new UriResource(), null]);
+            pageContext.ApplicationContext = applicationContext;
+            pageContext.Scopes = scopes;
 
             return pageContext;
         }

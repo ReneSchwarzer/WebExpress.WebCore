@@ -5,6 +5,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
+using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
@@ -124,6 +125,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         ISitemapManager SitemapManager { get; }
+
+        /// <summary>
+        /// Returns the fragment manager.
+        /// </summary>
+        /// <returns>The instance of the fragment manager.</returns>
+        IFragmentManager FragmentManager { get; }
 
         /// <summary>
         /// Returns the status page manager.

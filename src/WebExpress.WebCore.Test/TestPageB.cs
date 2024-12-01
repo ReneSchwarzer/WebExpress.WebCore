@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebScope;
 
 namespace WebExpress.WebCore.Test
 {
@@ -10,7 +11,7 @@ namespace WebExpress.WebCore.Test
     [Segment("pageb", "webindex:homepage.label")]
     [ContextPath(null)]
     [Parent<TestResourceA>]
-    public sealed class TestPageB : IPage
+    public sealed class TestPageB : IPage, IScope
     {
         /// <summary>
         /// Returns or sets the title of the page.

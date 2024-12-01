@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using WebExpress.WebCore.WebApplication;
+﻿using System.Globalization;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
@@ -12,9 +10,9 @@ namespace WebExpress.WebCore.WebPage
     public class RenderContext : IRenderContext
     {
         /// <summary>
-        /// Returns the application context.
+        /// Returns the page context.
         /// </summary>
-        public IApplicationContext ApplicationContext { get; protected set; }
+        public IPageContext PageContext { get; protected set; }
 
         /// <summary>
         /// Returns the request.
@@ -32,11 +30,6 @@ namespace WebExpress.WebCore.WebPage
         public CultureInfo Culture => Request?.Culture;
 
         /// <summary>
-        /// Returns the scopes.
-        /// </summary>
-        public IEnumerable<string> Scopes { get; }
-
-        /// <summary>
         /// Returns the contents of a page.
         /// </summary>
         public IVisualTree VisualTree { get; protected set; }
@@ -52,15 +45,13 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="applicationContext">>The application context.</param>
+        /// <param name="pageContext">>The page context.</param>
         /// <param name="request">The request associated with the rendering context.</param>
-        /// <param name="scopes">The scopes associated with the rendering context.</param>
-        public RenderContext(IApplicationContext applicationContext, Request request, IEnumerable<string> scopes)
+        public RenderContext(IPageContext pageContext, Request request)
             : this()
         {
-            ApplicationContext = applicationContext;
+            PageContext = pageContext;
             Request = request;
-            Scopes = scopes;
         }
 
         /// <summary>
@@ -68,7 +59,7 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         /// <param name="context">The context to copy.</param>
         public RenderContext(RenderContext context)
-            : this(context?.ApplicationContext, context?.Request, context?.Scopes)
+            : this(context?.PageContext, context?.Request)
         {
         }
 

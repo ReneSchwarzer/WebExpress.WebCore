@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.WebPage
                     }
                     else
                     {
-                        context = new RenderContext(endpontContext?.ApplicationContext, request, pageContetx.Scopes);
+                        context = new RenderContext(pageContetx, request);
                     }
 
                     page.Process(context);
@@ -285,7 +285,7 @@ namespace WebExpress.WebCore.WebPage
                 var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
-                var scopes = new List<string>();
+                var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
 
@@ -328,13 +328,13 @@ namespace WebExpress.WebCore.WebPage
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
+                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
                     }
                 }
 
                 if (resourceType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
                 {
-                    scopes.Add(resourceType.FullName?.ToLower());
+                    scopes.Add(resourceType);
                 }
 
                 // assign the page to existing applications

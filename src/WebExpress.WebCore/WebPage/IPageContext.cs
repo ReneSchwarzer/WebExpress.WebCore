@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebExpress.WebCore.WebEndpoint;
 
 namespace WebExpress.WebCore.WebPage
@@ -18,6 +19,6 @@ namespace WebExpress.WebCore.WebPage
         /// is a string with a name (e.g. global, admin), which can be used by elements to 
         /// determine whether content and how content should be displayed.
         /// </summary>
-        IEnumerable<string> Scopes { get; }
+        IEnumerable<Type> Scopes { get; }
     }
 }

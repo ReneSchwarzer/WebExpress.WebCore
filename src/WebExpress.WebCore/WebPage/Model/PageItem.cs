@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebPage.Model
         /// is a string with a name (e.g. global, admin), which can be used by elements to 
         /// determine whether content and how content should be displayed.
         /// </summary>
-        public IReadOnlyList<string> Scopes { get; set; }
+        public IEnumerable<Type> Scopes { get; set; }
 
         /// <summary>
         /// Returns or sets the paths of the resource.

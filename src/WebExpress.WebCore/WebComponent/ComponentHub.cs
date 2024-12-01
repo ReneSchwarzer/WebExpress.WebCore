@@ -7,6 +7,7 @@ using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebComponent.Model;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
+using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
@@ -42,6 +43,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly SettingPageManager _settingPageManager;
         private readonly RestApiManager _restApiManager;
         private readonly SitemapManager _sitemapManager;
+        private readonly FragmentManager _fragmentManager;
         private readonly StatusPageManager _statusPageManager;
         private readonly SessionManager _sessionManager;
         private readonly EventManager _eventManager;
@@ -70,6 +72,7 @@ namespace WebExpress.WebCore.WebComponent
                 _applicationManager,
                 _endpointManager,
                 _sitemapManager,
+                _fragmentManager,
                 _assetManager,
                 _resourceManager,
                 _pageManager,
@@ -169,6 +172,12 @@ namespace WebExpress.WebCore.WebComponent
         public ISitemapManager SitemapManager => _sitemapManager;
 
         /// <summary>
+        /// Returns the fragment manager.
+        /// </summary>
+        /// <returns>The instance of the fragment manager.</returns>
+        public IFragmentManager FragmentManager => _fragmentManager;
+
+        /// <summary>
         /// Returns the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager.</returns>
@@ -208,6 +217,7 @@ namespace WebExpress.WebCore.WebComponent
             _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
             _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
             _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
+            _fragmentManager = CreateInstance(typeof(FragmentManager)) as FragmentManager;
             _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
             _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
