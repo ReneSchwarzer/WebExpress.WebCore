@@ -93,15 +93,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/appa/resa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/appb/resa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/resa")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "/server/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/server/appa/resa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "/server/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "/server/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/server/appb/resa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "/server/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/server")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/server/resa")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/server")]
         public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions

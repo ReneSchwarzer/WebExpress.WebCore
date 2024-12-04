@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.Test
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:pagec.label")]
-    [Segment("pagec", "webindex:homepage.label")]
+    [Segment(null, "webindex:homepage.label")]
     [ContextPath(null)]
     public sealed class TestPageC : Page<RenderContext>
     {

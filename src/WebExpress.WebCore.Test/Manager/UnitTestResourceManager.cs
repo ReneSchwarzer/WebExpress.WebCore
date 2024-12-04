@@ -71,18 +71,18 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the resource.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "/appa/resa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "/appb/resa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "/")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "/resa")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "/server/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "/server/appa/resa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "/server/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "/server/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "/server/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "/server/appb/resa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "/server/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "/server/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "/server")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "/server/resa")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/server")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/server")]
 
         public void ContextPath(Type applicationType, Type resourceType, string id)
         {

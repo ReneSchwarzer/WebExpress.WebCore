@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.WebSitemap.Model
         /// <summary>
         /// Convert to string.
         /// </summary>
-        /// <returns>The tree node in its string representation.</returns>
+        /// <returns>The sitemap node in its string representation.</returns>
         public override string ToString()
         {
             return Path.FirstOrDefault()?.PathSegment + string.Join

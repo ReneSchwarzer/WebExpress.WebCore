@@ -102,9 +102,9 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/appa/assets/img/Logo.png")]
-        [InlineData(typeof(TestApplicationB), "/appb/assets/img/Logo.png")]
-        [InlineData(typeof(TestApplicationC), "/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationA), "/server/appa/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationB), "/server/appb/assets/img/Logo.png")]
+        [InlineData(typeof(TestApplicationC), "/server/assets/img/Logo.png")]
         public void Icon(Type applicationType, string icon)
         {
             // preconditions
@@ -119,9 +119,9 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the application.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/appa")]
-        [InlineData(typeof(TestApplicationB), "/appb")]
-        [InlineData(typeof(TestApplicationC), "/")]
+        [InlineData(typeof(TestApplicationA), "/server/appa")]
+        [InlineData(typeof(TestApplicationB), "/server/appb")]
+        [InlineData(typeof(TestApplicationC), "/server")]
         public void ContextPath(Type applicationType, string contextPath)
         {
             // preconditions

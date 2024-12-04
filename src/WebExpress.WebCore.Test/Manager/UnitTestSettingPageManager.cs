@@ -87,12 +87,12 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the setting page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "/server/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "/server/appa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "/server/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/server/appb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/server")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/server")]
         public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions

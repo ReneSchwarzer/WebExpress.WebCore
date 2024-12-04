@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test.Manager
     /// Test the package manager.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestPackage
+    public class UnitTestPackageManager
     {
         /// <summary>
         /// Test the register function of the package manager.

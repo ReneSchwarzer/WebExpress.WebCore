@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.Test.Manager
     /// Test the component manager.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestComponent
+    public class UnitTestComponentManager
     {
         /// <summary>
         /// Test the plugin manager property of the component manager.

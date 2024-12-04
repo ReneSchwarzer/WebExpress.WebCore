@@ -203,6 +203,17 @@ namespace WebExpress.WebCore.WebPlugin
                         }
                     }
 
+                    if (plugins.Count > 0)
+                    {
+                        // to many plugins, only one per assembly
+                        _httpServerContext.Log.Warning
+                        (
+                            I18N.Translate("webexpress:pluginmanager.tomany", type.FullName)
+                        );
+
+                        break;
+                    }
+
                     if (applicationTypes.Count == 0)
                     {
                         // no application specified
@@ -269,17 +280,7 @@ namespace WebExpress.WebCore.WebPlugin
                         );
                     }
 
-                    if (plugins.Count != 0)
-                    {
-                        plugins.Add(pluginContext);
-                    }
-                    else
-                    {
-                        _httpServerContext.Log.Warning
-                        (
-                            I18N.Translate("webexpress:pluginmanager.tomany", type.FullName)
-                        );
-                    }
+                    plugins.Add(pluginContext);
                 }
             }
             catch (Exception ex)

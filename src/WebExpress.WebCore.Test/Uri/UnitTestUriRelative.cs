@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.Test.Uri
                 uri.ToString() == str &&
                 uri.Scheme == UriScheme.Http &&
                 uri.Authority == null &&
-                uri.PathSegments.Count == 1 &&
+                uri.PathSegments.Count == 0 &&
                 uri.Fragment == null &&
                 uri.Query.Any() == false &&
                 uri.IsRelative
@@ -94,7 +94,7 @@ namespace WebExpress.WebCore.Test.Uri
                 uri.ToString() == str + "/" &&
                 uri.Scheme == UriScheme.Http &&
                 uri.Authority == null &&
-                uri.PathSegments.Count == 1 &&
+                uri.PathSegments.Count == 0 &&
                 uri.Fragment == null &&
                 uri.Query.Any() == false &&
                 uri.IsRelative

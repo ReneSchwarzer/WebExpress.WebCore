@@ -165,15 +165,15 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="url">The uri.</param>
         public UriResource(string uri)
         {
-            if (uri == null) return;
+            if (string.IsNullOrWhiteSpace(uri) || uri == "/") return;
 
-            if (Enum.GetNames(typeof(UriScheme)).Where(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)).Any())
+            if (Enum.GetNames<UriScheme>().Where(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)).Any())
             {
                 var match = UriRegex().Match(uri);
 
                 try
                 {
-                    Scheme = (UriScheme)Enum.Parse(typeof(UriScheme), match.Groups[1].Value, true);
+                    Scheme = Enum.Parse<UriScheme>(match.Groups[1].Value, true);
                 }
                 catch
                 {

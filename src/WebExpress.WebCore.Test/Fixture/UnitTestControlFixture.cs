@@ -11,7 +11,6 @@ using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Fixture
@@ -22,12 +21,6 @@ namespace WebExpress.WebCore.Test.Fixture
     public class UnitTestControlFixture : IDisposable
     {
         private static readonly string[] _separator = ["\r\n", "\r", "\n"];
-
-        /// <summary>
-        /// Returns the list of resources. 
-        /// </summary>
-        private static List<IResource> Ressources { get; } = [];
-
 
         /// <summary>
         /// Initializes a new instance of the class and boot the component manager.
@@ -50,7 +43,7 @@ namespace WebExpress.WebCore.Test.Fixture
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
-                null,
+                new UriResource("/server"),
                 CultureInfo.GetCultureInfo("en"),
                 new Log() { LogMode = LogMode.Off },
                 null
@@ -102,7 +95,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <param name="content">The content of the request.</param>
         /// <param name="uri">The URI of the request.</param>
         /// <returns>A fake request for testing.</returns>
-        public static WebMessage.Request CrerateRequestMock(string content = "", string uri = "")
+        public static Request CrerateRequestMock(string content = "", string uri = "")
         {
             var context = CreateHttpContextMock(content);
 
@@ -123,7 +116,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>A fake http context for testing.</returns>
         public static WebMessage.HttpContext CreateHttpContextMock(string content = "")
         {
-            var ctorRequest = typeof(WebMessage.Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
+            var ctorRequest = typeof(Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
             var featureCollection = new FeatureCollection();
             var firstLine = content.Split('\n').FirstOrDefault();
             var lines = content.Split(_separator, StringSplitOptions.None);

@@ -68,15 +68,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "/appa/1")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "/appa/1/apia/2")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "/appa/1/apia/2/apib/3")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "/appb/1")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "/appb/1/apia/2")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "/appb/1/apia/2/apib/3")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/1")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/1/apia/2")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/1/apia/2/apib/3")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "/server/appa/1")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "/server/appa/1/apia/2")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "/server/appa/1/apia/2/apib/3")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "/server/appb/1")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "/server/appb/1/apia/2")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "/server/appb/1/apia/2/apib/3")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/server/1")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/server/1/apia/2")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/server/1/apia/2/apib/3")]
         public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions

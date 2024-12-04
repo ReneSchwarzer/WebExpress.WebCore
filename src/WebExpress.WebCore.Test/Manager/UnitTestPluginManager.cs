@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test.Manager
     /// Test the plugin manager.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestPlugin
+    public class UnitTestPluginManager
     {
         /// <summary>
         /// Test the register function of the plugin manager.
@@ -175,7 +175,7 @@ namespace WebExpress.WebCore.Test.Manager
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            Assert.Equal("/assets/img/Logo.png", plugin.Icon);
+            Assert.Equal("/server/assets/img/Logo.png", plugin.Icon);
         }
 
         /// <summary>

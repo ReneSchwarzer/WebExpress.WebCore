@@ -119,17 +119,17 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestStatusPage301), null)]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), "/appa/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), "/appa/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), "/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage400), "/server/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage404), "/server/appa/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationA), typeof(TestStatusPage500), "/server/appa/webexpress/icon.png")]
         [InlineData(typeof(TestApplicationB), typeof(TestStatusPage301), null)]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage400), "/appb/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage404), "/appb/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage500), "/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage400), "/server/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage404), "/server/appb/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationB), typeof(TestStatusPage500), "/server/appb/webexpress/icon.png")]
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage301), null)]
-        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), "/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), "/webexpress/icon.png")]
-        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), "/server/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), "/server/webexpress/icon.png")]
+        [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "/server/webexpress/icon.png")]
         public void Icon(Type applicationType, Type statusPageType, string icon)
         {
             // preconditions

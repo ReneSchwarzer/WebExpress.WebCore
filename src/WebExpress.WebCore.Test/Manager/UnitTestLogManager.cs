@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test.Manager
     /// Test the log manager.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestLog
+    public class UnitTestLogManager
     {
         /// <summary>
         /// Test the register function of the log manager.
