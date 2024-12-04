@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 MergeSitemap(newSiteMapNode, CreateSiteMap
                 (
-                    new Queue<IUriPathSegment>(application.PathSegments.Where(x => x is not UriPathSegmentRoot)),
+                    new Queue<IUriPathSegment>(application.PathSegments),
                     application.ApplicationContext
                 ));
             }
@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 MergeSitemap(newSiteMapNode, CreateSiteMap
                 (
-                    new Queue<IUriPathSegment>(item.PathSegments.Where(x => x is not UriPathSegmentRoot)),
+                    new Queue<IUriPathSegment>(item.PathSegments),
                     item.EndpointContext
                 ));
             }
@@ -210,6 +210,11 @@ namespace WebExpress.WebCore.WebSitemap
             IApplicationContext applicationContext
         )
         {
+            if (contextPathSegments.Peek() is UriPathSegmentRoot)
+            {
+                contextPathSegments.Dequeue();
+            }
+
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, applicationContext, root);
 
@@ -272,6 +277,11 @@ namespace WebExpress.WebCore.WebSitemap
             IEndpointContext endpointContext
         )
         {
+            if (contextPathSegments.Peek() is UriPathSegmentRoot)
+            {
+                contextPathSegments.Dequeue();
+            }
+
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, endpointContext, root);
 
