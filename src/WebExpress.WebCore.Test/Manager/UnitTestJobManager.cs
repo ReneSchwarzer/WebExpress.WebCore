@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(3, componentHub.JobManager.Jobs.Count());
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var jobManager = componentHub.JobManager as JobManager;
 
@@ -47,7 +47,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var job in componentHub.JobManager.Jobs)
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type jobType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var job = componentHub.JobManager.GetJob(application, jobType);
 
@@ -98,7 +98,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Cron(Type applicationType, Type jobType, int minute, int hour, int day, int[] month, int weekday)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var job = componentHub.JobManager.GetJob(application, jobType);
 

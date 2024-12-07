@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(12, componentHub.StatusPageManager.StatusPages.Count());
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var statusPageManager = componentHub.StatusPageManager as StatusPageManager;
 
@@ -52,7 +52,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type statusPageType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
@@ -79,7 +79,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Title(Type applicationType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, resourceType);
 
@@ -106,7 +106,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Code(Type applicationType, Type statusPageType, int? code)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
@@ -133,7 +133,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Icon(Type applicationType, Type statusPageType, string icon)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
@@ -153,9 +153,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void CreateAndCheckCode(Type applicationType, int statusCode, int? expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
-            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse("content", statusCode, application, UnitTestControlFixture.CreateHttpContextMock().Request);
+            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse("content", statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
             // test execution
             Assert.Equal(expected, statusResponse?.Status);
@@ -170,9 +170,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
-            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestControlFixture.CreateHttpContextMock().Request);
+            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
             // test execution
             Assert.Contains(expected, statusResponse?.Content?.ToString());
@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.StatusPageManager.GetType()));
@@ -199,7 +199,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var application in componentHub.StatusPageManager.StatusPages)

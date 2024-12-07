@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(9, componentHub.PageManager.Pages.Count());
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var pageManager = componentHub.PageManager as PageManager;
 
@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
@@ -81,7 +81,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Title(Type applicationType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContextPath(Type applicationType, Type resourceType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.PageManager.GetType()));
@@ -133,7 +133,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var pages in componentHub.PageManager.Pages)

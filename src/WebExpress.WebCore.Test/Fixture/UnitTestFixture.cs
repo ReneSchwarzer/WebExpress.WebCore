@@ -18,14 +18,14 @@ namespace WebExpress.WebCore.Test.Fixture
     /// <summary>
     /// A fixture class for unit tests, providing various mock objects and utility methods.
     /// </summary>
-    public class UnitTestControlFixture : IDisposable
+    public class UnitTestFixture : IDisposable
     {
         private static readonly string[] _separator = ["\r\n", "\r", "\n"];
 
         /// <summary>
         /// Initializes a new instance of the class and boot the component manager.
         /// </summary>
-        public UnitTestControlFixture()
+        public UnitTestFixture()
         {
         }
 
@@ -193,7 +193,6 @@ namespace WebExpress.WebCore.Test.Fixture
 
             return new RenderContext(CreratePageContextMock(applicationContext, scopes), request);
         }
-
         /// <summary>
         /// Create a fake page context for unit testing.
         /// </summary>
@@ -218,7 +217,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>The content of the embedded resource as a string.</returns>
         public static string GetEmbeddedResource(string fileName)
         {
-            var assembly = typeof(UnitTestControlFixture).Assembly;
+            var assembly = typeof(UnitTestFixture).Assembly;
             var resourceName = assembly.GetManifestResourceNames()
                                    .FirstOrDefault(name => name.EndsWith(fileName, StringComparison.OrdinalIgnoreCase));
 

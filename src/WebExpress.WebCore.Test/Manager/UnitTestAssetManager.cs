@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(9, componentHub.AssetManager.Assets.Count());
@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var resourceManager = componentHub.AssetManager as AssetManager;
 
@@ -59,7 +59,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId == id);
 
@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Uri(Type applicationType, string uri)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId == Path.GetFileName(uri));
 
@@ -116,10 +116,10 @@ namespace WebExpress.WebCore.Test.Manager
         public void Request(string uri, string id, string resource)
         {
             // preconditions
-            var embeddedResource = UnitTestControlFixture.GetEmbeddedResource(resource);
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var context = UnitTestControlFixture.CreateHttpContextMock();
-            var httpServerContext = UnitTestControlFixture.CreateHttpServerContextMock();
+            var embeddedResource = UnitTestFixture.GetEmbeddedResource(resource);
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var context = UnitTestFixture.CreateHttpContextMock();
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -130,7 +130,7 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            var response = componentHub.EndpointManager.HandleRequest(UnitTestControlFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
+            var response = componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
 
             Assert.Equal(id, searchResult?.EndpointContext?.EndpointId);
             Assert.IsNotType<ResponseNotFound>(response);
@@ -144,7 +144,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.AssetManager.GetType()));
@@ -157,7 +157,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIContext()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             foreach (var asset in componentHub.AssetManager.Assets)

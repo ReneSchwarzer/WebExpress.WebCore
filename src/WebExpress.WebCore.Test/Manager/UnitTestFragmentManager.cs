@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(9, componentHub.FragmentManager.Fragments.Count());
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var fragmentManager = componentHub.FragmentManager as FragmentManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.EventManager.GetType()));
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Id(Type applicationType, Type fragmentType, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
@@ -89,9 +89,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void Process(Type applicationType, Type sectionType, Type scopeType, string expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
-            var renderContext = UnitTestControlFixture.CrerateRenderContextMock(application, [scopeType]);
+            var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
             var builder = new StringBuilder();
 
             // test execution

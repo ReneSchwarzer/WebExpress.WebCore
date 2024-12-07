@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsCompopnent()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             componentHub.TaskManager.CreateTask("test");
 
@@ -47,7 +47,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void CreateSystemTask()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             var task = componentHub.TaskManager.CreateTask("test");
@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void CreateOwnTask()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             var task = componentHub.TaskManager.CreateTask<TestTask>("test", null, []);
@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ContainsTask()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
             // test execution
@@ -90,7 +90,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetTask()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
             // test execution
@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void RemoveTask()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
             // test execution

@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.Equal(9, componentHub.IdentityManager.Permissions.Count());
@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var identityManager = componentHub.IdentityManager as IdentityManager;
 
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.IdentityManager.GetType()));
@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void CheckAccessIdentity(Type application, string identityName, Type permission, bool expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
             var identity = MockIdentityFactory.GetIdentity(identityName);
@@ -100,7 +100,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void CheckAccessGroup(Type application, string groupName, Type permission, bool expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
             var group = MockIdentityFactory.GetIdentityGroup(groupName);
@@ -124,7 +124,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void CheckAccessRole(Type application, Type role, Type permission, bool expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
 
@@ -143,9 +143,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void Login(string identityName, string password, bool expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestControlFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CrerateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
@@ -167,9 +167,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void Logout(string identityName, string password)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestControlFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CrerateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
@@ -193,9 +193,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetCurrentIdentity(string identityName, string password)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestControlFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CrerateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));

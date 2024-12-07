@@ -37,15 +37,6 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Redirects to the specified URI.
-        /// </summary>
-        /// <param name="uri">The URI to redirect to.</param>
-        public void Redirecting(string uri)
-        {
-
-        }
-
-        /// <summary>
         /// Processing of the page.
         /// </summary>
         /// <param name="context">The context for rendering the page.</param>

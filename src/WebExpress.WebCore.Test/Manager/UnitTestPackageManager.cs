@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Register()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
             // test execution
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Remove()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateComponentHubMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
             // test execution
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
             // test execution

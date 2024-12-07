@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void Refresh()
         {
             // preconditions
-            var componentManager = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentManager = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             componentManager.SitemapManager.Refresh();
@@ -65,9 +65,9 @@ namespace WebExpress.WebCore.Test.Manager
         public void SearchResource(string uri, string id)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
-            var context = UnitTestControlFixture.CreateHttpContextMock();
-            var httpServerContext = UnitTestControlFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var context = UnitTestFixture.CreateHttpContextMock();
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            componentHub.EndpointManager.HandleRequest(UnitTestControlFixture.CrerateRequestMock(), searchResult.EndpointContext);
+            componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock(), searchResult.EndpointContext);
 
             Assert.Equal(id, searchResult?.EndpointContext?.EndpointId);
         }
@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void GetUri(Type resourceType, string expected)
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             componentHub.SitemapManager.Refresh();
 
             // test execution
@@ -113,7 +113,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void IsIComponentManager()
         {
             // preconditions
-            var componentHub = UnitTestControlFixture.CreateAndRegisterComponentHubMock();
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));
