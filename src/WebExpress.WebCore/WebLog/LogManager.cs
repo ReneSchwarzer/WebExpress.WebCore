@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebLog
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:logmanager.initialization")
+                I18N.Translate("webexpress.webcore:logmanager.initialization")
             );
         }
 

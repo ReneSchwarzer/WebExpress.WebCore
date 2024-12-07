@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebSession
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:sessionmanager.initialization")
+                I18N.Translate("webexpress.webcore:sessionmanager.initialization")
             );
         }
 

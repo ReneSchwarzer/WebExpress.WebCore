@@ -102,7 +102,7 @@ namespace WebExpress.WebCore.WebRestApi
 
                     return new ResponseBadRequest()
                     {
-                        Content = I18N.Translate("webexpress:restapimanager.methodnotsupported", request.Method.ToString())
+                        Content = I18N.Translate("webexpress.webcore:restapimanager.methodnotsupported", request.Method.ToString())
                     };
                 }
             };
@@ -116,7 +116,7 @@ namespace WebExpress.WebCore.WebRestApi
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:restapimanager.initialization")
+                I18N.Translate("webexpress.webcore:restapimanager.initialization")
             );
         }
 
@@ -391,7 +391,7 @@ namespace WebExpress.WebCore.WebRestApi
                         (
                             I18N.Translate
                             (
-                                "webexpress:restapimanager.addresource",
+                                "webexpress.webcore:restapimanager.addresource",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -542,7 +542,7 @@ namespace WebExpress.WebCore.WebRestApi
                     string.Empty.PadRight(deep) +
                     I18N.Translate
                     (
-                        "webexpress:restapimanager.resource",
+                        "webexpress.webcore:restapimanager.resource",
                         resourcenItem?.RestApiContext?.EndpointId,
                         string.Join(",", resourcenItem?.RestApiContext?.ApplicationContext?.ApplicationId)
                     )

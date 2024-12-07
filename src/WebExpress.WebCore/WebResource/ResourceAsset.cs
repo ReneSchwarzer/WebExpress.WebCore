@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.WebResource
 
                 request.HttpServerContext.Log.Debug(I18N.Translate
                     (
-                        "webexpress:resource.file",
+                        "webexpress.webcore:resource.file",
                         request.RemoteEndPoint, request.Uri
                     ));
 

@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.WebIdentity
             (
                 I18N.Translate
                 (
-                    "webexpress:identitymanager.initialization"
+                    "webexpress.webcore:identitymanager.initialization"
                 )
             );
         }
@@ -166,7 +166,7 @@ namespace WebExpress.WebCore.WebIdentity
                         (
                             I18N.Translate
                             (
-                                "webexpress:identitymanager.registerpermission",
+                                "webexpress.webcore:identitymanager.registerpermission",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -178,7 +178,7 @@ namespace WebExpress.WebCore.WebIdentity
                         (
                             I18N.Translate
                             (
-                                "webexpress:identitymanager.duplicatepermission",
+                                "webexpress.webcore:identitymanager.duplicatepermission",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -235,7 +235,7 @@ namespace WebExpress.WebCore.WebIdentity
                         (
                             I18N.Translate
                             (
-                                "webexpress:identitymanager.registerrole",
+                                "webexpress.webcore:identitymanager.registerrole",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.WebIdentity
                         (
                             I18N.Translate
                             (
-                                "webexpress:identitymanager.duplicaterole",
+                                "webexpress.webcore:identitymanager.duplicaterole",
                                 id,
                                 applicationContext.ApplicationId
                             )

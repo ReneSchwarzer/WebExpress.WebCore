@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:statuspagemanager.initialization")
+                I18N.Translate("webexpress.webcore:statuspagemanager.initialization")
             );
         }
 
@@ -144,7 +144,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         (
                             I18N.Translate
                             (
-                                "webexpress:statuspagemanager.statuscodeless",
+                                "webexpress.webcore:statuspagemanager.statuscodeless",
                                 resource.Name,
                                 applicationContext?.ApplicationId
                             )
@@ -178,7 +178,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         (
                             I18N.Translate
                             (
-                                "webexpress:statuspagemanager.register",
+                                "webexpress.webcore:statuspagemanager.register",
                                 statusResponse,
                                 resource.Name
                             )
@@ -190,7 +190,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         (
                             I18N.Translate
                             (
-                                "webexpress:statuspagemanager.duplicat",
+                                "webexpress.webcore:statuspagemanager.duplicat",
                                 statusResponse,
                                 resource.Name
                             )
@@ -432,7 +432,7 @@ namespace WebExpress.WebCore.WebStatusPage
             //        string.Empty.PadRight(4) +
             //        I18N.Translate
             //        (
-            //            "webexpress:statuspagemanager.statuspage",
+            //            "webexpress.webcore:statuspagemanager.statuspage",
             //            statusCode
             //        )
             //    );

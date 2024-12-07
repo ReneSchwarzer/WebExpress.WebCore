@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.WebResource
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:resourcemanager.initialization")
+                I18N.Translate("webexpress.webcore:resourcemanager.initialization")
             );
         }
 
@@ -190,7 +190,7 @@ namespace WebExpress.WebCore.WebResource
                         OnAddResource(resourceContext);
                         _httpServerContext?.Log.Debug(
                             I18N.Translate(
-                                "webexpress:resourcemanager.addresource",
+                                "webexpress.webcore:resourcemanager.addresource",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -475,7 +475,7 @@ namespace WebExpress.WebCore.WebResource
                     string.Empty.PadRight(deep) +
                     I18N.Translate
                     (
-                        "webexpress:resourcemanager.resource",
+                        "webexpress.webcore:resourcemanager.resource",
                         resourcenItem?.ResourceContext?.EndpointId,
                         string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
                     )

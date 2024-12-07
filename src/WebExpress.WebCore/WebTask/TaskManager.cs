@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebTask
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:applicationmanager.initialization")
+                I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
         }
 

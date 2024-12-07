@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebJob
             (
                 I18N.Translate
                 (
-                    "webexpress:jobmanager.initialization"
+                    "webexpress.webcore:jobmanager.initialization"
                 )
             );
         }
@@ -184,7 +184,7 @@ namespace WebExpress.WebCore.WebJob
                             (
                                 I18N.Translate
                                 (
-                                    "webexpress:jobmanager.register",
+                                    "webexpress.webcore:jobmanager.register",
                                     id,
                                     applicationContext.ApplicationId
                                 )
@@ -196,7 +196,7 @@ namespace WebExpress.WebCore.WebJob
                             (
                                 I18N.Translate
                                 (
-                                    "webexpress:jobmanager.duplicate",
+                                    "webexpress.webcore:jobmanager.duplicate",
                                     id,
                                     applicationContext.ApplicationId
                                 )
@@ -209,7 +209,7 @@ namespace WebExpress.WebCore.WebJob
                         (
                             I18N.Translate
                             (
-                                "webexpress:jobmanager.jobless",
+                                "webexpress.webcore:jobmanager.jobless",
                                 id
                             )
                         );
@@ -374,7 +374,7 @@ namespace WebExpress.WebCore.WebJob
                         (
                             I18N.Translate
                             (
-                                "webexpress:jobmanager.job.process",
+                                "webexpress.webcore:jobmanager.job.process",
                                 scheduleItemValue.JobContext.JobId
                             )
                         );
@@ -394,7 +394,7 @@ namespace WebExpress.WebCore.WebJob
                         (
                             I18N.Translate
                             (
-                                "webexpress:jobmanager.job.process",
+                                "webexpress.webcore:jobmanager.job.process",
                                 scheduleItemValue.JobContext.JobId
                             )
                         );
@@ -439,7 +439,7 @@ namespace WebExpress.WebCore.WebJob
                     string.Empty.PadRight(deep) +
                     I18N.Translate
                     (
-                        "webexpress:jobmanager.job",
+                        "webexpress.webcore:jobmanager.job",
                         scheduleItem.JobId,
                         scheduleItem.ApplicationContext
                     )

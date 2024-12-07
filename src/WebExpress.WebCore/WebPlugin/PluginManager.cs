@@ -52,7 +52,7 @@ namespace WebExpress.WebCore.WebPlugin
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:pluginmanager.initialization")
+                I18N.Translate("webexpress.webcore:pluginmanager.initialization")
             );
         }
 
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebPlugin
                         (
                             I18N.Translate
                             (
-                                "webexpress:pluginmanager.load",
+                                "webexpress.webcore:pluginmanager.load",
                                 assembly.GetName().Name,
                                 assembly.GetName().Version.ToString()
                             )
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.WebPlugin
                     (
                         I18N.Translate
                         (
-                            "webexpress:pluginmanager.load",
+                            "webexpress.webcore:pluginmanager.load",
                             assembly.GetName().Name,
                             assembly.GetName().Version.ToString()
                         )
@@ -208,7 +208,7 @@ namespace WebExpress.WebCore.WebPlugin
                         // to many plugins, only one per assembly
                         _httpServerContext.Log.Warning
                         (
-                            I18N.Translate("webexpress:pluginmanager.tomany", type.FullName)
+                            I18N.Translate("webexpress.webcore:pluginmanager.tomany", type.FullName)
                         );
 
                         break;
@@ -219,7 +219,7 @@ namespace WebExpress.WebCore.WebPlugin
                         // no application specified
                         _httpServerContext.Log.Warning
                         (
-                            I18N.Translate("webexpress:pluginmanager.applicationless", id)
+                            I18N.Translate("webexpress.webcore:pluginmanager.applicationless", id)
                         );
 
                         break;
@@ -265,7 +265,7 @@ namespace WebExpress.WebCore.WebPlugin
 
                         _httpServerContext.Log.Debug
                         (
-                            I18N.Translate("webexpress:pluginmanager.created", id)
+                            I18N.Translate("webexpress.webcore:pluginmanager.created", id)
                         );
 
                         OnAddPlugin(pluginContext);
@@ -276,7 +276,7 @@ namespace WebExpress.WebCore.WebPlugin
                     {
                         _httpServerContext.Log.Warning
                         (
-                            I18N.Translate("webexpress:pluginmanager.duplicate", id)
+                            I18N.Translate("webexpress.webcore:pluginmanager.duplicate", id)
                         );
                     }
 
@@ -341,7 +341,7 @@ namespace WebExpress.WebCore.WebPlugin
                         (
                             I18N.Translate
                             (
-                                "webexpress:pluginmanager.fulfilleddependencies",
+                                "webexpress.webcore:pluginmanager.fulfilleddependencies",
                                 unfulfilledDependencies.Key
                             )
                         );
@@ -370,7 +370,7 @@ namespace WebExpress.WebCore.WebPlugin
                 (
                     I18N.Translate
                     (
-                        "webexpress:pluginmanager.unfulfilleddependencies",
+                        "webexpress.webcore:pluginmanager.unfulfilleddependencies",
                         id,
                         dependency
                     )
@@ -466,7 +466,7 @@ namespace WebExpress.WebCore.WebPlugin
                 (
                     I18N.Translate
                     (
-                        "webexpress:pluginmanager.notavailable",
+                        "webexpress.webcore:pluginmanager.notavailable",
                         pluginId
                     )
                 );
@@ -497,7 +497,7 @@ namespace WebExpress.WebCore.WebPlugin
             //(
             //    I18N.Translate
             //    (
-            //        "webexpress:pluginmanager.plugin.initialization",
+            //        "webexpress.webcore:pluginmanager.plugin.initialization",
             //        pluginItem.PluginContext.PluginId
             //    )
             //);
@@ -509,7 +509,7 @@ namespace WebExpress.WebCore.WebPlugin
                 (
                     I18N.Translate
                     (
-                        "webexpress:pluginmanager.plugin.processing.start",
+                        "webexpress.webcore:pluginmanager.plugin.processing.start",
                         pluginItem.PluginContext.PluginId
                     )
                 );
@@ -520,7 +520,7 @@ namespace WebExpress.WebCore.WebPlugin
                 (
                     I18N.Translate
                     (
-                        "webexpress:pluginmanager.plugin.processing.end",
+                        "webexpress.webcore:pluginmanager.plugin.processing.end",
                         pluginItem.PluginContext.PluginId
                     )
                 );
@@ -594,7 +594,7 @@ namespace WebExpress.WebCore.WebPlugin
             (
                 I18N.Translate
                 (
-                    "webexpress:pluginmanager.pluginmanager.label"
+                    "webexpress.webcore:pluginmanager.pluginmanager.label"
                 )
             );
 
@@ -606,7 +606,7 @@ namespace WebExpress.WebCore.WebPlugin
                 )
                 .Select(x => I18N.Translate
                 (
-                    "webexpress:pluginmanager.pluginmanager.system",
+                    "webexpress.webcore:pluginmanager.pluginmanager.system",
                     x.Key
                 ))
             );
@@ -619,7 +619,7 @@ namespace WebExpress.WebCore.WebPlugin
                 )
                 .Select(x => I18N.Translate
                 (
-                    "webexpress:pluginmanager.pluginmanager.custom",
+                    "webexpress.webcore:pluginmanager.pluginmanager.custom",
                     x.Key
                 ))
             );
@@ -627,7 +627,7 @@ namespace WebExpress.WebCore.WebPlugin
             list.AddRange(_unfulfilledDependencies
                 .Select(x => I18N.Translate
                 (
-                    "webexpress:pluginmanager.pluginmanager.unfulfilleddependencies",
+                    "webexpress.webcore:pluginmanager.pluginmanager.unfulfilleddependencies",
                     x.Key
                 ))
             );

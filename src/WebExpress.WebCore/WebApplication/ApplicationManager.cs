@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebApplication
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:applicationmanager.initialization")
+                I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
         }
 
@@ -154,7 +154,7 @@ namespace WebExpress.WebCore.WebApplication
 
                     _httpServerContext.Log.Debug
                     (
-                        I18N.Translate("webexpress:applicationmanager.register", id)
+                        I18N.Translate("webexpress.webcore:applicationmanager.register", id)
                     );
 
                     // raises the AddApplication event
@@ -164,7 +164,7 @@ namespace WebExpress.WebCore.WebApplication
                 {
                     _httpServerContext.Log.Warning
                     (
-                        I18N.Translate("webexpress:applicationmanager.duplicate", id)
+                        I18N.Translate("webexpress.webcore:applicationmanager.duplicate", id)
                     );
                 }
             }
@@ -315,7 +315,7 @@ namespace WebExpress.WebCore.WebApplication
                         (
                             I18N.Translate
                             (
-                                "webexpress:applicationmanager.application.processing.start",
+                                "webexpress.webcore:applicationmanager.application.processing.start",
                                 applicationItem.ApplicationContext.ApplicationId)
                             );
 
@@ -325,7 +325,7 @@ namespace WebExpress.WebCore.WebApplication
                         (
                             I18N.Translate
                             (
-                                "webexpress:applicationmanager.application.processing.end",
+                                "webexpress.webcore:applicationmanager.application.processing.end",
                                 applicationItem.ApplicationContext.ApplicationId
                             )
                         );
@@ -340,7 +340,7 @@ namespace WebExpress.WebCore.WebApplication
                 (
                     I18N.Translate
                     (
-                        "webexpress:applicationmanager.application.boot.notfound",
+                        "webexpress.webcore:applicationmanager.application.boot.notfound",
                         pluginContext.PluginId
                     )
                 );
@@ -405,14 +405,14 @@ namespace WebExpress.WebCore.WebApplication
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>
             {
-                I18N.Translate("webexpress:applicationmanager")
+                I18N.Translate("webexpress.webcore:applicationmanager.titel")
             };
 
             foreach (var applicationContext in Applications)
             {
                 list.Add
                 (
-                    I18N.Translate("webexpress:applicationmanager.application", applicationContext.ApplicationId)
+                    I18N.Translate("webexpress.webcore:applicationmanager.application", applicationContext.ApplicationId)
                 );
             }
 

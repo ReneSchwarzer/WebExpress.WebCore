@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.WebPage
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:pagemanager.initialization")
+                I18N.Translate("webexpress.webcore:pagemanager.initialization")
             );
         }
 
@@ -374,7 +374,7 @@ namespace WebExpress.WebCore.WebPage
                         (
                             I18N.Translate
                             (
-                                "webexpress:pagemanager.addresource",
+                                "webexpress.webcore:pagemanager.addresource",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -525,7 +525,7 @@ namespace WebExpress.WebCore.WebPage
                     string.Empty.PadRight(deep) +
                     I18N.Translate
                     (
-                        "webexpress:pagemanager.resource",
+                        "webexpress.webcore:pagemanager.resource",
                         resourcenItem?.PageContext?.EndpointId,
                         string.Join(",", resourcenItem?.PageContext?.ApplicationContext?.ApplicationId)
                     )

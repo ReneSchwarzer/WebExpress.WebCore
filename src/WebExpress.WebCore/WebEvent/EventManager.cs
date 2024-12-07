@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.WebEvent
             (
                 I18N.Translate
                 (
-                    "webexpress:eventmanager.initialization"
+                    "webexpress.webcore:eventmanager.initialization"
                 )
             );
         }
@@ -173,7 +173,7 @@ namespace WebExpress.WebCore.WebEvent
                     (
                         I18N.Translate
                         (
-                            "webexpress:eventmanager.eventless",
+                            "webexpress.webcore:eventmanager.eventless",
                             id
                         )
                     );
@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebEvent
                         (
                             I18N.Translate
                             (
-                                "webexpress:eventmanager.register",
+                                "webexpress.webcore:eventmanager.register",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -217,7 +217,7 @@ namespace WebExpress.WebCore.WebEvent
                         (
                             I18N.Translate
                             (
-                                "webexpress:eventmanager.duplicate",
+                                "webexpress.webcore:eventmanager.duplicate",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -346,7 +346,7 @@ namespace WebExpress.WebCore.WebEvent
             //        string.Empty.PadRight(deep) +
             //        I18N.Translate
             //        (
-            //            "webexpress:eventmanager.job",
+            //            "webexpress.webcore:eventmanager.job",
             //            scheduleItem.JobId,
             //            scheduleItem.ModuleContext
             //        )

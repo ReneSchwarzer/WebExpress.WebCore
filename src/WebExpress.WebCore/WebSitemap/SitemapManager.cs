@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.WebSitemap
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:sitemapmanager.initialization")
+                I18N.Translate("webexpress.webcore:sitemapmanager.initialization")
             );
         }
 
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.WebSitemap
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:sitemapmanager.refresh")
+                I18N.Translate("webexpress.webcore:sitemapmanager.refresh")
             );
 
             // applications
@@ -452,7 +452,7 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 I18N.Translate
                 (
-                    "webexpress:sitemapmanager.sitemap"
+                    "webexpress.webcore:sitemapmanager.titel"
                 )
             };
 
@@ -460,7 +460,7 @@ namespace WebExpress.WebCore.WebSitemap
                 .GetPreOrder()
                 .Select(x => I18N.Translate
                 (
-                    "webexpress:sitemapmanager.preorder",
+                    "webexpress.webcore:sitemapmanager.preorder",
                     "  " + x.ToString().PadRight(60),
                     x.EndpointContext?.EndpointId.ToString() ?? ""
                 ));

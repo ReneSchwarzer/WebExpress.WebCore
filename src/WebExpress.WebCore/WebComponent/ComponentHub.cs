@@ -231,11 +231,11 @@ namespace WebExpress.WebCore.WebComponent
             _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
             _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
 
-            _internationalizationManager.Register(typeof(HttpServer).Assembly, "webexpress");
+            _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
 
             _httpServerContext.Log.Debug
             (
-                _internationalizationManager.Translate("webexpress:componentmanager.initialization")
+                _internationalizationManager.Translate("webexpress.webcore:componentmanager.initialization")
             );
 
             _pluginManager.AddPlugin += (sender, pluginContext) =>
@@ -266,7 +266,7 @@ namespace WebExpress.WebCore.WebComponent
                 (
                     _internationalizationManager.Translate
                     (
-                        "webexpress:componentmanager.wrongtype",
+                        "webexpress.webcore:componentmanager.wrongtype",
                         componentType?.FullName, typeof(IComponentManager).FullName
                     )
                 );
@@ -349,7 +349,7 @@ namespace WebExpress.WebCore.WebComponent
 
                     _httpServerContext.Log.Debug
                     (
-                        _internationalizationManager.Translate("webexpress:componentmanager.register", id)
+                        _internationalizationManager.Translate("webexpress.webcore:componentmanager.register", id)
                     );
 
                     // raises the AddComponent event
@@ -359,7 +359,7 @@ namespace WebExpress.WebCore.WebComponent
                 {
                     _httpServerContext.Log.Warning
                     (
-                        _internationalizationManager.Translate("webexpress:componentmanager.duplicate", id)
+                        _internationalizationManager.Translate("webexpress.webcore:componentmanager.duplicate", id)
                     );
                 }
             }
@@ -413,7 +413,7 @@ namespace WebExpress.WebCore.WebComponent
         {
             _httpServerContext.Log.Debug
             (
-                _internationalizationManager.Translate("webexpress:componentmanager.execute")
+                _internationalizationManager.Translate("webexpress.webcore:componentmanager.execute")
             );
 
             _packageManager.Execute();
@@ -427,7 +427,7 @@ namespace WebExpress.WebCore.WebComponent
         {
             _httpServerContext.Log.Debug
             (
-                _internationalizationManager.Translate("webexpress:componentmanager.shutdown")
+                _internationalizationManager.Translate("webexpress.webcore:componentmanager.shutdown")
             );
         }
 
@@ -472,7 +472,7 @@ namespace WebExpress.WebCore.WebComponent
 
                     _httpServerContext.Log.Debug
                     (
-                        _internationalizationManager.Translate("webexpress:componentmanager.remove")
+                        _internationalizationManager.Translate("webexpress.webcore:componentmanager.remove")
                     );
                 }
             }
@@ -506,7 +506,7 @@ namespace WebExpress.WebCore.WebComponent
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var output = new List<string>
             {
-                _internationalizationManager.Translate("webexpress:componentmanager.component")
+                _internationalizationManager.Translate("webexpress.webcore:componentmanager.component")
             };
 
             foreach (var pluginContext in PluginManager.Plugins)
@@ -514,7 +514,7 @@ namespace WebExpress.WebCore.WebComponent
                 output.Add
                 (
                    string.Empty.PadRight(2) +
-                   _internationalizationManager.Translate("webexpress:pluginmanager.plugin", pluginContext.PluginId)
+                   _internationalizationManager.Translate("webexpress.webcore:pluginmanager.plugin", pluginContext.PluginId)
                 );
             }
 

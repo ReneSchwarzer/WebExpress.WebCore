@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.Internationalization
 
             HttpServerContext.Log.Debug
             (
-                Translate("webexpress:internationalizationmanager.initialization")
+                Translate("webexpress.webcore:internationalizationmanager.initialization")
             );
         }
 
@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.Internationalization
 
             HttpServerContext.Log.Debug
             (
-                Translate("webexpress:internationalizationmanager.register", pluginId)
+                Translate("webexpress.webcore:internationalizationmanager.register", pluginId)
             );
         }
 

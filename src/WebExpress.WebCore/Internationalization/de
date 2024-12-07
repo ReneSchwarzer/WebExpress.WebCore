@@ -73,6 +73,7 @@ pluginmanager.fulfilleddependencies=Das Plugin '{0}' erfüllt alle Abhängigkeit
 pluginmanager.unfulfilleddependencies=Das Plugin '{0}' erfüllt eine Abhängigkeit zu dem Plugin '{1}' nicht.
 pluginmanager.applicationless=Das Plugin '{0}' besitzt keine Angaben zur Anwendung.
 
+applicationmanager.titel=Anwendungsmanager:
 applicationmanager.initialization=Der Anwendungsmanager wurde initialisiert.
 applicationmanager.register=Die Anwendung '{0}' wurde erstellt und im Anwendungsmanager registriert.
 applicationmanager.duplicate=Die Anwendung '{0}' wurde bereits im Anwendungsmanager registriert.
@@ -108,13 +109,13 @@ statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statu
 statuspagemanager.statuscodeless=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
 statuspagemanager.statuspage=Statuscode: '{0}'
 
+sitemapmanager..titel=Sitemap:
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
 sitemapmanager.refresh=Die Sitemap wird neu aufgebaut.
 sitemapmanager.alreadyassigned=Der Knoten der Sitemap '{0}' ist bereits zugewiesen. Die Ressource '{1}' wird nicht in die Sitemap aufgenommen.
 sitemapmanager.addresource=Die Ressource '{0}' wurde in der Sitemap registriert.
 sitemapmanager.addresource.error=Die Ressource '{0}' konnte nicht in der Sitemap hinzugefügt werden.
 sitemapmanager.preorder={0} => {1}
-sitemapmanager.sitemap=Sitemap:
 sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gemerdged werden.
 
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.

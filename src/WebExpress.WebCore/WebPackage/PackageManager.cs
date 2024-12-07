@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.WebPackage
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:packagemanager.initialization")
+                I18N.Translate("webexpress.webcore:packagemanager.initialization")
             );
         }
 
@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 _httpServerContext.Log.Debug
                 (
-                    I18N.Translate("webexpress:packagemanager.existing", package.File)
+                    I18N.Translate("webexpress.webcore:packagemanager.existing", package.File)
                 );
 
                 if (package.State != PackageCatalogeItemState.Disable)
@@ -133,7 +133,7 @@ namespace WebExpress.WebCore.WebPackage
             (
                 I18N.Translate
                 (
-                    "webexpress:packagemanager.scan",
+                    "webexpress.webcore:packagemanager.scan",
                     _httpServerContext.PackagePath
                 )
             );
@@ -164,7 +164,7 @@ namespace WebExpress.WebCore.WebPackage
                 (
                     I18N.Translate
                     (
-                        "webexpress:packagemanager.add",
+                        "webexpress.webcore:packagemanager.add",
                         package
                     )
                 );
@@ -180,7 +180,7 @@ namespace WebExpress.WebCore.WebPackage
                 (
                     I18N.Translate
                     (
-                        "webexpress:packagemanager.remove",
+                        "webexpress.webcore:packagemanager.remove",
                         package
                     )
                 );
@@ -296,7 +296,7 @@ namespace WebExpress.WebCore.WebPackage
             (
                 I18N.Translate
                 (
-                    "webexpress:packagemanager.packagenotfound",
+                    "webexpress.webcore:packagemanager.packagenotfound",
                     file
                 )
             );
@@ -338,7 +338,7 @@ namespace WebExpress.WebCore.WebPackage
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:packagemanager.save")
+                I18N.Translate("webexpress.webcore:packagemanager.save")
             );
         }
 

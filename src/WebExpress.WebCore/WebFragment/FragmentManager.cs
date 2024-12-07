@@ -8,6 +8,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebFragment.Model;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -477,24 +478,18 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         private void Log()
         {
-            //output.Add
-            //(
-            //    string.Empty.PadRight(deep) +
-            //    I18N.Translate("webexpress.webui:fragmentmanager.titel")
-            //);
 
-            //foreach (var fragmentItem in GetFragmentItems(pluginContext))
-            //{
-            //    output.Add
-            //    (
-            //        string.Empty.PadRight(deep + 2) +
-            //        I18N.Translate
-            //        (
-            //            "webexpress.webui:fragmentmanager.fragment",
-            //            fragmentItem.FragmentClass.Name
-            //        )
-            //    );
-            //}
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
+                I18N.Translate("webexpress.webcore:fragmentmanager.titel")
+            };
+            foreach (var fragment in Fragments)
+            {
+                list.Add(I18N.Translate("webexpress.webcore:fragmentmanager.fragment", fragment.FragmentId.ToString()));
+            }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

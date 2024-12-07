@@ -125,7 +125,7 @@ namespace WebExpress.WebCore.WebResource
 
             _httpServerContext.Log.Debug(I18N.Translate
             (
-                "webexpress:asset.file",
+                "webexpress.webcore:asset.file",
                 request.RemoteEndPoint, request.Uri
             ));
 

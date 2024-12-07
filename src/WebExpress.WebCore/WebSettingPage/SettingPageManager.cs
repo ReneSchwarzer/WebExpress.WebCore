@@ -274,7 +274,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         (
                             I18N.Translate
                             (
-                                "webexpress:settingpagemanager.register",
+                                "webexpress.webcore:settingpagemanager.register",
                                 id,
                                 section,
                                 applicationContext.ApplicationId

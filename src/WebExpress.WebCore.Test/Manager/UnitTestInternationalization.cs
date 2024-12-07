@@ -68,6 +68,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("webexpress.webcore.test:unit.test.message", "Dies ist ein Test", "de", "webexpress.webcore.test")]
         [InlineData("webexpress.webcore.test:welcome.message", "Welcome 'Max' to our application!", "en", null, "Max")]
         [InlineData("welcome.message", "Welcome 'Max' to our application!", "en", "webexpress.webcore.test", "Max")]
+        [InlineData("webexpress.webcore:app.startup", "Startup", "en", null)]
         [InlineData("non.existent.key", "non.existent.key", "de")]
         public void Translate(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {

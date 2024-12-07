@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebAsset
 
             _httpServerContext.Log.Debug
             (
-                I18N.Translate("webexpress:assetmanager.initialization")
+                I18N.Translate("webexpress.webcore:assetmanager.initialization")
             );
         }
 
@@ -166,7 +166,7 @@ namespace WebExpress.WebCore.WebAsset
                             OnAddResource(assetContext);
                             _httpServerContext?.Log.Debug(
                                 I18N.Translate(
-                                    "webexpress:assetmanager.addresource",
+                                    "webexpress.webcore:assetmanager.addresource",
                                     id,
                                     applicationContext.ApplicationId
                                 )
@@ -390,7 +390,7 @@ namespace WebExpress.WebCore.WebAsset
             //        string.Empty.PadRight(deep) +
             //        I18N.Translate
             //        (
-            //            "webexpress:resourcemanager.resource",
+            //            "webexpress.webcore:resourcemanager.resource",
             //            resourcenItem?.ResourceContext?.EndpointId,
             //            string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
             //        )

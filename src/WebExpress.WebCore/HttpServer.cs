@@ -101,12 +101,12 @@ namespace WebExpress.WebCore
         {
             if (HttpServerContext != null && HttpServerContext.Log != null)
             {
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.run"));
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
 
             if (!HttpListener.IsSupported)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress:httpserver.notsupported"));
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
             }
 
             var logger = new LogFactory();
@@ -146,7 +146,7 @@ namespace WebExpress.WebCore
 
             Kestrel.StartAsync(this, ServerToken);
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
 
             Started?.Invoke(this, new EventArgs());
         }
@@ -169,7 +169,7 @@ namespace WebExpress.WebCore
                     .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.endpoint"), args: endPoint.Uri);
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
 
                 foreach (var ipAddress in addressList)
                 {
@@ -185,7 +185,7 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress:httpserver.listen.exeption"), args: endPoint);
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
                 HttpServerContext.Log.Exception(ex);
 
             }
@@ -200,7 +200,7 @@ namespace WebExpress.WebCore
         {
             serverOptions.Value.Listen(endPoint);
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace WebExpress.WebCore
                 configure.UseHttps(cert);
             });
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -245,10 +245,10 @@ namespace WebExpress.WebCore
             var culture = request.Culture;
             var uri = request?.Uri;
 
-            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress:httpserver.connected"), args: context.RemoteEndPoint);
+            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
             HttpServerContext.Log.Info(I18N.Translate
             (
-                "webexpress:httpserver.request",
+                "webexpress.webcore:httpserver.request",
                 context.RemoteEndPoint,
                 ++RequestNumber,
                 $"{request?.Method} {request?.Uri} {request?.Protocoll}"
@@ -353,7 +353,7 @@ namespace WebExpress.WebCore
 
             HttpServerContext.Log.Info(I18N.Translate
             (
-                "webexpress:httpserver.request.done",
+                "webexpress.webcore:httpserver.request.done",
                 context?.RemoteEndPoint,
                 RequestNumber,
                 stopwatch.ElapsedMilliseconds,
