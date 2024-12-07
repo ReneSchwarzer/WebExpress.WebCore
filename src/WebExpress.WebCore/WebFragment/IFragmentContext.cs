@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Gets the unique identifier for the fragment.
         /// </summary>
-        string FragmentId { get; }
+        IComponentId FragmentId { get; }
 
         /// <summary>
         /// Returns the conditions that must be met for the component to be active.

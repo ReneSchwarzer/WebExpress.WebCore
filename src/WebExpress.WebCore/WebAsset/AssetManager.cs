@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.WebAsset
                     var asset = _itemDictionary.Values
                         .SelectMany(x => x.Values)
                         .SelectMany(x => x)
-                        .FirstOrDefault(x => request.Uri.ToString().ToLower().Replace('/', '.').EndsWith(x.AssetContext.EndpointId));
+                        .FirstOrDefault(x => request.Uri.ToString().ToLower().Replace('/', '.').EndsWith(x.AssetContext.EndpointId.ToString()));
 
                     if (asset != null)
                     {
@@ -148,7 +148,7 @@ namespace WebExpress.WebCore.WebAsset
                     {
                         var assetContext = new AssetContext(new UriResource(), new UriPathSegmentConstant($"assets/{id}"))
                         {
-                            EndpointId = id,
+                            EndpointId = new ComponentId(id),
                             PluginContext = pluginContext,
                             ApplicationContext = applicationContext,
                             IncludeSubPaths = false
@@ -354,10 +354,10 @@ namespace WebExpress.WebCore.WebAsset
                 ApplicationContext = e,
                 PluginContext = new PluginContext()
                 {
-                    PluginId = assemblyName,
+                    PluginId = new ComponentId(assemblyName),
                     Assembly = assembly
                 },
-                EndpointId = assemblyName + ".asset",
+                EndpointId = new ComponentId(assemblyName + ".asset"),
                 IncludeSubPaths = true
             };
 

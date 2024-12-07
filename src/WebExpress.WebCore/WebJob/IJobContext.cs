@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebJob
         /// <summary>
         /// Returns the job id. 
         /// </summary>
-        string JobId { get; }
+        IComponentId JobId { get; }
 
         /// <summary>
         /// Returns the cron-object.

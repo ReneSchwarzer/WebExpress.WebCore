@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.Test.Manager
             var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, resource?.EndpointId);
+            Assert.Equal(id, resource?.EndpointId.ToString());
         }
 
         /// <summary>

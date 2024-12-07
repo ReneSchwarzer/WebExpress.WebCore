@@ -241,7 +241,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         ApplicationContext = applicationContext,
                         PluginContext = pluginContext,
-                        EndpointId = id,
+                        EndpointId = new ComponentId(id),
                         SettingPageTitle = title,
                         Scopes = scopes,
                         Context = context,

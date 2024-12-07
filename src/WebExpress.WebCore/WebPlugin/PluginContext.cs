@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPlugin
@@ -13,7 +14,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the plugin id.
         /// </summary>
-        public string PluginId { get; internal set; }
+        public IComponentId PluginId { get; internal set; }
 
         /// <summary>
         /// Returns the name of the plugin.
@@ -68,7 +69,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The string that uniquely represents the plugin.</returns>
         public override string ToString()
         {
-            return PluginId;
+            return $"Plugin: {PluginId.ToString()}";
         }
     }
 }

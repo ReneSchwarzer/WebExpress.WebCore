@@ -128,7 +128,7 @@ namespace WebExpress.WebCore.WebIdentity
                     )
                 ))
             {
-                var id = permissionType.FullName?.ToLower();
+                var id = new ComponentId(permissionType.FullName);
                 var roleTypes = new List<Type>();
 
                 foreach (var customAttribute in permissionType.CustomAttributes
@@ -198,7 +198,7 @@ namespace WebExpress.WebCore.WebIdentity
                     )
                 ))
             {
-                var id = roleType.FullName?.ToLower();
+                var id = new ComponentId(roleType.FullName);
                 var permissionTypes = new List<Type>();
 
                 foreach (var customAttribute in roleType.CustomAttributes

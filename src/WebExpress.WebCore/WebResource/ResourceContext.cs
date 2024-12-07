@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
@@ -37,7 +38,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the resource id.
         /// </summary>
-        public string EndpointId { get; internal set; }
+        public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
         /// Returns the parent or null if not used.

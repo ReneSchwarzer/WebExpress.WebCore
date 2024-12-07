@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         {
             foreach (var v in this)
             {
-                var item = v.Value.Where(x => x.SettingPageContext.EndpointId.Equals(pageId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                var item = v.Value.Where(x => x.SettingPageContext.EndpointId.ToString().Equals(pageId, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                 if (item != null)
                 {
                     return new SettingPageSearchResult() { Group = v.Key, Item = item };

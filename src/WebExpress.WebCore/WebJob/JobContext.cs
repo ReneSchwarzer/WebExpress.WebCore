@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebJob
@@ -21,7 +22,7 @@ namespace WebExpress.WebCore.WebJob
         /// <summary>
         /// Returns the job id. 
         /// </summary>
-        public string JobId { get; internal set; }
+        public IComponentId JobId { get; internal set; }
 
         /// <summary>
         /// Returns the cron-object.

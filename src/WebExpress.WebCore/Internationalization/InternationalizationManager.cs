@@ -67,7 +67,7 @@ namespace WebExpress.WebCore.Internationalization
         public void Register(IPluginContext pluginContext)
         {
             var pluginId = pluginContext.PluginId;
-            Register(pluginContext.Assembly, pluginId);
+            Register(pluginContext.Assembly, pluginId.ToString());
 
             HttpServerContext.Log.Debug
             (

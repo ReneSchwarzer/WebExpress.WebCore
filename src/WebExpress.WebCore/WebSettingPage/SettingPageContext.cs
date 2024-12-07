@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
@@ -34,7 +35,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Returns the unique identifier for the setting page.
         /// </summary>
-        public string EndpointId { get; internal set; }
+        public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
         /// Returns the setting page title.

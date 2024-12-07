@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebPlugin.Model
 {
@@ -7,7 +8,7 @@ namespace WebExpress.WebCore.WebPlugin.Model
     /// Key = PluginId
     /// Value = Plugin-Metadaten
     /// </summary>
-    internal class PluginDictionary : Dictionary<string, PluginItem>
+    internal class PluginDictionary : Dictionary<IComponentId, PluginItem>
     {
     }
 }

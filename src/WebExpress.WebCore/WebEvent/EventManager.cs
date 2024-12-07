@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebEvent
                 {
                     var eventHandlerContext = new EventHandlerContext()
                     {
-                        EventId = eventType.FullName.ToLower(),
+                        EventId = new ComponentId(eventType.FullName),
                         EventHandlerId = id,
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext

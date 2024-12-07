@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.WebFragment
                             {
                                 PluginContext = pluginContext,
                                 ApplicationContext = applicationContext,
-                                FragmentId = id,
+                                FragmentId = new ComponentId(id),
                                 Cache = cache,
                                 Section = section,
                                 Scope = scope,

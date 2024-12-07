@@ -204,17 +204,21 @@ namespace WebExpress.WebCore.WebComponent
                 {
                     // injection
                     var parameters = constructor.GetParameters();
-                    var properties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var hubProperties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var contextIdProperty = context.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(x => x.PropertyType == typeof(IComponentId))
+                        .FirstOrDefault();
 
                     var parameterValues = parameters.Select(parameter =>
                         parameter.ParameterType == typeof(IComponentHub) ? componentHub :
                         parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
                         parameter.ParameterType == typeof(C) ? context :
-                        properties.Where(x => x.PropertyType == parameter.ParameterType)
-                                  .FirstOrDefault()?
-                                  .GetValue(componentHub) ??
+                        parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(context) :
+                        hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
+                            .FirstOrDefault()?
+                            .GetValue(componentHub) ??
                         advancedParameters.Where(x => x.GetType() == parameter.ParameterType)
-                                  .FirstOrDefault() ?? null
+                            .FirstOrDefault() ?? null
                     ).ToArray();
 
                     if (constructor.Invoke(parameterValues) is T component)
@@ -250,11 +254,15 @@ namespace WebExpress.WebCore.WebComponent
                     // injection
                     var parameters = constructor.GetParameters();
                     var properties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var contextIdProperty = context.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(x => x.PropertyType == typeof(IComponentId))
+                        .FirstOrDefault();
 
                     var parameterValues = parameters.Select(parameter =>
                         parameter.ParameterType == typeof(IComponentHub) ? componentHub :
                         parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
                         parameter.ParameterType == typeof(C) ? context :
+                        parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(context) :
                         properties.Where(x => x.PropertyType == parameter.ParameterType)
                                   .FirstOrDefault()?
                                   .GetValue(componentHub) ??

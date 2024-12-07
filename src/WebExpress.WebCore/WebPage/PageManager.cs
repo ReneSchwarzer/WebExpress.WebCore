@@ -343,7 +343,7 @@ namespace WebExpress.WebCore.WebPage
                     var pageContext = new PageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
                         PageTitle = title,
-                        EndpointId = resourceType.FullName.ToLower(),
+                        EndpointId = new ComponentId(resourceType.FullName),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         Cache = cache,

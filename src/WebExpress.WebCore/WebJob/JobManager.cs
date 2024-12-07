@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebJob
             var jobContext = new JobContext()
             {
                 PluginContext = pluginContext,
-                JobId = typeof(T).FullName?.ToLower(),
+                JobId = new ComponentId(typeof(T).FullName),
                 Cron = cron
             };
 
@@ -163,7 +163,7 @@ namespace WebExpress.WebCore.WebJob
                 {
                     var jobContext = new JobContext()
                     {
-                        JobId = job.FullName.ToLower(),
+                        JobId = new ComponentId(job.FullName),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         Cron = new Cron(_httpServerContext, minute, hour, day, month, weekday),

@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.Register();
 
             Assert.Single(componentHub.PluginManager.Plugins);
-            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
+            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId.ToString());
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.Register();
 
             Assert.Single(componentHub.PluginManager.Plugins);
-            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId);
+            Assert.Contains("webexpress.webcore.test", componentHub.PluginManager.GetPlugin(typeof(TestPlugin))?.PluginId.ToString());
             Assert.Equal(1, i);
             Assert.True(triggered);
         }
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var plugin = componentHub.PluginManager.GetPlugin("webexpress.webcore.test");
 
-            Assert.Equal("webexpress.webcore.test", plugin?.PluginId);
+            Assert.Equal("webexpress.webcore.test", plugin?.PluginId.ToString());
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            Assert.Equal("webexpress.webcore.test", plugin?.PluginId);
+            Assert.Equal("webexpress.webcore.test", plugin?.PluginId.ToString());
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace WebExpress.WebCore.Test.Manager
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
             // test execution
-            Assert.Equal(typeof(TestPlugin).Namespace.ToLower(), plugin.PluginId);
+            Assert.Equal(typeof(TestPlugin).Namespace.ToLower(), plugin.PluginId.ToString());
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.Boot(plugin);
 
             Assert.Single(componentHub.PluginManager.Plugins);
-            Assert.Equal(expected, plugin?.PluginId);
+            Assert.Equal(expected, plugin?.PluginId.ToString());
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace WebExpress.WebCore.Test.Manager
             pluginManager.ShutDown(plugin);
 
             Assert.Single(componentHub.PluginManager.Plugins);
-            Assert.Equal(expected, plugin?.PluginId);
+            Assert.Equal(expected, plugin?.PluginId.ToString());
         }
 
         /// <summary>

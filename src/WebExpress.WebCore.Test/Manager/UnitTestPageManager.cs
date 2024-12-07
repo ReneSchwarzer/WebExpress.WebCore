@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.Manager
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, page.EndpointId);
+            Assert.Equal(id, page.EndpointId.ToString());
         }
 
         /// <summary>

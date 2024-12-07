@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Returns the event id.
         /// </summary>
-        string EventId { get; }
+        IComponentId EventId { get; }
 
         /// <summary>
         /// Returns the event handler id.

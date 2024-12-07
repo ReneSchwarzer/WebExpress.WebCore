@@ -20,18 +20,25 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="fragmentContext">The context of the fragment.</param>
-        public TestFragmentA(IComponentHub componentHub, IFragmentContext fragmentContext)
+        /// <param name="id">The unique identifier for the fragment.</param>
+        public TestFragmentA(IComponentHub componentHub, IFragmentContext fragmentContext, IComponentId id)
         {
             // test the injection
             if (componentHub == null)
             {
-                throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
+                throw new ArgumentNullException(nameof(componentHub), "Parameter componentHub cannot be null or empty.");
             }
 
             // test the injection
             if (fragmentContext == null)
             {
-                throw new ArgumentNullException(nameof(fragmentContext), "Parameter cannot be null or empty.");
+                throw new ArgumentNullException(nameof(fragmentContext), "Parameter fragmentContext cannot be null or empty.");
+            }
+
+            // test the injection
+            if (string.IsNullOrWhiteSpace(id?.ToString()))
+            {
+                throw new ArgumentNullException(nameof(fragmentContext), "Parameter id cannot be null or empty.");
             }
         }
 

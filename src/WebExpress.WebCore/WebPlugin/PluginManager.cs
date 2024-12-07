@@ -170,7 +170,7 @@ namespace WebExpress.WebCore.WebPlugin
                     .Where(x => x.IsClass && x.IsSealed)
                     .Where(x => x.GetInterface(typeof(IPlugin).Name) != null))
                 {
-                    var id = $"{type.Namespace?.ToLower()}";
+                    var id = new ComponentId(type.Namespace);
                     var name = type.Assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
                     var icon = string.Empty;
                     var description = type.Assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
@@ -238,7 +238,7 @@ namespace WebExpress.WebCore.WebPlugin
                         Host = _httpServerContext
                     };
 
-                    hasUnfulfilledDependencies = HasUnfulfilledDependencies(id, dependencies);
+                    hasUnfulfilledDependencies = HasUnfulfilledDependencies(id, dependencies.Select(x => new ComponentId(x)));
 
                     if (hasUnfulfilledDependencies)
                     {
@@ -326,7 +326,7 @@ namespace WebExpress.WebCore.WebPlugin
                     var hasUnfulfilledDependencies = HasUnfulfilledDependencies
                     (
                         unfulfilledDependencies.Key,
-                        unfulfilledDependencies.Value.Dependencies
+                        unfulfilledDependencies.Value.Dependencies.Select(x => new ComponentId(x))
                     );
 
                     if (!hasUnfulfilledDependencies)
@@ -356,12 +356,12 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="id">The id of the plugin.</param>
         /// <param name="dependencies">The dependencies to check.</param>
         /// <returns>True if dependencies exist, false otherwise</returns>
-        private bool HasUnfulfilledDependencies(string id, IEnumerable<string> dependencies)
+        private bool HasUnfulfilledDependencies(IComponentId id, IEnumerable<IComponentId> dependencies)
         {
             var hasUnfulfilledDependencies = false;
 
             foreach (var dependency in dependencies
-                   .Where(x => !_dictionary.ContainsKey(x.ToLower())))
+                   .Where(x => !_dictionary.ContainsKey(x)))
             {
                 // dependency was not fulfilled
                 hasUnfulfilledDependencies = true;
@@ -391,7 +391,7 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where
                 (
                     x => x.PluginContext != null &&
-                    x.PluginContext.PluginId.Equals(pluginId, StringComparison.OrdinalIgnoreCase)
+                    x.PluginContext.PluginId.ToString().Equals(pluginId)
                 )
                 .Select(x => x.PluginContext)
                 .FirstOrDefault();
@@ -458,7 +458,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The plugin item or null.</returns>
         private PluginItem GetPluginItem(IPluginContext pluginContext)
         {
-            var pluginId = pluginContext?.PluginId?.ToLower();
+            var pluginId = pluginContext?.PluginId;
 
             if (pluginId == null || !_dictionary.TryGetValue(pluginId, out PluginItem value))
             {
@@ -602,7 +602,7 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
-                        .GetCustomAttribute(typeof(SystemPluginAttribute)) != null
+                        .GetCustomAttribute<SystemPluginAttribute>() != null
                 )
                 .Select(x => I18N.Translate
                 (

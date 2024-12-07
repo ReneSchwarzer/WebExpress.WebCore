@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebResource
                 return new ResponseNotFound();
             }
 
-            var extension = Path.GetExtension(_assetContext.EndpointId)?.ToLower() ?? "";
+            var extension = Path.GetExtension(_assetContext.EndpointId.ToString())?.ToLower() ?? "";
             var response = new ResponseOK();
 
             response.Header.CacheControl = "public, max-age=31536000";

@@ -1,5 +1,6 @@
 ﻿using System;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebIdentity
@@ -12,7 +13,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns the permission id.
         /// </summary>
-        public string PermissionId { get; internal set; }
+        public IComponentId PermissionId { get; internal set; }
 
         /// <summary>
         /// Returns the permission.

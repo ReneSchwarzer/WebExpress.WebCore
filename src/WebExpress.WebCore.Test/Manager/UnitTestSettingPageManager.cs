@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.Test.Manager
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, settingPage.EndpointId);
+            Assert.Equal(id, settingPage.EndpointId.ToString());
         }
 
         /// <summary>

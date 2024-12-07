@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the plugin id.
         /// </summary>
-        string PluginId { get; }
+        IComponentId PluginId { get; }
 
         /// <summary>
         /// Returns the name of the plugin.

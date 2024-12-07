@@ -61,10 +61,10 @@ namespace WebExpress.WebCore.Test.Manager
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-            var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId == id);
+            var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId.ToString() == id);
 
             // test execution
-            Assert.Equal(id, asset?.EndpointId);
+            Assert.Equal(id, asset?.EndpointId.ToString());
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace WebExpress.WebCore.Test.Manager
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-            var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId == Path.GetFileName(uri));
+            var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId.ToString() == Path.GetFileName(uri));
 
             // test execution
             Assert.Equal(uri, asset?.Uri);
@@ -132,7 +132,7 @@ namespace WebExpress.WebCore.Test.Manager
 
             var response = componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
 
-            Assert.Equal(id, searchResult?.EndpointContext?.EndpointId);
+            Assert.Equal(id, searchResult?.EndpointContext?.EndpointId.ToString());
             Assert.IsNotType<ResponseNotFound>(response);
             Assert.Equal(embeddedResource, Encoding.UTF8.GetString(response.Content as byte[]));
         }

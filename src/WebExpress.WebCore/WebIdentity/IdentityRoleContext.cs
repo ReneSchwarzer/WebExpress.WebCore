@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebIdentity
@@ -11,7 +12,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns the role id.
         /// </summary>
-        public string RoleId { get; internal set; }
+        public IComponentId RoleId { get; internal set; }
 
         /// <summary>
         /// Returns the associated plugin context.

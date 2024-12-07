@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebSitemap
         public UriResource GetUri<T>(IEndpointContext endpointContext) where T : IEndpoint
         {
             var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(T), endpointContext.ApplicationContext)
-                .Where(x => x.EndpointId.Equals(endpointContext.EndpointId, StringComparison.OrdinalIgnoreCase));
+                .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()
                 .Where(x => endpointContexts.Contains(x.EndpointContext))
@@ -462,7 +462,7 @@ namespace WebExpress.WebCore.WebSitemap
                 (
                     "webexpress:sitemapmanager.preorder",
                     "  " + x.ToString().PadRight(60),
-                    x.EndpointContext?.EndpointId ?? ""
+                    x.EndpointContext?.EndpointId.ToString() ?? ""
                 ));
 
             foreach (var node in preorder)

@@ -10,11 +10,6 @@ namespace WebExpress.WebCore.WebStatusPage.Model
     internal class StatusPageItem
     {
         /// <summary>
-        /// Returns the status page id.
-        /// </summary>
-        public string StatusPageId { get; internal set; }
-
-        /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
@@ -52,7 +47,7 @@ namespace WebExpress.WebCore.WebStatusPage.Model
         /// <returns>The status page element in its string representation.</returns>
         public override string ToString()
         {
-            return $"StatusPage '{StatusPageId}'";
+            return $"StatusPage '{StatusPageContext?.StatusPageId}'";
         }
     }
 }

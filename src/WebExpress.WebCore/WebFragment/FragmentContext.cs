@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebPlugin;
 
@@ -25,7 +26,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Gets the unique identifier for the fragment.
         /// </summary>
-        public string FragmentId { get; internal set; }
+        public IComponentId FragmentId { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the component to be active.

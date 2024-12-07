@@ -359,7 +359,7 @@ namespace WebExpress.WebCore.WebRestApi
                 {
                     var restApiContext = new RestApiContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
-                        EndpointId = resourceType.FullName.ToLower(),
+                        EndpointId = new ComponentId(resourceType.FullName),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         Cache = cache,

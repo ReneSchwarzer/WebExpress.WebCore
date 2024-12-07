@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns the permission id.
         /// </summary>
-        string PermissionId { get; }
+        IComponentId PermissionId { get; }
 
         /// <summary>
         /// Returns the permission.

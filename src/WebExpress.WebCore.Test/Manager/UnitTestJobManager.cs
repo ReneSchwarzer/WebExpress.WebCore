@@ -85,7 +85,7 @@ namespace WebExpress.WebCore.Test.Manager
             var job = componentHub.JobManager.GetJob(application, jobType);
 
             // test execution
-            Assert.Equal(id, job?.JobId);
+            Assert.Equal(id, job?.JobId.ToString());
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Returns the endpoint id.
         /// </summary>
-        string EndpointId { get; }
+        IComponentId EndpointId { get; }
 
         /// <summary>
         /// Returns the associated plugin context.

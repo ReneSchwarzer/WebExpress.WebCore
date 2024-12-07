@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.Test.Manager
                 return;
             }
 
-            Assert.Contains(id, fragment.Select(x => x.FragmentId));
+            Assert.Contains(id, fragment.Select(x => x.FragmentId?.ToString()));
         }
 
         /// <summary>

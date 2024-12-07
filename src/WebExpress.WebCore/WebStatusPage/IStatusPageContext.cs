@@ -21,22 +21,22 @@ namespace WebExpress.WebCore.WebStatusPage
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Returns or sets the status id.
+        /// Returns the status page id.
         /// </summary>
-        string StatusId { get; }
+        IComponentId StatusPageId { get; }
 
         /// <summary>
-        /// Returns or sets the status code.
+        /// Returns the status code.
         /// </summary>
         int StatusCode { get; }
 
         /// <summary>
-        /// Returns or sets the status title.
+        /// Returns the status title.
         /// </summary>
         string StatusTitle { get; }
 
         /// <summary>
-        /// Returns or sets the status icon.
+        /// Returns the status icon.
         /// </summary>
         UriResource StatusIcon { get; }
     }

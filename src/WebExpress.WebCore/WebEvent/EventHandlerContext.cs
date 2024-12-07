@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebEvent
@@ -11,7 +12,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Returns the event id.
         /// </summary>
-        public string EventId { get; internal set; }
+        public IComponentId EventId { get; internal set; }
 
         /// <summary>
         /// Returns the event handler id.

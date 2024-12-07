@@ -102,7 +102,7 @@ namespace WebExpress.WebCore.Test.Manager
                 return;
             }
 
-            Assert.Contains(id, eventHandlers?.Select(x => x.EventId));
+            Assert.Contains(id, eventHandlers?.Select(x => x.EventId.ToString()));
         }
 
         /// <summary>

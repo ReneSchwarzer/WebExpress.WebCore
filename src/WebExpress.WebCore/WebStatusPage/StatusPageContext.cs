@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -20,9 +21,9 @@ namespace WebExpress.WebCore.WebStatusPage
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the status id.
+        /// Returns the status id.
         /// </summary>
-        public string StatusId { get; internal set; }
+        public IComponentId StatusPageId { get; internal set; }
 
         /// <summary>
         /// Returns the status code.
@@ -45,7 +46,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"StatusPage: {StatusId}";
+            return $"StatusPage: {StatusPageId.ToString()}";
         }
     }
 }

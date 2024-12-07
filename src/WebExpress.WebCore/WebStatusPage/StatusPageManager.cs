@@ -108,7 +108,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
                 .Where(x => x.GetInterface(typeof(IStatusPage).Name) != null))
             {
-                var id = resource.FullName?.ToLower();
+                var id = new ComponentId(resource.FullName);
                 var statusResponse = typeof(ResponseInternalServerError);
                 var icon = string.Empty;
                 var title = resource.Name;
@@ -155,7 +155,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     var statusCode = statusResponse.GetCustomAttribute<StatusCodeAttribute>().StatusCode;
                     var statusPageContext = new StatusPageContext()
                     {
-                        StatusId = id,
+                        StatusPageId = id,
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         StatusCode = statusCode,
@@ -165,7 +165,6 @@ namespace WebExpress.WebCore.WebStatusPage
 
                     if (_dictionary.AddStatusPageItem(pluginContext, applicationContext, statusCode, new StatusPageItem()
                     {
-                        StatusPageId = id,
                         StatusPageContext = statusPageContext,
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
@@ -203,10 +202,9 @@ namespace WebExpress.WebCore.WebStatusPage
                     {
                         _defaults.Add(statusCode, new StatusPageItem()
                         {
-                            StatusPageId = id,
                             StatusPageContext = new StatusPageContext()
                             {
-                                StatusId = id,
+                                StatusPageId = id,
                                 PluginContext = pluginContext,
                                 ApplicationContext = applicationContext,
                                 StatusCode = statusCode,
@@ -222,10 +220,9 @@ namespace WebExpress.WebCore.WebStatusPage
                     {
                         _defaults[statusCode] = new StatusPageItem()
                         {
-                            StatusPageId = id,
                             StatusPageContext = new StatusPageContext()
                             {
-                                StatusId = id,
+                                StatusPageId = id,
                                 PluginContext = pluginContext,
                                 ApplicationContext = applicationContext,
                                 StatusCode = statusCode,
@@ -237,7 +234,6 @@ namespace WebExpress.WebCore.WebStatusPage
                             PluginContext = pluginContext,
                         };
                     }
-
                 }
             }
 

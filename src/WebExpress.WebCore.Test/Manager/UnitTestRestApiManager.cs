@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.Manager
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, api?.EndpointId);
+            Assert.Equal(id, api?.EndpointId.ToString());
         }
 
         /// <summary>

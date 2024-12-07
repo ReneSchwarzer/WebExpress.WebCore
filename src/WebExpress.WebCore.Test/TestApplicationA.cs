@@ -29,14 +29,6 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Initialization of the application.
-        /// </summary>
-        /// <param name="applicationContext">The application context.</param>
-        public void Initialization(IApplicationContext applicationContext)
-        {
-        }
-
-        /// <summary>
         /// Called when the plugin starts working. The call is concurrent.
         /// </summary>
         public void Run()

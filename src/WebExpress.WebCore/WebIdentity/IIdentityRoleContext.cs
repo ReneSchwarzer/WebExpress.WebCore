@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns the role id.
         /// </summary>
-        string RoleId { get; }
+        IComponentId RoleId { get; }
 
         /// <summary>
         /// Returns the associated plugin context.
