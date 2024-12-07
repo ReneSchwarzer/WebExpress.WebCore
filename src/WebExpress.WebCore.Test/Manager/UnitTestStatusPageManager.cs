@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage400), "webindex:homepage.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage404), "webindex:homepage.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "webindex:homepage.label")]
-        public void Title(Type applicationType, Type resourceType, string id)
+        public void Title(Type applicationType, Type resourceType, string title)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.Test.Manager
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, resourceType);
 
             // test execution
-            Assert.Equal(id, statusPage.StatusTitle);
+            Assert.Equal(title, statusPage.StatusTitle);
         }
 
         /// <summary>

@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/server/1")]
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/server/1/apia/2")]
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/server/1/apia/2/apib/3")]
-        public void ContextPath(Type applicationType, Type resourceType, string id)
+        public void ContextPath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -85,7 +85,7 @@ namespace WebExpress.WebCore.Test.Manager
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, api?.ContextPath);
+            Assert.Equal(path, api?.ContextPath);
         }
 
         /// <summary>

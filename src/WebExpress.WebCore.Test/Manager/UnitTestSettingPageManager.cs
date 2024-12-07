@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webindex:settingpagea.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webindex:settingpageb.label")]
 
-        public void Title(Type applicationType, Type resourceType, string id)
+        public void Title(Type applicationType, Type resourceType, string title)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.Test.Manager
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, settingPage.SettingPageTitle);
+            Assert.Equal(title, settingPage.SettingPageTitle);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/server/appb")]
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/server")]
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/server")]
-        public void ContextPath(Type applicationType, Type resourceType, string id)
+        public void ContextPath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -101,7 +101,7 @@ namespace WebExpress.WebCore.Test.Manager
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, settingPage.ContextPath);
+            Assert.Equal(path, settingPage.ContextPath);
         }
 
         /// <summary>

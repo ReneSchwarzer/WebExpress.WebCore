@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestPageB), "webindex:pageb.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestPageC), "webindex:pagec.label")]
 
-        public void Title(Type applicationType, Type resourceType, string id)
+        public void Title(Type applicationType, Type resourceType, string title)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.Test.Manager
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, page.PageTitle);
+            Assert.Equal(title, page.PageTitle);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/server")]
         [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/server/resa")]
         [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/server")]
-        public void ContextPath(Type applicationType, Type resourceType, string id)
+        public void ContextPath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.Test.Manager
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, page.ContextPath);
+            Assert.Equal(path, page.ContextPath);
         }
 
         /// <summary>

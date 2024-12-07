@@ -177,6 +177,12 @@ namespace WebExpress.WebCore.WebFragment
                     continue;
                 }
 
+                // check scope
+                if (scopes.Count == 0)
+                {
+                    scopes.Add(typeof(IScope));
+                }
+
                 // assign the fragment to existing applications
                 foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
                 {

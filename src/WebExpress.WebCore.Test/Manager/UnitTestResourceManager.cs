@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/server")]
         [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/server")]
 
-        public void ContextPath(Type applicationType, Type resourceType, string id)
+        public void ContextPath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.Test.Manager
             var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(id, resource.ContextPath);
+            Assert.Equal(path, resource.ContextPath);
         }
 
         /// <summary>
