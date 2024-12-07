@@ -27,11 +27,11 @@
         }
 
         /// <summary>
-        /// Defines an explicit conversion of a <see cref="ComponentId"/> to a string.
+        /// Defines an implicit conversion of a <see cref="ComponentId"/> to a string.
         /// </summary>
         /// <param name="componentId">The <see cref="ComponentId"/> to convert.</param>
         /// <returns>The identifier of the component as a string.</returns>
-        public static explicit operator string(ComponentId componentId)
+        public static implicit operator string(ComponentId componentId)
         {
             return componentId._id;
         }

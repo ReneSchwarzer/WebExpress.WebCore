@@ -450,7 +450,7 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .Where(x => x.Key == section)
                 .SelectMany(x => x.Value)
-                .Where(x => scopes.Any(y => x.Key == y))
+                .Where(x => scopes.Any(y => y.IsAssignableFrom(x.Key)))
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order);
 

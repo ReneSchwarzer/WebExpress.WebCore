@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>The component hub.</returns>
         public static ComponentHub CreateComponentHubMock()
         {
-            var ctorComponentManager = typeof(ComponentHub).GetConstructor
+            var ctorComponentHub = typeof(ComponentHub).GetConstructor
             (
                 BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
@@ -64,15 +64,15 @@ namespace WebExpress.WebCore.Test.Fixture
                 null
             );
 
-            var componentManager = (ComponentHub)ctorComponentManager.Invoke([CreateHttpServerContextMock()]);
+            var componentHub = (ComponentHub)ctorComponentHub.Invoke([CreateHttpServerContextMock()]);
 
             // set static field in the webex class
             var type = typeof(WebEx);
             var field = type.GetField("_componentHub", BindingFlags.Static | BindingFlags.NonPublic);
 
-            field.SetValue(null, componentManager);
+            field.SetValue(null, componentHub);
 
-            return componentManager;
+            return componentHub;
         }
 
         /// <summary>
@@ -81,12 +81,12 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>The component hub.</returns>
         public static ComponentHub CreateAndRegisterComponentHubMock()
         {
-            var componentManager = CreateComponentHubMock();
-            var pluginManager = componentManager.PluginManager as PluginManager;
+            var componentHub = CreateComponentHubMock();
+            var pluginManager = componentHub.PluginManager as PluginManager;
 
             pluginManager.Register();
 
-            return componentManager;
+            return componentHub;
         }
 
         /// <summary>

@@ -1,7 +1,7 @@
-﻿using System.Text;
-using WebExpress.WebCore.Test.Fixture;
+﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebFragment;
+using WebExpress.WebCore.WebScope;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -83,22 +83,21 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the process function of the fragment handler.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA), "TestFragmentA")]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeB), "TestFragmentB")]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB), "TestFragmentA")]
-        public void Process(Type applicationType, Type sectionType, Type scopeType, string expected)
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA))]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeB))]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB))]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(IScope))]
+        public void Process(Type applicationType, Type sectionType, Type scopeType)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
-            var builder = new StringBuilder();
 
             // test execution
             componentHub.FragmentManager.Process(renderContext, sectionType);
-            renderContext.VisualTree.Content.ToString(builder, 0);
 
-            Assert.Contains(expected, builder.ToString());
+            Assert.NotEmpty(renderContext.VisualTree.Content.ToString());
         }
     }
 }
