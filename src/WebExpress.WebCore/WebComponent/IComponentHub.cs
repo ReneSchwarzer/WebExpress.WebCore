@@ -169,5 +169,15 @@ namespace WebExpress.WebCore.WebComponent
         /// <typeparam name="T">The component class.</typeparam>
         /// <returns>The instance of the component.</returns>
         T GetComponent<T>() where T : IComponentManager;
+
+        /// <summary>
+        /// Starts the component.
+        /// </summary>
+        void Execute();
+
+        /// <summary>
+        /// Shutting down the component manager.
+        /// </summary>
+        void ShutDown();
     }
 }

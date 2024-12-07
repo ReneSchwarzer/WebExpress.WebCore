@@ -59,6 +59,42 @@ namespace WebExpress.WebCore.WebComponent
         /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
         /// </summary>
         /// <typeparam name="T">The type of the component manager, which must implement <see cref="IComponentManager"/>.</typeparam>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
+        /// <returns>An instance of the specified component type.</returns>
+        public static T CreateInstance<T>(IHttpServerContext httpServerContext, params object[] advancedParameters) where T : class, IComponentHub
+        {
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var constructors = typeof(T).GetConstructors(flags);
+
+            if (constructors != null)
+            {
+                foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                {
+                    // injection
+                    var parameters = constructor.GetParameters();
+
+                    var parameterValues = parameters.Select(parameter =>
+                        parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
+
+                        advancedParameters.Where(x => x.GetType() == parameter.ParameterType)
+                                  .FirstOrDefault() ?? null
+                    ).ToArray();
+
+                    if (constructor.Invoke(parameterValues) is T component)
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            return Activator.CreateInstance(typeof(T), advancedParameters) as T;
+        }
+
+        /// <summary>
+        /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
+        /// </summary>
+        /// <typeparam name="T">The type of the component manager, which must implement <see cref="IComponentManager"/>.</typeparam>
         /// <param name="componentType">The type of the component to create.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         /// <param name="componentHub">The component hub to use for dependency injection.</param>

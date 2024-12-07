@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
-        internal ComponentHub(IHttpServerContext httpServerContext)
+        protected ComponentHub(IHttpServerContext httpServerContext)
         {
             _httpServerContext = httpServerContext;
 
@@ -409,7 +409,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Starts the component.
         /// </summary>
-        internal void Execute()
+        public void Execute()
         {
             _httpServerContext.Log.Debug
             (
@@ -423,7 +423,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Shutting down the component manager.
         /// </summary>
-        internal void ShutDown()
+        public void ShutDown()
         {
             _httpServerContext.Log.Debug
             (

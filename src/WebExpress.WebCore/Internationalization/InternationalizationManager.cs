@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.Internationalization
         /// </summary>
         /// <param name="assembly">The assembly that contains the key-value pairs to insert.</param>
         /// <param name="pluginId">The id of the plugin to which the internationalization data will be assigned.</param>
-        internal void Register(Assembly assembly, string pluginId)
+        public void Register(Assembly assembly, string pluginId)
         {
             var assemblyName = assembly.GetName().Name.ToLower();
             var name = assemblyName + ".internationalization.";

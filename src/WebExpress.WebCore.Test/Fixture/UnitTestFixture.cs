@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             var ctorComponentHub = typeof(ComponentHub).GetConstructor
             (
-                BindingFlags.NonPublic | BindingFlags.Instance,
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
                 [typeof(HttpServerContext)],
                 null
@@ -67,7 +67,7 @@ namespace WebExpress.WebCore.Test.Fixture
             var componentHub = (ComponentHub)ctorComponentHub.Invoke([CreateHttpServerContextMock()]);
 
             // set static field in the webex class
-            var type = typeof(WebEx);
+            var type = typeof(WebEx<IComponentHub>);
             var field = type.GetField("_componentHub", BindingFlags.Static | BindingFlags.NonPublic);
 
             field.SetValue(null, componentHub);
