@@ -136,7 +136,7 @@ namespace WebExpress.WebCore
             Initialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
 
             // start the manager
-            _componentHub.Execute();
+            (_componentHub as ComponentHub).Execute();
 
             // starting the web server
             Start();
@@ -286,7 +286,7 @@ namespace WebExpress.WebCore
             _httpServer.HttpServerContext.Log.Seperator('/');
 
             // Stop running
-            _componentHub.ShutDown();
+            (_componentHub as ComponentHub).ShutDown();
 
             // stop logging
             _httpServer.HttpServerContext.Log.Close();
