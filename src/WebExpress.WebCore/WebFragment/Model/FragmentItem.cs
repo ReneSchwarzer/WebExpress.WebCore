@@ -4,6 +4,7 @@ using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 
@@ -77,23 +78,23 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// Processes the fragments for a given section within the specified render context.
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
-        public void Process(IRenderContext renderContext)
+        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
+        public IHtmlNode Render(IRenderContext renderContext)
         {
             var instance = _instance;
-            if (instance == null)
-            {
-                instance = ComponentActivator.CreateInstance<IFragment, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
-            }
-
-            if (CheckControl(renderContext))
-            {
-                instance.Process(renderContext);
-            }
+            instance ??= ComponentActivator.CreateInstance<IFragment, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
 
             if (Cache)
             {
                 _instance = instance;
             }
+
+            if (CheckControl(renderContext))
+            {
+                return instance.Render(renderContext);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>True if the fragment is active, false otherwise.</returns>
         private bool CheckControl(IRenderContext renderContext)
         {
-            return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
+            return FragmentContext.Conditions.Count == 0 || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
         }
 
         /// <summary>

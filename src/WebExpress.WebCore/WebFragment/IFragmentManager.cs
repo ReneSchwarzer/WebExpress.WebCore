@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebSection;
@@ -86,10 +87,11 @@ namespace WebExpress.WebCore.WebFragment
         IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, IEnumerable<Type> scopes);
 
         /// <summary>
-        /// Processes the fragments for a given section within the specified render context.
+        /// Converts the fragments to HTML for a given section within the specified render context.
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
-        void Process(IRenderContext renderContext, Type section);
+        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
+        IHtmlNode Render(IRenderContext renderContext, Type section);
     }
 }

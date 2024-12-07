@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebFragment
@@ -9,9 +10,10 @@ namespace WebExpress.WebCore.WebFragment
     public interface IFragment : IComponent
     {
         /// <summary>
-        /// Processes the fragments in the specified render context.
+        /// Convert the fragment to HTML.
         /// </summary>
-        /// <param name="renderContext">The context in which rendering occurs.</param>
-        void Process(IRenderContext renderContext);
+        /// <param name="renderContext">The context in which the fragment is rendered.</param>
+        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
+        IHtmlNode Render(IRenderContext renderContext);
     }
 }

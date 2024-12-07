@@ -95,9 +95,10 @@ namespace WebExpress.WebCore.Test.Manager
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
 
             // test execution
-            componentHub.FragmentManager.Process(renderContext, sectionType);
+            var html = componentHub.FragmentManager.Render(renderContext, sectionType);
 
-            Assert.NotEmpty(renderContext.VisualTree.Content.ToString());
+            Assert.NotNull(html);
+            Assert.NotEmpty(html.ToString());
         }
     }
 }

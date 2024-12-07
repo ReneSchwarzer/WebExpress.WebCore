@@ -38,9 +38,10 @@ namespace WebExpress.WebCore.Test
         /// Processes the fragments in the specified render context.
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
-        public void Process(IRenderContext renderContext)
+        /// <returns>An HTML node representing the rendered fragments.</returns>
+        public IHtmlNode Render(IRenderContext renderContext)
         {
-            renderContext.VisualTree.Content = new HtmlText("TestFragmentB");
+            return new HtmlText("TestFragmentB");
         }
 
         /// <summary>

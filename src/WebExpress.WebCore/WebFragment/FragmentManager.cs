@@ -7,6 +7,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebFragment.Model;
+using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -436,11 +437,12 @@ namespace WebExpress.WebCore.WebFragment
         }
 
         /// <summary>
-        /// Processes the fragments for a given section within the specified render context.
+        /// Converts the fragments to HTML for a given section within the specified render context.
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
-        public void Process(IRenderContext renderContext, Type section)
+        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
+        public IHtmlNode Render(IRenderContext renderContext, Type section)
         {
             var scopes = renderContext?.PageContext?.Scopes ?? [];
 
@@ -454,10 +456,14 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order);
 
-            foreach (var item in items)
+            var nodes = items.Select(x => x.Render(renderContext)).ToList();
+
+            return nodes.Count switch
             {
-                item.Process(renderContext);
-            }
+                0 => null,
+                1 => nodes.First(),
+                _ => new HtmlElementTextContentDiv(nodes)
+            };
         }
 
         /// <summary>
