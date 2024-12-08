@@ -448,8 +448,8 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
-        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
-        public IHtmlNode Render(IRenderContext renderContext, Type section)
+        /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
+        public IEnumerable<IHtmlNode> Render(IRenderContext renderContext, Type section)
         {
             var scopes = renderContext?.PageContext?.Scopes ?? [];
 
@@ -463,14 +463,7 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order);
 
-            var nodes = items.Select(x => x.Render(renderContext)).ToList();
-
-            return nodes.Count switch
-            {
-                0 => null,
-                1 => nodes.First(),
-                _ => new HtmlElementTextContentDiv(nodes)
-            };
+            return items.Select(x => x.Render(renderContext));
         }
 
         /// <summary>

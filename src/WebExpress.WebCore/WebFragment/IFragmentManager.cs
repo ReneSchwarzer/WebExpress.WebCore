@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
-        /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
-        IHtmlNode Render(IRenderContext renderContext, Type section);
+        /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
+        IEnumerable<IHtmlNode> Render(IRenderContext renderContext, Type section);
     }
 }
