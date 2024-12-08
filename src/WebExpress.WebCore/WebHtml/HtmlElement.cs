@@ -17,12 +17,12 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected List<IHtmlAttribute> Attributes { get; } = new List<IHtmlAttribute>();
+        protected List<IHtmlAttribute> Attributes { get; } = [];
 
         /// <summary>
         /// Returns or sets the elements.
         /// </summary>
-        protected List<IHtmlNode> Elements { get; } = new List<IHtmlNode>();
+        protected List<IHtmlNode> Elements { get; } = [];
 
         /// <summary>
         /// Returns or sets the id.
@@ -267,10 +267,10 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="deep">The call depth.</param>
         public virtual void ToString(StringBuilder builder, int deep)
         {
-            ToPreString(builder, deep);
-
             var closeTag = false;
             var nl = true;
+
+            ToPreString(builder, deep);
 
             if (Elements.Count == 1 && Elements.First() is HtmlText)
             {
@@ -306,10 +306,10 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Convert to a string using a StringBuilder.
+        /// Converts the element to a string and appends it to the provided StringBuilder.
         /// </summary>
-        /// <param name="builder">The string builder.</param>
-        /// <param name="deep">The call depth.</param>
+        /// <param name="builder">The StringBuilder to append the string representation to.</param>
+        /// <param name="deep">The depth of the element in the HTML hierarchy, used for indentation.</param>
         protected virtual void ToPreString(StringBuilder builder, int deep)
         {
             if (!Inline)
@@ -318,22 +318,23 @@ namespace WebExpress.WebCore.WebHtml
                 builder.Append(string.Empty.PadRight(deep));
             }
 
-            builder.Append("<");
+            builder.Append('<');
             builder.Append(ElementName);
-            foreach (var v in Attributes)
+            foreach (var attribute in Attributes)
             {
-                builder.Append(" ");
-                v.ToString(builder, 0);
+                builder.Append(' ');
+                attribute.ToString(builder, 0);
             }
-            builder.Append(">");
+
+            builder.Append('>');
         }
 
         /// <summary>
-        /// Convert to a string using a string builder.
+        /// Converts the element to a string and appends the closing tag to the provided StringBuilder.
         /// </summary>
-        /// <param name="builder">The string builder.</param>
-        /// <param name="deep">The call depth.</param>
-        /// <param name="nl">Start the closing tag on a new line.</param>
+        /// <param name="builder">The StringBuilder to append the string representation to.</param>
+        /// <param name="deep">The depth of the element in the HTML hierarchy, used for indentation.</param>
+        /// <param name="nl">Indicates whether the closing tag should start on a new line.</param>
         protected virtual void ToPostString(StringBuilder builder, int deep, bool nl = true)
         {
             if (!Inline && nl)
@@ -344,7 +345,7 @@ namespace WebExpress.WebCore.WebHtml
 
             builder.Append("</");
             builder.Append(ElementName);
-            builder.Append(">");
+            builder.Append('>');
         }
 
         /// <summary>

@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents an empty HTML node.
+    /// </summary>
     public class HtmlEmpty : IHtmlNode
     {
         /// <summary>

@@ -165,8 +165,8 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the icon property of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]
-        [InlineData(typeof(TestApplicationA), 500, "content", "content", 78)]
+        [InlineData(typeof(TestApplicationA), 400, "content", "content", 82)]
+        [InlineData(typeof(TestApplicationA), 500, "content", "content", 82)]
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
             // preconditions
