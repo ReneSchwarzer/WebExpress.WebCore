@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:pagec.label")]
     [Segment(null, "webindex:homepage.label")]
     [ContextPath(null)]
-    public sealed class TestPageC : Page<VisualTree>
+    public sealed class TestPageC : Page<TestVisualTree>
     {
         /// <summary>
         /// Initialization of the page. Here, for example, managed resources can be loaded. 
@@ -29,12 +29,18 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="renderContext">The context for rendering the page.</param>
         /// <param name="visualTree">The visual tree to be rendered.</param>
-        public override void Process(IRenderContext renderContext, VisualTree visualTree)
+        public override void Process(IRenderContext renderContext, TestVisualTree visualTree)
         {
             // test the context
             if (renderContext == null)
             {
                 throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
+            }
+
+            // test the visualTree
+            if (visualTree == null)
+            {
+                throw new ArgumentNullException(nameof(visualTree), "Parameter cannot be null or empty.");
             }
         }
 
