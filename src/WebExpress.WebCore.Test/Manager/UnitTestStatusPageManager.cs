@@ -142,7 +142,7 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test the icon property of the status page.
+        /// Test the CreateStatusResponse function of the status page.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), 400, 400)]
@@ -162,7 +162,7 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test the icon property of the status page.
+        /// Test the CreateStatusResponse function of the status page.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]

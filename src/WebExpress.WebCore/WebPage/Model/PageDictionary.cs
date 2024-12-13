@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebPage.Model
         {
             var type = pageItem.PageClass;
 
-            if (!typeof(IPage).IsAssignableFrom(type))
+            if (type.GetInterface(typeof(IPage<>).Name) == null)
             {
                 return false;
             }

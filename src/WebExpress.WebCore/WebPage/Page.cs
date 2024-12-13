@@ -4,7 +4,7 @@
     /// The prototype of a website.
     /// </summary>
     /// <typeparam name="T">An implementation of the visualization tree.</typeparam>
-    public abstract class Page<T> : IPage<T> where T : IRenderContext, new()
+    public abstract class Page<T> : IPage<T> where T : IVisualTree, new()
     {
         /// <summary>
         /// Returns or sets the page title.
@@ -29,7 +29,7 @@
         /// The function throws the RedirectException.
         /// </summary>
         /// <param name="uri">The uri to redirect to.</param>
-        public void Redirecting(string uri)
+        public virtual void Redirecting(string uri)
         {
             throw new RedirectException(uri?.ToString());
         }
@@ -37,8 +37,9 @@
         /// <summary>
         /// Processing of the page.
         /// </summary>
-        /// <param name="context">The context for rendering the page.</param>
-        public abstract void Process(IRenderContext context);
+        /// <param name="renderContext">The context for rendering the page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        public abstract void Process(IRenderContext renderContext, T visualTree);
 
         /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.

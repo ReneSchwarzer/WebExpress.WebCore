@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
                     return new ResponseOK()
                     {
-                        Content = context.VisualTree.Render(new VisualTreeContext(context))
+                        //Content = context.VisualTree.Render(new VisualTreeContext(context))
                     };
                 }
             };

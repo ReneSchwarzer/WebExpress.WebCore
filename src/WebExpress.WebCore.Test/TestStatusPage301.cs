@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:homepage.label")]
     [StatusResponse<ResponseMovedPermanently>()]
     // [Icon("/webexpress/icon.png")] test empty icon
-    public sealed class TestStatusPage301 : IStatusPage<RenderContext>
+    public sealed class TestStatusPage301 : IStatusPage<VisualTree>
     {
         /// <summary>
         /// Initialization of the status page. Here, for example, managed resources can be loaded. 
@@ -29,13 +29,14 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Processing of the status page.
         /// </summary>
-        /// <param name="context">The context for rendering the status page.</param>
-        public void Process(IRenderContext context)
+        /// <param name="renderContext">The context for rendering the status page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        public void Process(IRenderContext renderContext, VisualTree visualTree)
         {
             // test the parameter
-            if (context == null)
+            if (renderContext == null)
             {
-                throw new ArgumentNullException(nameof(context), "Parameter cannot be null or empty.");
+                throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }
         }
 

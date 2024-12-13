@@ -5,20 +5,21 @@ namespace WebExpress.WebCore.WebPage
     /// <summary>
     /// Defines the contract for a page resource.
     /// </summary>
-    public interface IPage : IEndpoint
+    public interface IPage : IPage<VisualTree>
     {
-        /// <summary>
-        /// Processing of the page.
-        /// </summary>
-        /// <param name="context">The context for rendering the page.</param>
-        void Process(IRenderContext context);
     }
 
     /// <summary>
     /// Defines the contract for a page resource that can be rendered using a specific context.
     /// </summary>
-    /// <typeparam name="T">The type of the render context.</typeparam>
-    public interface IPage<T> : IPage where T : IRenderContext
+    /// <typeparam name="T">The type of the visual tree.</typeparam>
+    public interface IPage<T> : IEndpoint where T : IVisualTree
     {
+        /// <summary>
+        /// Processing of the page.
+        /// </summary>
+        /// <param name="renderContext">The context for rendering the page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        void Process(IRenderContext renderContext, T visualTree);
     }
 }

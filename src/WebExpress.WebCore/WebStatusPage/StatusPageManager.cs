@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -23,6 +24,7 @@ namespace WebExpress.WebCore.WebStatusPage
         private readonly IHttpServerContext _httpServerContext;
         private readonly StatusPageDictionary _dictionary = [];
         private readonly Dictionary<int, StatusPageItem> _defaults = [];
+        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
         /// An event that fires when an status page is added.
@@ -106,7 +108,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
             foreach (var resource in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IStatusPage).Name) != null))
+                .Where(x => x.GetInterface(typeof(IStatusPage<>).Name) != null))
             {
                 var id = new ComponentId(resource.FullName);
                 var statusResponse = typeof(ResponseInternalServerError);
@@ -282,7 +284,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 };
             }
 
-            var instance = ComponentActivator.CreateInstance<IStatusPage, IStatusPageContext>
+            var pageInstance = ComponentActivator.CreateInstance<IComponent, IStatusPageContext>
             (
                 statusPageItem.StatusPageClass,
                 statusPageItem.StatusPageContext,
@@ -290,26 +292,37 @@ namespace WebExpress.WebCore.WebStatusPage
                 _componentHub,
                 new StatusMessage(message)
             );
-            var type = instance.GetType();
-            var renderContext = default(IRenderContext);
+            var pageType = pageInstance.GetType();
+            var renderContext = new RenderContext(new PageContext(_componentHub.EndpointManager, null, request.Uri, new UriPathSegmentRoot()), request);
+            var visualTreeContext = new VisualTreeContext(renderContext);
 
-            if (type.IsGenericType)
+            var visualTreeType = pageType.GetInterface(typeof(IStatusPage<>).Name).GetGenericArguments()[0];
+            if (!_delegateCache.TryGetValue(pageType, out var del))
             {
-                var typeOfT = type.GetGenericArguments()[0];
-                var parameters = new object[] { statusPageItem.PluginContext, request, new List<string>() };
+                // create and compile the expression
+                var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
+                var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
+                var callProzessMethod = Expression.Call
+                (
+                    Expression.Constant(pageInstance),
+                    pageType.GetMethod("Process"),
+                    renderContextParam,
+                    visualTreeParam
+                );
+                var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
+                    .Compile();
 
-                renderContext = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
+                _delegateCache[pageType] = lambda;
+                del = lambda;
             }
-            else
-            {
-                renderContext = new RenderContext();
-            }
 
-            instance.Process(renderContext);
+            var visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
 
+            // execute the cached delegate
+            del.DynamicInvoke(renderContext, visualTreeInstance);
 
             var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _httpServerContext, _componentHub, new StatusMessage(message));
-            var content = renderContext.VisualTree.Render(new VisualTreeContext(request))?.ToString();
+            var content = visualTreeInstance.Render(new VisualTreeContext(request))?.ToString();
 
             response.Content = content;
             response.Header.ContentLength = content?.Length ?? 0;

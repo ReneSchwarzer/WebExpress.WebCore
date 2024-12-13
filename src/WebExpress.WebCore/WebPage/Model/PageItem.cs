@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage.Model
@@ -30,7 +31,7 @@ namespace WebExpress.WebCore.WebPage.Model
         /// <summary>
         /// Returns or sets the instance of the page, if the page is cached, otherwise null.
         /// </summary>
-        public IPage Instance { get; set; }
+        public IEndpoint Instance { get; set; }
 
         /// <summary>
         /// Returns the scope names that provides the resource. The scope name

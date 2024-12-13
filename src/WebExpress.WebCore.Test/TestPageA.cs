@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:pagea.label")]
     [Segment("pagea", "webindex:homepage.label")]
     [ContextPath(null)]
-    public sealed class TestPageA : IPage<RenderContext>
+    public sealed class TestPageA : IPage<VisualTree>
     {
         /// <summary>
         /// Returns or sets the title of the page.
@@ -39,13 +39,14 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Processing of the page.
         /// </summary>
-        /// <param name="context">The context for rendering the page.</param>
-        public void Process(IRenderContext context)
+        /// <param name="renderContext">The context for rendering the page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        public void Process(IRenderContext renderContext, VisualTree visualTree)
         {
             // test the context
-            if (context == null)
+            if (renderContext == null)
             {
-                throw new ArgumentNullException(nameof(context), "Parameter cannot be null or empty.");
+                throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }
         }
 

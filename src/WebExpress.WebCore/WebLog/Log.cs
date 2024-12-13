@@ -34,6 +34,31 @@ namespace WebExpress.WebCore.WebLog
     public class Log : ILog
     {
         /// <summary>
+        /// The directory where the log is created.
+        /// </summary>
+        private string _path;
+
+        /// <summary>
+        /// The thread that takes care of the cyclic writing in the log file.
+        /// </summary>
+        private Thread _workerThread;
+
+        /// <summary>
+        /// Constant that determines the further of the separator rows.
+        /// </summary>
+        private const int _seperatorWidth = 260;
+
+        /// <summary>
+        /// End worker thread lifecycle.
+        /// </summary>
+        private bool _done = false;
+
+        /// <summary>
+        /// The width of the log entry output in the console.
+        /// </summary>
+        private readonly int _width = 250;
+
+        /// <summary>
         /// Returns or sets the encoding.
         /// </summary>
         public Encoding Encoding { get; set; }
@@ -89,48 +114,9 @@ namespace WebExpress.WebCore.WebLog
         public string TimePattern { set; get; }
 
         /// <summary>
-        /// The directory where the log is created.
-        /// </summary>
-        private string _path;
-
-        /// <summary>
-        /// The thread that takes care of the cyclic writing in the log file.
-        /// </summary>
-        private Thread _workerThread;
-
-        /// <summary>
-        /// Constant that determines the further of the separator rows.
-        /// </summary>
-        private const int _seperatorWidth = 260;
-
-        /// <summary>
-        /// End worker thread lifecycle.
-        /// </summary>
-        private bool _done = false;
-
-        /// <summary>
         /// Unsaved entries queue.
         /// </summary>
         private readonly Queue<LogItem> _queue = new Queue<LogItem>();
-
-        /// <summary>
-        /// Returns the number of characters for log outputs in the console.
-        /// </summary>
-        private int Width
-        {
-            get
-            {
-                try
-                {
-                    return Console.WindowWidth;
-                }
-                catch
-                {
-                }
-
-                return 250;
-            }
-        }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -236,7 +222,7 @@ namespace WebExpress.WebCore.WebLog
                             break;
                     }
 
-                    Console.WriteLine(item.ToString().Length > _seperatorWidth ? item.ToString().Substring(0, _seperatorWidth - 3) + "..." : item.ToString().PadRight(Width, ' '));
+                    Console.WriteLine(item.ToString().Length > _seperatorWidth ? string.Concat(item.ToString().AsSpan(0, _seperatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
                     Console.ResetColor();
 
                     _queue.Enqueue(item);

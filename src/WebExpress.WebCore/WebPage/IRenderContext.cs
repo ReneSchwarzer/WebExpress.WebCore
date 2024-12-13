@@ -16,10 +16,5 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the request.
         /// </summary>
         Request Request { get; }
-
-        /// <summary>
-        /// Returns the contents of a page.
-        /// </summary>
-        IVisualTree VisualTree { get; }
     }
 }

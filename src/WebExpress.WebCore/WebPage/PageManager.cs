@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
@@ -23,6 +24,7 @@ namespace WebExpress.WebCore.WebPage
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly PageDictionary _dictionary = [];
+        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
         /// An event that fires when an page is added.
@@ -62,28 +64,40 @@ namespace WebExpress.WebCore.WebPage
                 EndpointsResolver = () => Pages,
                 HandleRequest = (request, endpontContext) =>
                 {
-                    var page = CreatePageInstance(endpontContext as IPageContext);
-                    var pageType = page.GetType();
-                    var context = default(IRenderContext);
+                    var pageInstance = CreatePageInstance(endpontContext as IPageContext);
+                    var pageType = pageInstance.GetType();
                     var pageContetx = endpontContext as IPageContext;
+                    var renderContext = new RenderContext(pageContetx, request);
+                    var visualTreeContext = new VisualTreeContext(renderContext);
 
-                    if (pageType.IsGenericType)
+                    var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];
+                    if (!_delegateCache.TryGetValue(pageType, out var del))
                     {
-                        var typeOfT = pageType.GetGenericArguments()[0];
-                        var parameters = new object[] { page, endpontContext as IPageContext, request };
+                        // create and compile the expression
+                        var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
+                        var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
+                        var callProzessMethod = Expression.Call
+                        (
+                            Expression.Constant(pageInstance),
+                            pageType.GetMethod("Process"),
+                            renderContextParam,
+                            visualTreeParam
+                        );
+                        var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
+                            .Compile();
 
-                        context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
-                    }
-                    else
-                    {
-                        context = new RenderContext(pageContetx, request);
+                        _delegateCache[pageType] = lambda;
+                        del = lambda;
                     }
 
-                    page.Process(context);
+                    var visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
+
+                    // execute the cached delegate
+                    del.DynamicInvoke(renderContext, visualTreeInstance);
 
                     return new ResponseOK()
                     {
-                        Content = context.VisualTree.Render(new VisualTreeContext(context))
+                        Content = visualTreeInstance.Render(visualTreeContext)
                     };
                 }
             };
@@ -213,7 +227,7 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         /// <param name="pageContext">The context used for page creation.</param>
         /// <returns>The created or cached page.</returns>
-        private IPage CreatePageInstance(IPageContext pageContext)
+        private IEndpoint CreatePageInstance(IPageContext pageContext)
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
@@ -222,7 +236,7 @@ namespace WebExpress.WebCore.WebPage
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IPage, IPageContext>(resourceItem.PageClass, pageContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IEndpoint, IPageContext>(resourceItem.PageClass, pageContext, _httpServerContext, _componentHub);
 
                 if (resourceItem.Cache)
                 {
@@ -277,7 +291,7 @@ namespace WebExpress.WebCore.WebPage
 
             foreach (var resourceType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IPage).Name) != null))
+                .Where(x => x.GetInterface(typeof(IPage<>).Name) != null))
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);

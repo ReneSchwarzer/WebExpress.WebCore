@@ -30,16 +30,10 @@ namespace WebExpress.WebCore.WebPage
         public CultureInfo Culture => Request?.Culture;
 
         /// <summary>
-        /// Returns the contents of a page.
-        /// </summary>
-        public IVisualTree VisualTree { get; protected set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public RenderContext()
         {
-            VisualTree = CreateVisualTree();
         }
 
         /// <summary>
@@ -61,15 +55,6 @@ namespace WebExpress.WebCore.WebPage
         public RenderContext(RenderContext context)
             : this(context?.PageContext, context?.Request)
         {
-        }
-
-        /// <summary>
-        /// Creates the visual tree representing the contents of a page.
-        /// </summary>
-        /// <returns>A new instance of the <see cref="IVisualTree"/> interface.</returns>
-        protected virtual IVisualTree CreateVisualTree()
-        {
-            return new VisualTree();
         }
     }
 }
