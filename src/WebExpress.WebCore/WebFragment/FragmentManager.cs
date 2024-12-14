@@ -440,10 +440,11 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Converts the fragments to HTML for a given section within the specified render context.
         /// </summary>
+        /// <typeparam name="TRenderContext">The type of the render context.</typeparam>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
         /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
-        public IEnumerable<IHtmlNode> Render(IRenderContext renderContext, Type section)
+        public IEnumerable<IHtmlNode> Render<TRenderContext>(TRenderContext renderContext, Type section) where TRenderContext : IRenderContext
         {
             var scopes = renderContext?.PageContext?.Scopes ?? [];
 

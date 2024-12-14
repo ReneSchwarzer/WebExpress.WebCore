@@ -84,6 +84,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         public IHtmlNode Render<T>(T renderContext) where T : IRenderContext
         {
             var instance = _instance;
+
             instance ??= ComponentActivator.CreateInstance<IComponent, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
 
             if (Cache)
@@ -93,21 +94,22 @@ namespace WebExpress.WebCore.WebFragment.Model
 
             if (CheckControl(renderContext))
             {
-                if (!_delegateCache.TryGetValue(typeof(T), out var del))
+                if (!_delegateCache.TryGetValue(FragmentClass, out var del))
                 {
                     // create and compile the expression
-                    var fragmentType = FragmentClass.GetInterface(typeof(IFragment<>).Name).GetGenericArguments()[0];
-                    var renderContextParam = Expression.Parameter(fragmentType, "renderContext");
+                    var renderContextType = FragmentClass.GetInterface(typeof(IFragment<>).Name).GetGenericArguments()[0];
+                    var renderContextParam = Expression.Parameter(renderContextType, "renderContext");
+                    var renderMethod = FragmentClass.GetMethod("Render", [renderContextType]);
                     var callProzessMethod = Expression.Call
                     (
                         Expression.Constant(instance),
-                        fragmentType.GetMethod("Render"),
+                        renderMethod,
                         renderContextParam
                     );
                     var lambda = Expression.Lambda(callProzessMethod, renderContextParam)
                         .Compile();
 
-                    _delegateCache[typeof(T)] = lambda;
+                    _delegateCache[FragmentClass] = lambda;
                     del = lambda;
                 }
 

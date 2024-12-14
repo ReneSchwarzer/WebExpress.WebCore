@@ -1,6 +1,7 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebFragment;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebScope;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -101,7 +102,7 @@ namespace WebExpress.WebCore.Test.Manager
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
 
             // test execution
-            var html = componentHub.FragmentManager.Render(renderContext, sectionType);
+            var html = componentHub.FragmentManager.Render<IRenderContext>(renderContext, sectionType);
 
             Assert.NotNull(html);
             Assert.NotEmpty(html.ToString());

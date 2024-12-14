@@ -76,10 +76,11 @@ namespace WebExpress.WebCore.WebPage
                         // create and compile the expression
                         var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
                         var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
+                        var processMethod = pageType.GetMethod("Process", [typeof(IRenderContext), visualTreeType]);
                         var callProzessMethod = Expression.Call
                         (
                             Expression.Constant(pageInstance),
-                            pageType.GetMethod("Process"),
+                            processMethod,
                             renderContextParam,
                             visualTreeParam
                         );
