@@ -106,16 +106,9 @@ namespace WebExpress.WebCore.WebFragment
         {
             var assembly = pluginContext.Assembly;
 
-            foreach (var fragmentType in assembly.GetTypes().Where
-                (
-                    x => x.IsClass &&
-                    x.IsSealed &&
-                    x.IsPublic &&
-                    (
-                        x.GetInterfaces().Contains(typeof(IFragment)) ||
-                        x.GetInterfaces().Contains(typeof(IFragmentDynamic))
-                    )
-                ))
+            foreach (var fragmentType in assembly.GetTypes()
+                .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
+                .Where(x => x.GetInterface(typeof(IFragment<>).Name) != null))
             {
                 var id = fragmentType.FullName?.ToLower();
                 var scopes = new List<Type>();
@@ -335,12 +328,13 @@ namespace WebExpress.WebCore.WebFragment
         {
             Remove(e);
         }
+
         /// <summary>
         /// Returns all fragment contexts that belong to a given fragment type.
         /// </summary>
         /// <typeparam name="T">The fragment type.</typeparam>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<T>() where T : IFragment
+        public IEnumerable<IFragmentContext> GetFragments<T>() where T : IFragmentBase
         {
             return GetFragments(typeof(T));
         }
@@ -368,7 +362,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <typeparam name="T">The fragment type..</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<T>(IApplicationContext applicationContext) where T : IFragment
+        public IEnumerable<IFragmentContext> GetFragments<T>(IApplicationContext applicationContext) where T : IFragmentBase
         {
             return GetFragments(applicationContext, typeof(T));
         }

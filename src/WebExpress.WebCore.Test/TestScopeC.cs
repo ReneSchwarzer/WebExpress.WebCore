@@ -3,9 +3,9 @@
 namespace WebExpress.WebCore.Test
 {
     /// <summary>
-    /// Test scope B implementing the IScope interface.
+    /// Test scope C implementing the IScope interface.
     /// </summary>
-    internal class TestScopeA : IScope
+    internal class TestScopeC : IScope
     {
     }
 }

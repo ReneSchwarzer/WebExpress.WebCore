@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(9, componentHub.FragmentManager.Fragments.Count());
+            Assert.Equal(12, componentHub.FragmentManager.Fragments.Count());
         }
 
         /// <summary>
@@ -55,12 +55,18 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test the id property of the fragment handler.
+        /// Test the id property of the fragment.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestFragmentA), "webexpress.webcore.test.testfragmenta")]
         [InlineData(typeof(TestApplicationB), typeof(TestFragmentA), "webexpress.webcore.test.testfragmenta")]
         [InlineData(typeof(TestApplicationC), typeof(TestFragmentA), "webexpress.webcore.test.testfragmenta")]
+        [InlineData(typeof(TestApplicationA), typeof(TestFragmentB), "webexpress.webcore.test.testfragmentb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestFragmentB), "webexpress.webcore.test.testfragmentb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestFragmentB), "webexpress.webcore.test.testfragmentb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestFragmentC), "webexpress.webcore.test.testfragmentc")]
+        [InlineData(typeof(TestApplicationB), typeof(TestFragmentC), "webexpress.webcore.test.testfragmentc")]
+        [InlineData(typeof(TestApplicationC), typeof(TestFragmentC), "webexpress.webcore.test.testfragmentc")]
         public void Id(Type applicationType, Type fragmentType, string id)
         {
             // preconditions
@@ -80,7 +86,7 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test the process function of the fragment handler.
+        /// Test the process function of the fragment.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA))]

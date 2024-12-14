@@ -2,7 +2,6 @@
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebHtml;
-using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.Test
 {
@@ -10,16 +9,16 @@ namespace WebExpress.WebCore.Test
     /// Represents a test fragment.
     /// </summary>
     [Section<TestSectionA>()]
-    [Scope<TestScopeB>]
+    [Scope<TestScopeC>]
     [Order(0)]
-    public sealed class TestFragmentB : IFragment<RenderContext>
+    public sealed class TestFragmentC : IFragment<TestRenderContext>
     {
         /// <summary>
         /// Initialization of the fragment. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="fragmentContext">The context of the fragment.</param>
-        public TestFragmentB(IComponentHub componentHub, IFragmentContext fragmentContext)
+        public TestFragmentC(IComponentHub componentHub, IFragmentContext fragmentContext)
         {
             // test the injection
             if (componentHub == null)
@@ -39,9 +38,9 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <returns>An HTML node representing the rendered fragments.</returns>
-        public IHtmlNode Render(RenderContext renderContext)
+        public IHtmlNode Render(TestRenderContext renderContext)
         {
-            return new HtmlText("TestFragmentB");
+            return new HtmlText("TestFragmentC");
         }
 
         /// <summary>

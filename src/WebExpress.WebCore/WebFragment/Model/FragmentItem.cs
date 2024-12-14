@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -15,9 +16,10 @@ namespace WebExpress.WebCore.WebFragment.Model
     /// </summary>
     internal class FragmentItem : IDisposable
     {
-        private IFragment _instance;
+        private IComponent _instance;
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
+        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
         /// Returns the context of the associated plugin.
@@ -79,10 +81,10 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
         /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
-        public IHtmlNode Render(IRenderContext renderContext)
+        public IHtmlNode Render<T>(T renderContext) where T : IRenderContext
         {
             var instance = _instance;
-            instance ??= ComponentActivator.CreateInstance<IFragment, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
+            instance ??= ComponentActivator.CreateInstance<IComponent, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
 
             if (Cache)
             {
@@ -91,7 +93,28 @@ namespace WebExpress.WebCore.WebFragment.Model
 
             if (CheckControl(renderContext))
             {
-                return instance.Render(renderContext);
+                if (!_delegateCache.TryGetValue(typeof(T), out var del))
+                {
+                    // create and compile the expression
+                    var fragmentType = FragmentClass.GetInterface(typeof(IFragment<>).Name).GetGenericArguments()[0];
+                    var renderContextParam = Expression.Parameter(fragmentType, "renderContext");
+                    var callProzessMethod = Expression.Call
+                    (
+                        Expression.Constant(instance),
+                        fragmentType.GetMethod("Render"),
+                        renderContextParam
+                    );
+                    var lambda = Expression.Lambda(callProzessMethod, renderContextParam)
+                        .Compile();
+
+                    _delegateCache[typeof(T)] = lambda;
+                    del = lambda;
+                }
+
+                // execute the cached delegate
+                var html = del.DynamicInvoke(renderContext) as IHtmlNode;
+
+                return html;
             }
 
             return null;
@@ -102,7 +125,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// </summary>
         /// <param name="renderContext">The context in which checking occurs.</param>
         /// <returns>True if the fragment is active, false otherwise.</returns>
-        private bool CheckControl(IRenderContext renderContext)
+        private bool CheckControl<T>(T renderContext) where T : IRenderContext
         {
             return FragmentContext.Conditions.Count == 0 || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
         }

@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         {
             var type = fragmentItem.FragmentClass;
 
-            if (!typeof(IFragment).IsAssignableFrom(type))
+            if (type.GetInterface(typeof(IFragment<>).Name) == null)
             {
                 return false;
             }
@@ -109,12 +109,12 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <summary>
         /// Returns the fragment items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of fragment.</typeparam>
+        /// <typeparam name="TFragment">The type of fragment.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of fragment items</returns>
-        public IEnumerable<FragmentItem> GetFragmentItems<T>(IApplicationContext applicationContext) where T : IFragment
+        public IEnumerable<FragmentItem> GetFragmentItems<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase
         {
-            return GetFragmentItems(applicationContext, typeof(T));
+            return GetFragmentItems(applicationContext, typeof(TFragment));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>An IEnumerable of fragment items</returns>
         public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type fragmentType)
         {
-            if (!typeof(IFragment).IsAssignableFrom(fragmentType))
+            if (!typeof(IFragment<>).IsAssignableFrom(fragmentType))
             {
                 return [];
             }
