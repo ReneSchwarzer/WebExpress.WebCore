@@ -40,8 +40,8 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="deep">The call depth.</param>
         public override void ToString(StringBuilder builder, int deep)
         {
-            base.Elements.Clear();
-            base.Elements.AddRange(Elements);
+            //base.Elements.Clear();
+            //base.Elements.AddRange(Elements);
 
             base.ToString(builder, deep);
         }

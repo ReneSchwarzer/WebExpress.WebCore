@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Value
         {
             get => string.Join(string.Empty, Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFormTextarea(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFormDatalist(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

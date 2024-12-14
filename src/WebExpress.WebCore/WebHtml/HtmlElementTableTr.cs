@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebExpress.WebCore.WebHtml
+﻿namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents a row of table cells.
@@ -22,17 +20,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementTableTr(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementTableTr(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

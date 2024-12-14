@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,9 @@ namespace WebExpress.WebCore.WebHtml
     /// </summary>
     public class HtmlElement : IHtmlNode
     {
+        private readonly List<IHtmlNode> _elements = [];
+        private readonly List<IHtmlAttribute> _attributes = [];
+
         /// <summary>
         /// Returns or sets the name. des Attributes
         /// </summary>
@@ -17,12 +21,12 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected List<IHtmlAttribute> Attributes { get; } = [];
+        protected IEnumerable<IHtmlAttribute> Attributes => _attributes;
 
         /// <summary>
-        /// Returns or sets the elements.
+        /// Returns the elements.
         /// </summary>
-        protected List<IHtmlNode> Elements { get; } = [];
+        protected IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Returns or sets the id.
@@ -119,19 +123,61 @@ namespace WebExpress.WebCore.WebHtml
             {
                 if (v is HtmlAttribute attr)
                 {
-                    Attributes.Add(attr);
+                    _attributes.Add(attr);
                 }
                 else if (v is HtmlElement element)
                 {
-                    Elements.Add(element);
+                    _elements.Add(element);
                 }
                 else if (v is HtmlText text)
                 {
-                    Elements.Add(text);
+                    _elements.Add(text);
                 }
             }
         }
 
+        /// <summary>
+        /// Adds one or more elements to the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void Add(params IHtmlNode[] elements)
+        {
+            _elements.AddRange(elements);
+        }
+
+        /// <summary>
+        /// Adds one or more elements to the beginning of the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void AddFirst(params IHtmlNode[] elements)
+        {
+            _elements.InsertRange(0, elements);
+        }
+        /// <summary>
+        /// Adds one or more attributes to the html element.
+        /// </summary>
+        /// <param name="attributes">The attributes to add.</param>
+        public void Add(params IHtmlAttribute[] attributes)
+        {
+            _attributes.AddRange(attributes);
+        }
+
+        /// <summary>
+        /// Clear all elements frrom the html element.
+        /// </summary>
+        public void Clear()
+        {
+            _elements.Clear();
+        }
+
+        /// <summary>
+        /// Clear all elements from the html element that match the given predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to match elements.</param>
+        protected void Clear(Func<IHtmlNode, bool> predicate)
+        {
+            _elements.RemoveAll(new Predicate<IHtmlNode>(predicate));
+        }
         /// <summary>
         /// Returns the value of an attribute.
         /// </summary>
@@ -139,7 +185,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The value of the attribute.</returns>
         protected string GetAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
@@ -156,7 +202,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>True if attribute exists, false otherwise.</returns>
         protected bool HasAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             return (a != null);
         }
@@ -168,13 +214,13 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="value">The value of the attribute.</param>
         protected void SetAttribute(string name, string value)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    Attributes.Remove(a);
+                    _attributes.Remove(a);
                 }
                 else if (a is HtmlAttribute)
                 {
@@ -185,7 +231,7 @@ namespace WebExpress.WebCore.WebHtml
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    Attributes.Add(new HtmlAttribute(name, value));
+                    _attributes.Add(new HtmlAttribute(name, value));
                 }
             }
         }
@@ -196,11 +242,11 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         protected void SetAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a == null)
             {
-                Attributes.Add(new HtmlAttributeNoneValue(name));
+                _attributes.Add(new HtmlAttributeNoneValue(name));
             }
         }
 
@@ -210,11 +256,11 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         protected void RemoveAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
-                Attributes.Remove(a);
+                _attributes.Remove(a);
             }
         }
 
@@ -225,7 +271,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The element.</returns>
         protected HtmlElement GetElement(string name)
         {
-            var a = Elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == name).FirstOrDefault();
+            var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == name).FirstOrDefault();
 
             return a as HtmlElement;
         }
@@ -238,14 +284,14 @@ namespace WebExpress.WebCore.WebHtml
         {
             if (element != null)
             {
-                var a = Elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == element.ElementName);
+                var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == element.ElementName);
 
                 foreach (var v in a)
                 {
-                    Elements.Remove(v);
+                    _elements.Remove(v);
                 }
 
-                Elements.Add(element);
+                _elements.Add(element);
             }
         }
 
@@ -255,7 +301,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The text.</returns>
         protected string GetText()
         {
-            var a = Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value);
+            var a = _elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value);
 
             return string.Join(" ", a);
         }
@@ -272,14 +318,14 @@ namespace WebExpress.WebCore.WebHtml
 
             ToPreString(builder, deep);
 
-            if (Elements.Count == 1 && Elements.First() is HtmlText)
+            if (_elements.Count == 1 && Elements.First() is HtmlText)
             {
                 closeTag = true;
                 nl = false;
 
-                Elements.First().ToString(builder, 0);
+                _elements.First().ToString(builder, 0);
             }
-            else if (Elements.Count > 0)
+            else if (_elements.Count > 0)
             {
                 closeTag = true;
                 var count = builder.Length;
@@ -294,7 +340,7 @@ namespace WebExpress.WebCore.WebHtml
                     nl = false;
                 }
             }
-            else if (Elements.Count == 0)
+            else if (_elements.Count == 0)
             {
                 nl = false;
             }

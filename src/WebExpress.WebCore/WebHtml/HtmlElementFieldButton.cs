@@ -24,13 +24,13 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join("", Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets a value.
@@ -103,17 +103,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFieldButton(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementFieldButton(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>
@@ -123,11 +113,6 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="deep">The call depth.</param>
         public override void ToString(StringBuilder builder, int deep)
         {
-            //if (Type == "submit" || Type == "reset")
-            //{
-            //    ElementName = "input";
-            //}
-
             base.ToString(builder, deep);
         }
     }

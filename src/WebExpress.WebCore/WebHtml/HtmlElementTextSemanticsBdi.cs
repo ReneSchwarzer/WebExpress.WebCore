@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join("", Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementTextSemanticsBdi(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

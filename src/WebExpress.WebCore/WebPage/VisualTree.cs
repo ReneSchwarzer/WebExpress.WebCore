@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.WebPage
             html.Head.Styles = Styles;
             html.Head.Meta = Meta;
             html.Head.Scripts = HeaderScripts;
-            html.Body.Elements.Add(Content);
+            html.Body.Add(Content);
             html.Body.Scripts = [.. Scripts.Values];
 
             html.Head.CssLinks = CssLinks.Where(x => x != null).Select(x => x.ToString());

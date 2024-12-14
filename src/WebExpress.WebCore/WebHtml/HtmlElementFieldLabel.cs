@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join(string.Empty, Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.RemoveAll(x => x is HtmlText); Elements.Insert(0, new HtmlText(value)); }
+            set { Clear(x => x is HtmlText); AddFirst(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFieldLabel(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

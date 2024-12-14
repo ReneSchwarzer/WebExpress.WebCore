@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFormKeygen(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

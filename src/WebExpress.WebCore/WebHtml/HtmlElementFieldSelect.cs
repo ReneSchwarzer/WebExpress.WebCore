@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFieldSelect(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the script elements.
@@ -59,7 +59,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementSectionBody(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

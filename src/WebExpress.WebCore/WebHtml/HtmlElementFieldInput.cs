@@ -196,7 +196,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementFieldInput(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

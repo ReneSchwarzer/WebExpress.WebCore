@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebExpress.WebCore.WebHtml
+﻿namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents the group of table rows that contain the summaries of the table columns.
@@ -22,17 +20,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementTableTfoot(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementTableTfoot(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

@@ -8,17 +8,18 @@ namespace WebExpress.WebCore.WebHtml
     /// </summary>
     public class HtmlList : IHtmlNode
     {
+        private readonly List<IHtmlNode> _elements = [];
+
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public List<IHtmlNode> Elements { get; private set; }
+        public IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public HtmlList()
         {
-            Elements = new List<IHtmlNode>();
         }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlList(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            _elements.AddRange(nodes);
         }
 
         /// <summary>
@@ -39,8 +40,8 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlList(IHtmlNode firstNode, params IHtmlNode[] followingNodes)
             : this()
         {
-            Elements.Add(firstNode);
-            Elements.AddRange(followingNodes);
+            _elements.Add(firstNode);
+            _elements.AddRange(followingNodes);
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlList(IEnumerable<IHtmlNode> nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            _elements.AddRange(nodes);
         }
 
         /// <summary>
@@ -61,8 +62,17 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlList(IHtmlNode firstNode, IEnumerable<IHtmlNode> followingNodes)
             : this()
         {
-            Elements.Add(firstNode);
-            Elements.AddRange(followingNodes);
+            _elements.Add(firstNode);
+            _elements.AddRange(followingNodes);
+        }
+
+        /// <summary>
+        /// Adds one or more elements to the list.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        protected void Add(params IHtmlNode[] elements)
+        {
+            _elements.AddRange(elements);
         }
 
         /// <summary>
@@ -73,10 +83,23 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="nl">Start the closing tag on a new line.</param>
         public void ToString(StringBuilder builder, int deep)
         {
-            foreach (var v in Elements)
+            foreach (var v in _elements)
             {
                 v.ToString(builder, deep);
             }
+        }
+
+        /// <summary>
+        /// Converts the HTML list to its string representation.
+        /// </summary>
+        /// <returns>A string that represents the HTML list.</returns>
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+
+            ToString(builder, 0);
+
+            return builder.ToString();
         }
     }
 }
