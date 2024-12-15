@@ -38,6 +38,8 @@ jobs:
       run: docfx build -o ../../docs
 
     - name: Commit and push documentation
+      env: 
+        GITHUB_TOKEN: ${{ secrets.ACTIONS_DOC }}
       run: |
         git add -f docs
         git commit -m "Update documentation"
