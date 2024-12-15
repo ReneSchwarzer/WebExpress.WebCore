@@ -1,0 +1,38 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "**/*.csproj" ],
+          "cwd": "./src",
+          "exclude": [ "**/bin/**", "**/obj/**" ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [ "**/*.md", "api/**/*.yml" ],
+        "cwd": "./src",
+        "exclude": [ "**/bin/**", "**/obj/**" ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [ "**/*.png", "**/*.jpg" ],
+        "cwd": "./src",
+        "exclude": [ "**/bin/**", "**/obj/**" ]
+      }
+    ],
+    "dest": "docs",
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [],
+    "postProcessors": [],
+    "markdownEngineName": "dfm",
+    "noLangKeyword": false,
+    "keepFileLink": false
+  }
+}
