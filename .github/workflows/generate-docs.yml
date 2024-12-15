@@ -13,13 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Navigate to project directory
+      run: cd src/WebExpress.WebCore
+
     - name: Install dependencies
-      run: |
-        dotnet restore
+      run: dotnet restore
 
     - name: Generate documentation
-      run: |
-        dotnet docfx msbuild /p:DocumentationFile=true /p:GenerateDocumentation=true
+      run: docfx build
 
     - name: Commit and push documentation
       run: |
