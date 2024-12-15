@@ -28,6 +28,11 @@ jobs:
       working-directory: src/WebExpress.WebCore
       run: dotnet restore
 
+    - name: Configure Git 
+      run: | 
+        git config --global user.email "rene_schwarzer@hotmail.de" 
+        git config --global user.name "ReneSchwarzer"
+
     - name: Generate documentation
       working-directory: src/WebExpress.WebCore
       run: docfx build
