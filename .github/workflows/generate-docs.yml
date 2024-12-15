@@ -35,7 +35,7 @@ jobs:
 
     - name: Generate documentation
       working-directory: src/WebExpress.WebCore
-      run: docfx build
+      run: docfx build -o ../docs
 
     - name: Commit and push documentation
       run: |
