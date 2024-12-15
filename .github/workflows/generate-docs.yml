@@ -1,0 +1,28 @@
+name: Generate Documentation
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        dotnet restore
+
+    - name: Generate documentation
+      run: |
+        dotnet docfx msbuild /p:DocumentationFile=true /p:GenerateDocumentation=true
+
+    - name: Commit and push documentation
+      run: |
+        git add -f docs/
+        git commit -m "Update documentation"
+        git push
