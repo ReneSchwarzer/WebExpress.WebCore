@@ -4,7 +4,7 @@
       "src": [
         {
           "files": [ "**/*.csproj" ],
-          "cwd": "./src",
+          "cwd": "src",
           "exclude": [ "**/bin/**", "**/obj/**" ]
         }
       ],
@@ -15,18 +15,18 @@
     "content": [
       {
         "files": [ "**/*.md", "api/**/*.yml" ],
-        "cwd": "./src",
+        "cwd": "src",
         "exclude": [ "**/bin/**", "**/obj/**" ]
       }
     ],
     "resource": [
       {
         "files": [ "**/*.png", "**/*.jpg" ],
-        "cwd": "./src",
+        "cwd": "src",
         "exclude": [ "**/bin/**", "**/obj/**" ]
       }
     ],
-    "dest": "docs",
+    "dest": "../docs",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [],
