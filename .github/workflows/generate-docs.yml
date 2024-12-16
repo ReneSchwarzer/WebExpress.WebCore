@@ -32,6 +32,11 @@ jobs:
       run: |
         docfx build
 
+    - name: Configure Git
+      run: |
+        git config --global user.email "rene_schwarzer@hotmail.de"
+        git config --global user.name "ReneSchwarzer"
+
     - name: Commit and push documentation
       env:
         GITHUB_TOKEN: ${{ secrets.ACTIONS_DOC }}
