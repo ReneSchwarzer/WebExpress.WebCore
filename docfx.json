@@ -3,8 +3,8 @@
     {
       "src": [
         {
-          "files": [ "**/*.csproj" ],
-          "cwd": "src",
+          "files": [ "**/WebExpress.WebCore.csproj" ],
+          "cwd": "src/WebExpress.WebCore",
           "exclude": [ "**/bin/**", "**/obj/**" ]
         }
       ],
@@ -15,18 +15,22 @@
     "content": [
       {
         "files": [ "**/*.md", "api/**/*.yml" ],
-        "cwd": "src",
+        "cwd": "src/WebExpress.WebCore",
         "exclude": [ "**/bin/**", "**/obj/**" ]
+      },
+      {
+        "files": [ "README.md" ], 
+        "cwd": "."
       }
     ],
     "resource": [
       {
         "files": [ "**/*.png", "**/*.jpg" ],
-        "cwd": "src",
+        "cwd": "src/WebExpress.WebCore",
         "exclude": [ "**/bin/**", "**/obj/**" ]
       }
     ],
-    "dest": "../docs",
+    "dest": "docs",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [],

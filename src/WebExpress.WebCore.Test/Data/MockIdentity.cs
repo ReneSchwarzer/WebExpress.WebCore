@@ -57,7 +57,5 @@ namespace WebExpress.WebCore.Test.Data
         {
             _groups.AddRange(groups);
         }
-
-
     }
 }
