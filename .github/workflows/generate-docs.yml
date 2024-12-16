@@ -43,4 +43,5 @@ jobs:
       run: |
         git add -f docs
         git commit -m "Update documentation"
+        git remote set-url origin https://ReneSchwarzer:${{ secrets.ACTIONS_DOC }}@github.com/ReneSchwarzer/WebExpress.WebCore.git
         git push
