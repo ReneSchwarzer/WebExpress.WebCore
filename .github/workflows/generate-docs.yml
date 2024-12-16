@@ -13,24 +13,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET SDK 
-      uses: actions/setup-dotnet@v3 
-      with: 
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
         dotnet-version: '9.0.x'
 
-    - name: Install DocFX 
-      run: dotnet tool install -g docfx 
-      
-    - name: Add DocFX to PATH 
+    - name: Install DocFX
+      run: dotnet tool install -g docfx
+
+    - name: Add DocFX to PATH
       run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Navigate to project directory
       working-directory: src/WebExpress.WebCore
       run: dotnet restore
 
-    - name: Configure Git 
-      run: | 
-        git config --global user.email "rene_schwarzer@hotmail.de" 
+    - name: Configure Git
+      run: |
+        git config --global user.email "rene_schwarzer@hotmail.de"
         git config --global user.name "ReneSchwarzer"
 
     - name: Generate documentation
@@ -38,10 +38,10 @@ jobs:
       run: docfx build -o ../../docs
 
     - name: Commit and push documentation
-      env: 
+      env:
         GITHUB_TOKEN: ${{ secrets.ACTIONS_DOC }}
       run: |
-        git add -f docs
+        git add -f ../../docs
         git commit -m "Update documentation"
         git remote set-url origin https://ReneSchwarzer:${{ secrets.ACTIONS_DOC }}@github.com/ReneSchwarzer/WebExpress.WebCore.git
-        git push
+        git push origin HEAD:develop
