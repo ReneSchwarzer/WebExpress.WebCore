@@ -37,7 +37,9 @@ jobs:
       run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Generate documentation
-      run: docfx docfx.json
+      run: |
+        cd docs 
+        docfx build docfx.json
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
