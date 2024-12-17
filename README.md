@@ -27,6 +27,7 @@ The current binaries are available for download [here](https://github.com/ReneSc
 # Start
 If you're looking to get started with `WebExpress`, we would recommend using the following documentation. It can help you understand the platform.
 
+- [api](https://reneschwarzer.github.io/WebExpress.WebCore/) 
 - [installation guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/installation_guide.md) 
 - [development guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/development_guide.md)
 
