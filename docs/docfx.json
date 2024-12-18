@@ -40,7 +40,7 @@
       "_appTitle": "WebExpress.WebCore",
       "_appName": "WebExpress.WebCore",
       "_appFaviconPath": "assets/webexpress.ico", 
-      "_appLogoPath": "assets/webexpress.svg"
+      "_appLogoPath": "assets/webexpress.svg",
       "pdf": false
     },
     "markdownEngineProperties": {
