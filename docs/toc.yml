@@ -1,8 +1,8 @@
 ﻿- name: Home
   href: index.md
 - name: API Documentation
-  href: api/index.md
+  href: api/WebExpress.WebCore.html
 - name: User Guide
   href: user-guide.md
-- name: FAQ
-  href: faq.md
+- name: Tutorials
+  href: tutorials.md
