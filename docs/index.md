@@ -24,19 +24,7 @@ The WebExpress family includes the following projects:
 WebCore is part of the WebExpress family and includes the basic elements of a WebExpress application.
 
 # Download 
-
 The current binaries are available for download [here](https://github.com/ReneSchwarzer/WebExpress/releases).
-
-# Start
-
-To get started with WebExpress, use the following links and tutorials:
-
-- [Installation Guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/installation_guide.md) 
-- [Development Guide](https://github.com/ReneSchwarzer/WebExpress/blob/main/doc/development_guide.md)
-
-## Tutorials
-
-- [HelloWorld](https://github.com/ReneSchwarzer/WebExpress.Tutorial.HelloWorld#readme)
 
 # Tags
 #Raspberry #Raspbian #IoT #NETCore #WebExpress
