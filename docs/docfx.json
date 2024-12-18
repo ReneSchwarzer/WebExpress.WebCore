@@ -27,6 +27,9 @@
         "exclude": [ "_site/**", "obj/**" ]
       },
       {
+        "files": [ "assets/webexpress.ico", "assets/webexpress.svg" ]
+      },
+      {
         "src": "../schemas",
         "files": [ "**/*.json" ],
         "dest": "schemas"
@@ -36,6 +39,8 @@
     "globalMetadata": {
       "_appTitle": "WebExpress.WebCore",
       "_appName": "WebExpress.WebCore",
+      "_appFaviconPath": "assets/webexpress.ico", 
+      "_appLogoPath": "assets/webexpress.svg"
       "pdf": false
     },
     "markdownEngineProperties": {
