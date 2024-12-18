@@ -7,7 +7,7 @@
           "files": [
             "src/WebExpress.WebCore/*.csproj"
           ],
-          "src": "./"
+          "src": "../"
         }
       ],
       "dest": "api",
