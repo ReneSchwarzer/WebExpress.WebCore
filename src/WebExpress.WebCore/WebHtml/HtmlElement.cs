@@ -146,6 +146,15 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Adds one or more elements to the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void Add(IEnumerable<IHtmlNode> elements)
+        {
+            _elements.AddRange(elements);
+        }
+
+        /// <summary>
         /// Adds one or more elements to the beginning of the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
