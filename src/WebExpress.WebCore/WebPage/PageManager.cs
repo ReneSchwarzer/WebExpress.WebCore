@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
@@ -66,8 +67,8 @@ namespace WebExpress.WebCore.WebPage
                 {
                     var pageInstance = CreatePageInstance(endpontContext as IPageContext);
                     var pageType = pageInstance.GetType();
-                    var pageContetx = endpontContext as IPageContext;
-                    var renderContext = new RenderContext(pageContetx, request);
+                    var pageContext = endpontContext as IPageContext;
+                    var renderContext = new RenderContext(pageContext, request);
                     var visualTreeContext = new VisualTreeContext(renderContext);
 
                     var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];
@@ -91,7 +92,42 @@ namespace WebExpress.WebCore.WebPage
                         del = lambda;
                     }
 
-                    var visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
+                    // create visual tree instance
+                    var visualTreeInstance = default(IVisualTree);
+                    var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+                    var constructors = visualTreeType?.GetConstructors(flags);
+
+                    if (constructors != null)
+                    {
+                        foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                        {
+                            // injection
+                            var parameters = constructor.GetParameters();
+                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .Where(x => x.PropertyType == typeof(IComponentId))
+                                .FirstOrDefault();
+
+                            var parameterValues = parameters.Select(parameter =>
+                                parameter.ParameterType == typeof(IComponentHub) ? componentHub :
+                                parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
+                                parameter.ParameterType == typeof(IPageContext) ? pageContext :
+                                parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(pageContext) :
+                                hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
+                                    .FirstOrDefault()?
+                                    .GetValue(componentHub) ?? null
+                            ).ToArray();
+
+                            if (constructor.Invoke(parameterValues) is IVisualTree visualTree)
+                            {
+                                visualTreeInstance = visualTree;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        visualTreeInstance = Activator.CreateInstance<IVisualTree>();
+                    }
 
                     // execute the cached delegate
                     del.DynamicInvoke(renderContext, visualTreeInstance);
@@ -285,7 +321,7 @@ namespace WebExpress.WebCore.WebPage
         /// Registers pages for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;

@@ -293,7 +293,8 @@ namespace WebExpress.WebCore.WebStatusPage
                 new StatusMessage(message)
             );
             var pageType = pageInstance.GetType();
-            var renderContext = new RenderContext(new PageContext(_componentHub.EndpointManager, null, request.Uri, new UriPathSegmentRoot()), request);
+            var pageContext = new PageContext(_componentHub.EndpointManager, null, request.Uri, new UriPathSegmentRoot());
+            var renderContext = new RenderContext(pageContext, request);
             var visualTreeContext = new VisualTreeContext(renderContext);
 
             var visualTreeType = pageType.GetInterface(typeof(IStatusPage<>).Name).GetGenericArguments()[0];
@@ -317,7 +318,42 @@ namespace WebExpress.WebCore.WebStatusPage
                 del = lambda;
             }
 
-            var visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
+            // create visual tree instance
+            var visualTreeInstance = default(IVisualTree);
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var constructors = visualTreeType?.GetConstructors(flags);
+
+            if (constructors != null)
+            {
+                foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                {
+                    // injection
+                    var parameters = constructor.GetParameters();
+                    var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(x => x.PropertyType == typeof(IComponentId))
+                        .FirstOrDefault();
+
+                    var parameterValues = parameters.Select(parameter =>
+                        parameter.ParameterType == typeof(IComponentHub) ? _componentHub :
+                        parameter.ParameterType == typeof(IHttpServerContext) ? _httpServerContext :
+                        parameter.ParameterType == typeof(IPageContext) ? pageContext :
+                        parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(pageContext) :
+                        hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
+                            .FirstOrDefault()?
+                            .GetValue(_componentHub) ?? null
+                    ).ToArray();
+
+                    if (constructor.Invoke(parameterValues) is IVisualTree visualTree)
+                    {
+                        visualTreeInstance = visualTree;
+                    }
+                }
+            }
+            else
+            {
+                visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
+            }
 
             // execute the cached delegate
             del.DynamicInvoke(renderContext, visualTreeInstance);

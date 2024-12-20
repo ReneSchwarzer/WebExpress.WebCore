@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
@@ -18,10 +17,5 @@ namespace WebExpress.WebCore.WebPage
         /// The uri of the request.
         /// </summary>
         UriResource Uri { get; }
-
-        /// <summary>
-        /// Returns the culture.
-        /// </summary>
-        CultureInfo Culture { get; }
     }
 }
