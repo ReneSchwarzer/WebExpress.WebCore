@@ -303,13 +303,14 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns a component based on its type.
         /// </summary>
-        /// <typeparam name="T">The component class.</typeparam>
+        /// <typeparam name="TComponentManager">The component class.</typeparam>
         /// <returns>The instance of the component or null.</returns>
-        public T GetComponent<T>() where T : IComponentManager
+        public TComponentManager GetComponentManager<TComponentManager>()
+            where TComponentManager : IComponentManager
         {
-            return (T)_dictionary.Values
+            return (TComponentManager)_dictionary.Values
                 .SelectMany(x => x)
-                .Where(x => x.ComponentClass == typeof(T))
+                .Where(x => x.ComponentClass == typeof(TComponentManager))
                 .Select(x => x.ComponentInstance)
                 .FirstOrDefault();
         }
@@ -317,7 +318,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Discovers and registers the components from the specified plugin.
         /// </summary>
-        /// <param name="pluginContexts">A plugin context that contain the components.</param>
+        /// <param name="pluginContext">A plugin context that contain the components.</param>
         internal void Register(IPluginContext pluginContext)
         {
             // the plugin has already been registered

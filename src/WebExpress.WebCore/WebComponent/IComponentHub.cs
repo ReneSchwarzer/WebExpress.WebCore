@@ -166,8 +166,9 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Returns a component based on its type.
         /// </summary>
-        /// <typeparam name="T">The component class.</typeparam>
+        /// <typeparam name="TComponentManager">The component class.</typeparam>
         /// <returns>The instance of the component.</returns>
-        T GetComponent<T>() where T : IComponentManager;
+        TComponentManager GetComponentManager<TComponentManager>()
+            where TComponentManager : IComponentManager;
     }
 }

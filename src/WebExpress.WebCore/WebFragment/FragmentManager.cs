@@ -101,7 +101,7 @@ namespace WebExpress.WebCore.WebFragment
         /// Registers pages for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext.Assembly;
@@ -359,12 +359,12 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Returns all fragment contexts that belong to a given fragment type.
         /// </summary>
-        /// <typeparam name="T">The fragment type..</typeparam>
+        /// <typeparam name="TFragment">The fragment type.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<T>(IApplicationContext applicationContext) where T : IFragmentBase
+        public IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase
         {
-            return GetFragments(applicationContext, typeof(T));
+            return GetFragments(applicationContext, typeof(TFragment));
         }
 
         /// <summary>
@@ -389,13 +389,15 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Returns all fragment contexts that belong to a given application.
         /// </summary>
-        /// <typeparam name="S">The section where the fragment is embedded.</typeparam>
-        /// <typeparam name="T">The scope where the fragment is embedded.</typeparam>
+        /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
+        /// <typeparam name="TScope">The scope where the fragment is embedded.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<S, T>(IApplicationContext applicationContext) where S : ISection where T : IScope
+        public IEnumerable<IFragmentContext> GetFragments<TSection, TScope>(IApplicationContext applicationContext)
+            where TSection : ISection
+            where TScope : IScope
         {
-            return GetFragments(applicationContext, typeof(S), typeof(T));
+            return GetFragments(applicationContext, typeof(TSection), typeof(TScope));
         }
 
         /// <summary>
@@ -417,6 +419,27 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order)
                 .Select(x => x.FragmentContext);
+        }
+
+        /// <summary>
+        /// Returns all fragment contexts that belong to a given application.
+        /// </summary>
+        /// <typeparam name="TFragment">The fragment type.</typeparam>
+        /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="scopes">The scopes where the fragment is embedded.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        public IEnumerable<IFragmentContext> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
+            where TFragment : IFragmentBase
+            where TSection : ISection
+        {
+            foreach (var scope in scopes)
+            {
+                foreach (var item in GetFragments(applicationContext, typeof(TSection), scope))
+                {
+                    yield return item;
+                }
+            }
         }
 
         /// <summary>

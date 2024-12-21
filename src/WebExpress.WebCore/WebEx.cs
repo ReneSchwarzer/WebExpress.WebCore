@@ -309,7 +309,7 @@ namespace WebExpress.WebCore
         /// <returns>The instance of the component or null.</returns>
         public static T GetComponent<T>() where T : IComponentManager
         {
-            return _componentHub.GetComponent<T>();
+            return _componentHub.GetComponentManager<T>();
         }
 
         /// <summary>

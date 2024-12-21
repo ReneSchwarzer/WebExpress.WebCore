@@ -49,7 +49,8 @@ namespace WebExpress.WebCore.WebFragment
         /// <typeparam name="TFragment">The fragment type..</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase;
+        IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext)
+            where TFragment : IFragmentBase;
 
         /// <summary>
         /// Returns all fragment contexts that belong to a given fragment type.
@@ -66,7 +67,9 @@ namespace WebExpress.WebCore.WebFragment
         /// <typeparam name="TScope">The scope where the fragment is embedded.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        IEnumerable<IFragmentContext> GetFragments<TSection, TScope>(IApplicationContext applicationContext) where TSection : ISection where TScope : IScope;
+        IEnumerable<IFragmentContext> GetFragments<TSection, TScope>(IApplicationContext applicationContext)
+            where TSection : ISection
+            where TScope : IScope;
 
         /// <summary>
         /// Returns all fragment contexts that belong to a given application.
@@ -76,6 +79,18 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="scope">The scope where the fragment is embedded.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, Type scope);
+
+        /// <summary>
+        /// Returns all fragment contexts that belong to a given application.
+        /// </summary>
+        /// <typeparam name="TFragment">The fragment type.</typeparam>
+        /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="scopes">The scopes where the fragment is embedded.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        IEnumerable<IFragmentContext> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
+            where TFragment : IFragmentBase
+            where TSection : ISection;
 
         /// <summary>
         /// Returns all fragment contexts that belong to a given application.
