@@ -11,29 +11,25 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the request.
         /// </summary>
-        public Request Request { get; protected set; }
+        public Request Request => RenderContext?.Request;
 
         /// <summary>
         /// The uri of the request.
         /// </summary>
-        public UriResource Uri => Request?.Uri;
+        public UriResource Uri => RenderContext?.Request?.Uri;
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Return or sets the render context.
         /// </summary>
-        /// <param name="request">The request associated with the rendering context.</param>
-        public VisualTreeContext(Request request)
-        {
-            Request = request;
-        }
+        public IRenderContext RenderContext { get; protected set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The context to copy./param>
         public VisualTreeContext(IRenderContext context)
-            : this(context?.Request)
         {
+            RenderContext = context;
         }
     }
 }

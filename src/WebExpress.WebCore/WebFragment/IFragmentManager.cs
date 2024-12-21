@@ -81,14 +81,14 @@ namespace WebExpress.WebCore.WebFragment
         IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, Type scope);
 
         /// <summary>
-        /// Returns all fragment contexts that belong to a given application.
+        /// Returns all fragments that belong to a given application.
         /// </summary>
         /// <typeparam name="TFragment">The fragment type.</typeparam>
         /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="scopes">The scopes where the fragment is embedded.</param>
-        /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        IEnumerable<IFragmentContext> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
+        /// <returns>An enumeration of the filtered fragments.</returns>
+        public IEnumerable<TFragment> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
             where TFragment : IFragmentBase
             where TSection : ISection;
 

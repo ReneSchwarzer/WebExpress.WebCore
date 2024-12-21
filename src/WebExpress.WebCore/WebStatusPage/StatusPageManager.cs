@@ -359,7 +359,7 @@ namespace WebExpress.WebCore.WebStatusPage
             del.DynamicInvoke(renderContext, visualTreeInstance);
 
             var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _httpServerContext, _componentHub, new StatusMessage(message));
-            var content = visualTreeInstance.Render(new VisualTreeContext(request))?.ToString();
+            var content = visualTreeInstance.Render(new VisualTreeContext(renderContext))?.ToString();
 
             response.Content = content;
             response.Header.ContentLength = content?.Length ?? 0;

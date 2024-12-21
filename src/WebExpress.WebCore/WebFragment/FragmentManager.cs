@@ -409,35 +409,49 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, Type scope)
         {
+            scope = scope ?? typeof(IScope);
+
             return _dictionary.Values
                 .SelectMany(x => x)
                 .Where(x => x.Key == applicationContext)
                 .SelectMany(x => x.Value)
-                .Where(x => x.Key == section)
+                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
                 .SelectMany(x => x.Value)
-                .Where(x => x.Key == scope)
+                .Where(x => x.Key == scope || scope.IsAssignableFrom(x.Key))
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order)
                 .Select(x => x.FragmentContext);
         }
 
         /// <summary>
-        /// Returns all fragment contexts that belong to a given application.
+        /// Returns all fragments that belong to a given application.
         /// </summary>
         /// <typeparam name="TFragment">The fragment type.</typeparam>
         /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="scopes">The scopes where the fragment is embedded.</param>
-        /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
+        /// <returns>An enumeration of the filtered fragments.</returns>
+        public IEnumerable<TFragment> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
             where TFragment : IFragmentBase
             where TSection : ISection
         {
-            foreach (var scope in scopes)
+            var effectiveScopes = (scopes?.Any() == true) ? scopes : [typeof(IScope)];
+
+            foreach (var scope in effectiveScopes)
             {
-                foreach (var item in GetFragments(applicationContext, typeof(TSection), scope))
+                foreach (var item in _dictionary.Values
+                    .SelectMany(x => x)
+                    .Where(x => x.Key == applicationContext)
+                    .SelectMany(x => x.Value)
+                    .Where(x => x.Key == typeof(TSection) || typeof(TSection).IsAssignableFrom(x.Key))
+                    .SelectMany(x => x.Value)
+                    .Where(x => x.Key == scope || scope.IsAssignableFrom(x.Key))
+                    .SelectMany(x => x.Value)
+                    .Where(x => x.FragmentClass == typeof(TFragment) || typeof(TFragment).IsAssignableFrom(x.FragmentClass))
+                    .OrderBy(x => x.Order)
+                )
                 {
-                    yield return item;
+                    yield return item.CreateInstance<TFragment>();
                 }
             }
         }
@@ -451,7 +465,9 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, IEnumerable<Type> scopes)
         {
-            foreach (var scope in scopes)
+            var effectiveScopes = (scopes?.Any() == true) ? scopes : [typeof(IScope)];
+
+            foreach (var scope in effectiveScopes)
             {
                 foreach (var item in GetFragments(applicationContext, section, scope))
                 {
@@ -469,13 +485,13 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
         public IEnumerable<IHtmlNode> Render<TRenderContext>(TRenderContext renderContext, Type section) where TRenderContext : IRenderContext
         {
-            var scopes = renderContext?.PageContext?.Scopes ?? [];
+            var scopes = renderContext?.PageContext?.Scopes ?? [typeof(IScope)];
 
             var items = _dictionary.Values
                 .SelectMany(x => x)
                 .Where(x => x.Key == renderContext?.PageContext?.ApplicationContext)
                 .SelectMany(x => x.Value)
-                .Where(x => x.Key == section)
+                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
                 .SelectMany(x => x.Value)
                 .Where(x => scopes.Any(y => y.IsAssignableFrom(x.Key)))
                 .SelectMany(x => x.Value)

@@ -87,6 +87,30 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Test the get fragment function of the fragment.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(IScope), 2)]
+        [InlineData(typeof(TestApplicationA), typeof(TestScopeA), 1)]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), 1)]
+        [InlineData(typeof(TestApplicationB), typeof(IScope), 2)]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), 1)]
+        public void GetFragments(Type applicationType, Type scopeType, int count)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+            var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
+
+            // test execution
+            var fragments = componentHub.FragmentManager.GetFragments<TestFragmentA, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
+
+            Assert.NotNull(fragments);
+            Assert.NotEmpty(fragments);
+            Assert.Equal(count, fragments.Count);
+        }
+
+        /// <summary>
         /// Test the process function of the fragment.
         /// </summary>
         [Theory]

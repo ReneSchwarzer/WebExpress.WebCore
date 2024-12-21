@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebFragment.Model
     /// </summary>
     internal class FragmentItem : IDisposable
     {
-        private IComponent _instance;
+        private IFragmentBase _instance;
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private static readonly Dictionary<Type, Delegate> _delegateCache = [];
@@ -69,13 +69,31 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="fragmentManager">The fragment manager responsible for managing web fragments.</param>
+        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The context of the HTTP server.</param>
         public FragmentItem(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
-        }
+        }
+
+        /// <summary>
+        /// Create the instance of the component.
+        /// </summary>
+        public TFragment CreateInstance<TFragment>() where TFragment : IFragmentBase
+        {
+            var instance = _instance;
+
+            instance ??= ComponentActivator.CreateInstance<IFragmentBase, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
+
+            if (Cache)
+            {
+                _instance = instance;
+            }
+
+            return (TFragment)instance;
+        }
+
         /// <summary>
         /// Processes the fragments for a given section within the specified render context.
         /// </summary>
@@ -83,14 +101,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
         public IHtmlNode Render<T>(T renderContext) where T : IRenderContext
         {
-            var instance = _instance;
-
-            instance ??= ComponentActivator.CreateInstance<IComponent, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
-
-            if (Cache)
-            {
-                _instance = instance;
-            }
+            var instance = CreateInstance<IFragmentBase>();
 
             if (CheckControl(renderContext))
             {

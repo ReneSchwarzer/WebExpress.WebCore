@@ -175,7 +175,6 @@ namespace WebExpress.WebCore.Test.Fixture
             featureCollection.Set<IHttpRequestIdentifierFeature>(requestIdentifierFeature);
             featureCollection.Set<IHttpConnectionFeature>(connectionFeature);
 
-            var componentManager = CreateComponentHubMock();
             var context = new WebMessage.HttpContext(featureCollection, CreateHttpServerContextMock());
 
             return context;
