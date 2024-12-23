@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebEvent.Model
     internal class EventItem : IDisposable
     {
         private readonly IComponentHub _componentHub;
-        private readonly IDisposable _instance;
+        private readonly IComponent _instance;
 
         /// <summary>
         /// Returns the associated plugin context.
@@ -110,7 +110,10 @@ namespace WebExpress.WebCore.WebEvent.Model
         /// </summary>
         public void Dispose()
         {
-            _instance?.Dispose();
+            if (_instance is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
         /// <summary>

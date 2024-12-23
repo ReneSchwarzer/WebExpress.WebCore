@@ -69,7 +69,10 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// </summary>
         public void Dispose()
         {
-            Instance?.Dispose();
+            if (Instance is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
         /// <summary>
