@@ -1,12 +1,11 @@
-﻿using System;
-using WebExpress.WebCore.WebComponent;
+﻿using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebPlugin
 {
     /// <summary>
     /// This interface represents a plugin.
     /// </summary>
-    public interface IPlugin : IComponent, IDisposable
+    public interface IPlugin : IComponent
     {
         /// <summary>
         /// Called when the plugin starts working. The call is concurrent.

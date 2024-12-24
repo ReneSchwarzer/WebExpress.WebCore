@@ -1,12 +1,11 @@
-﻿using System;
-using WebExpress.WebCore.WebComponent;
+﻿using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebApplication
 {
     /// <summary>
     /// This interface represents an application.
     /// </summary>
-    public interface IApplication : IComponent, IDisposable
+    public interface IApplication : IComponent
     {
         /// <summary>
         /// Called when the application starts working. The call is concurrent.
