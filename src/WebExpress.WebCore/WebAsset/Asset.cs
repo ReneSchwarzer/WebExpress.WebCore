@@ -120,7 +120,8 @@ namespace WebExpress.WebCore.WebResource
                     response.Header.ContentType = "video/mp4";
                     break;
                 default:
-                    return new ResponseNotFound();
+                    response.Header.ContentType = "binary/octet-stream";
+                    break;
             }
 
             _httpServerContext.Log.Debug(I18N.Translate
