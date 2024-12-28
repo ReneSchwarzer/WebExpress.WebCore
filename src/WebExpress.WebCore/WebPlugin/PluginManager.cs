@@ -165,6 +165,51 @@ namespace WebExpress.WebCore.WebPlugin
 
             try
             {
+                // system plugins without plugin class (e.g. webexpress.webui)
+                if (assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
+                {
+                    var id = new ComponentId(assembly.GetName().Name.ToLower());
+                    var pluginContext = new PluginContext()
+                    {
+                        Assembly = assembly,
+                        PluginId = id,
+                        PluginName = assembly.GetName().Name.ToLower(),
+                        Manufacturer = assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
+                        Copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
+                        Version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
+                        Host = _httpServerContext
+                    };
+
+                    if (!_dictionary.ContainsKey(id))
+                    {
+                        _dictionary.Add(id, new PluginItem()
+                        {
+                            PluginLoadContext = loadContext,
+                            PluginClass = typeof(IPlugin),
+                            PluginContext = pluginContext,
+                            Plugin = null,
+                            Dependencies = null,
+                            ApplicationTypes = [typeof(IApplication)]
+                        });
+
+                        _httpServerContext.Log.Debug
+                        (
+                            I18N.Translate("webexpress.webcore:pluginmanager.created", id)
+                        );
+
+                        OnAddPlugin(pluginContext);
+                    }
+                    else
+                    {
+                        _httpServerContext.Log.Warning
+                        (
+                            I18N.Translate("webexpress.webcore:pluginmanager.duplicate", id)
+                        );
+                    }
+
+                    plugins.Add(pluginContext);
+                }
+
                 foreach (var type in assembly
                     .GetExportedTypes()
                     .Where(x => x.IsClass && x.IsSealed)
@@ -400,7 +445,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns a plugin context based on its id.
         /// </summary>
-        /// <param name="pluginId">The type of the plugin.</param>
+        /// <param name="plugin">The type of the plugin.</param>
         /// <returns>The plugin context.</returns>
         public IPluginContext GetPlugin(Type plugin)
         {
@@ -491,16 +536,10 @@ namespace WebExpress.WebCore.WebPlugin
                 return;
             }
 
-            //// initialize plugin
-            //pluginItem.Plugin.Initialization(pluginItem.PluginContext);
-            //HttpServerContext.Log.Debug
-            //(
-            //    I18N.Translate
-            //    (
-            //        "webexpress.webcore:pluginmanager.plugin.initialization",
-            //        pluginItem.PluginContext.PluginId
-            //    )
-            //);
+            if (pluginItem.Plugin == null)
+            {
+                return;
+            }
 
             // run plugin concurrently
             Task.Run(() =>

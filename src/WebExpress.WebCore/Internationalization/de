@@ -66,7 +66,6 @@ pluginmanager.pluginmanager.label=Plugin Manager:
 pluginmanager.pluginmanager.system=Systemplugin: '{0}'
 pluginmanager.pluginmanager.custom=Benutzerdefiniertes Plugin: '{0}'
 pluginmanager.pluginmanager.unfulfilleddependencies=Plugin mit unerfüllten Abhängigkeiten: '{0}'
-pluginmanager.plugin.initialization=Das Plugin '{0}' wurde initialisiert.
 pluginmanager.plugin.processing.start=Das Plugin '{0}' wird ausgeführt.
 pluginmanager.plugin.processing.end=Die Ausführung des Plugin '{0}' wurde beendet.
 pluginmanager.fulfilleddependencies=Das Plugin '{0}' erfüllt alle Abhängigkeiten.

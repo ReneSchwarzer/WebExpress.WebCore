@@ -130,7 +130,7 @@ namespace WebExpress.WebCore.WebAsset
         /// Registers resources for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;

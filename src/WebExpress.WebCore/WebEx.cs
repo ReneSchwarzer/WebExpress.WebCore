@@ -17,28 +17,11 @@ using WebExpress.WebCore.WebUri;
 namespace WebExpress.WebCore
 {
     /// <summary>
-    /// The class provides a web server application for WebExpress with a default component hub.
-    /// </summary>
-    public class WebEx : WebEx<IComponentHub>
-    {
-        /// <summary>
-        /// Creates and returns a new instance of <see cref="IComponentHub"/>.
-        /// </summary>
-        /// <param name="httpServerContext">The HTTP server context used to initialize the component manager.</param>
-        /// <returns>A new instance of <see cref="IComponentHub"/>.</returns>
-        protected override IComponentHub CreateComponentManager(IHttpServerContext httpServerContext)
-        {
-            return ComponentActivator.CreateInstance<ComponentHub>(httpServerContext);
-        }
-    }
-
-    /// <summary>
     /// The class provides a web server application for WebExpress.
     /// </summary>
-    /// <typeparam name="T">The type of the component hub, which must implement <see cref="IComponentHub"/>.</typeparam>
-    public abstract class WebEx<T> where T : class, IComponentHub
+    public sealed class WebEx
     {
-        private static T _componentHub;
+        private static IComponentHub _componentHub;
         private HttpServer _httpServer;
 
         /// <summary>
@@ -54,7 +37,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the component hub.
         /// </summary>
-        public static T ComponentHub => _componentHub;
+        public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
         /// Running the application.
@@ -217,7 +200,7 @@ namespace WebExpress.WebCore
                 Config = config
             };
 
-            _componentHub = CreateComponentManager(_httpServer.HttpServerContext) as T;
+            _componentHub = ComponentActivator.CreateInstance<ComponentHub>(_httpServer.HttpServerContext);
 
             // start logging
             _httpServer.HttpServerContext.Log.Begin(config.Log);
@@ -311,12 +294,5 @@ namespace WebExpress.WebCore
         {
             return _componentHub.GetComponentManager<T>();
         }
-
-        /// <summary>
-        /// Creates and returns a new instance of <see cref="IComponentHub"/>.
-        /// </summary>
-        /// <param name="httpServerContext">The HTTP server context used to initialize the component manager.</param>
-        /// <returns>A new instance of <see cref="IComponentHub"/>.</returns>
-        protected abstract T CreateComponentManager(IHttpServerContext httpServerContext);
     }
 }

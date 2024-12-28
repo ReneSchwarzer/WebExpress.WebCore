@@ -66,7 +66,6 @@ pluginmanager.pluginmanager.label=Plugin manager:
 pluginmanager.pluginmanager.system=System plugin: '{0}'
 pluginmanager.pluginmanager.custom=custom plugin: '{0}'
 pluginmanager.pluginmanager.unfulfilleddependencies=Plugin with unfulfilled dependencies: '{0}'
-pluginmanager.plugin.initialization=The plugin '{0}' has been initialized.
 pluginmanager.plugin.processing.start=The plugin '{0}' is running.
 pluginmanager.plugin.processing.end=The running of the plugin '{0}' has been stopped.
 pluginmanager.fulfilleddependencies=The plugin '{0}' fulfills all dependencies.
