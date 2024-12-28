@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.WebPage
                     var pageInstance = CreatePageInstance(endpontContext as IPageContext);
                     var pageType = pageInstance.GetType();
                     var pageContext = endpontContext as IPageContext;
-                    var renderContext = new RenderContext(pageContext, request);
+                    var renderContext = new RenderContext(pageInstance, pageContext, request);
                     var visualTreeContext = new VisualTreeContext(renderContext);
 
                     var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];

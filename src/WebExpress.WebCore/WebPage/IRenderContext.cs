@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -7,6 +8,11 @@ namespace WebExpress.WebCore.WebPage
     /// </summary>
     public interface IRenderContext
     {
+        /// <summary>
+        /// Returns the endpoint associated with the rendering context.
+        /// </summary>
+        IEndpoint Endpoint { get; }
+
         /// <summary>
         /// Returns the page context.
         /// </summary>

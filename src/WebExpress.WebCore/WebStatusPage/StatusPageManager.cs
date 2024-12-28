@@ -7,6 +7,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -294,7 +295,7 @@ namespace WebExpress.WebCore.WebStatusPage
             );
             var pageType = pageInstance.GetType();
             var pageContext = new PageContext(_componentHub.EndpointManager, null, request.Uri, new UriPathSegmentRoot());
-            var renderContext = new RenderContext(pageContext, request);
+            var renderContext = new RenderContext(pageInstance as IEndpoint, pageContext, request);
             var visualTreeContext = new VisualTreeContext(renderContext);
 
             var visualTreeType = pageType.GetInterface(typeof(IStatusPage<>).Name).GetGenericArguments()[0];

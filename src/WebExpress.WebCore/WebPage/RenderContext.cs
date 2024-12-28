@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
@@ -30,6 +31,11 @@ namespace WebExpress.WebCore.WebPage
         public CultureInfo Culture => Request?.Culture;
 
         /// <summary>
+        /// Returns the endpoint associated with the rendering context.
+        /// </summary>
+        public IEndpoint Endpoint { get; protected set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public RenderContext()
@@ -39,11 +45,12 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="pageContext">>The page context.</param>
+        /// <param name="endpoint">The endpoint associated with the rendering context.</param>
+        /// <param name="pageContext">The page context.</param>
         /// <param name="request">The request associated with the rendering context.</param>
-        public RenderContext(IPageContext pageContext, Request request)
-            : this()
+        public RenderContext(IEndpoint endpoint, IPageContext pageContext, Request request)
         {
+            Endpoint = endpoint;
             PageContext = pageContext;
             Request = request;
         }
@@ -53,7 +60,7 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         /// <param name="context">The context to copy.</param>
         public RenderContext(RenderContext context)
-            : this(context?.PageContext, context?.Request)
+            : this(context.Endpoint, context?.PageContext, context?.Request)
         {
         }
     }

@@ -190,7 +190,7 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             var request = CrerateRequestMock();
 
-            return new RenderContext(CreratePageContextMock(applicationContext, scopes), request);
+            return new RenderContext(null, CreratePageContextMock(applicationContext, scopes), request);
         }
         /// <summary>
         /// Create a fake page context for unit testing.

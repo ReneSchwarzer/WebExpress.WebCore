@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.Test
@@ -8,6 +9,11 @@ namespace WebExpress.WebCore.Test
     /// </summary>
     public class TestRenderContext : IRenderContext
     {
+        /// <summary>
+        /// Returns the endpoint associated with the rendering context.
+        /// </summary>
+        public IEndpoint Endpoint { get; protected set; }
+
         /// <summary>
         /// Returns the page context.
         /// </summary>
@@ -21,10 +27,14 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
+        /// <param name="endpoint">The endpoint associated with the rendering context.</param>
         /// <param name="pageContext">>The page context.</param>
         /// <param name="request">The request associated with the rendering context.</param>
-        public TestRenderContext(IPageContext pageContext, Request request)
+        public TestRenderContext(IEndpoint endpoint, IPageContext pageContext, Request request)
         {
+            Endpoint = endpoint;
+            PageContext = pageContext;
+            Request = request;
         }
     }
 }
