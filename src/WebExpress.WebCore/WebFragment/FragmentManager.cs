@@ -417,7 +417,7 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
                 .SelectMany(x => x.Value)
-                .Where(x => x.Key == scope || scope.IsAssignableFrom(x.Key))
+                .Where(x => x.Key == scope)
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order)
                 .Select(x => x.FragmentContext);
@@ -445,7 +445,7 @@ namespace WebExpress.WebCore.WebFragment
                     .SelectMany(x => x.Value)
                     .Where(x => x.Key == typeof(TSection) || typeof(TSection).IsAssignableFrom(x.Key))
                     .SelectMany(x => x.Value)
-                    .Where(x => x.Key == scope || scope.IsAssignableTo(x.Key))
+                    .Where(x => x.Key == scope)
                     .SelectMany(x => x.Value)
                     .Where(x => x.FragmentClass == typeof(TFragment) || typeof(TFragment).IsAssignableFrom(x.FragmentClass))
                     .OrderBy(x => x.Order)
@@ -493,7 +493,7 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
                 .SelectMany(x => x.Value)
-                .Where(x => scopes.Any(y => y.IsAssignableFrom(x.Key)))
+                .Where(x => scopes.Any(y => x.Key == y))
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order);
 
