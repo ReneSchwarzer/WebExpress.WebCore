@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(43, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(46, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>

@@ -71,7 +71,6 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "webindex:settingpageb.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webindex:settingpagea.label")]
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webindex:settingpageb.label")]
-
         public void Title(Type applicationType, Type resourceType, string title)
         {
             // preconditions
@@ -80,7 +79,7 @@ namespace WebExpress.WebCore.Test.Manager
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(title, settingPage.SettingPageTitle);
+            Assert.Equal(title, settingPage.PageTitle);
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     var renderContext = new RenderContext(pageInstance, pageContext, request);
                     var visualTreeContext = new VisualTreeContext(renderContext);
 
-                    var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];
+                    var visualTreeType = pageType.GetInterface(typeof(ISettingPage<>).Name).GetGenericArguments()[0];
                     if (!_delegateCache.TryGetValue(pageType, out var del))
                     {
                         // create and compile the expression
@@ -141,7 +141,7 @@ namespace WebExpress.WebCore.WebSettingPage
             AddSettingPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveSettingPage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<PageContext>(endpointtRegistration);
+            _componentHub.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
 
             _httpServerContext.Log.Debug(I18N.Translate("webexpress.webapp:pagesettingmanager.initialization"));
         }
@@ -149,9 +149,9 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Creates a new setting page and returns it. If a page already exists (through caching), the existing instance is returned.
         /// </summary>
-        /// <param name="settinPageContext">The context used for setting page creation.</param>
+        /// <param name="settingPageContext">The context used for setting page creation.</param>
         /// <returns>The created or cached page.</returns>
-        private ISettingPage CreateSettingPageInstance(ISettingPageContext settinPageContext)
+        private IEndpoint CreateSettingPageInstance(ISettingPageContext settingPageContext)
         {
             var settingPageItem = _dictionary.Values
                 .SelectMany(a => a.Values)
@@ -159,11 +159,11 @@ namespace WebExpress.WebCore.WebSettingPage
                 .SelectMany(s => s.Values)
                 .SelectMany(g => g.Values)
                 .SelectMany(i => i)
-                .FirstOrDefault(x => x.SettingPageContext.Equals(settinPageContext));
+                .FirstOrDefault(x => x.SettingPageContext.Equals(settingPageContext));
 
             if (settingPageItem != null && settingPageItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<ISettingPage, ISettingPageContext>(settingPageItem.SettingPageClass, settinPageContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IEndpoint, ISettingPageContext>(settingPageItem.SettingPageClass, settingPageContext, _httpServerContext, _componentHub);
 
                 if (settingPageItem.Cache)
                 {
@@ -225,7 +225,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 var segment = default(ISegmentAttribute);
                 var parent = default(Type);
                 var contextPath = string.Empty;
-                var scopes = new List<string>();
+                var scopes = new List<Type>();
                 var context = default(string);
                 var group = default(string);
                 var section = SettingSection.Primary;
@@ -284,7 +284,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower());
+                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
                     }
                 }
 
@@ -296,7 +296,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         ApplicationContext = applicationContext,
                         PluginContext = pluginContext,
                         EndpointId = new ComponentId(id),
-                        SettingPageTitle = title,
+                        PageTitle = title,
                         Scopes = scopes,
                         Context = context,
                         Section = section,

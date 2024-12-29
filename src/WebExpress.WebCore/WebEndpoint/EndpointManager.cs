@@ -54,11 +54,11 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Registers an endpoint context type.
         /// </summary>
-        /// <typeparam name="T">The type of the endpoint context.</typeparam>
+        /// <typeparam name="TEndpointContext">The type of the endpoint context.</typeparam>
         /// <param name="endpointRegistration">The registration details containing the callback functions.</param>
-        public void Register<T>(EndpointRegistration endpointRegistration) where T : IEndpointContext
+        public void Register<TEndpointContext>(EndpointRegistration endpointRegistration) where TEndpointContext : IEndpointContext
         {
-            var type = typeof(T);
+            var type = typeof(TEndpointContext);
             if (!_registrations.ContainsKey(type))
             {
                 _registrations[type] = endpointRegistration;
@@ -71,10 +71,10 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Removes the registration for a specific endpoint context type.
         /// </summary>
-        /// <typeparam name="T">The type of the endpoint context.</typeparam>
-        public void Remove<T>() where T : IEndpointContext
+        /// <typeparam name="TEndpointContext">The type of the endpoint context.</typeparam>
+        public void Remove<TEndpointContext>() where TEndpointContext : IEndpointContext
         {
-            var type = typeof(T);
+            var type = typeof(TEndpointContext);
             _registrations.Remove(type, out var endpointRegistration);
 
             endpointRegistration.AddEndpoint -= OnAddEndpoint;

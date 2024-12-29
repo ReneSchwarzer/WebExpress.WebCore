@@ -1,6 +1,6 @@
 ﻿using System;
-using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebSettingPage.Model
@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <summary>
         /// Returns or sets the instance of the setting page, if the page is cached, otherwise null.
         /// </summary>
-        public ISettingPage Instance { get; internal set; }
+        public IEndpoint Instance { get; internal set; }
 
         /// <summary>
         /// Returns the setting context.
