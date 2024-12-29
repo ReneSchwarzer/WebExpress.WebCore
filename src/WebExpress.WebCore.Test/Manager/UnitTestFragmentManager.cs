@@ -90,10 +90,10 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the get fragment function of the fragment.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(IScope), 2)]
+        [InlineData(typeof(TestApplicationA), typeof(IScope), 0)]
         [InlineData(typeof(TestApplicationA), typeof(TestScopeA), 1)]
         [InlineData(typeof(TestApplicationA), typeof(TestPageB), 1)]
-        [InlineData(typeof(TestApplicationB), typeof(IScope), 2)]
+        [InlineData(typeof(TestApplicationB), typeof(IScope), 0)]
         [InlineData(typeof(TestApplicationB), typeof(TestPageB), 1)]
         public void GetFragments(Type applicationType, Type scopeType, int count)
         {
@@ -106,7 +106,6 @@ namespace WebExpress.WebCore.Test.Manager
             var fragments = componentHub.FragmentManager.GetFragments<TestFragmentA, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
 
             Assert.NotNull(fragments);
-            Assert.NotEmpty(fragments);
             Assert.Equal(count, fragments.Count);
         }
 

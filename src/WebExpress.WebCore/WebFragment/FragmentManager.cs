@@ -445,7 +445,7 @@ namespace WebExpress.WebCore.WebFragment
                     .SelectMany(x => x.Value)
                     .Where(x => x.Key == typeof(TSection) || typeof(TSection).IsAssignableFrom(x.Key))
                     .SelectMany(x => x.Value)
-                    .Where(x => x.Key == scope || scope.IsAssignableFrom(x.Key))
+                    .Where(x => x.Key == scope || scope.IsAssignableTo(x.Key))
                     .SelectMany(x => x.Value)
                     .Where(x => x.FragmentClass == typeof(TFragment) || typeof(TFragment).IsAssignableFrom(x.FragmentClass))
                     .OrderBy(x => x.Order)
