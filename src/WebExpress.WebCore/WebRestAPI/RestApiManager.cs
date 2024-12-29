@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -49,6 +50,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private RestApiManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -289,7 +291,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// Registers rest apis for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;
@@ -450,23 +452,6 @@ namespace WebExpress.WebCore.WebRestApi
 
                 pluginDict.Remove(applicationContext);
             }
-        }
-
-        /// <summary>
-        /// Returns an enumeration of all containing rest api resource items of a plugin.
-        /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose rest api resources are to be registered.</param>
-        /// <returns>An enumeration of rest api resource items.</returns>
-        private IEnumerable<RestApiItem> GetRestApiItems(IPluginContext pluginContext)
-        {
-            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.Value);
-            }
-
-            return [];
         }
 
         /// <summary>

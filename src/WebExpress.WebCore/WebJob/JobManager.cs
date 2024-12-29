@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,7 @@ namespace WebExpress.WebCore.WebJob
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private JobManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -66,31 +68,6 @@ namespace WebExpress.WebCore.WebJob
                     "webexpress.webcore:jobmanager.initialization"
                 )
             );
-        }
-
-        /// <summary>
-        /// Registers a dynamic job.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="cron">The cropn-object.</param>
-        /// <returns>The job.</returns>
-        private IJob Register<T>(IPluginContext pluginContext, Cron cron) where T : IJob
-        {
-            // create context
-            var jobContext = new JobContext()
-            {
-                PluginContext = pluginContext,
-                JobId = new ComponentId(typeof(T).FullName),
-                Cron = cron
-            };
-
-            var item = new ScheduleItem(_componentHub, _httpServerContext, pluginContext, null, jobContext, typeof(T));
-
-            _ = _dynamicScheduleList.Append(item);
-
-            OnAddJob(jobContext);
-
-            return item.Instance;
         }
 
         /// <summary>
@@ -128,7 +105,7 @@ namespace WebExpress.WebCore.WebJob
         /// Registers resources for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;

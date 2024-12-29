@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
@@ -22,6 +25,7 @@ namespace WebExpress.WebCore.WebSettingPage
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly SettingPageDictionary _dictionary = [];
+        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
         /// An event that fires when an setting page is added.
@@ -43,6 +47,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private SettingPageManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -59,28 +64,76 @@ namespace WebExpress.WebCore.WebSettingPage
                 EndpointsResolver = () => SettingPages,
                 HandleRequest = (request, endpontContext) =>
                 {
-                    var settingPage = CreateSettingPageInstance(endpontContext as ISettingPageContext);
-                    var settingPageType = settingPage.GetType();
-                    var context = default(IRenderContext);
-                    var pageContetx = endpontContext as IPageContext;
+                    var pageInstance = CreateSettingPageInstance(endpontContext as ISettingPageContext);
+                    var pageType = pageInstance.GetType();
+                    var pageContext = endpontContext as IPageContext;
+                    var renderContext = new RenderContext(pageInstance, pageContext, request);
+                    var visualTreeContext = new VisualTreeContext(renderContext);
 
-                    if (settingPageType.IsGenericType)
+                    var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];
+                    if (!_delegateCache.TryGetValue(pageType, out var del))
                     {
-                        var typeOfT = settingPageType.GetGenericArguments()[0];
-                        var parameters = new object[] { settingPage, endpontContext as IPageContext, request };
+                        // create and compile the expression
+                        var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
+                        var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
+                        var processMethod = pageType.GetMethod("Process", [typeof(IRenderContext), visualTreeType]);
+                        var callProzessMethod = Expression.Call
+                        (
+                            Expression.Constant(pageInstance),
+                            processMethod,
+                            renderContextParam,
+                            visualTreeParam
+                        );
+                        var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
+                            .Compile();
 
-                        context = Activator.CreateInstance(typeOfT, parameters) as IRenderContext;
+                        _delegateCache[pageType] = lambda;
+                        del = lambda;
+                    }
+
+                    // create visual tree instance
+                    var visualTreeInstance = default(IVisualTree);
+                    var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+                    var constructors = visualTreeType?.GetConstructors(flags);
+
+                    if (constructors != null)
+                    {
+                        foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                        {
+                            // injection
+                            var parameters = constructor.GetParameters();
+                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .Where(x => x.PropertyType == typeof(IComponentId))
+                                .FirstOrDefault();
+
+                            var parameterValues = parameters.Select(parameter =>
+                                parameter.ParameterType == typeof(IComponentHub) ? componentHub :
+                                parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
+                                parameter.ParameterType == typeof(IPageContext) ? pageContext :
+                                parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(pageContext) :
+                                hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
+                                    .FirstOrDefault()?
+                                    .GetValue(componentHub) ?? null
+                            ).ToArray();
+
+                            if (constructor.Invoke(parameterValues) is IVisualTree visualTree)
+                            {
+                                visualTreeInstance = visualTree;
+                            }
+                        }
                     }
                     else
                     {
-                        context = new RenderContext(settingPage, pageContetx, request);
+                        visualTreeInstance = Activator.CreateInstance<IVisualTree>();
                     }
 
-                    settingPage.Process(context);
+                    // execute the cached delegate
+                    del.DynamicInvoke(renderContext, visualTreeInstance);
 
                     return new ResponseOK()
                     {
-                        //Content = context.VisualTree.Render(new VisualTreeContext(context))
+                        Content = visualTreeInstance.Render(visualTreeContext)
                     };
                 }
             };
@@ -158,13 +211,14 @@ namespace WebExpress.WebCore.WebSettingPage
         /// Registers pages for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext.Assembly;
 
             foreach (var settingPageType in assembly.GetTypes()
-                    .Where(x => x.IsClass && x.IsSealed && (x.GetInterfaces().Contains(typeof(ISettingPage)))))
+                .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
+                .Where(x => x.GetInterface(typeof(ISettingPage<>).Name) != null))
             {
                 var id = settingPageType.FullName?.ToLower();
                 var title = settingPageType.Name;
@@ -283,9 +337,6 @@ namespace WebExpress.WebCore.WebSettingPage
                     }
                 }
             }
-
-            // Logging
-            Log();
         }
 
         /// <summary>
@@ -419,30 +470,6 @@ namespace WebExpress.WebCore.WebSettingPage
         private void OnRemoveApplication(object sender, IApplicationContext e)
         {
             Remove(e);
-        }
-
-        /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        private void Log()
-        {
-            //output.Add
-            //(
-            //    string.Empty.PadRight(deep) +
-            //    I18N.Translate("webexpress.webui:settingpagemanager.titel")
-            //);
-
-            //var log = new List<string>
-            //    {
-            //            I18N.Translate("webexpress.webapp:pagesettingmanager.register"),
-            //    "    SettingContext       = " + context ?? "null",
-            //            "    SettingSection       = " + section.ToString(),
-            //            "    SettingGroup         = " + group ?? "null",
-            //            "    SettingPage.Id       = " + page?.Id ?? "null",
-            //            "    SettingPage.Hide     = " + (page?.Hide != null ? page?.Hide.ToString() : "null")
-            //    };
-
-            //_httpServerContext.Log.Debug(string.Join(Environment.NewLine, log));
         }
 
         /// <summary>

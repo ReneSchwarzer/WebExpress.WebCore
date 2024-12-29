@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -53,6 +54,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="componentHub">The component hub.</param>
         /// <param name="pluginManager">The plugin manager.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private PackageManager(IComponentHub componentHub, IPluginManager pluginManager, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub as ComponentHub;
@@ -470,7 +472,7 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void Log()
         {
-            if (!Catalog.Packages.Any())
+            if (Catalog.Packages.Count == 0)
             {
                 return;
             }

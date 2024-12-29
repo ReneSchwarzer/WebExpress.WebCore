@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -44,6 +45,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private PluginManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -92,8 +94,7 @@ namespace WebExpress.WebCore.WebPlugin
             }
 
             // register plugin
-            foreach (var assembly in assemblies
-                .OrderBy(x => x.GetCustomAttribute(typeof(SystemPluginAttribute)) != null ? 0 : 1))
+            foreach (var assembly in assemblies.OrderBy(x => x.GetCustomAttribute<SystemPluginAttribute>() != null ? 0 : 1))
             {
                 Register(assembly);
             }
@@ -158,7 +159,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// </summary>
         /// <param name="assembly">The assembly where the plugin is located.</param>
         /// <param name="loadContext">The plugin load context for isolating and unloading the dependent libraries.</param>
-        /// <returns>A plugin created or null.</returns>
+        /// <returns>A collection of created plugin contexts.</returns>
         private IEnumerable<IPluginContext> Register(Assembly assembly, PluginLoadContext loadContext = null)
         {
             var plugins = new List<IPluginContext>();
@@ -654,7 +655,7 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
-                        .GetCustomAttribute(typeof(SystemPluginAttribute)) == null
+                        .GetCustomAttribute<SystemPluginAttribute>() == null
                 )
                 .Select(x => I18N.Translate
                 (

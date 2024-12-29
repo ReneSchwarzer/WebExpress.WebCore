@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -50,6 +51,7 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private PageManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -484,23 +486,6 @@ namespace WebExpress.WebCore.WebPage
 
                 pluginDict.Remove(applicationContext);
             }
-        }
-
-        /// <summary>
-        /// Returns an enumeration of all containing page items of a plugin.
-        /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose pages are to be registered.</param>
-        /// <returns>An enumeration of pages items.</returns>
-        private IEnumerable<PageItem> GetPageItems(IPluginContext pluginContext)
-        {
-            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.Value);
-            }
-
-            return [];
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -46,6 +47,7 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private ResourceManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -116,7 +118,7 @@ namespace WebExpress.WebCore.WebResource
         /// Registers resources for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;
@@ -249,23 +251,6 @@ namespace WebExpress.WebCore.WebResource
 
                 pluginDict.Remove(applicationContext);
             }
-        }
-
-        /// <summary>
-        /// Returns an enumeration of all containing resource items of a plugin.
-        /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose resources are to be registered.</param>
-        /// <returns>An enumeration of resource items.</returns>
-        private IEnumerable<ResourceItem> GetResorceItems(IPluginContext pluginContext)
-        {
-            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.Value);
-            }
-
-            return [];
         }
 
         /// <summary>

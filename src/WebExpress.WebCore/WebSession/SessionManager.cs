@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
@@ -19,7 +20,8 @@ namespace WebExpress.WebCore.WebSession
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The reference to the context of the host.</param>
-        internal SessionManager(IHttpServerContext context)
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private SessionManager(IHttpServerContext context)
         {
             _httpServerContext = context;
 
@@ -43,30 +45,30 @@ namespace WebExpress.WebCore.WebSession
                 .Cookies?.Where(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
 
-            Guid Guid = Guid.NewGuid();
+            var guid = Guid.NewGuid();
 
             try
             {
-                Guid = Guid.Parse(sessionCookie?.Value);
+                guid = Guid.Parse(sessionCookie?.Value);
             }
             catch
             {
 
             }
 
-            if (sessionCookie != null && _dictionary.ContainsKey(Guid))
+            if (sessionCookie != null && _dictionary.TryGetValue(guid, out Session value))
             {
-                session = _dictionary[Guid];
+                session = value;
                 session.Updated = DateTime.Now;
             }
             else
             {
                 // no or invalid session => assign new session
-                session = new Session(Guid);
+                session = new Session(guid);
 
                 lock (_dictionary)
                 {
-                    _dictionary[Guid] = session;
+                    _dictionary[guid] = session;
                 }
             }
 
@@ -78,6 +80,7 @@ namespace WebExpress.WebCore.WebSession
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

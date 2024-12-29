@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -23,8 +24,8 @@ namespace WebExpress.WebCore.WebIdentity
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly IdentityPermissionDictionary _permissionDictionary = new();
-        private readonly IdentityRoleDictionary _roleDictionary = new();
+        private readonly IdentityPermissionDictionary _permissionDictionary = [];
+        private readonly IdentityRoleDictionary _roleDictionary = [];
 
         /// <summary>
         /// Returns all permissions.
@@ -57,6 +58,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private IdentityManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -112,7 +114,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// Registers roles and ientities for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;
@@ -579,6 +581,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

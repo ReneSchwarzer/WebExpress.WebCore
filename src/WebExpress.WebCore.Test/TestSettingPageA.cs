@@ -10,13 +10,8 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:settingpagea.label")]
     [Segment("settingpagea", "webindex:homepage.label")]
     [ContextPath(null)]
-    public sealed class TestSettingPageA : ISettingPage<RenderContext>
+    public sealed class TestSettingPageA : ISettingPage<VisualTree>
     {
-        /// <summary>
-        /// Returns or sets the title of the setting page.
-        /// </summary>
-        public string Title { get; set; }
-
         /// <summary>
         /// Returns or sets the setting page context.
         /// </summary>
@@ -38,32 +33,17 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Redirects to the specified URI.
-        /// </summary>
-        /// <param name="uri">The URI to redirect to.</param>
-        public void Redirecting(string uri)
-        {
-
-        }
-
-        /// <summary>
         /// Processing of the page.
         /// </summary>
-        /// <param name="context">The context for rendering the setting page.</param>
-        public void Process(IRenderContext context)
+        /// <param name="renderContext">The context for rendering the setting page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        public void Process(IRenderContext renderContext, VisualTree visualTree)
         {
             // test the context
-            if (context == null)
+            if (renderContext == null)
             {
-                throw new ArgumentNullException(nameof(context), "Parameter cannot be null or empty.");
+                throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }
-        }
-
-        /// <summary>
-        /// Release of unmanaged resources reserved during use.
-        /// </summary>
-        public void Dispose()
-        {
         }
     }
 }

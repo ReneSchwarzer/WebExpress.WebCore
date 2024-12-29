@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -33,6 +34,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private SitemapManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -129,7 +131,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Determines the uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
         /// <paramref name="parameters"/>
         /// <returns>Returns the uri taking into account the context or null.</returns>
         public UriResource GetUri<T>(params Parameter[] parameters) where T : IEndpoint
@@ -163,7 +165,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Determines the uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>Returns the uri taking into account the context or null.</returns>
         public UriResource GetUri<T>(IApplicationContext applicationContext) where T : IEndpoint
@@ -180,12 +182,12 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="TEnpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
         /// <param name="endpointContext">The endpoint context.</param>
         /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(IEndpointContext endpointContext) where T : IEndpoint
+        public UriResource GetUri<TEnpoint>(IEndpointContext endpointContext) where TEnpoint : IEndpoint
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(T), endpointContext.ApplicationContext)
+            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()
@@ -202,7 +204,6 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="contextPathSegments">The path segments of the context path.</param>
         /// <param name="applicationContext">The application context.</param>
-        /// <param name="parent">The parent node or null if root.</param>
         /// <returns>The sitemap root node.</returns>
         private static SitemapNode CreateSiteMap
         (
