@@ -119,5 +119,4 @@ namespace WebExpress.WebCore.Test.Manager
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));
         }
     }
-
 }
