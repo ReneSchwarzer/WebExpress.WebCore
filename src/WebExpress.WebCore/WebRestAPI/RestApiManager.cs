@@ -528,29 +528,6 @@ namespace WebExpress.WebCore.WebRestApi
         }
 
         /// <summary>
-        /// Collects and prepares information about the component for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The depth of the log.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
-            foreach (var resourcenItem in GetRestApiItems(pluginContext))
-            {
-                output.Add
-                (
-                    string.Empty.PadRight(deep) +
-                    I18N.Translate
-                    (
-                        "webexpress.webcore:restapimanager.resource",
-                        resourcenItem?.RestApiContext?.EndpointId,
-                        string.Join(",", resourcenItem?.RestApiContext?.ApplicationContext?.ApplicationId)
-                    )
-                );
-            }
-        }
-
-        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()

@@ -461,29 +461,6 @@ namespace WebExpress.WebCore.WebResource
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
-            foreach (var resourcenItem in GetResorceItems(pluginContext))
-            {
-                output.Add
-                (
-                    string.Empty.PadRight(deep) +
-                    I18N.Translate
-                    (
-                        "webexpress.webcore:resourcemanager.resource",
-                        resourcenItem?.ResourceContext?.EndpointId,
-                        string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
-                    )
-                );
-            }
-        }
-
-        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()

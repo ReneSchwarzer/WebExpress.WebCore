@@ -40,12 +40,13 @@ componentmanager.duplicate=Die Komponente '{0}' wurde bereits registriert.
 componentmanager.remove=Die Komponente '{0}' wurde entfernt.
 componentmanager.component=Komponenten:
 
-logmanager.initialization:Der Logmanager wurde initialisiert.
-logmanager.titel:Logmanager
+logmanager.initialization=Der Logmanager wurde initialisiert.
+logmanager.titel=Logmanager
 
 internationalizationmanager.initialization=Der Internationalisierungsmanager wurde initialisiert.
 internationalizationmanager.register=Das Plugin '{0}' wurde im Internationalizationmanager registriert.
 
+packagemanager.titel=Paketmanager:
 packagemanager.initialization=Der Paketmanager wurde initialisiert.
 packagemanager.existing=Das Paket '{0}' ist im Katalog registriert.
 packagemanager.add=Das Paket '{0}' wird im Katalog neu aufgenommen.
@@ -54,6 +55,7 @@ packagemanager.scan=Das Verzeichnis '{0}' wird auf neue Pakete gescannt.
 packagemanager.save=Der Katalog wird gespeichert.
 packagemanager.packagenotfound=Das Paket '{0}' wurde nicht im Dateisystem gefunden.
 packagemanager.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
+packagemanager.package=Package: '{0}'
 
 pluginmanager.initialization=Der Pluginmanager wurde initialisiert.
 pluginmanager.load={0}.dll wird geladen. Version = '{1}'
@@ -102,13 +104,14 @@ restapimanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist ber
 restapimanager.resource=Seite: '{0}' für die Anwendung '{1}'  
 restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
 
+statuspagemanager.titel=Statuspagemanager:
 statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
 statuspagemanager.register=Der Status '{0}' wurde registriert und der Statusseite '{1}' zugewiesen.
 statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
 statuspagemanager.statuscodeless=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
 statuspagemanager.statuspage=Statuscode: '{0}'
 
-sitemapmanager..titel=Sitemap:
+sitemapmanager.titel=Sitemap:
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
 sitemapmanager.refresh=Die Sitemap wird neu aufgebaut.
 sitemapmanager.alreadyassigned=Der Knoten der Sitemap '{0}' ist bereits zugewiesen. Die Ressource '{1}' wird nicht in die Sitemap aufgenommen.
@@ -119,10 +122,12 @@ sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gem
 
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
 
+eventmanager.titel=Eventmanager:
 eventmanager.initialization=Der Eventmanager wurde initialisiert.
 eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiesen und im Eventmanager registriert.
 eventmanager.duplicate=Der Eventhandler '{0}' wurde bereits in der Anwendung '{1}' registriert.
 eventmanager.eventless=Der Eventhandler '{0}' besitzt keine Angaben zu einem Event.
+eventmanager.handler=Eventhandler: '{0}' für die Anwendung '{1}'.
 
 jobmanager.initialization=Der Jobmanager wurde initialisiert.
 jobmanager.register=Der Job '{0}' wurde der Anwendung '{1}' zugewiesen und im Jobmanager registriert.
@@ -150,4 +155,3 @@ identitymanager.duplicaterole=Die Rolle '{0}' wurde bereits in der Anwendung '{1
 
 resource.variable.duplicate=Variable '{0}' bereits vorhanden!
 resource.file={0}: Datei '{1}' wurde geladen.
-

@@ -8,6 +8,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -476,18 +477,26 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         private void Log()
         {
-            //foreach (var statusCode in _dictionary.GetStatusPageContexts(pluginContext).Select(x => x.StatusCode))
-            //{
-            //    output.Add
-            //    (
-            //        string.Empty.PadRight(4) +
-            //        I18N.Translate
-            //        (
-            //            "webexpress.webcore:statuspagemanager.statuspage",
-            //            statusCode
-            //        )
-            //    );
-            //}
+            if (!StatusPages.Any())
+            {
+                return;
+            }
+
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
+                I18N.Translate("webexpress.webcore:statuspagemanager.titel")
+            };
+
+            foreach (var statusPage in StatusPages)
+            {
+                list.Add
+                (
+                    I18N.Translate("webexpress.webcore:statuspagemanager.statuspage", statusPage.StatusCode)
+                );
+            }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

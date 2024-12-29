@@ -6,6 +6,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEvent.Model;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebEvent
@@ -139,7 +140,7 @@ namespace WebExpress.WebCore.WebEvent
         /// Registers resources for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="applicationContext">The application context (optional).</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;
@@ -225,6 +226,8 @@ namespace WebExpress.WebCore.WebEvent
                     }
                 }
             }
+
+            Log();
         }
 
         /// <summary>
@@ -332,26 +335,30 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the event.
+        /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
-            //foreach (var scheduleItem in GetScheduleItems(pluginContext))
-            //{
-            //    output.Add
-            //    (
-            //        string.Empty.PadRight(deep) +
-            //        I18N.Translate
-            //        (
-            //            "webexpress.webcore:eventmanager.job",
-            //            scheduleItem.JobId,
-            //            scheduleItem.ModuleContext
-            //        )
-            //    );
-            //}
+            if (!EventHandlers.Any())
+            {
+                return;
+            }
+
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
+                I18N.Translate("webexpress.webcore:eventmanager.titel")
+            };
+
+            foreach (var eventHandlerContext in EventHandlers)
+            {
+                list.Add
+                (
+                    I18N.Translate("webexpress.webcore:eventmanager.handler", eventHandlerContext.EventId, eventHandlerContext.ApplicationContext?.ApplicationId)
+                );
+            }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

@@ -46,6 +46,7 @@ logmanager.titel:Log manager
 internationalizationmanager.initialization=The internationalization manager has been initialized.
 internationalizationmanager.register=The plugin '{0}' is registered in the internationalization manager.
 
+packagemanager.titel=Package manager:
 packagemanager.initialization=The package manager has been initialized.
 packagemanager.existing=The package '{0}' is registered in the catalog.
 packagemanager.add=Package '{0}' is added to the catalog.
@@ -54,6 +55,7 @@ packagemanager.scan=The directory '{0}' is scanned for new packages.
 packagemanager.save=The catalog is saved.
 packagemanager.packagenotfound=The package '{0}' was not found in the file system.
 packagemanager.boot.notfound=The plugin '{0}' is unknown.
+packagemanager.package=Package: '{0}'
 
 pluginmanager.initialization=The plugin manager has been initialized.
 pluginmanager.load={0}.dll is loading. Version = '{1}'
@@ -102,6 +104,7 @@ restapimanager.addresource.duplicate=The REST API '{0}' of application '{1}' has
 restapimanager.resource=REST API: '{0}' for application '{1}'
 restapimanager.methodnotsupported=The method '{0}' is not supported.
 
+statuspagemanager.titel=Status page manager:
 statuspagemanager.initialization=The status page manager has been initialized.
 statuspagemanager.register=The status '{0}' has been registered and assigned to the status page '{1}'.
 statuspagemanager.duplicat=The status '{0}' has already been registered. Therefore, the status page '{1}' is not used.
@@ -119,10 +122,12 @@ sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
 
 sessionmanager.initialization=The session manager has been initialized.
 
+eventmanager.titel=Event manager:
 eventmanager.initialization=The event manager has been initialized.
 eventmanager.register=The event handler '{0}' has been registered in the application '{1}'.
 eventmanager.duplicate=The event handler '{0}' has already been registered. Therefore, the application '{1}' is not used.
 eventmanager.eventless=The event handler '{0}' does not have any information about the event.
+eventmanager.handler=Event handler: '{0}' for application '{1}'.
 
 jobmanager.initialization=The schedule manager has been initialized.
 jobmanager.register=The job '{0}' has been registered in the application '{1}'.

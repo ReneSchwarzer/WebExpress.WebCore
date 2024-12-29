@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebSession
@@ -73,16 +71,6 @@ namespace WebExpress.WebCore.WebSession
             }
 
             return session;
-        }
-
-        /// <summary>
-        /// Collects and prepares information about the component for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
         }
 
         /// <summary>

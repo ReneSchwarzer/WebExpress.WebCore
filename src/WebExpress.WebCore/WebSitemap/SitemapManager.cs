@@ -447,6 +447,11 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         private void Log()
         {
+            if (!SiteMap.Any())
+            {
+                return;
+            }
+
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>
             {

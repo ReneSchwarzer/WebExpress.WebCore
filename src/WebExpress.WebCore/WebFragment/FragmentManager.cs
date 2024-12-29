@@ -505,6 +505,10 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         private void Log()
         {
+            if (!Fragments.Any())
+            {
+                return;
+            }
 
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>

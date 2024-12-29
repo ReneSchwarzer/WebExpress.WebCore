@@ -402,6 +402,11 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         private void Log()
         {
+            if (!Applications.Any())
+            {
+                return;
+            }
+
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var list = new List<string>
             {

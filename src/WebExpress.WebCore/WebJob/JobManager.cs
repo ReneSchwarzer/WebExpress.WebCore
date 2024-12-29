@@ -425,29 +425,6 @@ namespace WebExpress.WebCore.WebJob
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
-            foreach (var scheduleItem in Jobs.Where(x => x.PluginContext == pluginContext))
-            {
-                output.Add
-                (
-                    string.Empty.PadRight(deep) +
-                    I18N.Translate
-                    (
-                        "webexpress.webcore:jobmanager.job",
-                        scheduleItem.JobId,
-                        scheduleItem.ApplicationContext
-                    )
-                );
-            }
-        }
-
-        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()
