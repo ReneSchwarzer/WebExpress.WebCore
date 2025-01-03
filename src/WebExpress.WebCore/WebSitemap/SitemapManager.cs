@@ -198,6 +198,24 @@ namespace WebExpress.WebCore.WebSitemap
         }
 
         /// <summary>
+        /// Retrieves the endpoint context associated with the given URI.
+        /// </summary>
+        /// <param name="uri">The URI resource to search for.</param>
+        /// <returns>The endpoint context if found, otherwise null.</returns>
+        public IEndpointContext GetEndpoint(UriResource uri)
+        {
+            var variables = new Dictionary<string, string>();
+            var result = SearchNode
+            (
+                _root,
+                new Queue<string>(uri.PathSegments.Select(x => x.ToString())),
+                new Queue<IUriPathSegment>(),
+                new SearchContext()
+            );
+            return result?.EndpointContext;
+        }
+
+        /// <summary>
         /// Creates the sitemap. Works recursively.
         /// It is important for the algorithm that the addition of application is sorted 
         /// by the number of path segments in ascending order.
