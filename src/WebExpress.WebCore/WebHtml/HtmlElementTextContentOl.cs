@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace WebExpress.WebCore.WebHtml
@@ -12,7 +13,9 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<HtmlElementTextContentLi> Elements { get; set; }
+        public new IEnumerable<HtmlElementTextContentLi> Elements => base.Elements
+            .Where(x => x is HtmlElementTextContentLi)
+            .Select(x => x as HtmlElementTextContentLi);
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -20,7 +23,6 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementTextContentOl()
             : base("ol")
         {
-            Elements = new List<HtmlElementTextContentLi>();
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementTextContentOl(params HtmlElementTextContentLi[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>
@@ -40,9 +42,6 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="deep">The call depth.</param>
         public override void ToString(StringBuilder builder, int deep)
         {
-            //base.Elements.Clear();
-            //base.Elements.AddRange(Elements);
-
             base.ToString(builder, deep);
         }
     }
