@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebSettingPage.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -286,6 +287,11 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
                     }
+                }
+
+                if (settingPageType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
+                {
+                    scopes.Add(settingPageType);
                 }
 
                 // assign the fragment to existing applications

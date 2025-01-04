@@ -5,7 +5,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Indicates that a page or component can be reused
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class CacheAttribute : System.Attribute, IEndpointAttribute
     {
         /// <summary>

@@ -105,9 +105,13 @@ namespace WebExpress.WebCore.WebFragment
         /// Converts the fragments to HTML for a given section within the specified render context.
         /// </summary>
         /// <typeparam name="TRenderContext">The type of the render context.</typeparam>
+        /// <typeparam name="TVisualTree">The type of the visual tree.</typeparam>
         /// <param name="renderContext">The context in which rendering occurs.</param>
+        /// <param name="visualTree">The visual tree used for rendering.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
         /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
-        IEnumerable<IHtmlNode> Render<TRenderContext>(TRenderContext renderContext, Type section) where TRenderContext : IRenderContext;
+        IEnumerable<IHtmlNode> Render<TRenderContext, TVisualTree>(TRenderContext renderContext, TVisualTree visualTree, Type section)
+            where TRenderContext : IRenderContext
+            where TVisualTree : IVisualTree;
     }
 }

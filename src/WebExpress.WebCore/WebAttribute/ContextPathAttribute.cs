@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebAttribute
 {
+    /// <summary>
+    /// Attribute to define the context path for an application or endpoint.
+    /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
     public class ContextPathAttribute : Attribute, IApplicationAttribute, IEndpointAttribute
     {

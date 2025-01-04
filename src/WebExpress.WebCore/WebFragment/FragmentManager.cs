@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.WebFragment
 
             foreach (var fragmentType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IFragment<>).Name) != null))
+                .Where(x => x.GetInterface(typeof(IFragment<,>).Name) != null))
             {
                 var id = fragmentType.FullName?.ToLower();
                 var scopes = new List<Type>();
@@ -482,10 +482,14 @@ namespace WebExpress.WebCore.WebFragment
         /// Converts the fragments to HTML for a given section within the specified render context.
         /// </summary>
         /// <typeparam name="TRenderContext">The type of the render context.</typeparam>
+        /// <typeparam name="TVisualTree">The type of the visual tree.</typeparam>
         /// <param name="renderContext">The context in which rendering occurs.</param>
+        /// <param name="visualTree">The visual tree used for rendering.</param>
         /// <param name="section">The section where the fragment is embedded.</param>
         /// <returns>An enumeration of HTML nodes representing the rendered fragments.</returns>
-        public IEnumerable<IHtmlNode> Render<TRenderContext>(TRenderContext renderContext, Type section) where TRenderContext : IRenderContext
+        public IEnumerable<IHtmlNode> Render<TRenderContext, TVisualTree>(TRenderContext renderContext, TVisualTree visualTree, Type section)
+            where TRenderContext : IRenderContext
+            where TVisualTree : IVisualTree
         {
             var scopes = renderContext?.PageContext?.Scopes ?? [typeof(IScope)];
 
@@ -499,7 +503,7 @@ namespace WebExpress.WebCore.WebFragment
                 .SelectMany(x => x.Value)
                 .OrderBy(x => x.Order);
 
-            return items.Select(x => x.Render(renderContext));
+            return items.Select(x => x.Render(renderContext, visualTree));
         }
 
         /// <summary>

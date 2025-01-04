@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to specify the section where the settings page is listed.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SettingSectionAttribute : Attribute, IEndpointAttribute
     {
         /// <summary>

@@ -1,8 +1,11 @@
-﻿namespace WebExpress.WebCore.WebAttribute
+﻿using System;
+
+namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
     /// Attribute used to identify a class as a plugin component.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class OrderAttribute : System.Attribute, IFragmentAttribute
     {
         /// <summary>

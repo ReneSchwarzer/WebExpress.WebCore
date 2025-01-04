@@ -5,7 +5,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to specify the context in which the settings page is associated.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SettingContextAttribute : Attribute, IEndpointAttribute
     {
         /// <summary>

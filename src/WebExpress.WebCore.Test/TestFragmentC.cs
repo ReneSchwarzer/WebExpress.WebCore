@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.Test
     [Section<TestSectionA>()]
     [Scope<TestScopeC>]
     [Order(0)]
-    public sealed class TestFragmentC : IFragment<TestRenderContext>
+    public sealed class TestFragmentC : IFragment<TestRenderContext, TestVisualTree>
     {
         /// <summary>
         /// Initialization of the fragment. Here, for example, managed resources can be loaded. 
@@ -37,8 +37,9 @@ namespace WebExpress.WebCore.Test
         /// Processes the fragments in the specified render context.
         /// </summary>
         /// <param name="renderContext">The context in which rendering occurs.</param>
+        /// <param name="visualTree">The visual tree used for rendering the fragment.</param>
         /// <returns>An HTML node representing the rendered fragments.</returns>
-        public IHtmlNode Render(TestRenderContext renderContext)
+        public IHtmlNode Render(TestRenderContext renderContext, TestVisualTree visualTree)
         {
             return new HtmlText("TestFragmentC");
         }

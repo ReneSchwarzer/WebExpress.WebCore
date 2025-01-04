@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         {
             var type = fragmentItem.FragmentClass;
 
-            if (type.GetInterface(typeof(IFragment<>).Name) == null)
+            if (type.GetInterface(typeof(IFragment<,>).Name) == null)
             {
                 return false;
             }
@@ -125,7 +125,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>An IEnumerable of fragment items</returns>
         public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type fragmentType)
         {
-            if (!typeof(IFragment<>).IsAssignableFrom(fragmentType))
+            if (!typeof(IFragment<,>).IsAssignableFrom(fragmentType))
             {
                 return [];
             }

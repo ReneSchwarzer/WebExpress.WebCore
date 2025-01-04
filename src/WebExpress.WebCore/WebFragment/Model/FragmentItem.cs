@@ -97,9 +97,14 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <summary>
         /// Processes the fragments for a given section within the specified render context.
         /// </summary>
+        /// <typeparam name="TRenderContext">The type of the render context.</typeparam>
+        /// <typeparam name="TVisualTree">The type of the visual tree.</typeparam>
         /// <param name="renderContext">The context in which rendering occurs.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
         /// <returns>An HTML node representing the rendered fragments. Can be null if no nodes are present.</returns>
-        public IHtmlNode Render<T>(T renderContext) where T : IRenderContext
+        public IHtmlNode Render<TRenderContext, TVisualTree>(TRenderContext renderContext, TVisualTree visualTree)
+            where TRenderContext : IRenderContext
+            where TVisualTree : IVisualTree
         {
             var instance = CreateInstance<IFragmentBase>();
 
@@ -108,16 +113,19 @@ namespace WebExpress.WebCore.WebFragment.Model
                 if (!_delegateCache.TryGetValue(FragmentClass, out var del))
                 {
                     // create and compile the expression
-                    var renderContextType = FragmentClass.GetInterface(typeof(IFragment<>).Name).GetGenericArguments()[0];
+                    var renderContextType = FragmentClass.GetInterface(typeof(IFragment<,>).Name).GetGenericArguments()[0];
+                    var visualTreeType = FragmentClass.GetInterface(typeof(IFragment<,>).Name).GetGenericArguments()[1];
                     var renderContextParam = Expression.Parameter(renderContextType, "renderContext");
-                    var renderMethod = FragmentClass.GetMethod("Render", [renderContextType]);
+                    var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
+                    var renderMethod = FragmentClass.GetMethod("Render", [renderContextType, visualTreeType]);
                     var callProzessMethod = Expression.Call
                     (
                         Expression.Constant(instance),
                         renderMethod,
-                        renderContextParam
+                        renderContextParam,
+                        visualTreeParam
                     );
-                    var lambda = Expression.Lambda(callProzessMethod, renderContextParam)
+                    var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
                         .Compile();
 
                     _delegateCache[FragmentClass] = lambda;
@@ -125,7 +133,7 @@ namespace WebExpress.WebCore.WebFragment.Model
                 }
 
                 // execute the cached delegate
-                var html = del.DynamicInvoke(renderContext) as IHtmlNode;
+                var html = del.DynamicInvoke(renderContext, visualTree) as IHtmlNode;
 
                 return html;
             }
@@ -138,7 +146,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// </summary>
         /// <param name="renderContext">The context in which checking occurs.</param>
         /// <returns>True if the fragment is active, false otherwise.</returns>
-        private bool CheckControl<T>(T renderContext) where T : IRenderContext
+        private bool CheckControl<TRenderContext>(TRenderContext renderContext) where TRenderContext : IRenderContext
         {
             return FragmentContext.Conditions.Count == 0 || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
         }
