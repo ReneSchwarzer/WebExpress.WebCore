@@ -39,6 +39,7 @@ componentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' n
 componentmanager.duplicate=Die Komponente '{0}' wurde bereits registriert.
 componentmanager.remove=Die Komponente '{0}' wurde entfernt.
 componentmanager.component=Komponenten:
+componentmanager.name=Komponente: '{0}'
 
 logmanager.initialization=Der Logmanager wurde initialisiert.
 logmanager.titel=Logmanager
@@ -93,6 +94,9 @@ resourcemanager.sitemap=Inhalt der Sitemap für die Anwendung '{0}':
 resourcemanager.wrongtype=Der Type '{0}' implementiert die Schnittstelle '{1}' nicht.
 resourcemanager.resource=Ressource: '{0}' für die Anwednung '{1}'
 
+assetmanager.initialization=Der Assetmanager wurde initialisiert.
+assetmanager.addresource=Das Asset '{0}' wurde in der Anwendung '{1}' registiert.
+
 pagemanager.initialization=Der Pagemanager wurde initialisiert.  
 pagemanager.addresource=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
 pagemanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.  
@@ -145,7 +149,7 @@ fragmentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' ni
 fragmentmanager.moduleless=Das Fragment '{0}' aus dem Plugin '{1}' besitzt keine Angaben zum Modul.
 fragmentmanager.addfragment.duplicate=Das Fragment '{0}' aus dem Plugin '{1}' ist bereits hinzugefügt worden.
 fragmentmanager.titel=Fragmente:
-fragmentmanager.fragment={0}
+fragmentmanager.fragment=Fragment: '{0}'
 
 identitymanager.initialization=Der Identitymanager wurde initialisiert.
 identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.

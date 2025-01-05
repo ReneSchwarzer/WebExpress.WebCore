@@ -417,6 +417,7 @@ namespace WebExpress.WebCore.WebApplication
             {
                 list.Add
                 (
+                    string.Empty.PadRight(2) +
                     I18N.Translate("webexpress.webcore:applicationmanager.application", applicationContext.ApplicationId)
                 );
             }

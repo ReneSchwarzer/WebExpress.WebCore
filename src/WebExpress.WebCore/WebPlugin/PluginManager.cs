@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebPlugin
                         _dictionary.Add(id, new PluginItem()
                         {
                             PluginLoadContext = loadContext,
-                            PluginClass = typeof(IPlugin),
+                            PluginClass = assembly.ExportedTypes.FirstOrDefault() ?? typeof(IPlugin),
                             PluginContext = pluginContext,
                             Plugin = null,
                             Dependencies = null,
@@ -608,7 +608,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Raises the AddPlugin event.
         /// </summary>
-        /// <param name="component">The plugin context.</param>
+        /// <param name="pluginContext">The plugin context.</param>
         private void OnAddPlugin(IPluginContext pluginContext)
         {
             AddPlugin?.Invoke(this, pluginContext);
@@ -617,7 +617,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Raises the RemovePlugin event.
         /// </summary>
-        /// <param name="component">The plugin context.</param>
+        /// <param name="pluginContext">The plugin context.</param>
         private void OnRemovePlugin(IPluginContext pluginContext)
         {
             RemovePlugin?.Invoke(this, pluginContext);
@@ -644,7 +644,7 @@ namespace WebExpress.WebCore.WebPlugin
                     x => x.Value.PluginClass.Assembly
                         .GetCustomAttribute<SystemPluginAttribute>() != null
                 )
-                .Select(x => I18N.Translate
+                .Select(x => string.Empty.PadRight(2) + I18N.Translate
                 (
                     "webexpress.webcore:pluginmanager.pluginmanager.system",
                     x.Key
@@ -657,7 +657,7 @@ namespace WebExpress.WebCore.WebPlugin
                     x => x.Value.PluginClass.Assembly
                         .GetCustomAttribute<SystemPluginAttribute>() == null
                 )
-                .Select(x => I18N.Translate
+                .Select(x => string.Empty.PadRight(2) + I18N.Translate
                 (
                     "webexpress.webcore:pluginmanager.pluginmanager.custom",
                     x.Key
@@ -665,7 +665,7 @@ namespace WebExpress.WebCore.WebPlugin
             );
 
             list.AddRange(_unfulfilledDependencies
-                .Select(x => I18N.Translate
+                .Select(x => string.Empty.PadRight(2) + I18N.Translate
                 (
                     "webexpress.webcore:pluginmanager.pluginmanager.unfulfilleddependencies",
                     x.Key

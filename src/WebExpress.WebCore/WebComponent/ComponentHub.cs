@@ -50,6 +50,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly JobManager _jobManager;
         private readonly TaskManager _taskManager;
         private readonly IdentityManager _identityManager;
+        private int _lastCounter = 0;
 
         /// <summary>
         /// An event that fires when an component is added.
@@ -341,7 +342,7 @@ namespace WebExpress.WebCore.WebComponent
 
                 if (!componentItems.Where(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)).Any())
                 {
-                    componentItems = componentItems.Concat([ new ComponentItem()
+                    _dictionary[pluginContext] = componentItems.Concat([ new ComponentItem()
                     {
                         ComponentClass = type,
                         ComponentId = id,
@@ -364,18 +365,8 @@ namespace WebExpress.WebCore.WebComponent
                     );
                 }
             }
-        }
 
-        /// <summary>
-        /// Discovers and registers the components from the specified plugins.
-        /// </summary>
-        /// <param name="pluginContexts">A list with plugin contexts that contain the components.</param>
-        public void Register(IEnumerable<IPluginContext> pluginContexts)
-        {
-            foreach (var pluinContext in pluginContexts)
-            {
-                Register(pluinContext);
-            }
+            Log();
         }
 
         /// <summary>
@@ -504,22 +495,28 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         private void Log()
         {
+            if (_lastCounter == Managers.Count())
+            {
+                return;
+            }
+
             using var frame = new LogFrameSimple(_httpServerContext.Log);
             var output = new List<string>
             {
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.component")
             };
 
-            foreach (var pluginContext in PluginManager.Plugins)
+            foreach (var manager in Managers)
             {
                 output.Add
                 (
                    string.Empty.PadRight(2) +
-                   _internationalizationManager.Translate("webexpress.webcore:pluginmanager.plugin", pluginContext.PluginId)
+                   _internationalizationManager.Translate("webexpress.webcore:componentmanager.name", manager.GetType()?.Name.ToLower())
                 );
             }
 
             _httpServerContext.Log.Info(string.Join(Environment.NewLine, output));
+            _lastCounter = Managers.Count();
         }
 
         /// <summary>

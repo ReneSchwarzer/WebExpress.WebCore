@@ -39,6 +39,7 @@ componentmanager.wrongtype=The type '{0}' does not implement the interface '{1}'
 componentmanager.duplicate=The component '{0}' has already been registered.
 componentmanager.remove=The component '{0}' has been removed.
 componentmanager.component=Components:
+componentmanager.name=Component: '{0}'
 
 logmanager.initialization:The log manager has been initialized.
 logmanager.titel:Log manager
@@ -93,6 +94,9 @@ resourcemanager.sitemap=Sitemap content resource '{0}' application:
 resourcemanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
 resourcemanager.resource=Resource: '{0}' for application '{1}'
 
+assetmanager.initialization=The asset manager has been initialized.
+assetmanager.addresource=The asset '{0}' has been registered in the application '{1}'.
+
 pagemanager.initialization=The page manager has been initialized.
 pagemanager.addresource=The page '{0}' has been registered in the application '{1}'.
 pagemanager.addresource.duplicate=The page '{0}' of application '{1}' has already been added.
@@ -145,7 +149,7 @@ fragmentmanager.wrongtype=The type '{0}' does not implement the interface '{1}'.
 fragmentmanager.moduleless=The fragment '{0}' from the plugin '{1}' has no information about the module.
 fragmentmanager.addfragment.duplicate=The fragment '{0}' from the plugin '{1}' has already been added.
 fragmentmanager.titel=Fragments:
-fragmentmanager.fragment={0}
+fragmentmanager.fragment=Fragment: '{0}'
 
 identitymanager.initialization=The identity manager has been initialized.
 identitymanager.registerpermission=The permission '{0}' has been assigned to the application '{1}' and registered in the identity manager.

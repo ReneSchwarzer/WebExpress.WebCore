@@ -521,9 +521,13 @@ namespace WebExpress.WebCore.WebFragment
             {
                 I18N.Translate("webexpress.webcore:fragmentmanager.titel")
             };
-            foreach (var fragment in Fragments)
+            foreach (var fragment in Fragments.Distinct())
             {
-                list.Add(I18N.Translate("webexpress.webcore:fragmentmanager.fragment", fragment.FragmentId.ToString()));
+                list.Add
+                (
+                    string.Empty.PadRight(2) +
+                    I18N.Translate("webexpress.webcore:fragmentmanager.fragment", fragment.FragmentId.ToString())
+                );
             }
 
             _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
