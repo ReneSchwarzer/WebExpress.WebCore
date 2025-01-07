@@ -6,6 +6,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 
@@ -108,7 +109,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         {
             var instance = CreateInstance<IFragmentBase>();
 
-            if (CheckControl(renderContext))
+            if (CheckConditions(renderContext?.Request))
             {
                 if (!_delegateCache.TryGetValue(FragmentClass, out var del))
                 {
@@ -144,13 +145,12 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <summary>
         /// Checks the component to see if they are displayed or disabled.
         /// </summary>
-        /// <param name="renderContext">The context in which checking occurs.</param>
+        /// <param name="request">The request.</param>
         /// <returns>True if the fragment is active, false otherwise.</returns>
-        private bool CheckControl<TRenderContext>(TRenderContext renderContext) where TRenderContext : IRenderContext
+        public bool CheckConditions(Request request)
         {
-            return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
-        }
-
+            return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(request));
+        }
         /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
         /// </summary>
