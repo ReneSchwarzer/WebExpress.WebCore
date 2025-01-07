@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(12, componentHub.FragmentManager.Fragments.Count());
+            Assert.Equal(15, componentHub.FragmentManager.Fragments.Count());
         }
 
         /// <summary>
@@ -113,11 +113,12 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the process function of the fragment.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA))]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeB))]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB))]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(IScope))]
-        public void Process(Type applicationType, Type sectionType, Type scopeType)
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA), false)]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeB), false)]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB), false)]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(IScope), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeD), true)]
+        public void Process(Type applicationType, Type sectionType, Type scopeType, bool empty)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -129,7 +130,15 @@ namespace WebExpress.WebCore.Test.Manager
             var html = componentHub.FragmentManager.Render<IRenderContext, IVisualTree>(renderContext, visualTree, sectionType);
 
             Assert.NotNull(html);
-            Assert.NotEmpty(html.ToString());
+
+            if (!empty)
+            {
+                Assert.NotEmpty(html.FirstOrDefault()?.ToString());
+            }
+            else
+            {
+                Assert.Null(html.FirstOrDefault());
+            }
         }
     }
 }

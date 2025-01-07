@@ -148,7 +148,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>True if the fragment is active, false otherwise.</returns>
         private bool CheckControl<TRenderContext>(TRenderContext renderContext) where TRenderContext : IRenderContext
         {
-            return FragmentContext.Conditions.Count == 0 || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
+            return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(renderContext?.Request));
         }
 
         /// <summary>

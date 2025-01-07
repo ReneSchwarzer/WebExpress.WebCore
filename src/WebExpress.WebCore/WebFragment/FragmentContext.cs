@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Returns the conditions that must be met for the component to be active.
         /// </summary>
-        public ICollection<ICondition> Conditions { get; internal set; } = [];
+        public IEnumerable<ICondition> Conditions { get; internal set; } = [];
 
         /// <summary>
         /// Determines whether the component is created once and reused on each execution.

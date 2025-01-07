@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Returns the conditions that must be met for the component to be active.
         /// </summary>
-        ICollection<ICondition> Conditions { get; }
+        IEnumerable<ICondition> Conditions { get; }
 
         /// <summary>
         /// Returns the section.
