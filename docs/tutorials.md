@@ -8,6 +8,8 @@ our tutorials offer something for everyone.
 # Getting Started
 Begin with our basic tutorial:
 - [HelloWorld](https://github.com/ReneSchwarzer/WebExpress.Tutorial.HelloWorld#readme)
+- [WebApp](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebApp#readme)
+- [WebIndex](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebIndex#readme)
 
 This tutorial will guide you through the initial steps of creating and running your first `WebExpress` application.
 

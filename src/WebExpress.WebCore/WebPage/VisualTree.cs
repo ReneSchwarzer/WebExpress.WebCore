@@ -108,7 +108,7 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
-        /// Convert to html.
+        /// Converts to an HTML representation.
         /// </summary>
         /// <param name="context">The context for rendering the visual tree.</param>
         /// <returns>The page as an html tree.</returns>

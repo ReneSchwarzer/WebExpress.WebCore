@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebPage
     public interface IVisualTree
     {
         /// <summary>
-        /// Convert to html.
+        /// Converts to an HTML representation.
         /// </summary>
         /// <param name="context">The context for rendering the visual tree.</param>
         /// <returns>The page as html.</returns>

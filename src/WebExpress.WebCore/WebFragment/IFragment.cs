@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebFragment
         where TVisualTree : IVisualTree
     {
         /// <summary>
-        /// Convert the fragment to HTML.
+        /// Converts the fragment to an HTML representation.
         /// </summary>
         /// <param name="renderContext">The context in which the fragment is rendered.</param>
         /// <param name="visualTree">The visual tree used for rendering the fragment.</param>
