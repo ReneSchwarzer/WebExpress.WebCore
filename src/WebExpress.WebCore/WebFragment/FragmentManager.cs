@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebFragment
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly FragmentDictionary _dictionary = [];
+        private readonly FragmentDictionary _dictionary = new();
 
         /// <summary>
         /// An event that fires when an fragment is added.
@@ -39,12 +39,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <summary>
         /// Returns the collection of fragment contexts.
         /// </summary>
-        public IEnumerable<IFragmentContext> Fragments => _dictionary.Values
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x)
-            .Select(x => x.FragmentContext);
+        public IEnumerable<IFragmentContext> Fragments => _dictionary.All;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -74,7 +69,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="pluginContext">The context of the plugin whose fragments are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.Contains(pluginContext))
             {
                 return;
             }
@@ -90,7 +85,7 @@ namespace WebExpress.WebCore.WebFragment
         {
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                if (_dictionary.Contains(pluginContext, applicationContext))
                 {
                     continue;
                 }
@@ -348,14 +343,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(Type fragmentType)
         {
-            return _dictionary.Values
-                .SelectMany(x => x)
-                .SelectMany(x => x.Value)
-                .SelectMany(x => x.Value)
-                .SelectMany(x => x.Value)
-                .Where(x => x.FragmentClass == fragmentType)
-                .OrderBy(x => x.Order)
-                .Select(x => x.FragmentContext);
+            return _dictionary.GetFragments(fragmentType);
         }
 
         /// <summary>
@@ -377,15 +365,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type fragmentType)
         {
-            return _dictionary.Values
-                .SelectMany(x => x)
-                .Where(x => x.Key == applicationContext)
-                .SelectMany(x => x.Value)
-                .SelectMany(x => x.Value)
-                .SelectMany(x => x.Value)
-                .Where(x => x.FragmentClass == fragmentType)
-                .OrderBy(x => x.Order)
-                .Select(x => x.FragmentContext);
+            return _dictionary.GetFragments(applicationContext, fragmentType);
         }
 
         /// <summary>
@@ -411,18 +391,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, Type scope)
         {
-            scope ??= typeof(IScope);
-
-            return _dictionary.Values
-                .SelectMany(x => x)
-                .Where(x => x.Key == applicationContext)
-                .SelectMany(x => x.Value)
-                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
-                .SelectMany(x => x.Value)
-                .Where(x => x.Key == scope)
-                .SelectMany(x => x.Value)
-                .OrderBy(x => x.Order)
-                .Select(x => x.FragmentContext);
+            return _dictionary.GetFragments(applicationContext, section, scope);
         }
 
         /// <summary>
@@ -439,22 +408,9 @@ namespace WebExpress.WebCore.WebFragment
         {
             var effectiveScopes = (scopes?.Any() == true) ? scopes : [typeof(IScope)];
 
-            foreach (var scope in effectiveScopes)
+            foreach (var item in _dictionary.GetFragmentItems(applicationContext, typeof(TFragment), typeof(TSection), effectiveScopes))
             {
-                foreach (var item in _dictionary.Values
-                    .SelectMany(x => x)
-                    .Where(x => x.Key == applicationContext)
-                    .SelectMany(x => x.Value)
-                    .Where(x => x.Key == typeof(TSection) || typeof(TSection).IsAssignableFrom(x.Key))
-                    .SelectMany(x => x.Value)
-                    .Where(x => x.Key == scope)
-                    .SelectMany(x => x.Value)
-                    .Where(x => x.FragmentClass == typeof(TFragment) || typeof(TFragment).IsAssignableFrom(x.FragmentClass))
-                    .OrderBy(x => x.Order)
-                )
-                {
-                    yield return item.CreateInstance<TFragment>();
-                }
+                yield return item.CreateInstance<TFragment>();
             }
         }
 
@@ -471,7 +427,7 @@ namespace WebExpress.WebCore.WebFragment
 
             foreach (var scope in effectiveScopes)
             {
-                foreach (var item in GetFragments(applicationContext, section, scope))
+                foreach (var item in GetFragments(applicationContext, section, effectiveScopes))
                 {
                     yield return item;
                 }
@@ -491,17 +447,9 @@ namespace WebExpress.WebCore.WebFragment
             where TRenderContext : IRenderContext
             where TVisualTree : IVisualTree
         {
+            var applicationContext = renderContext?.PageContext?.ApplicationContext;
             var scopes = renderContext?.PageContext?.Scopes ?? [typeof(IScope)];
-
-            var items = _dictionary.Values
-                .SelectMany(x => x)
-                .Where(x => x.Key == renderContext?.PageContext?.ApplicationContext)
-                .SelectMany(x => x.Value)
-                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
-                .SelectMany(x => x.Value)
-                .Where(x => scopes.Any(y => x.Key == y))
-                .SelectMany(x => x.Value)
-                .OrderBy(x => x.Order);
+            var items = _dictionary.GetFragmentItems(applicationContext, section, scopes);
 
             return items.Select(x => x.Render(renderContext, visualTree));
         }

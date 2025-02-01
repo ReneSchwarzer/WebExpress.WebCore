@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebScope;
 
 namespace WebExpress.WebCore.WebFragment.Model
 {
@@ -11,8 +12,20 @@ namespace WebExpress.WebCore.WebFragment.Model
     /// which in turn maps to a dictionary of section types and inner maps of scope types and lists of FragmentItem objects.
     /// Plugin -> Application -> Section -> Scope -> FragmentItem
     /// </summary>
-    internal class FragmentDictionary : Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, Dictionary<Type, List<FragmentItem>>>>>
+    internal class FragmentDictionary
     {
+        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, Dictionary<Type, List<FragmentItem>>>>> _dict = [];
+
+        /// <summary>
+        /// Returns all fragment contexts from the dictionary.
+        /// </summary>
+        public IEnumerable<IFragmentContext> All => _dict.Values
+            .SelectMany(x => x.Values)
+            .SelectMany(x => x.Values)
+            .SelectMany(x => x.Values)
+            .SelectMany(x => x)
+            .Select(x => x.FragmentContext);
+
         /// <summary>
         /// Adds a fragment item to the dictionary.
         /// </summary>
@@ -29,10 +42,10 @@ namespace WebExpress.WebCore.WebFragment.Model
                 return false;
             }
 
-            if (!TryGetValue(pluginContext, out var applicationDict))
+            if (!_dict.TryGetValue(pluginContext, out var applicationDict))
             {
                 applicationDict = [];
-                this[pluginContext] = applicationDict;
+                _dict[pluginContext] = applicationDict;
             }
 
             if (!applicationDict.TryGetValue(applicationContext, out var sectionDict))
@@ -60,7 +73,7 @@ namespace WebExpress.WebCore.WebFragment.Model
                 return true;
             }
 
-            return false; // item with the same fragment class already exists
+            return false;
         }
 
         /// <summary>
@@ -72,7 +85,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         {
             var fragments = GetFragments(pluginContext);
 
-            Remove(pluginContext);
+            _dict.Remove(pluginContext);
 
             return fragments;
         }
@@ -84,7 +97,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>An IEnumerable of fragment contexts that were removed.</returns>
         public IEnumerable<IFragmentContext> RemoveFragments(IApplicationContext applicationContext)
         {
-            foreach (var pluginKeyValue in this)
+            foreach (var pluginKeyValue in _dict)
             {
                 if (pluginKeyValue.Value.TryGetValue(applicationContext, out var sectionDict))
                 {
@@ -92,7 +105,7 @@ namespace WebExpress.WebCore.WebFragment.Model
 
                     if (pluginKeyValue.Value.Count == 0)
                     {
-                        Remove(pluginKeyValue.Key);
+                        _dict.Remove(pluginKeyValue.Key);
                     }
 
                     foreach (var item in sectionDict.Values
@@ -107,36 +120,45 @@ namespace WebExpress.WebCore.WebFragment.Model
         }
 
         /// <summary>
-        /// Returns the fragment items from the dictionary.
+        /// Returns all fragment contexts that belong to a given application.
         /// </summary>
-        /// <typeparam name="TFragment">The type of fragment.</typeparam>
         /// <param name="applicationContext">The application context.</param>
-        /// <returns>An IEnumerable of fragment items</returns>
-        public IEnumerable<FragmentItem> GetFragmentItems<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase
+        /// <param name="section">The section where the fragment is embedded.</param>
+        /// <param name="scopes">The scopes where the fragment is embedded.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type section, IEnumerable<Type> scopes)
         {
-            return GetFragmentItems(applicationContext, typeof(TFragment));
+            return _dict.Values
+                .SelectMany(x => x)
+                .Where(x => x.Key == applicationContext)
+                .SelectMany(x => x.Value)
+                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
+                .SelectMany(x => x.Value)
+                .Where(x => scopes.Any(y => x.Key == y))
+                .SelectMany(x => x.Value)
+                .OrderBy(x => x.Order);
         }
 
         /// <summary>
-        /// Returns the fragment items from the dictionary.
+        /// Returns all fragment items that belong to a given application context, fragment type, section, and scopes.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="fragmentType">The type of fragment.</typeparam>
-        /// <returns>An IEnumerable of fragment items</returns>
-        public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type fragmentType)
+        /// <param name="fragment">The type of fragment.</param>
+        /// <param name="section">The section where the fragment is embedded.</param>
+        /// <param name="scopes">The scopes where the fragment is embedded.</param>
+        /// <returns>An enumeration of the filtered fragment items.</returns>
+        public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type fragment, Type section, IEnumerable<Type> scopes)
         {
-            if (!typeof(IFragment<,>).IsAssignableFrom(fragmentType))
-            {
-                return [];
-            }
-
-            return Values
-                .Where(x => x.ContainsKey(applicationContext))
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x)
-                .Where(x => x.FragmentClass == fragmentType);
+            return _dict.Values
+                    .SelectMany(x => x)
+                    .Where(x => x.Key == applicationContext)
+                    .SelectMany(x => x.Value)
+                    .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
+                    .SelectMany(x => x.Value)
+                    .Where(x => scopes.Any(y => x.Key == y))
+                    .SelectMany(x => x.Value)
+                    .Where(x => x.FragmentClass == fragment || fragment.IsAssignableFrom(x.FragmentClass))
+                    .OrderBy(x => x.Order);
         }
 
         /// <summary>
@@ -146,12 +168,92 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <returns>An IEnumerable of fragment contexts.</returns>
         public IEnumerable<IFragmentContext> GetFragments(IPluginContext pluginContext)
         {
-            return this.Where(x => x.Key == pluginContext)
-                       .SelectMany(x => x.Value.Values)
-                       .SelectMany(x => x.Values)
-                       .SelectMany(x => x.Values)
-                       .SelectMany(x => x)
-                       .Select(x => x.FragmentContext);
+            return _dict.Where(x => x.Key == pluginContext)
+                .SelectMany(x => x.Value.Values)
+                .SelectMany(x => x.Values)
+                .SelectMany(x => x.Values)
+                .SelectMany(x => x)
+                .Select(x => x.FragmentContext);
+        }
+
+        /// <summary>
+        /// Returns all fragment contexts that belong to a given fragment type.
+        /// </summary>
+        /// <param name="fragmentType">The fragment type.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        public IEnumerable<IFragmentContext> GetFragments(Type fragmentType)
+        {
+            return _dict.Values
+                .SelectMany(x => x)
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .Where(x => x.FragmentClass == fragmentType)
+                .OrderBy(x => x.Order)
+                .Select(x => x.FragmentContext);
+        }
+
+        /// <summary>
+        /// Returns all fragment contexts that belong to a given fragment type.
+        /// </summary>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="fragmentType">The fragment type.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type fragmentType)
+        {
+            return _dict.Values
+                .SelectMany(x => x)
+                .Where(x => x.Key == applicationContext)
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .Where(x => x.FragmentClass == fragmentType)
+                .OrderBy(x => x.Order)
+                .Select(x => x.FragmentContext);
+        }
+
+        /// <summary>
+        /// Returns all fragment contexts that belong to a given application.
+        /// </summary>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="section">The section where the fragment is embedded.</param>
+        /// <param name="scope">The scope where the fragment is embedded.</param>
+        /// <returns>An enumeration of the filtered fragment contexts.</returns>
+        public IEnumerable<IFragmentContext> GetFragments(IApplicationContext applicationContext, Type section, Type scope)
+        {
+            scope ??= typeof(IScope);
+
+            return _dict.Values
+                .SelectMany(x => x)
+                .Where(x => x.Key == applicationContext)
+                .SelectMany(x => x.Value)
+                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
+                .SelectMany(x => x.Value)
+                .Where(x => x.Key == scope)
+                .SelectMany(x => x.Value)
+                .OrderBy(x => x.Order)
+                .Select(x => x.FragmentContext);
+        }
+
+        /// <summary>
+        /// Checks if the dictionary contains the specified plugin context.
+        /// </summary>
+        /// <param name="pluginContext">The plugin context to check for.</param>
+        /// <returns>True if the plugin context exists in the dictionary, otherwise false.</returns>
+        public bool Contains(IPluginContext pluginContext)
+        {
+            return _dict.ContainsKey(pluginContext);
+        }
+
+        /// <summary>
+        /// Checks if the dictionary contains the specified plugin context and application context.
+        /// </summary>
+        /// <param name="pluginContext">The plugin context to check for.</param>
+        /// <param name="applicationContext">The application context to check for.</param>
+        /// <returns>True if the plugin context and application context exist in the dictionary, otherwise false.</returns>
+        public bool Contains(IPluginContext pluginContext, IApplicationContext applicationContext)
+        {
+            return _dict.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext);
         }
     }
 }

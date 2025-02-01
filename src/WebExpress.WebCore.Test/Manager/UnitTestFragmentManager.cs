@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test the process function of the fragment.
+        /// Test the Render function of the fragment.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA), false)]
@@ -118,7 +118,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB), false)]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(IScope), true)]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeD), true)]
-        public void Process(Type applicationType, Type sectionType, Type scopeType, bool empty)
+        public void Render(Type applicationType, Type sectionType, Type scopeType, bool empty)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();

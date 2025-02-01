@@ -26,35 +26,35 @@ namespace WebExpress.WebCore.WebApplication
         IEnumerable<IApplicationContext> Applications { get; }
 
         /// <summary>
-        /// Determines the application contexts for a given application id.
+        /// Returns the application contexts for a given application id.
         /// </summary>
         /// <param name="applicationId">The application id.</param>
         /// <returns>The context of the application or null.</returns>
         IApplicationContext GetApplication(string applicationId);
 
         /// <summary>
-        /// Determines the application contexts for a given application id.
+        /// Returns the application contexts for a given application id.
         /// </summary>
         /// <typeparam name="T">The application type.</typeparam>
         /// <returns>The context of the application or null.</returns>
         IApplicationContext GetApplication<T>();
 
         /// <summary>
-        /// Determines the application contexts for the given application ids.
+        /// Returns the application contexts for the given application ids.
         /// </summary>
         /// <param name="applicationIds">The applications ids. Can contain regular expressions or * for all.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
         IEnumerable<IApplicationContext> GetApplications(IEnumerable<string> applicationIds);
 
         /// <summary>
-        /// Determines the application contexts for the given plugin.
+        /// Returns the application contexts for the given plugin.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>
         IEnumerable<IApplicationContext> GetApplications(IPluginContext pluginContext);
 
         /// <summary>
-        /// Determines the application contexts for a given application type.
+        /// Returns the application contexts for a given application type.
         /// </summary>
         /// <param name="application">The application type.</param>
         /// <returns>The contexts of the applications as an enumeration.</returns>

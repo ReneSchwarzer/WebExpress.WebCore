@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebPage
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly PageDictionary _dictionary = [];
+        private readonly PageDictionary _dictionary = new();
         private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
@@ -41,10 +41,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns all page contexts.
         /// </summary>
-        public IEnumerable<IPageContext> Pages => _dictionary.Values
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x.Values)
-            .Select(x => x.PageContext);
+        public IEnumerable<IPageContext> Pages => _dictionary.All;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -161,14 +158,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of page contexts.</returns>
         public IEnumerable<IPageContext> GetPages(IPluginContext pluginContext)
         {
-            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.Value.PageContext);
-            }
-
-            return [];
+            return _dictionary.GetPages(pluginContext);
         }
 
         /// <summary>
@@ -188,11 +178,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of page contextes.</returns>
         public IEnumerable<IPageContext> GetPages(Type pageType)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.PageClass.Equals(pageType))
-                .Select(x => x.PageContext);
+            return _dictionary.GetPages(pageType);
         }
 
         /// <summary>
@@ -203,12 +189,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of page contextes.</returns>
         public IEnumerable<IPageContext> GetPages(Type pageType, IApplicationContext applicationContext)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.PageClass.Equals(pageType))
-                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.PageContext);
+            return _dictionary.GetPages(pageType, applicationContext);
         }
 
         /// <summary>
@@ -219,12 +200,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An enumeration of page contextes.</returns>
         public IEnumerable<IPageContext> GetPages<T>(IApplicationContext applicationContext) where T : IPage
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.PageClass.Equals(typeof(T)))
-                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.PageContext);
+            return _dictionary.GetPages<T>(applicationContext);
         }
 
         /// <summary>
@@ -235,13 +211,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An page context or null.</returns>
         public IPageContext GetPage(IApplicationContext applicationContext, string pageId)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.PageContext.ApplicationContext.Equals(applicationContext))
-                .Where(x => x.PageContext.EndpointId.Equals(pageId))
-                .Select(x => x.PageContext)
-                .FirstOrDefault();
+            return _dictionary.GetPage(applicationContext, pageId);
         }
 
         /// <summary>
@@ -252,13 +222,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>An page context or null.</returns>
         public IPageContext GetPage(string applicationId, string pageId)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.PageContext.ApplicationContext.ApplicationId.Equals(applicationId))
-                .Where(x => x.PageContext.EndpointId.Equals(pageId))
-                .Select(x => x.PageContext)
-                .FirstOrDefault();
+            return _dictionary.GetPage(applicationId, pageId);
         }
 
         /// <summary>
@@ -268,10 +232,7 @@ namespace WebExpress.WebCore.WebPage
         /// <returns>The created or cached page.</returns>
         private IEndpoint CreatePageInstance(IPageContext pageContext)
         {
-            var resourceItem = _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .FirstOrDefault(x => x.PageContext.Equals(pageContext));
+            var resourceItem = _dictionary.GetPageItem(pageContext);
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
@@ -294,7 +255,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="pluginContext">The context of the plugin whose pages are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.Contains(pluginContext))
             {
                 return;
             }
@@ -310,7 +271,7 @@ namespace WebExpress.WebCore.WebPage
         {
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                if (_dictionary.Contains(pluginContext, applicationContext))
                 {
                     continue;
                 }
@@ -449,16 +410,9 @@ namespace WebExpress.WebCore.WebPage
             }
 
             // the plugin has not been registered in the manager
-            if (_dictionary.TryGetValue(pluginContext, out var value))
+            foreach (var pageContext in _dictionary.RemovePage(pluginContext))
             {
-                foreach (var resourceItem in value.Values
-                    .SelectMany(x => x.Values))
-                {
-                    OnRemovePage(resourceItem.PageContext);
-                    resourceItem.Dispose();
-                }
-
-                _dictionary.Remove(pluginContext);
+                OnRemovePage(pageContext);
             }
         }
 
@@ -473,18 +427,9 @@ namespace WebExpress.WebCore.WebPage
                 return;
             }
 
-            foreach (var pluginDict in _dictionary.Values)
+            foreach (var pageContext in _dictionary.RemovePage(applicationContext))
             {
-                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
-                {
-                    foreach (var resourceItem in appDict.Values)
-                    {
-                        OnRemovePage(resourceItem.PageContext);
-                        resourceItem.Dispose();
-                    }
-                }
-
-                pluginDict.Remove(applicationContext);
+                OnRemovePage(pageContext);
             }
         }
 

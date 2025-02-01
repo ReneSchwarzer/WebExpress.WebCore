@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -46,6 +47,7 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private AssetManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
@@ -229,23 +231,6 @@ namespace WebExpress.WebCore.WebAsset
         }
 
         /// <summary>
-        /// Returns an enumeration of all containing asset items of a plugin.
-        /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose resources are to be registered.</param>
-        /// <returns>An enumeration of resource items.</returns>
-        private IEnumerable<AssetItem> GetAssetItems(IPluginContext pluginContext)
-        {
-            if (_itemDictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x);
-            }
-
-            return [];
-        }
-
-        /// <summary>
         /// Returns an enumeration of all containing asset contexts of a plugin.
         /// </summary>
         /// <param name="pluginContext">A context of a plugin whose asset are to be registered.</param>
@@ -274,29 +259,6 @@ namespace WebExpress.WebCore.WebAsset
                 .SelectMany(x => x)
                 .Where(x => x.AssetContext.ApplicationContext.Equals(applicationContext))
                 .Select(x => x.AssetContext);
-        }
-
-        /// <summary>
-        /// Creates a new resource and returns it. If a resource already exists (through caching), the existing instance is returned.
-        /// </summary>
-        /// <param name="assetContext">The context used for asset creation.</param>
-        /// <returns>The created or cached resource.</returns>
-        private IAsset CreateAssetInstance(IAssetContext assetContext)
-        {
-            var resourceItem = _itemDictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x)
-                .FirstOrDefault(x => x.AssetContext.Equals(assetContext));
-
-            if (resourceItem != null && resourceItem.Instance == null)
-            {
-                var instance = ComponentActivator.CreateInstance<IAsset, IAssetContext>(resourceItem.AssetClass, assetContext, _httpServerContext, _componentHub);
-                resourceItem.Instance = instance;
-
-                return instance;
-            }
-
-            return resourceItem?.Instance as IAsset;
         }
 
         /// <summary>
