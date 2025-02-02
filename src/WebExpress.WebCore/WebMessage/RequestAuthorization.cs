@@ -1,11 +1,20 @@
 ﻿using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace WebExpress.WebCore.WebMessage
 {
-    public class RequestAuthorization
+    /// <summary>
+    /// Represents an authorization request containing type, identification, and password.
+    /// </summary>
+    public partial class RequestAuthorization
     {
+        /// <summary>
+        /// Returns a regular expression to match the authorization header.
+        /// </summary>
+        /// <returns>A <see cref="Regex"/> object for matching authorization headers.</returns>
+        [GeneratedRegex("^(.*) (.*)$")]
+        private static partial Regex AuthorizationRegex();
+
         /// <summary>
         /// Returns or sets the type.e (Basic bei WWW-Authenticate: Basic realm="RealmName")
         /// </summary>
@@ -33,7 +42,7 @@ namespace WebExpress.WebCore.WebMessage
                 return null;
             }
 
-            var m = Regex.Match(str, "^(.*) (.*)$");
+            var m = AuthorizationRegex().Match(str);
             var type = "Basic";
             var user = "";
             var password = "";
@@ -47,7 +56,7 @@ namespace WebExpress.WebCore.WebMessage
                 var split = userPw.Split(':');
 
                 user = split[0];
-                password = split.Count() > 0 ? split[1] : "";
+                password = split.Length > 0 ? split[1] : "";
             }
 
             return new RequestAuthorization()

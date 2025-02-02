@@ -105,17 +105,23 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name of the item.</param>
+        /// <param name="name">The name of the HTML element.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag. Default is true.</param>
         public HtmlElement(string name, bool closeTag = true)
         {
+
             ElementName = name;
+
             CloseTag = closeTag;
-        }
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name of the item.</param>
+        /// <param name="name">The name of the HTML element.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag.</param>
+        /// <param name="nodes">An array of IHtml nodes to be added to the element.</param>
         public HtmlElement(string name, bool closeTag, params IHtml[] nodes)
             : this(name, closeTag)
         {

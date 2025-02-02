@@ -5,6 +5,9 @@ using System.Xml.Serialization;
 
 namespace WebExpress.WebCore.WebPackage.Model
 {
+    /// <summary>
+    /// Represents a catalog of packages.
+    /// </summary>
     [XmlRoot("catalog")]
     public class PackageCatalog
     {
@@ -12,13 +15,13 @@ namespace WebExpress.WebCore.WebPackage.Model
         /// Returns the package entries in the catalog.
         /// </summary>
         [XmlElement("package")]
-        public List<PackageCatalogItem> Packages { get; } = new List<PackageCatalogItem>();
+        public List<PackageCatalogItem> Packages { get; } = [];
 
         /// <summary>
         /// Returns the system package entries in the catalog.
         /// </summary>
         [XmlIgnore]
-        public List<PackageCatalogItem> SystemPackages { get; } = new List<PackageCatalogItem>();
+        public List<PackageCatalogItem> SystemPackages { get; } = [];
 
         /// <summary>
         /// Locates a specific catalog item.

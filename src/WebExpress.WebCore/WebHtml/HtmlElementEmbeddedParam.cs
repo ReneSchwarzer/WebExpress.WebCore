@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Represents a parameter for a plugin that can be used for the display 
-    /// of an <object> embedded element.
+    /// of an object embedded element.
     /// </summary>
     public class HtmlElementEmbeddedParam : HtmlElement, IHtmlElementEmbedded
     {
@@ -12,7 +12,6 @@
         public HtmlElementEmbeddedParam()
             : base("param", false)
         {
-
         }
     }
 }

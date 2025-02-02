@@ -4,7 +4,7 @@ using System.Text;
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Used along with the element <ruby> to surround Ruby text with parentheses that 
+    /// Used along with the element ruby to surround Ruby text with parentheses that 
     /// appear when the user program (browser) does not support Ruby annotations.
     /// </summary>
     public class HtmlElementTextSemanticsRp : HtmlElement, IHtmlElementTextSemantics

@@ -4,12 +4,14 @@ using System.Text;
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a selection option within an <select>element, or a suggestion within an <datalist>element.
-    /// <select name="top5" size="5">
-    ///  <option>Michael Jackson</option>
-    ///  <option selected>Tom Waits</option>
-    /// </select>
+    /// Represents a selection option within an select element, or a suggestion within an datalist element.
     /// </summary>
+    /// <code>
+    /// <select name="top5" size="5">
+    ///   <option>Michael Jackson</option>
+    ///   <option selected="">Tom Waits</option>
+    /// </select>
+    /// </code>
     public class HtmlElementFormOption : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>

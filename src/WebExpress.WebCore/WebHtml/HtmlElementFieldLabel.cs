@@ -5,9 +5,11 @@ namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents the label for a form control element (e.g. text input fields).
-    /// <label for="firstname">First name:</label> 
-    /// <input type="text" name="firstname" id="firstname" maxlength="30">
     /// </summary>
+    /// <code>
+    /// <label for="firstname">First name:</label> 
+    /// <input type="text" name="firstname" id="firstname" maxlength="30"/>
+    /// </code>
     public class HtmlElementFieldLabel : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>

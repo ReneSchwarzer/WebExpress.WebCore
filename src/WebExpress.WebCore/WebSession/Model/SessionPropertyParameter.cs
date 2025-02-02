@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebSession.Model
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="params">The parameters</param>
+        /// <param name="parameters">The parameters.</param>
         public SessionPropertyParameter(params Parameter[] parameters)
         {
             foreach (var param in parameters)

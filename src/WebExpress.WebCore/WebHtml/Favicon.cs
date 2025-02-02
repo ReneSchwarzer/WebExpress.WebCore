@@ -1,5 +1,8 @@
 ﻿namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents a favicon with a URL and media type.
+    /// </summary>
     public class Favicon
     {
         /// <summary>
@@ -27,7 +30,6 @@
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
-        /// <param name="mediatype">The media type.</param>
         public Favicon(string url)
         {
             Url = url;

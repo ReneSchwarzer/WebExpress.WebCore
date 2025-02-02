@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a summary or legend for a specific <details>element.
+    /// Represents a summary or legend for a specific details element.
     /// </summary>
     public class HtmlElementInteractiveSummary : HtmlElement, IHtmlElementInteractive
     {

@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns a plugin context based on its id.
         /// </summary>
-        /// <param name="pluginId">The type of the plugin.</param>
+        /// <param name="plugin">The type of the plugin.</param>
         /// <returns>The plugin context.</returns>
         IPluginContext GetPlugin(Type plugin);
 

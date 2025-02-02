@@ -66,9 +66,10 @@ namespace WebExpress.WebCore.WebJob.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemoveScheduleItem<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IEvent
+        public void RemoveScheduleItem<TEvent>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TEvent : IEvent
         {
-            var type = typeof(T);
+            var type = typeof(TEvent);
 
             if (ContainsKey(pluginContext))
             {
@@ -99,19 +100,20 @@ namespace WebExpress.WebCore.WebJob.Model
         /// <summary>
         /// Returns the schedule items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TJob">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of schedule items</returns>
-        public IEnumerable<ScheduleItem> GetScheduleItems<T>(IApplicationContext applicationContext) where T : IJob
+        public IEnumerable<ScheduleItem> GetScheduleItems<TJob>(IApplicationContext applicationContext)
+            where TJob : IJob
         {
-            return GetScheduleItems(applicationContext, typeof(T));
+            return GetScheduleItems(applicationContext, typeof(TJob));
         }
 
         /// <summary>
         /// Returns the schedule items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="jobType">The type of job.</typeparam>
+        /// <param name="jobType">The type of job.</param>
         /// <returns>An IEnumerable of event items</returns>
         public IEnumerable<ScheduleItem> GetScheduleItems(IApplicationContext applicationContext, Type jobType)
         {

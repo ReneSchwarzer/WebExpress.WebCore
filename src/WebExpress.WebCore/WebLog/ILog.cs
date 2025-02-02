@@ -18,15 +18,15 @@ namespace WebExpress.WebCore.WebLog
     /// column defines the level of the log entry. The third column lists the function that produced the entry. 
     /// The last column indicates a note or error description.
     /// </summary>
-    /// <example>
-    /// <b>Example:</b><br>
-    /// 08:26:30 Info      Program.Main                   Startup<br>
-    /// 08:26:30 Info      Program.Main                   --------------------------------------------------<br>
-    /// 08:26:30 Info      Program.Main                   Version: 0.0.0.1<br>
-    /// 08:26:30 Info      Program.Main                   Arguments: -test <br>
-    /// 08:26:30 Info      Program.Main                   Configuration version: V1<br>
-    /// 08:26:30 Info      Program.Main                   Processing: sequentiell<br>
-    /// </example>
+    /// <code>
+    /// Example:
+    /// 08:26:30 Info      Program.Main                   Startup
+    /// 08:26:30 Info      Program.Main                   --------------------------------------------------
+    /// 08:26:30 Info      Program.Main                   Version: 0.0.0.1
+    /// 08:26:30 Info      Program.Main                   Arguments: -test
+    /// 08:26:30 Info      Program.Main                   Configuration version: V1
+    /// 08:26:30 Info      Program.Main                   Processing: sequentiell
+    /// </code>
     public interface ILog : ILogger
     {
         /// <summary>

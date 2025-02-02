@@ -34,10 +34,11 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <paramref name="parameters"/>
         /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<T>(params Parameter[] parameters) where T : IEndpoint;
+        UriResource GetUri<TEndpoint>(params Parameter[] parameters)
+            where TEndpoint : IEndpoint;
 
         /// <summary>
         /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
@@ -50,18 +51,20 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<T>(IApplicationContext applicationContext) where T : IEndpoint;
+        UriResource GetUri<TEndpoint>(IApplicationContext applicationContext)
+            where TEndpoint : IEndpoint;
 
         /// <summary>
         /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
+        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="endpointContext">The endpoint context.</param>
         /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<T>(IEndpointContext endpointContext) where T : IEndpoint;
+        UriResource GetUri<TEndpoint>(IEndpointContext endpointContext)
+            where TEndpoint : IEndpoint;
 
         /// <summary>
         /// Retrieves the endpoint context associated with the given URI.

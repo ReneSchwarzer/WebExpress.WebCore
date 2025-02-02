@@ -64,7 +64,6 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
         /// </summary>
-        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
         /// <param name="contextPath">The context path of the resource.</param>
         /// <param name="pathSegment">The path segment of the resource.</param>
         public AssetContext(UriResource contextPath, IUriPathSegment pathSegment)

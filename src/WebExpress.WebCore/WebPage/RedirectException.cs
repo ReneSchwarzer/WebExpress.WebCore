@@ -2,23 +2,26 @@
 
 namespace WebExpress.WebCore.WebPage
 {
+    /// <summary>
+    /// Represents an exception that is thrown to redirect a web page.
+    /// </summary>
     public class RedirectException : Exception
     {
         /// <summary>
-        /// Liefert oder setzt das Weiterleitungsziel
+        /// Returns or sets the redirection target.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// Bestimmt, ob ein permanete Weiterleitung erfolgen soll
+        /// Determines whether a permanent redirection should occur.
         /// </summary>
         public bool Permanet { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="url">Das Weiterleitungsziel</param> 
-        /// <param name="permanent">true wenn 301 gesendet werden soll, flase für 302</param>
+        /// <param name="url">The redirection target.</param> 
+        /// <param name="permanent">true if 301 should be sent, false for 302.</param>
         public RedirectException(string url, bool permanent = false)
             : base("Redirecting to " + url)
         {

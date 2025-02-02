@@ -9,20 +9,26 @@
         /// All characters are encoded (spaces are conferred to "+" and special characters in the hex representation).
         /// </summary>
         UrLEncoded,
+
         /// <summary>
         /// No characters will be encodes. Used when transferring files.
         /// </summary>
         None,
+
         /// <summary>
         /// Only space characters are encoded.
         /// </summary>
         Text,
+
         /// <summary>
         /// Not assignable.
         /// </summary>
         Default
     }
 
+    /// <summary>
+    /// Provides extension methods for the TypeEnctype enumeration.
+    /// </summary>
     public static class TypeEnctypeExtensions
     {
         /// <summary>
@@ -40,7 +46,6 @@
                 _ => TypeEnctype.Default,
             };
         }
-
 
         /// <summary>
         /// Conversion to string.repräsentation

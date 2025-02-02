@@ -8,7 +8,9 @@ namespace WebExpress.WebCore.WebJob
     /// <summary>
     /// Manages commands that are executed on a scheduled basis (CRON = command run on notice). 
     /// </summary>
-    /// <see cref="https://en.wikipedia.org/wiki/Cron"/>
+    /// <remarks>
+    /// For more information, see <a href="https://en.wikipedia.org/wiki/Cron">Cron</a>.
+    /// </remarks>
     public class Cron
     {
         /// <summary>
@@ -118,7 +120,7 @@ namespace WebExpress.WebCore.WebJob
                     {
                         if (result >= minValue && result <= maxValue)
                         {
-                            items = items.Union(new List<int> { result });
+                            items = items.Union([result]);
                         }
                         else
                         {

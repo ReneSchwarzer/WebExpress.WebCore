@@ -3,11 +3,13 @@ using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebAttribute
 {
+    /// <summary>
     /// Specifies the status code for a starus page.
     /// </summary>
-    /// <typeparam name="T">The type of the response.</typeparam>
+    /// <typeparam name="TResponse">The type of the response.</typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class StatusResponseAttribute<T> : Attribute, IStatusPageAttribute where T : Response, new()
+    public class StatusResponseAttribute<TResponse> : Attribute, IStatusPageAttribute
+        where TResponse : Response, new()
     {
         /// <summary>
         /// Initializes a new instance of the class.

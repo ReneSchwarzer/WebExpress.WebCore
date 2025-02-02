@@ -8,7 +8,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// A dynamic path segment of type guid.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class SegmentGuidAttribute<T> : Attribute, IEndpointAttribute, ISegmentAttribute where T : Parameter
+    public class SegmentGuidAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
+        where TParameter : Parameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -28,12 +29,11 @@ namespace WebExpress.WebCore.WebAttribute
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="parameter">The type of the variable.</param>
         /// <param name="display">The display string.</param>
         /// <param name="displayFormat">The display format.</param>
         public SegmentGuidAttribute(string display, UriPathSegmentVariableGuid.Format displayFormat = UriPathSegmentVariableGuid.Format.Simple)
         {
-            VariableName = (Activator.CreateInstance(typeof(T)) as Parameter)?.Key?.ToLower();
+            VariableName = (Activator.CreateInstance<TParameter>() as Parameter)?.Key?.ToLower();
             Display = display;
             DisplayFormat = displayFormat;
         }

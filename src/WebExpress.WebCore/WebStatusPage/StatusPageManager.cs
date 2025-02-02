@@ -342,6 +342,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         parameter.ParameterType == typeof(IComponentHub) ? _componentHub :
                         parameter.ParameterType == typeof(IHttpServerContext) ? _httpServerContext :
                         parameter.ParameterType == typeof(IPageContext) ? pageContext :
+                        parameter.ParameterType == typeof(IApplicationContext) ? pageContext?.ApplicationContext :
                         parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(pageContext) :
                         hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
                             .FirstOrDefault()?

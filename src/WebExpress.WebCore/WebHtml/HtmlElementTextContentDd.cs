@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents the definition of the term(s) specified in the immediately preceding <dt>element.
+    /// Represents the definition of the term(s) specified in the immediately preceding dt element.
     /// </summary>
     public class HtmlElementTextContentDd : HtmlElement, IHtmlElementTextContent
     {

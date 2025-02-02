@@ -1,7 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 
 namespace WebExpress.WebCore.WebLog
 {
+    /// <summary>
+    /// Provides a factory for creating loggers and adding logger providers.
+    /// </summary>
     public class LogFactory : ILoggerFactory, ILoggerProvider
     {
         /// <summary>
@@ -10,7 +14,6 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="provider">The ILoggerProvider.</param>
         public void AddProvider(ILoggerProvider provider)
         {
-
         }
 
         /// <summary>
@@ -30,7 +33,7 @@ namespace WebExpress.WebCore.WebLog
         /// </summary>
         public void Dispose()
         {
-
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Provides utility methods for working with CSS classes.
+    /// </summary>
     public static class Css
     {
         /// <summary>

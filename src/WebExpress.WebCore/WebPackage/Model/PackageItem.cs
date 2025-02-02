@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebPackage.Model
 {
+    /// <summary>
+    /// Represents an item in a web package.
+    /// </summary>
     public class PackageItem
     {
         /// <summary>

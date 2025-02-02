@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a label for an <fieldset>element.
+    /// Represents a label for an fieldset element.
     /// </summary>
     public class HtmlElementFieldLegend : HtmlElement
     {

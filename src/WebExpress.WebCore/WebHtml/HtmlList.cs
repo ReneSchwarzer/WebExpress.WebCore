@@ -80,7 +80,6 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="builder">The string builder.</param>
         /// <param name="deep">The call depth.</param>
-        /// <param name="nl">Start the closing tag on a new line.</param>
         public void ToString(StringBuilder builder, int deep)
         {
             foreach (var v in _elements)

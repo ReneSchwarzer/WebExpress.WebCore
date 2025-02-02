@@ -1,5 +1,8 @@
 ﻿namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents a file parameter with content type and data.
+    /// </summary>
     public class ParameterFile : Parameter
     {
         /// <summary>

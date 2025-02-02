@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents an HTML attribute that can be added to an HTML element.
+    /// </summary>
     public class HtmlAttribute : IHtmlAttribute
     {
         /// <summary>
@@ -52,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
             builder.Append(Name);
             builder.Append("=\"");
             builder.Append(Value);
-            builder.Append("\"");
+            builder.Append('"');
         }
     }
 }

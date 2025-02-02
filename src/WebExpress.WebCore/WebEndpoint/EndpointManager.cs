@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebEndpoint
     /// </summary>
     public sealed class EndpointManager : IEndpointManager, ISystemComponent
     {
-        private readonly IComponentHub _componentHub;
+        //private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly Dictionary<Type, EndpointRegistration> _registrations = [];
 
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebEndpoint
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
         private EndpointManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            _componentHub = componentHub;
+            //_componentHub = componentHub;
 
             _httpServerContext = httpServerContext;
 
@@ -81,7 +81,7 @@ namespace WebExpress.WebCore.WebEndpoint
             endpointRegistration.RemoveEndpoint -= OnRemoveEndpoint;
         }
 
-        //// <summary>
+        /// <summary>
         /// Returns an enumeration of endpoint contexts.
         /// </summary>
         /// <param name="endpointType">The endpoint type.</param>

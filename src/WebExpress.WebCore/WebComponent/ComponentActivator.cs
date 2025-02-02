@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebStatusPage;
 
@@ -255,7 +256,13 @@ namespace WebExpress.WebCore.WebComponent
                         hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
                             .FirstOrDefault()?
                             .GetValue(componentHub) ??
-                        advancedParameters.Where(x => x.GetType() == parameter.ParameterType)
+                        advancedParameters.Where(x =>
+                                x.GetType() == parameter.ParameterType ||
+                                (
+                                    parameter.ParameterType == typeof(IApplicationContext) &&
+                                    x.GetType().GetInterfaces().Any(x => x == typeof(IApplicationContext))
+                                )
+                            )
                             .FirstOrDefault() ?? null
                     ).ToArray();
 
@@ -272,15 +279,15 @@ namespace WebExpress.WebCore.WebComponent
         /// <summary>
         /// Creates an instance of the specified component type with the provided context and component hub and advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the component, which must implement <see cref="IComponent"/>.</typeparam>
-        /// <typeparam name="C">The type of the context, which must implement <see cref="IContext"/>.</typeparam>
+        /// <typeparam name="TContext">The type of the context, which must implement <see cref="IContext"/>.</typeparam>
         /// <param name="componentType">The type of the component to create.</param>
         /// <param name="context">The context to pass to the component's constructor.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         /// <param name="componentHub">The component hub to use for dependency injection.</param>
         /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
         /// <returns>An instance of the specified component type.</returns>
-        public static IComponent CreateInstance<C>(Type componentType, C context, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters) where C : IContext
+        public static IComponent CreateInstance<TContext>(Type componentType, TContext context, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
+            where TContext : IContext
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -299,7 +306,7 @@ namespace WebExpress.WebCore.WebComponent
                     var parameterValues = parameters.Select(parameter =>
                         parameter.ParameterType == typeof(IComponentHub) ? componentHub :
                         parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
-                        parameter.ParameterType == typeof(C) ? context :
+                        parameter.ParameterType == typeof(TContext) ? context :
                         parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(context) :
                         properties.Where(x => x.PropertyType == parameter.ParameterType)
                                   .FirstOrDefault()?

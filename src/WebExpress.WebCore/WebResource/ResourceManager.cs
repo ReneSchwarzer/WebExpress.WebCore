@@ -375,7 +375,14 @@ namespace WebExpress.WebCore.WebResource
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>(resourceItem.ResourceClass, resourceContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>
+                (
+                    resourceItem.ResourceClass,
+                    resourceContext,
+                    _httpServerContext,
+                    _componentHub,
+                    resourceContext.ApplicationContext
+                );
 
                 if (resourceItem.Cache)
                 {

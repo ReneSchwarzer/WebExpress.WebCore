@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebIdentity.Model
 
             if (!TryGetValue(pluginContext, out var appContextDict))
             {
-                appContextDict = new Dictionary<IApplicationContext, IList<IdentityRoleItem>>();
+                appContextDict = [];
                 this[pluginContext] = appContextDict;
             }
 
@@ -54,9 +54,10 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemoveRoleItem<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IIdentityRole
+        public void RemoveRoleItem<TIdentityRole>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TIdentityRole : IIdentityRole
         {
-            var type = typeof(T);
+            var type = typeof(TIdentityRole);
 
             if (ContainsKey(pluginContext))
             {
@@ -88,19 +89,20 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// <summary>
         /// Returns the role items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of the role.</typeparam>
+        /// <typeparam name="TIdentityRole">The type of the role.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of role items</returns>
-        public IEnumerable<IdentityRoleItem> GetRoleItems<T>(IApplicationContext applicationContext) where T : IIdentityRole
+        public IEnumerable<IdentityRoleItem> GetRoleItems<TIdentityRole>(IApplicationContext applicationContext)
+            where TIdentityRole : IIdentityRole
         {
-            return GetRoleItems(applicationContext, typeof(T));
+            return GetRoleItems(applicationContext, typeof(TIdentityRole));
         }
 
         /// <summary>
         /// Returns the role items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="roleType">The type of the role.</typeparam>
+        /// <param name="roleType">The type of the role.</param>
         /// <returns>An IEnumerable of role items</returns>
         public IEnumerable<IdentityRoleItem> GetRoleItems(IApplicationContext applicationContext, Type roleType)
         {

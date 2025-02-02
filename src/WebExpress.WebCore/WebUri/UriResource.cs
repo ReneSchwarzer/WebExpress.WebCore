@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// The query part (e.g. ?title=Uniform_Resource_Identifier&action=submit).
+        /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
         public ICollection<UriQuerry> Query { get; } = [];
 
@@ -162,7 +162,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="url">The uri.</param>
+        /// <param name="uri">The uri.</param>
         public UriResource(string uri)
         {
             if (string.IsNullOrWhiteSpace(uri) || uri == "/") return;
@@ -273,7 +273,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="scheme">The scheme (e.g. Http, FTP).</param>
         /// <param name="authority">The authority (e.g. user@example.com:8080).</param>
         /// <param name="fragment">References a position within a resource (e.g. #Anchor).</param>
-        /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier&action=submit).</param>
+        /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier).</param>
         /// <param name="segments">The path segments.</param>
         public UriResource(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuerry> query, IEnumerable<IUriPathSegment> segments)
         {
@@ -333,12 +333,12 @@ namespace WebExpress.WebCore.WebUri
 
         /// <summary>
         /// Return a shortened uri containing n-elements.
-        /// count > 0 count elements are included
-        /// count < 0 count elements are truncated
+        /// count greater than 0 count elements are included
+        /// count less than 0 count elements are truncated
         /// count = 0 an empty uri is returned
         /// </summary>
-        /// <param name="count">The count.</param>
-        /// <returns>The sub uri.</returns>
+        /// <param name="count">The count of elements to include or truncate.</param>
+        /// <returns>The sub uri with the specified number of elements.</returns>
         public virtual UriResource Take(int count)
         {
             var copy = new UriResource(this);
@@ -367,11 +367,11 @@ namespace WebExpress.WebCore.WebUri
 
         /// <summary>
         /// Return a shortened uri by not including the first n elements.
-        /// count > 0 count elements are skipped
-        /// count <= 0 an empty Uri is returned
+        /// count greater than 0 count elements are skipped
+        /// count less than or equals 0 an empty Uri is returned
         /// </summary>
-        /// <param name="count">The count.</param>
-        /// <returns>The sub uri.</returns>
+        /// <param name="count">The count of elements to skip.</param>
+        /// <returns>The sub uri after skipping the specified number of elements.</returns>
         public UriResource Skip(int count)
         {
             if (count >= PathSegments.Count)

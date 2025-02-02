@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     /// <select name="top5" size="5">
     ///  <optgroup label="Names with A">
     ///   <option value="1">Michael Jackson</option>
-    ///   <option value="2" selected>Tom Waits</option>
+    ///   <option value="2" selected="">Tom Waits</option>
     ///  </optgroup>
     /// </select>
     /// </summary>

@@ -4,6 +4,9 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPlugin
 {
+    /// <summary>
+    /// Represents the context of a plugin, providing access to its metadata and host context.
+    /// </summary>
     public class PluginContext : IPluginContext
     {
         /// <summary>
@@ -69,7 +72,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The string that uniquely represents the plugin.</returns>
         public override string ToString()
         {
-            return $"Plugin: {PluginId.ToString()}";
+            return $"Plugin: {PluginId}";
         }
     }
 }

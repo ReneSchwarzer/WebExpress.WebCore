@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebSettingPage.Model
 {
+    /// <summary>
+    /// Represents a dictionary that maps setting sections to their corresponding groups of setting page items.
+    /// </summary>
     public class SettingPageDictionaryItemSection : Dictionary<SettingSection, SettingPageDictionaryItemGroup>
     {
         /// <summary>
@@ -16,7 +19,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
             // register Section
             if (!ContainsKey(section))
             {
-                Add(section, new SettingPageDictionaryItemGroup());
+                Add(section, []);
             }
 
             return this[section].AddSettingPageItem(group, item);

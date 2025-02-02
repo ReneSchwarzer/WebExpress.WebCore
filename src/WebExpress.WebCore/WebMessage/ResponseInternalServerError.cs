@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="message">The user defined status message or null.</param></param>
+        /// <param name="message">The user defined status message or null.</param>
         public ResponseInternalServerError(StatusMessage message)
         {
             var content = message?.Message ?? "<html><head><title>404</title></head><body>500 - Internal Server Error</body></html>";

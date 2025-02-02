@@ -2,6 +2,12 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents a raw HTML node.
+    /// </summary>
+    /// <remarks>
+    /// This class is used to encapsulate raw HTML content.
+    /// </remarks>
     public class HtmlRaw : IHtmlNode
     {
         /// <summary>
@@ -14,7 +20,6 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         public HtmlRaw()
         {
-
         }
 
         /// <summary>

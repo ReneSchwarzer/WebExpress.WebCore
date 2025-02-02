@@ -4,7 +4,7 @@ namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// An attribute without value.
-    /// e.g. required in input <input required>
+    /// e.g. required in input required
     /// </summary>
     public class HtmlAttributeNoneValue : IHtmlAttribute
     {

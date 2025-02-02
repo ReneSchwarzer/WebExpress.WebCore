@@ -3,37 +3,37 @@ using System.Collections.Generic;
 
 namespace WebExpress.WebCore.WebJob
 {
+    /// <summary>
+    /// Represents a clock that provides time-related properties and methods.
+    /// </summary>
     public class Clock
     {
-        /// <summary>
-        /// The underlying date and time.
-        /// </summary>
-        private DateTime DateTime { get; set; }
+        private DateTime _dateTime;
 
         /// <summary>
         /// The minute 0-59.
         /// </summary>
-        public int Minute => DateTime.Minute;
+        public int Minute => _dateTime.Minute;
 
         /// <summary>
         /// The hour 0-23.
         /// </summary>
-        public int Hour => DateTime.Hour;
+        public int Hour => _dateTime.Hour;
 
         /// <summary>
         /// The day 1-31.
         /// </summary>
-        public int Day => DateTime.Day;
+        public int Day => _dateTime.Day;
 
         /// <summary>
         /// The month 1-12.
         /// </summary>
-        public int Month => DateTime.Month;
+        public int Month => _dateTime.Month;
 
         /// <summary>
         /// The weekday 0-6 (Sunday-Saturday).
         /// </summary>
-        public int Weekday => (int)DateTime.DayOfWeek;
+        public int Weekday => (int)_dateTime.DayOfWeek;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebJob
         {
             var dateTime = DateTime.Now;
 
-            DateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
+            _dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebJob
         /// <param name="dateTime">The time to copy.</param>
         public Clock(DateTime dateTime)
         {
-            DateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
+            _dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.WebJob
         /// <param name="clock">The clock to be copied.</param>
         public Clock(Clock clock)
         {
-            DateTime = clock.DateTime;
+            _dateTime = clock._dateTime;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.WebJob
         /// </summary>
         internal void Tick()
         {
-            DateTime = DateTime.AddMinutes(1);
+            _dateTime = _dateTime.AddMinutes(1);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace WebExpress.WebCore.WebJob
                 next.Tick();
             }
 
-            DateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
+            _dateTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0);
 
             return elapsed;
         }
@@ -124,7 +124,7 @@ namespace WebExpress.WebCore.WebJob
         /// <returns>True wenn die linke Uhrzeit kleiner ist als die Rechte, false sonst</returns>
         public static bool operator <(Clock obj1, Clock obj2)
         {
-            return obj1.DateTime < obj2.DateTime;
+            return obj1._dateTime < obj2._dateTime;
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace WebExpress.WebCore.WebJob
         /// <returns>True if the time on the left is greater than the time on the right, false otherwise.</returns>
         public static bool operator >(Clock obj1, Clock obj2)
         {
-            return obj1.DateTime > obj2.DateTime;
+            return obj1._dateTime > obj2._dateTime;
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.WebJob
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
-            return DateTime.GetHashCode();
+            return _dateTime.GetHashCode();
         }
     }
 }

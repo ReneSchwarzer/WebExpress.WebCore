@@ -4,6 +4,9 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebPackage.Model
 {
+    /// <summary>
+    /// Represents an item in the package catalog.
+    /// </summary>
     [XmlRoot("package")]
     public class PackageCatalogItem
     {
@@ -29,7 +32,7 @@ namespace WebExpress.WebCore.WebPackage.Model
         /// Returns the plugins belonging to the package.
         /// </summary>
         [XmlIgnore]
-        public List<IPluginContext> Plugins { get; internal set; } = new List<IPluginContext>();
+        public List<IPluginContext> Plugins { get; internal set; } = [];
 
         /// <summary>
         /// Returns the meta information about the package.

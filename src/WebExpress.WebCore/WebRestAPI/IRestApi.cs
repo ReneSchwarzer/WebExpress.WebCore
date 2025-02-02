@@ -30,7 +30,6 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Deletes data.
         /// </summary>
-        /// <param name="id">The id of the data to delete.</param>
         /// <param name="request">The request.</param>
         void DeleteData(Request request);
     }

@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="message">The user defined status message or null.</param></param>
+        /// <param name="message">The user defined status message or null.</param>
         public ResponseUnauthorized(StatusMessage message)
         {
             Reason = "OK";

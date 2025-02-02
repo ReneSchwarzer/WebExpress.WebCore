@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebComponent.Model
 {
+    /// <summary>
+    /// Represents an item of a web component, including its class type, ID, and instance.
+    /// </summary>
     public class ComponentItem
     {
         /// <summary>

@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a short quote. For longer quotes should <blockquote> be used.
+    /// Represents a short quote. For longer quotes should blockquote be used.
     /// </summary>
     public class HtmlElementTextSemanticsQ : HtmlElement, IHtmlElementTextSemantics
     {

@@ -60,9 +60,10 @@ namespace WebExpress.WebCore.WebEvent.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemoveEventHandler<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IEvent
+        public void RemoveEventHandler<TEvent>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TEvent : IEvent
         {
-            var type = typeof(T);
+            var type = typeof(TEvent);
 
             if (ContainsKey(pluginContext))
             {
@@ -93,19 +94,20 @@ namespace WebExpress.WebCore.WebEvent.Model
         /// <summary>
         /// Returns the event handler from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TEvent">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of event items</returns>
-        public IEnumerable<EventItem> GetEventHandlerItems<T>(IApplicationContext applicationContext) where T : IEvent
+        public IEnumerable<EventItem> GetEventHandlerItems<TEvent>(IApplicationContext applicationContext)
+            where TEvent : IEvent
         {
-            return GetEventHandlerItems(applicationContext, typeof(T));
+            return GetEventHandlerItems(applicationContext, typeof(TEvent));
         }
 
         /// <summary>
         /// Returns the event handler from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="eventType">The type of event.</typeparam>
+        /// <param name="eventType">The type of event.</param>
         /// <returns>An IEnumerable of event items</returns>
         public IEnumerable<EventItem> GetEventHandlerItems(IApplicationContext applicationContext, Type eventType)
         {

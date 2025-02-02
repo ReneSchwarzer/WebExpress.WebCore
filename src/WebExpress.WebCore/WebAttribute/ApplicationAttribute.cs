@@ -6,9 +6,9 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// An application expression attribute, which is determined by the type.
     /// </summary>
-    /// <typeparamref name="T">The type of the application.</typeparamref/>
+    /// <typeparamref name="TApplication">The type of the application.</typeparamref>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ApplicationAttribute<T> : Attribute, IPluginAttribute where T : class, IApplication
+    public class ApplicationAttribute<TApplication> : Attribute, IPluginAttribute where TApplication : class, IApplication
     {
 
     }

@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="value">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="display">The display text.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentVariableInt(string name, string display, object tag = null)

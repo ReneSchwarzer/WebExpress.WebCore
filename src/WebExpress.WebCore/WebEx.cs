@@ -144,7 +144,7 @@ namespace WebExpress.WebCore
         /// Initialization
         /// </summary>
         /// <param name="args">The valid arguments.</param>
-        /// <param param name="configFile">The configuration file.</param>
+        /// <param name="configFile">The configuration file.</param>
         private void Initialization(string args, string configFile)
         {
             // Config laden

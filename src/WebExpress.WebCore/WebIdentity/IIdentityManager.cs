@@ -57,11 +57,12 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Checks if the specified identity has the given permission.
         /// </summary>
-        /// <typeparam name="T">The type of the identity permission.</typeparam>
+        /// <typeparam name="TIdentityPermission">The type of the identity permission.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="identity">The identity to check.</param>
         /// <returns>True if the identity has the permission, false otherwise.</returns>
-        bool CheckAccess<T>(IApplicationContext applicationContext, IIdentity identity) where T : IIdentityPermission;
+        bool CheckAccess<TIdentityPermission>(IApplicationContext applicationContext, IIdentity identity)
+            where TIdentityPermission : IIdentityPermission;
 
         /// <summary>
         /// Checks if the specified identity has the given permission.
@@ -75,11 +76,12 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Checks if the specified identity group has the given permission.
         /// </summary>
-        /// <typeparam name="T">The type of the identity permission.</typeparam>
+        /// <typeparam name="TIdentityPermission">The type of the identity permission.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="group">The identity group to check.</param>
         /// <returns>True if the identity group has the permission, false otherwise.</returns>
-        bool CheckAccess<T>(IApplicationContext applicationContext, IIdentityGroup group) where T : IIdentityPermission;
+        bool CheckAccess<TIdentityPermission>(IApplicationContext applicationContext, IIdentityGroup group)
+            where TIdentityPermission : IIdentityPermission;
 
         /// <summary>
         /// Checks if the specified identity group has the given permission.
@@ -93,15 +95,18 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Checks if the specified identity role has the given permission.
         /// </summary>
-        /// <typeparam name="R">The type of the identity role.</typeparam>
-        /// <typeparam name="P">The type of the identity permission.</typeparam>
+        /// <typeparam name="TIdentityRole">The type of the identity role.</typeparam>
+        /// <typeparam name="TIdentityPermission">The type of the identity permission.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
         /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        bool CheckAccess<R, P>(IApplicationContext applicationContext) where R : IIdentityRole where P : IIdentityPermission;
+        bool CheckAccess<TIdentityRole, TIdentityPermission>(IApplicationContext applicationContext)
+            where TIdentityRole : IIdentityRole
+            where TIdentityPermission : IIdentityPermission;
 
         /// <summary>
         /// Checks if the specified identity role has the given permission.
         /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
         /// <param name="role">The identity role to check.</param>
         /// <param name="permission">The permission to check for.</param>
         /// <returns>True if the identity role has the permission, false otherwise.</returns>

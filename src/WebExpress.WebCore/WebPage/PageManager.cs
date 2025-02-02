@@ -236,7 +236,14 @@ namespace WebExpress.WebCore.WebPage
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IEndpoint, IPageContext>(resourceItem.PageClass, pageContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IEndpoint, IPageContext>
+                (
+                    resourceItem.PageClass,
+                    pageContext,
+                    _httpServerContext,
+                    _componentHub,
+                    pageContext.ApplicationContext
+                );
 
                 if (resourceItem.Cache)
                 {

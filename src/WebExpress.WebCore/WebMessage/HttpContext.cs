@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using System;
-using System.Linq;
 using System.Net;
 using System.Text;
 
 namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents the context of an HTTP request and response.
+    /// </summary>
     public class HttpContext
     {
         /// <summary>
@@ -53,7 +55,6 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         internal HttpContext()
         {
-
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Encoding = requestFeature.Headers.ContentEncoding.Any() ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
+            Encoding = requestFeature.Headers.ContentEncoding.Count != 0 ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
             Request = new Request(contextFeatures, header, httpServerContext);

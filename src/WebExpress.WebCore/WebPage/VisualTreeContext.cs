@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="context">The context to copy./param>
+        /// <param name="context">The context to copy.</param>
         public VisualTreeContext(IRenderContext context)
         {
             RenderContext = context;

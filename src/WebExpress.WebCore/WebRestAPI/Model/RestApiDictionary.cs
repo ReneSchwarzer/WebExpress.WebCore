@@ -56,9 +56,10 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemoveRestApi<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IRestApi
+        public void RemoveRestApi<TRestApi>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TRestApi : IRestApi
         {
-            var type = typeof(T);
+            var type = typeof(TRestApi);
 
             if (ContainsKey(pluginContext))
             {
@@ -89,19 +90,20 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <summary>
         /// Returns the rest api items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of rest api.</typeparam>
+        /// <typeparam name="TRestApi">The type of rest api.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of rest api items</returns>
-        public IEnumerable<RestApiItem> GetRestApiItems<T>(IApplicationContext applicationContext) where T : IRestApi
+        public IEnumerable<RestApiItem> GetRestApiItems<TRestApi>(IApplicationContext applicationContext)
+            where TRestApi : IRestApi
         {
-            return GetRestApiItems(applicationContext, typeof(T));
+            return GetRestApiItems(applicationContext, typeof(TRestApi));
         }
 
         /// <summary>
         /// Returns the rest api items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="restApiType">The type of rest api.</typeparam>
+        /// <param name="restApiType">The type of rest api.</param>
         /// <returns>An IEnumerable of rest api items</returns>
         public IEnumerable<RestApiItem> GetRestApiItems(IApplicationContext applicationContext, Type restApiType)
         {

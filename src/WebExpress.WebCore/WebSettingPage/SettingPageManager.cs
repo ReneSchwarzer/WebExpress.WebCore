@@ -164,7 +164,14 @@ namespace WebExpress.WebCore.WebSettingPage
 
             if (settingPageItem != null && settingPageItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IEndpoint, ISettingPageContext>(settingPageItem.SettingPageClass, settingPageContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IEndpoint, ISettingPageContext>
+                (
+                    settingPageItem.SettingPageClass,
+                    settingPageContext,
+                    _httpServerContext,
+                    _componentHub,
+                    settingPageContext.ApplicationContext
+                );
 
                 if (settingPageItem.Cache)
                 {

@@ -3,8 +3,9 @@
     /// <summary>
     /// The prototype of a website.
     /// </summary>
-    /// <typeparam name="T">An implementation of the visualization tree.</typeparam>
-    public abstract class Page<T> : IPage<T> where T : IVisualTree, new()
+    /// <typeparam name="TVisualTree">An implementation of the visualization tree.</typeparam>
+    public abstract class Page<TVisualTree> : IPage<TVisualTree>
+        where TVisualTree : IVisualTree, new()
     {
         /// <summary>
         /// Returns or sets the page title.
@@ -19,7 +20,6 @@
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="pageContext">The context of the page.</param>
         public Page()
         {
         }
@@ -39,7 +39,7 @@
         /// </summary>
         /// <param name="renderContext">The context for rendering the page.</param>
         /// <param name="visualTree">The visual tree to be rendered.</param>
-        public abstract void Process(IRenderContext renderContext, T visualTree);
+        public abstract void Process(IRenderContext renderContext, TVisualTree visualTree);
 
         /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.

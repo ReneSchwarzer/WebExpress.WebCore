@@ -5,7 +5,7 @@ using System.Text;
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents the main content of an HTML document. Each document can contain only one <body>element.
+    /// Represents the main content of an HTML document. Each document can contain only one body element.
     /// </summary>
     public class HtmlElementSectionBody : HtmlElement, IHtmlElementSection
     {
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementSectionBody()
             : base("body")
         {
-            ElementScriptLinks = new List<HtmlElementScriptingScript>();
+            ElementScriptLinks = [];
         }
 
         /// <summary>

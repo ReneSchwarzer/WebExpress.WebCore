@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents the main content of the page. Only one <main> element per page is allowed.
+    /// Represents the main content of the page. Only one main element per page is allowed.
     /// </summary>
     public class HtmlElementSectionMain : HtmlElement, IHtmlElementSection
     {

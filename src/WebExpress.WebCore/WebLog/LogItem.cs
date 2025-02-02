@@ -30,9 +30,10 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="level">The level.</param>
-        /// <param name="instance">The modul/funktion.</param>
+        /// <param name="level">The level of the log entry.</param>
+        /// <param name="instance">The module or function where the log entry originated.</param>
         /// <param name="message">The log message.</param>
+        /// <param name="timePattern">The time pattern used for formatting the timestamp.</param>
         public LogItem(LogLevel level, string instance, string message, string timePattern)
         {
             m_level = level;
@@ -50,7 +51,7 @@ namespace WebExpress.WebCore.WebLog
         {
             if (m_level != LogLevel.Seperartor)
             {
-                return m_timestamp.ToString(TimePattern) + " " + m_level.ToString().PadRight(9, ' ') + " " + m_instance.PadRight(19, ' ').Substring(0, 19) + " " + m_message;
+                return m_timestamp.ToString(TimePattern) + " " + m_level.ToString().PadRight(9, ' ') + " " + m_instance.PadRight(19, ' ')[..19] + " " + m_message;
             }
             else
             {

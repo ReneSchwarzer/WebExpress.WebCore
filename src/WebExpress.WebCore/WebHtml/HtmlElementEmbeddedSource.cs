@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Allows authors to specify alternative media resources (e.g., different audio or video 
-    /// formats) for media elements such as <video> or <audio>.
+    /// formats) for media elements such as video or audio.
     /// </summary>
     public class HtmlElementEmbeddedSource : HtmlElement, IHtmlElementEmbedded
     {

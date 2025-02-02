@@ -3,6 +3,10 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
 {
+    /// <summary>
+    /// Attribute to define a segment string in a URI path.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
     public class SegmentStringAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>

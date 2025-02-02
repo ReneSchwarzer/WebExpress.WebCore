@@ -22,15 +22,15 @@ namespace WebExpress.WebCore.WebLog
     /// column defines the level of the log entry. The third column lists the function that produced the entry. 
     /// The last column indicates a note or error description.
     /// </summary>
-    /// <example>
-    /// <b>Example:</b><br>
-    /// 08:26:30 Info      Program.Main                   Startup<br>
-    /// 08:26:30 Info      Program.Main                   --------------------------------------------------<br>
-    /// 08:26:30 Info      Program.Main                   Version: 0.0.0.1<br>
-    /// 08:26:30 Info      Program.Main                   Arguments: -test <br>
-    /// 08:26:30 Info      Program.Main                   Configuration version: V1<br>
-    /// 08:26:30 Info      Program.Main                   Processing: sequentiell<br>
-    /// </example>
+    /// <code>
+    /// Example:
+    /// 08:26:30 Info      Program.Main                   Startup
+    /// 08:26:30 Info      Program.Main                   --------------------------------------------------
+    /// 08:26:30 Info      Program.Main                   Version: 0.0.0.1
+    /// 08:26:30 Info      Program.Main                   Arguments: -test
+    /// 08:26:30 Info      Program.Main                   Configuration version: V1
+    /// 08:26:30 Info      Program.Main                   Processing: sequentiell
+    /// </code>
     public class Log : ILog
     {
         /// <summary>
@@ -116,7 +116,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Unsaved entries queue.
         /// </summary>
-        private readonly Queue<LogItem> _queue = new Queue<LogItem>();
+        private readonly Queue<LogItem> _queue = new();
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -185,7 +185,7 @@ namespace WebExpress.WebCore.WebLog
         public void Begin(SettingLogItem settings)
         {
             Filename = settings.Filename;
-            LogMode = (LogMode)Enum.Parse(typeof(LogMode), settings.Modus);
+            LogMode = Enum.Parse<LogMode>(settings.Modus);
             Encoding = Encoding.GetEncoding(settings.Encoding);
             TimePattern = settings.Timepattern;
             DebugMode = settings.Debug;

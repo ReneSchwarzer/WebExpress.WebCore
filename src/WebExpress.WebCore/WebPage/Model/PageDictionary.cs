@@ -275,7 +275,7 @@ namespace WebExpress.WebCore.WebPage.Model
             return _dict.ContainsKey(pluginContext);
         }
 
-        // <summary>
+        /// <summary>
         /// Checks if the dictionary contains the specified plugin context and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context to check for.</param>

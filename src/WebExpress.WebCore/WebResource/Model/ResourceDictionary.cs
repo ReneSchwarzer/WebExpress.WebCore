@@ -56,9 +56,10 @@ namespace WebExpress.WebCore.WebResource.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemoveResource<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IResource
+        public void RemoveResource<TResource>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TResource : IResource
         {
-            var type = typeof(T);
+            var type = typeof(TResource);
 
             if (ContainsKey(pluginContext))
             {
@@ -89,19 +90,20 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <summary>
         /// Returns the resource items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of resource.</typeparam>
+        /// <typeparam name="TResource">The type of resource.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of resource items</returns>
-        public IEnumerable<ResourceItem> GetResourceItems<T>(IApplicationContext applicationContext) where T : IResource
+        public IEnumerable<ResourceItem> GetResourceItems<TResource>(IApplicationContext applicationContext)
+            where TResource : IResource
         {
-            return GetResourceItems(applicationContext, typeof(T));
+            return GetResourceItems(applicationContext, typeof(TResource));
         }
 
         /// <summary>
         /// Returns the resource items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="resourceType">The type of resource.</typeparam>
+        /// <param name="resourceType">The type of resource.</param>
         /// <returns>An IEnumerable of resource items</returns>
         public IEnumerable<ResourceItem> GetResourceItems(IApplicationContext applicationContext, Type resourceType)
         {

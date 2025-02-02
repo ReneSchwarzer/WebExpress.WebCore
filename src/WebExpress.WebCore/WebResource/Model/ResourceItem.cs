@@ -29,13 +29,6 @@ namespace WebExpress.WebCore.WebResource.Model
         public IEndpoint Instance { get; set; }
 
         /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
-        /// is a string with a name (e.g. global, admin), which can be used by elements to 
-        /// determine whether content and how content should be displayed.
-        /// </summary>
-        //public IReadOnlyList<string> Scopes { get; set; }
-
-        /// <summary>
         /// Returns or sets the paths of the resource.
         /// </summary>
         public UriResource ContextPath { get; set; }

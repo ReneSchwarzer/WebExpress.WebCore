@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents an HTML comment node.
+    /// </summary>
     public class HtmlComment : IHtmlNode
     {
         /// <summary>
@@ -14,7 +17,6 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         public HtmlComment()
         {
-
         }
 
         /// <summary>

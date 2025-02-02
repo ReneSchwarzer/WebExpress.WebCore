@@ -4,7 +4,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace WebExpress.WebCore.WebFragment
 {
-    [Obsolete]
+    /// <summary>
+    /// Provides a method to compare two objects of type T for equality.
+    /// </summary>
+    /// <typeparam name="T">The type of objects to compare.</typeparam>
+    [Obsolete("FragmentComparer is obsolete. Use a different comparer implementation.")]
     public class FragmentComparer<T> : IEqualityComparer<T>
     {
         /// <summary>

@@ -1,15 +1,44 @@
 ﻿namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Specifies the target for hyperlinks or forms.
+    /// </summary>
     public enum TypeTarget
     {
+        /// <summary>
+        /// No target specified.
+        /// </summary>
         None,
+
+        /// <summary>
+        /// Opens the link in a new window or tab.
+        /// </summary>
         Blank,
+
+        /// <summary>
+        /// Opens the link in the same frame as it was clicked.
+        /// </summary>
         Self,
+
+        /// <summary>
+        /// Opens the link in the parent frame.
+        /// </summary>
         Parent,
+
+        /// <summary>
+        /// Opens the link in the full body of the window.
+        /// </summary>
         Top,
+
+        /// <summary>
+        /// Opens the link in a named frame.
+        /// </summary>
         Framename
     }
 
+    /// <summary>
+    /// Provides extension methods for the TypeTarget enum.
+    /// </summary>
     public static class TypeTargetExtensions
     {
         /// <summary>

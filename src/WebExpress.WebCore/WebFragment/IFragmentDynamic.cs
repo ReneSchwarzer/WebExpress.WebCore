@@ -4,10 +4,14 @@ using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebFragment
 {
+    /// <summary>
+    /// Interface representing a dynamic fragment.
+    /// Provides methods for initialization and creation of fragments.
+    /// </summary>
     public interface IFragmentDynamic
     {
         /// <summary>
-        /// Returns the context of the fragment..
+        /// Returns the context of the fragment.
         /// </summary>
         IFragmentContext Context { get; }
 
@@ -22,6 +26,7 @@ namespace WebExpress.WebCore.WebFragment
         /// Creates fragments of a common type T.
         /// </summary>
         /// <returns>The created instances of the fragments.</returns>
-        IEnumerable<T> Create<T>() where T : IComponent;
+        IEnumerable<TComponent> Create<TComponent>()
+            where TComponent : IComponent;
     }
 }

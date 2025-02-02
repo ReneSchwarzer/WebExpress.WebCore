@@ -6,14 +6,25 @@ using WebExpress.WebCore.Internationalization;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// Variable path segment.
+    /// Represents a URI path segment variable for GUIDs.
     /// </summary>
     public class UriPathSegmentVariableGuid : UriPathSegmentVariable
     {
         /// <summary>
         /// The display formats of the guid.
         /// </summary>
-        public enum Format { Full, Simple }
+        public enum Format
+        {
+            /// <summary>
+            /// Full format of the guid.
+            /// </summary>
+            Full,
+
+            /// <summary>
+            /// Simple format of the guid.
+            /// </summary>
+            Simple
+        }
 
         /// <summary>
         /// Returns the display format.
@@ -33,7 +44,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="value">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="display">The display text.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentVariableGuid(string name, string display, object tag = null)
@@ -44,7 +55,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="value">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="display">The display text.</param>
         /// <param name="displayFormat">The display format.</param>
         /// <param name="tag">The tag or null</param>

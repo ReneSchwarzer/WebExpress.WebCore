@@ -5,11 +5,13 @@ namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents a control that can be used to select from a range of options.
+    /// </summary>
+    /// <code>
     /// <select name="top5" size="2">
     ///  <option>Michael Jackson</option>
-    ///  <option selected>Tom Waits</option>
+    ///  <option selected="">Tom Waits</option>
     /// </select>
-    /// </summary>
+    /// </code>
     public class HtmlElementFieldSelect : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>

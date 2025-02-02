@@ -69,12 +69,11 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Release unmanaged resources that were reserved during initialization.
         /// </summary>
-        /// <param name="data">The input data.</param>
-        /// <returns>The output data.</returns>
         public virtual void Dispose()
         {
             Log.Info("".PadRight(80, '='), Instance, Line, File);
             Log.Info(Status, Instance, Line, File);
+            GC.SuppressFinalize(this);
         }
     }
 }

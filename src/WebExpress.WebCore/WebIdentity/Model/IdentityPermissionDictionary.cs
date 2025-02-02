@@ -54,9 +54,10 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        public void RemovePermissionItem<T>(IPluginContext pluginContext, IApplicationContext applicationContext) where T : IIdentityPermission
+        public void RemovePermissionItem<TIdentityPermission>(IPluginContext pluginContext, IApplicationContext applicationContext)
+            where TIdentityPermission : IIdentityPermission
         {
-            var type = typeof(T);
+            var type = typeof(TIdentityPermission);
 
             if (ContainsKey(pluginContext))
             {
@@ -88,25 +89,26 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// <summary>
         /// Returns the permission items from the dictionary.
         /// </summary>
-        /// <typeparam name="T">The type of the permission.</typeparam>
+        /// <typeparam name="TIdentityPermission">The type of the permission.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of permission items</returns>
-        public IEnumerable<IdentityPermissionItem> GetPermissionItems<T>(IApplicationContext applicationContext) where T : IIdentityPermission
+        public IEnumerable<IdentityPermissionItem> GetPermissionItems<TIdentityPermission>(IApplicationContext applicationContext)
+            where TIdentityPermission : IIdentityPermission
         {
-            return GetPermissionItems(applicationContext, typeof(T));
+            return GetPermissionItems(applicationContext, typeof(TIdentityPermission));
         }
 
         /// <summary>
         /// Returns the permission items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <typeparam name="permissionType">The type of the permission.</typeparam>
+        /// <param name="permissionType">The type of the permission.</param>
         /// <returns>An IEnumerable of permission items</returns>
         public IEnumerable<IdentityPermissionItem> GetPermissionItems(IApplicationContext applicationContext, Type permissionType)
         {
             if (!typeof(IIdentityPermission).IsAssignableFrom(permissionType))
             {
-                return Enumerable.Empty<IdentityPermissionItem>();
+                return [];
             }
 
             if (ContainsKey(applicationContext?.PluginContext))

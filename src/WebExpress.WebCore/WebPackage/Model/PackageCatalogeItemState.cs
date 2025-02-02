@@ -1,19 +1,22 @@
 ﻿namespace WebExpress.WebCore.WebPackage.Model
 {
+    /// <summary>
+    /// Represents the state of a package in the catalog.
+    /// </summary>
     public enum PackageCatalogeItemState
     {
         /// <summary>
-        /// Das Paket ist verfügbar, jedoch noch nicht vom WebExpress geladen.
+        /// The package is available but has not yet been loaded by WebExpress.
         /// </summary>
         Available,
 
         /// <summary>
-        /// Das Paket wurde geladen und steht zur Nutzung bereit.
+        /// The package has been loaded and is ready for use.
         /// </summary>
         Active,
 
         /// <summary>
-        /// Das Paket wurde deaktiviert. Die Nutzung des Paketes ist nicht möglich.
+        /// The package has been disabled. The use of the package is not possible.
         /// </summary>
         Disable
     }

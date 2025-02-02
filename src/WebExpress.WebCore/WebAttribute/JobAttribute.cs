@@ -1,5 +1,9 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
+    /// <summary>
+    /// Represents an attribute to schedule jobs based on specified time intervals.
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Class)]
     public class JobAttribute : System.Attribute
     {
         /// <summary>

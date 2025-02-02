@@ -131,9 +131,10 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Reads the data of a specified resource.
         /// </summary>
-        /// <param name="file">The file.</param>
-        /// <param name="assembly">The assembly.</param>
-        /// <returns>The data.</returns>
+        /// <param name="file">The name of the resource file to read.</param>
+        /// <param name="assembly">The assembly containing the resource.</param>
+        /// <param name="resources">A collection of resource names available in the assembly.</param>
+        /// <returns>A byte array containing the resource data, or null if the resource is not found.</returns>
         private static byte[] GetData(string file, Assembly assembly, IEnumerable<string> resources)
         {
             var item = resources.Where(x => x.Equals(file, System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault();

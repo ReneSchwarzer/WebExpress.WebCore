@@ -1,7 +1,7 @@
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// The query part (e.g. ?title=Uniform_Resource_Identifier&action=submit).
+    /// The query part (e.g. ?title=Uniform_Resource_Identifier).
     /// </summary>
     public class UriQuerry
     {

@@ -67,7 +67,7 @@ namespace WebExpress.WebCore.WebRestApi
                 HandleRequest = (request, endpointContext) =>
                 {
                     var restApiContext = endpointContext as IRestApiContext;
-                    var restApi = CreatePageInstance(restApiContext) as IRestApi;
+                    var restApi = CreateApiInstance(restApiContext) as IRestApi;
 
                     if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
                     {
@@ -232,18 +232,25 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Creates a new rest api resource and returns it. If a rest api resource already exists (through caching), the existing instance is returned.
         /// </summary>
-        /// <param name="pageContext">The context used for rest api resource creation.</param>
+        /// <param name="apiContext">The context used for rest api resource creation.</param>
         /// <returns>The created or cached rest api resource.</returns>
-        private IRestApi CreatePageInstance(IRestApiContext pageContext)
+        private IRestApi CreateApiInstance(IRestApiContext apiContext)
         {
             var resourceItem = _dictionary.Values
                 .SelectMany(x => x.Values)
                 .SelectMany(x => x.Values)
-                .FirstOrDefault(x => x.RestApiContext.Equals(pageContext));
+                .FirstOrDefault(x => x.RestApiContext.Equals(apiContext));
 
             if (resourceItem != null && resourceItem.Instance == null)
             {
-                var instance = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>(resourceItem.RestApiClass, pageContext, _httpServerContext, _componentHub);
+                var instance = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>
+                (
+                    resourceItem.RestApiClass,
+                    apiContext,
+                    _httpServerContext,
+                    _componentHub,
+                    apiContext.ApplicationContext
+                );
 
                 if (resourceItem.Cache)
                 {

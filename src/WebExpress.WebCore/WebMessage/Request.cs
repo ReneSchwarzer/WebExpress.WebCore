@@ -66,29 +66,9 @@ namespace WebExpress.WebCore.WebMessage
         public EndPoint RemoteEndPoint { get; private set; }
 
         /// <summary>
-        /// Returns a boolean value that indicates whether the client sending this request is authenticated.
-        /// </summary>
-        //public bool IsAuthenticated { get; private set; }  //=> RawRequuest.IsAuthenticated;
-
-        /// <summary>
-        /// Returns a boolean value that indicates whether the request was sent from the local computer.
-        /// </summary>
-        //public bool IsLocal { get; private set; }  //=> RawRequuest.IsLocal;
-
-        /// <summary>
         /// Returns a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
         /// </summary>
         public bool IsSecureConnection { get; private set; }
-
-        /// <summary>
-        /// Returns a boolean value indicating whether the tcp connection was a web socket request.
-        /// </summary>
-        //public bool IsWebSocketRequest { get; private set; }  // => RawRequuest.IsWebSocketRequest;
-
-        /// <summary>
-        /// Returns a boolean value that indicates whether the client is requesting a persistent connection.
-        /// </summary>
-        //public bool KeepAlive { get; private set; }  //=> RawRequuest.KeepAlive;
 
         /// <summary>
         /// Returns the shema. This can be http or https.
