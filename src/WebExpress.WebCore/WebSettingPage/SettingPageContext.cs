@@ -28,9 +28,9 @@ namespace WebExpress.WebCore.WebSettingPage
         public string Icon { get; internal set; }
 
         /// <summary>
-        /// Returns the setting context.
+        /// Returns the setting category.
         /// </summary>
-        public string Context { get; internal set; }
+        public string Category { get; internal set; }
 
         /// <summary>  
         /// Returns the section of the setting page.  

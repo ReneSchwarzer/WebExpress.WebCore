@@ -3,9 +3,9 @@
 namespace WebExpress.WebCore.WebSettingPage.Model
 {
     /// <summary>
-    /// Represents a context for setting page dictionary items, inheriting from Dictionary.
+    /// Represents a category for setting page dictionary items, inheriting from dictionary.
     /// </summary>
-    public class SettingPageDictionaryItemContext : Dictionary<string, SettingPageDictionaryItemSection>
+    public class SettingPageDictionaryItemCategory : Dictionary<string, SettingPageDictionaryItemSection>
     {
         /// <summary>
         /// Adds a setting page item to the dictionary.
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
             // register context
             if (!ContainsKey(context))
             {
-                Add(context, new SettingPageDictionaryItemSection());
+                Add(context, []);
             }
 
             return this[context].AddSettingPageItem(section, group, page);

@@ -309,6 +309,9 @@ namespace WebExpress.WebCore.WebPage
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var attributes = resourceType.CustomAttributes
+                    .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
+                    !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
@@ -370,7 +373,8 @@ namespace WebExpress.WebCore.WebPage
                         Cache = cache,
                         Scopes = scopes,
                         Conditions = conditions,
-                        IncludeSubPaths = includeSubPaths
+                        IncludeSubPaths = includeSubPaths,
+                        Attributes = attributes.Select(x => x.AttributeType)
                     };
 
                     var pageItem = new PageItem(_componentHub.PageManager)

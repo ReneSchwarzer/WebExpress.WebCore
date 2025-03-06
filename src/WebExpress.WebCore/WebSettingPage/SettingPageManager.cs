@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebSettingPage
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly SettingPageDictionary _dictionary = [];
+        private readonly SettingPageDictionary _dictionary = new();
         private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Returns the collection of setting pages.
         /// </summary>
-        public IEnumerable<ISettingPageContext> SettingPages => _dictionary.SettingPages;
+        public IEnumerable<ISettingPageContext> SettingPages => _dictionary.All;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -154,34 +154,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <returns>The created or cached page.</returns>
         private IEndpoint CreateSettingPageInstance(ISettingPageContext settingPageContext)
         {
-            var settingPageItem = _dictionary.Values
-                .SelectMany(a => a.Values)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
-                .FirstOrDefault(x => x.SettingPageContext.Equals(settingPageContext));
-
-            if (settingPageItem != null && settingPageItem.Instance == null)
-            {
-                var instance = ComponentActivator.CreateInstance<IEndpoint, ISettingPageContext>
-                (
-                    settingPageItem.SettingPageClass,
-                    settingPageContext,
-                    _httpServerContext,
-                    _componentHub,
-                    settingPageContext.ApplicationContext
-                );
-
-                if (settingPageItem.Cache)
-                {
-                    settingPageItem.Instance = instance;
-                }
-
-                return instance;
-            }
-
-            return settingPageItem?.Instance;
+            return _dictionary.CreateSettingPageInstance(settingPageContext, _componentHub, _httpServerContext);
         }
 
         /// <summary>
@@ -190,7 +163,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <param name="pluginContext">The context of the plugin whose setting pages are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_dictionary.ContainsKey(pluginContext))
+            if (_dictionary.Contains(pluginContext))
             {
                 return;
             }
@@ -204,13 +177,13 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <param name="applicationContext">The context of the application whose pages are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
+            if (_dictionary.Contains(applicationContext))
+            {
+                return;
+            }
+
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
-                {
-                    continue;
-                }
-
                 Register(pluginContext, [applicationContext]);
             }
         }
@@ -234,7 +207,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 var parent = default(Type);
                 var contextPath = string.Empty;
                 var scopes = new List<Type>();
-                var context = default(string);
+                var category = default(string);
                 var group = default(string);
                 var section = SettingSection.Primary;
                 var hide = false;
@@ -257,9 +230,9 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         contextPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
-                    else if (customAttribute.AttributeType == typeof(SettingContextAttribute))
+                    else if (customAttribute.AttributeType == typeof(SettingCategoryAttribute))
                     {
-                        context = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        category = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(SettingGroupAttribute))
                     {
@@ -311,7 +284,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         EndpointId = new ComponentId(id),
                         PageTitle = title,
                         Scopes = scopes,
-                        Context = context,
+                        Category = category,
                         Section = section,
                         Group = group,
                         Hide = hide,
@@ -326,7 +299,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         ApplicationContext = applicationContext,
                         SettingPageContext = settingPageContext,
                         SettingPageClass = settingPageType,
-                        Context = context,
+                        Context = category,
                         Section = section,
                         Group = group,
                         Cache = cache
@@ -367,26 +340,9 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <param name="applicationContext">The context of the application that contains the fragments to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            foreach (var settingPageContext in _dictionary.Remove(applicationContext))
             {
-                return;
-            }
-
-            foreach (var pluginDict in _dictionary.Values)
-            {
-                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
-                {
-                    foreach (var settingPageItem in appDict.Values
-                        .SelectMany(s => s.Values)
-                        .SelectMany(g => g.Values)
-                        .SelectMany(i => i))
-                    {
-                        OnRemoveSettingPage(settingPageItem.SettingPageContext);
-                        settingPageItem.Dispose();
-                    }
-                }
-
-                pluginDict.Remove(applicationContext);
+                OnRemoveSettingPage(settingPageContext);
             }
         }
 
@@ -397,14 +353,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <returns>An enumeration of setting page contextes.</returns>
         public IEnumerable<ISettingPageContext> GetSettingPages(Type settingPageType)
         {
-            return _dictionary.Values
-                .SelectMany(a => a.Values)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
-                .Where(x => x.SettingPageClass.Equals(settingPageType))
-                .Select(x => x.SettingPageContext);
+            return _dictionary.GetSettingPages(settingPageType);
         }
 
         /// <summary>
@@ -415,16 +364,82 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <returns>An enumeration of setting page contextes.</returns>
         public IEnumerable<ISettingPageContext> GetSettingPages(Type settingPageType, IApplicationContext applicationContext)
         {
-            return _dictionary.Values
-                .SelectMany(a => a)
-                .Where(a => a.Key.Equals(applicationContext))
-                .Select(a => a.Value)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
-                .Where(x => x.SettingPageClass.Equals(settingPageType))
-                .Select(x => x.SettingPageContext);
+            return _dictionary.GetSettingPages(settingPageType, applicationContext);
+        }
+
+        /// <summary>
+        /// Returns the categories associated with the specified application context.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <returns>An enumeration of category names.</returns>
+        public IEnumerable<string> GetCategories(IApplicationContext applicationContext)
+        {
+            return _dictionary.GetCategories(applicationContext);
+        }
+
+        /// <summary>
+        /// Returns the groups associated with the specified application context and category.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="category">The category for which to retrieve groups.</param>
+        /// <returns>An enumeration of group names.</returns>
+        public IEnumerable<string> GetGroups(IApplicationContext applicationContext, string category)
+        {
+            return _dictionary.GetGroups(applicationContext, category);
+        }
+
+        /// <summary>
+        /// Returns an enumeration of setting page contexts for the specified application context and category.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="category">The category for which to retrieve setting pages.</param>
+        /// <returns>An enumeration of setting page contexts.</returns>
+        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, string category)
+        {
+            return _dictionary.GetSettingPages(applicationContext, category);
+        }
+
+        /// <summary>
+        /// Returns the first setting page context for the specified application context and category.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="category">The category for which to retrieve setting pages.</param>
+        /// <returns>The first setting page context or null.</returns>
+        public ISettingPageContext GetFirstSettingPage(IApplicationContext applicationContext, string category)
+        {
+            var pages = _dictionary.GetSettingPages(applicationContext, category);
+            var preferences = pages.Where(x => x.Section == SettingSection.Preferences);
+            var primary = pages.Where(x => x.Section == SettingSection.Primary);
+            var secondary = pages.Where(x => x.Section == SettingSection.Secondary);
+
+            if (preferences.Any())
+            {
+                return preferences.OrderBy(x => x.PageTitle).FirstOrDefault();
+            }
+
+            if (primary.Any())
+            {
+                return primary.OrderBy(x => x.PageTitle).FirstOrDefault();
+            }
+
+            if (secondary.Any())
+            {
+                return secondary.OrderBy(x => x.PageTitle).FirstOrDefault();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns an enumeration of setting page contexts for the specified application context, category, and group.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="category">The category for which to retrieve setting pages.</param>
+        /// <param name="group">The group for which to retrieve setting pages.</param>
+        /// <returns>An enumeration of setting page contexts.</returns>
+        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, string category, string group)
+        {
+            return _dictionary.GetSettingPages(applicationContext, category, group);
         }
 
         /// <summary>

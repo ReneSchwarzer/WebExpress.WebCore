@@ -69,6 +69,11 @@ namespace WebExpress.WebCore.WebPage
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
+        /// Returns the attributes associated with the page.
+        /// </summary>
+        public IEnumerable<Type> Attributes { get; internal set; }
+
+        /// <summary>
         /// Returns the context path.
         /// </summary>
         public UriResource ContextPath

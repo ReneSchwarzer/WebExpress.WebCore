@@ -15,6 +15,11 @@ namespace WebExpress.WebCore.WebSettingPage
         string Group { get; }
 
         /// <summary>
+        /// Returns the setting category.
+        /// </summary>
+        string Category { get; }
+
+        /// <summary>
         /// Returns the section to which the setting page belongs.
         /// </summary>
         SettingSection Section { get; }
