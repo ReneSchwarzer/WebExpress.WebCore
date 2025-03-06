@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.Internationalization
 {
@@ -50,6 +51,29 @@ namespace WebExpress.WebCore.Internationalization
         public static string Translate(Request request, string key, params object[] args)
         {
             return WebEx.ComponentHub?.InternationalizationManager?.Translate(request, key, args) ?? key;
+        }
+
+        /// <summary>
+        /// Translates a given key to the specified language.
+        /// </summary>
+        /// <param name="renderContext">The render context with the language to use.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string Translate(IRenderContext renderContext, string key)
+        {
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(renderContext?.Request, key) ?? key;
+        }
+
+        /// <summary>
+        /// Translates a given key to the specified language.
+        /// </summary>
+        /// <param name="renderContext">The render context with the language to use.</param>
+        /// <param name="key">The internationalization key.</param>
+        /// <param name="args">The formatting arguments.</param>
+        /// <returns>The value of the key in the current language.</returns>
+        public static string Translate(IRenderContext renderContext, string key, params object[] args)
+        {
+            return WebEx.ComponentHub?.InternationalizationManager?.Translate(renderContext?.Request, key, args) ?? key;
         }
 
         /// <summary>
