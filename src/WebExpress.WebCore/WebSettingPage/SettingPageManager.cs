@@ -518,7 +518,6 @@ namespace WebExpress.WebCore.WebSettingPage
                         EndpointId = new ComponentId(id),
                         PageTitle = title,
                         Scopes = scopes,
-                        SettingCategory = _groupDictionary.GetSettingGroup(applicationContext, group)?.SettingCategory,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         Section = section,
                         Hide = hide,

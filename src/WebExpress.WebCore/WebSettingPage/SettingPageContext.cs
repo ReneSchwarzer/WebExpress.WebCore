@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Returns the setting category context to which the setting page belongs.
         /// </summary>
-        public ISettingCategoryContext SettingCategory { get; internal set; }
+        public ISettingCategoryContext SettingCategory => SettingGroup?.SettingCategory;
 
         /// <summary>
         /// Returns the group context to which the setting page belongs.
