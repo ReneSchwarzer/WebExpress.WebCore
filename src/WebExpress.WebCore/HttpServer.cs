@@ -187,7 +187,6 @@ namespace WebExpress.WebCore
             {
                 HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
                 HttpServerContext.Log.Exception(ex);
-
             }
         }
 

@@ -10,14 +10,19 @@ namespace WebExpress.WebCore.WebSettingPage
     public interface ISettingPageContext : IPageContext
     {
         /// <summary>
-        /// Returns the group to which the setting page belongs.
+        /// Returns the icon.
         /// </summary>
-        string Group { get; }
+        string Icon { get; }
 
         /// <summary>
-        /// Returns the setting category.
+        /// Returns the setting category context to which the setting page belongs.
         /// </summary>
-        string Category { get; }
+        ISettingCategoryContext SettingCategory { get; }
+
+        /// <summary>
+        /// Returns the group context to which the setting page belongs.
+        /// </summary>
+        ISettingGroupContext SettingGroup { get; }
 
         /// <summary>
         /// Returns the section to which the setting page belongs.
@@ -28,10 +33,5 @@ namespace WebExpress.WebCore.WebSettingPage
         /// Returns a value indicating whether the page should be displayed or hidden.
         /// </summary>
         bool Hide { get; }
-
-        /// <summary>
-        /// Returns or sets the icon.
-        /// </summary>
-        string Icon { get; }
     }
 }

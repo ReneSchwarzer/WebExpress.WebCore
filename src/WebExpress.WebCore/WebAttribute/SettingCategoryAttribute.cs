@@ -1,4 +1,5 @@
 ﻿using System;
+using WebExpress.WebCore.WebSettingPage;
 
 namespace WebExpress.WebCore.WebAttribute
 {
@@ -6,15 +7,14 @@ namespace WebExpress.WebCore.WebAttribute
     /// Attribute to specify the category in which the settings page is associated.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class SettingCategoryAttribute : Attribute, IEndpointAttribute
+    public class SettingCategoryAttribute<TCategory> : Attribute, ISettingGroupAttribute
+        where TCategory : class, ISettingCategory
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="category">The category in which the settings page is associated.</param>
-        public SettingCategoryAttribute(string category)
+        public SettingCategoryAttribute()
         {
-
         }
     }
 }

@@ -126,6 +126,17 @@ sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
 
 sessionmanager.initialization=The session manager has been initialized.
 
+settingpagemanager.initialization=The setting page manager has been initialized.
+settingpagemanager.register.category=The setting category '{0}' has been registered in the application '{1}'.
+settingpagemanager.register.group=The setting group '{0}' has been registered in the application '{1}'.
+settingpagemanager.register.page=The setting page '{0}' has been registered in the application '{1}'.
+settingpagemanager.register.nocategory=The setting page '{0}' has not been assigned to a setting category.
+settingpagemanager.register.nogroup=The setting page '{0}' has not been assigned to a setting group.
+settingpagemanager.category.general.name=General settings
+settingpagemanager.category.general.description=Default category for general application settings.
+settingpagemanager.group.general.name=General
+settingpagemanager.group.general.description=General application settings.
+
 eventmanager.titel=Event manager:
 eventmanager.initialization=The event manager has been initialized.
 eventmanager.register=The event handler '{0}' has been registered in the application '{1}'.

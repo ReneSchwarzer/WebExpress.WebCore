@@ -126,6 +126,17 @@ sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gem
 
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
 
+settingpagemanager.initialization=Der Settingpagemanager wurde initialisiert.
+settingpagemanager.register.category=Die Einstellungskategorie '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.group=Die Einstellungsgruppe '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.page=Die Einstellungsseite '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.nocategory=Die Einstellungsseite '{0}' wurde keiner Einstellungskategorie zugewiesen.
+settingpagemanager.register.nogroup=Die Einstellungsseite '{0}' wurde keiner Einstellungsgruppe zugewiesen.
+settingpagemanager.category.general.name=Allgemeine Einstellungen
+settingpagemanager.category.general.description=Standardkategorie für allgemeine Anwendungseinstellungen.
+settingpagemanager.group.general.name=Allgemein
+settingpagemanager.group.general.description=Allgemeine Anwendungseinstellungen.
+
 eventmanager.titel=Eventmanager:
 eventmanager.initialization=Der Eventmanager wurde initialisiert.
 eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiesen und im Eventmanager registriert.

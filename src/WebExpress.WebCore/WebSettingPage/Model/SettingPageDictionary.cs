@@ -13,17 +13,14 @@ namespace WebExpress.WebCore.WebSettingPage.Model
     /// </summary>
     internal class SettingPageDictionary
     {
-        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, SettingPageDictionaryItemCategory>> _dict = [];
+        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<SettingPageItem>>> _dict = [];
 
         /// <summary>
         /// Returns the collection of setting pages.
         /// </summary>
         public IEnumerable<ISettingPageContext> All => _dict.Values
             .SelectMany(a => a.Values)
-            .SelectMany(c => c.Values)
-            .SelectMany(s => s.Values)
-            .SelectMany(g => g.Values)
-            .SelectMany(i => i)
+            .SelectMany(x => x)
             .Select(x => x.SettingPageContext);
 
         /// <summary>
@@ -39,13 +36,15 @@ namespace WebExpress.WebCore.WebSettingPage.Model
                 _dict.Add(item.PluginContext, appDict);
             }
 
-            if (!appDict.TryGetValue(item.ApplicationContext, out var contextDict))
+            if (!appDict.TryGetValue(item.ApplicationContext, out var list))
             {
-                contextDict = [];
-                appDict.Add(item.ApplicationContext, contextDict);
+                list = [];
+                appDict.Add(item.ApplicationContext, list);
             }
 
-            return contextDict.AddSettingPageItem(item.Context, item.Section, item.Group, item);
+            list.Add(item);
+
+            return true;
         }
 
         /// <summary>
@@ -71,18 +70,17 @@ namespace WebExpress.WebCore.WebSettingPage.Model
 
             foreach (var pluginDict in _dict.Values)
             {
-                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
-                {
-                    foreach (var settingPageItem in appDict.Values
-                        .SelectMany(s => s.Values)
-                        .SelectMany(g => g.Values)
-                        .SelectMany(i => i))
-                    {
-                        yield return settingPageItem.SettingPageContext;
-                    }
-                }
+                var removed = pluginDict
+                    .Where(x => x.Key == applicationContext)
+                    .SelectMany(x => x.Value)
+                    .ToList();
 
                 pluginDict.Remove(applicationContext);
+
+                foreach (var page in removed)
+                {
+                    yield return page.SettingPageContext;
+                }
             }
         }
 
@@ -95,10 +93,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         {
             return _dict.Values
                 .SelectMany(a => a.Values)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
+                .SelectMany(x => x)
                 .Where(x => x.SettingPageClass.Equals(settingPageType))
                 .Select(x => x.SettingPageContext);
         }
@@ -114,11 +109,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
             return _dict.Values
                 .SelectMany(a => a)
                 .Where(a => a.Key.Equals(applicationContext))
-                .Select(a => a.Value)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
+                .SelectMany(x => x.Value)
                 .Where(x => x.SettingPageClass.Equals(settingPageType))
                 .Select(x => x.SettingPageContext);
         }
@@ -154,10 +145,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         {
             var settingPageItem = _dict.Values
                 .SelectMany(a => a.Values)
-                .SelectMany(c => c.Values)
-                .SelectMany(s => s.Values)
-                .SelectMany(g => g.Values)
-                .SelectMany(i => i)
+                .SelectMany(x => x)
                 .FirstOrDefault(x => x.SettingPageContext.Equals(settingPageContext));
 
             if (settingPageItem != null && settingPageItem.Instance == null)
@@ -183,53 +171,18 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         }
 
         /// <summary>
-        /// Returns the categories associated with the specified application context.
-        /// </summary>
-        /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>An enumeration of category names.</returns>
-        public IEnumerable<string> GetCategories(IApplicationContext applicationContext)
-        {
-            return _dict.Values
-                 .SelectMany(a => a)
-                 .Where(a => a.Key == applicationContext)
-                 .SelectMany(c => c.Value)
-                 .Select(c => c.Key);
-        }
-
-        /// <summary>
-        /// Returns the groups associated with the specified application context and category.
-        /// </summary>
-        /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="category">The category for which to retrieve groups.</param>
-        /// <returns>An enumeration of group names.</returns>
-        public IEnumerable<string> GetGroups(IApplicationContext applicationContext, string category)
-        {
-            return _dict.Values
-                 .SelectMany(a => a)
-                 .Where(a => a.Key == applicationContext)
-                 .SelectMany(c => c.Value)
-                 .Where(c => c.Key == category)
-                 .SelectMany(s => s.Value)
-                 .SelectMany(g => g.Value)
-                 .Select(g => g.Key);
-        }
-
-        /// <summary>
         /// Returns an enumeration of setting page contexts for the specified application context and category.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="category">The category for which to retrieve setting pages.</param>
+        /// <param name="categoryContext">The category for which to retrieve setting pages.</param>
         /// <returns>An enumeration of setting page contexts.</returns>
-        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, string category)
+        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, ISettingCategoryContext categoryContext)
         {
             return _dict.Values
                  .SelectMany(a => a)
                  .Where(a => a.Key == applicationContext)
-                 .SelectMany(c => c.Value)
-                 .Where(c => c.Key == category)
-                 .SelectMany(s => s.Value)
-                 .SelectMany(g => g.Value)
-                 .SelectMany(g => g.Value)
+                 .SelectMany(x => x.Value)
+                 .Where(x => x.SettingPageContext?.SettingCategory == categoryContext)
                  .Select(x => x.SettingPageContext);
         }
 
@@ -237,20 +190,15 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// Returns an enumeration of setting page contexts for the specified application context, category, and group.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="category">The category for which to retrieve setting pages.</param>
-        /// <param name="group">The group for which to retrieve setting pages.</param>
+        /// <param name="groupContext">The group for which to retrieve setting pages.</param>
         /// <returns>An enumeration of setting page contexts.</returns>
-        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, string category, string group)
+        public IEnumerable<ISettingPageContext> GetSettingPages(IApplicationContext applicationContext, ISettingGroupContext groupContext)
         {
             return _dict.Values
                  .SelectMany(a => a)
                  .Where(a => a.Key == applicationContext)
-                 .SelectMany(c => c.Value)
-                 .Where(c => c.Key == category)
-                 .SelectMany(s => s.Value)
-                 .SelectMany(g => g.Value)
-                 .Where(g => g.Key == group)
-                 .SelectMany(g => g.Value)
+                 .SelectMany(x => x.Value)
+                 .Where(x => x.SettingPageContext?.SettingGroup == groupContext)
                  .Select(x => x.SettingPageContext);
         }
     }

@@ -10,8 +10,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:settingpageb.label")]
     [Segment("settingpagea", "webindex:homepage.label")]
     [ContextPath(null)]
-    [SettingGroup<TestSettingGroupB>()]
-    public sealed class TestSettingPageB : ISettingPage<VisualTree>
+    public sealed class TestSettingPageC : ISettingPage<VisualTree>
     {
         /// <summary>
         /// Returns or sets the setting page context.
@@ -22,7 +21,7 @@ namespace WebExpress.WebCore.Test
         /// Initialization of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the setting page.</param>
-        public TestSettingPageB(ISettingPageContext pageContext)
+        public TestSettingPageC(ISettingPageContext pageContext)
         {
             PageContext = pageContext;
 

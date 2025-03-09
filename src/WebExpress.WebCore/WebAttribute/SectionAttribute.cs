@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// Attribute to identify a section.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class SectionAttribute<T> : Attribute, IFragmentAttribute where T : class, ISection
+    public class SectionAttribute<T> : Attribute, IFragmentAttribute, ISettingCategoryAttribute, ISettingGroupAttribute where T : class, ISection
     {
         /// <summary>
         /// Initializes a new instance of the class.

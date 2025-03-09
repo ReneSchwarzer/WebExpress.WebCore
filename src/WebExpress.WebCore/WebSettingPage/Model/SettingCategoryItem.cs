@@ -1,14 +1,13 @@
 ﻿using System;
 using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebSettingPage.Model
 {
     /// <summary>
-    /// Represents an item on the setting page.
+    /// Represents an item on the setting category.
     /// </summary>
-    public class SettingPageItem : IDisposable
+    public class SettingCategoryItem : IDisposable
     {
         /// <summary>
         /// Returns the context of the associated plugin.
@@ -21,34 +20,29 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the setting page context.
+        /// Returns the setting category context.
         /// </summary>
-        public ISettingPageContext SettingPageContext { get; internal set; }
+        public ISettingCategoryContext SettingCategoryContext { get; internal set; }
 
         /// <summary>
-        /// Returns the class type of the setting page.
+        /// Returns the class type of the setting category.
         /// </summary>
-        public Type SettingPageClass { get; internal set; }
+        public Type SettingCategoryClass { get; internal set; }
 
         /// <summary>
-        /// Returns the instance of the setting page, if the page is cached, otherwise null.
+        /// Returns the human-readable name or a internationalization key of the category.
         /// </summary>
-        public IEndpoint Instance { get; internal set; }
+        public string Name { get; internal set; }
 
         /// <summary>
-        /// Returns the group.
+        /// Returns the human-readable description or a internationalization key of the category. 
         /// </summary>
-        public Type Group { get; internal set; }
+        public string Description { get; internal set; }
 
         /// <summary>
         /// Returns the section.
         /// </summary>
         public SettingSection Section { get; internal set; }
-
-        /// <summary>
-        /// Returns a value indicating whether the component is created once and reused on each execution.
-        /// </summary>
-        public bool Cache { get; internal set; }
 
         /// <summary>
         /// Release of unmanaged resources reserved during use.

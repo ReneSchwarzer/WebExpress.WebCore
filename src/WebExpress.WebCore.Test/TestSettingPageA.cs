@@ -10,6 +10,7 @@ namespace WebExpress.WebCore.Test
     [Title("webindex:settingpagea.label")]
     [Segment("settingpagea", "webindex:homepage.label")]
     [ContextPath(null)]
+    [SettingGroup<TestSettingGroupA>()]
     public sealed class TestSettingPageA : ISettingPage<VisualTree>
     {
         /// <summary>
