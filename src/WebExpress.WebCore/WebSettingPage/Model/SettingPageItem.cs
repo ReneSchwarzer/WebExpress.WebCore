@@ -5,6 +5,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -52,6 +53,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
                     IncludeSubPaths = IncludeSubPaths,
                     Attributes = Attributes,
                     SettingGroup = SettingGroup,
+                    Icon = Icon,
                 };
 
                 var parentContext = _endpointManager.GetEndpoints(ParentType, ApplicationContext)
@@ -113,7 +115,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <summary>
         /// Returns the icon.
         /// </summary>
-        public string Icon { get; internal set; }
+        public IIcon Icon { get; internal set; }
 
         /// <summary>
         /// Returns the setting page title.

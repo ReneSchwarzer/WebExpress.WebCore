@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -238,7 +239,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 .Where(x => x.GetInterface(typeof(ISettingCategory).Name) != null))
             {
                 var id = settingCategoryType.FullName?.ToLower();
-                var icon = default(string);
+                var icon = default(IIcon);
                 var name = default(string);
                 var description = default(string);
                 var section = SettingSection.Primary;
@@ -247,17 +248,18 @@ namespace WebExpress.WebCore.WebSettingPage
                 foreach (var customAttribute in settingCategoryType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISettingCategoryAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(IconAttribute))
+                    if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        icon = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        icon ??= Activator.CreateInstance(type) as IIcon;
                     }
                     else if (customAttribute.AttributeType == typeof(NameAttribute))
                     {
-                        name = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        name ??= customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(DescriptionAttribute))
                     {
-                        description = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        description ??= customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(SettingSectionAttribute))
                     {
@@ -324,7 +326,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 .Where(x => x.GetInterface(typeof(ISettingGroup).Name) != null))
             {
                 var id = settingGroupType.FullName?.ToLower();
-                var icon = default(string);
+                var icon = default(IIcon);
                 var name = default(string);
                 var description = default(string);
                 var category = default(Type);
@@ -334,9 +336,10 @@ namespace WebExpress.WebCore.WebSettingPage
                 foreach (var customAttribute in settingGroupType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISettingGroupAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(IconAttribute))
+                    if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        icon = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        icon ??= Activator.CreateInstance(type) as IIcon;
                     }
                     else if (customAttribute.AttributeType == typeof(NameAttribute))
                     {
@@ -438,7 +441,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 var section = SettingSection.Primary;
                 var includeSubPaths = false;
                 var hide = false;
-                var icon = default(string);
+                var icon = default(IIcon);
                 var cache = false;
                 var attributes = settingPageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
@@ -452,7 +455,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         segment = settingPageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
-                    else if (customAttribute.AttributeType == typeof(ParentAttribute<>))
+                    else if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(ParentAttribute<>))
                     {
                         parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                     }
@@ -472,9 +475,10 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         hide = true;
                     }
-                    else if (customAttribute.AttributeType == typeof(IconAttribute))
+                    else if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        icon = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        icon ??= Activator.CreateInstance(type) as IIcon;
                     }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {

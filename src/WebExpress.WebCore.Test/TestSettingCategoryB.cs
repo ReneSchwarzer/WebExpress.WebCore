@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy setting category for testing purposes.
     /// </summary>
-    [Icon("InfoCircle")]
+    [WebIcon<TestIconProfile>]
     [Name("SettingCategory B")]
     [Description("Description of category b.")]
     [SettingSection(SettingSection.Primary)]

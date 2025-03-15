@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSettingPage.Model;
 
@@ -28,7 +29,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Returns the icon.
         /// </summary>
-        string Icon { get; }
+        IIcon Icon { get; }
 
         /// <summary>
         /// Returns the name.

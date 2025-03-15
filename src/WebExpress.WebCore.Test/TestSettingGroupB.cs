@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy setting group for testing purposes.
     /// </summary>
-    [Icon("InfoCircle")]
+    [WebIcon<TestIconShild>()]
     [Name("SettingGroup B")]
     [Description("Description of group b.")]
     [SettingCategory<TestSettingCategoryA>()]

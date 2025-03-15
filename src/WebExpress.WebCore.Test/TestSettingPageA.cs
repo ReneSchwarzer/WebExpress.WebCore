@@ -7,6 +7,7 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
+    [WebIcon<TestIconTool>]
     [Title("webindex:settingpagea.label")]
     [Segment("settingpagea", "webindex:homepage.label")]
     [ContextPath(null)]

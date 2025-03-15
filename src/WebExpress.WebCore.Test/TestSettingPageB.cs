@@ -7,10 +7,11 @@ namespace WebExpress.WebCore.Test
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
+    [WebIcon<TestIconWrench>]
     [Title("webindex:settingpageb.label")]
     [Segment("settingpagea", "webindex:homepage.label")]
     [ContextPath(null)]
-    [SettingGroup<TestSettingGroupB>()]
+    [SettingGroup<TestSettingGroupB>]
     public sealed class TestSettingPageB : ISettingPage<VisualTree>
     {
         /// <summary>

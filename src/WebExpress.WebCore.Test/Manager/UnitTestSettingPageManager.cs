@@ -178,6 +178,24 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Test the icon property of the setting categories.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), new[] { "WebExpress.WebCore.Test.TestIconBell", "WebExpress.WebCore.Test.TestIconProfile", null })]
+        [InlineData(typeof(TestApplicationB), new[] { "WebExpress.WebCore.Test.TestIconBell", "WebExpress.WebCore.Test.TestIconProfile", null })]
+        [InlineData(typeof(TestApplicationC), new[] { "WebExpress.WebCore.Test.TestIconBell", "WebExpress.WebCore.Test.TestIconProfile", null })]
+        public void CategoryIcon(Type applicationType, params string[] icons)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var settingCategories = componentHub.SettingPageManager.GetSettingCategories(application);
+
+            // test execution
+            Assert.Equal([.. icons], [.. settingCategories.Select(x => x.Icon?.ToString())]);
+        }
+
+        /// <summary>
         /// Test the description property of the setting categories.
         /// </summary>
         [Theory]

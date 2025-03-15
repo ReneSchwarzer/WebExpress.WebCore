@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebPage;
+﻿using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.WebSettingPage
@@ -12,7 +13,7 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Returns the icon.
         /// </summary>
-        string Icon { get; }
+        IIcon Icon { get; }
 
         /// <summary>
         /// Returns the setting category context to which the setting page belongs.
