@@ -2,11 +2,10 @@
 using System.IO;
 using System.Reflection;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebAsset;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 
-namespace WebExpress.WebCore.WebResource
+namespace WebExpress.WebCore.WebAsset
 {
     /// <summary>
     /// Delivery of a resource embedded in the assembly.
