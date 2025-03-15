@@ -436,9 +436,13 @@ namespace WebExpress.WebCore.WebSettingPage
                 var scopes = new List<Type>();
                 var group = default(Type);
                 var section = SettingSection.Primary;
+                var includeSubPaths = false;
                 var hide = false;
                 var icon = default(string);
                 var cache = false;
+                var attributes = settingPageType.CustomAttributes
+                    .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
+                    !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
                 // determining attributes
                 foreach (var customAttribute in settingPageType.CustomAttributes
@@ -476,6 +480,10 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         cache = true;
                     }
+                    else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+                    {
+                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                    }
                 }
 
                 if (group == default)
@@ -511,36 +519,31 @@ namespace WebExpress.WebCore.WebSettingPage
                 // assign the setting page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var settingPageContext = new SettingPageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
+                    // create meta information of the setting page
+                    var settingPageItem = new SettingPageItem(_componentHub.EndpointManager)
                     {
-                        ApplicationContext = applicationContext,
-                        PluginContext = pluginContext,
                         EndpointId = new ComponentId(id),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
+                        SettingPageClass = settingPageType,
+                        SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         PageTitle = title,
                         Scopes = scopes,
-                        SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
+                        SettingGroupType = group?.GetType(),
                         Section = section,
                         Hide = hide,
                         Icon = icon,
-                        Cache = cache
-                    };
-
-                    // create meta information of the setting page
-                    var settingPageItem = new SettingPageItem()
-                    {
-                        PluginContext = pluginContext,
-                        ApplicationContext = applicationContext,
-                        SettingPageContext = settingPageContext,
-                        SettingPageClass = settingPageType,
-                        Group = group?.GetType(),
-                        Section = section,
-                        Cache = cache
+                        Cache = cache,
+                        ContextPath = new UriResource(contextPath),
+                        IncludeSubPaths = includeSubPaths,
+                        PathSegment = segment.ToPathSegment(),
+                        Attributes = attributes.Select(x => x.AttributeType)
                     };
 
                     // insert the settings page into the dictionary
                     if (_pageDictionary.AddSettingPageItem(settingPageItem))
                     {
-                        OnAddSettingPage(settingPageContext);
+                        OnAddSettingPage(settingPageItem.SettingPageContext);
 
                         _httpServerContext?.Log.Debug
                         (

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage.Model
@@ -11,7 +15,23 @@ namespace WebExpress.WebCore.WebPage.Model
     /// </summary>
     internal class PageItem : IDisposable
     {
-        private readonly IPageManager _pageManager;
+        private readonly IEndpointManager _endpointManager;
+        private PageContext _pageContext;
+
+        /// <summary>
+        /// Returns the endpoint id.
+        /// </summary>
+        public IComponentId EndpointId { get; internal set; }
+
+        /// <summary>
+        /// Returns the associated plugin context.
+        /// </summary>
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the corresponding application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns or sets the resource title.
@@ -71,17 +91,53 @@ namespace WebExpress.WebCore.WebPage.Model
         public bool Optional { get; set; }
 
         /// <summary>
-        /// Returns the page context.
+        /// Returns the attributes associated with the page.
         /// </summary>
-        public IPageContext PageContext { get; internal set; }
+        public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PageItem"/> class.
+        /// Returns the page context.
         /// </summary>
-        /// <param name="pageManager">The page manager.</param>
-        internal PageItem(IPageManager pageManager)
+        public IPageContext PageContext
         {
-            _pageManager = pageManager;
+            get
+            {
+                _pageContext ??= new PageContext()
+                {
+                    PageTitle = Title,
+                    EndpointId = EndpointId,
+                    PluginContext = PluginContext,
+                    ApplicationContext = ApplicationContext,
+                    Cache = Cache,
+                    Scopes = Scopes,
+                    Conditions = Conditions,
+                    IncludeSubPaths = IncludeSubPaths,
+                    Attributes = Attributes,
+                };
+
+                var parentContext = _endpointManager.GetEndpoints(ParentType, ApplicationContext)
+                    .FirstOrDefault();
+
+                var contextPath = UriResource.Combine
+                (
+                    parentContext?.Uri ?? ApplicationContext?.ContextPath, ContextPath
+                );
+
+                _pageContext.ParentContext = parentContext;
+                _pageContext.ContextPath = contextPath;
+                _pageContext.Uri = contextPath.Append(PathSegment);
+
+                return _pageContext;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        internal PageItem(IEndpointManager endpointManager)
+        {
+            _endpointManager = endpointManager;
         }
 
         /// <summary>

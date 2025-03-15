@@ -296,29 +296,29 @@ namespace WebExpress.WebCore.WebPage
         {
             var assembly = pluginContext?.Assembly;
 
-            foreach (var resourceType in assembly.GetTypes()
+            foreach (var pageType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
                 .Where(x => x.GetInterface(typeof(IPage<>).Name) != null))
             {
-                var id = resourceType.FullName?.ToLower();
+                var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var title = resourceType.Name;
+                var title = pageType.Name;
                 var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
-                var attributes = resourceType.CustomAttributes
+                var attributes = pageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                     !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
-                foreach (var customAttribute in resourceType.CustomAttributes
+                foreach (var customAttribute in pageType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = pageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
@@ -343,7 +343,7 @@ namespace WebExpress.WebCore.WebPage
                     }
                 }
 
-                foreach (var customAttribute in resourceType.CustomAttributes
+                foreach (var customAttribute in pageType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
                 {
                     if (customAttribute.AttributeType == typeof(TitleAttribute))
@@ -356,44 +356,34 @@ namespace WebExpress.WebCore.WebPage
                     }
                 }
 
-                if (resourceType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
+                if (pageType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
                 {
-                    scopes.Add(resourceType);
+                    scopes.Add(pageType);
                 }
 
                 // assign the page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var pageContext = new PageContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
+                    var pageItem = new PageItem(_componentHub.EndpointManager)
                     {
-                        PageTitle = title,
-                        EndpointId = new ComponentId(resourceType.FullName),
+                        EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
-                        Cache = cache,
-                        Scopes = scopes,
-                        Conditions = conditions,
-                        IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType)
-                    };
-
-                    var pageItem = new PageItem(_componentHub.PageManager)
-                    {
                         Title = title,
-                        PageContext = pageContext,
                         ParentType = parent,
-                        PageClass = resourceType,
+                        PageClass = pageType,
                         Scopes = scopes,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment()
+                        PathSegment = segment.ToPathSegment(),
+                        Attributes = attributes.Select(x => x.AttributeType)
                     };
 
                     if (_dictionary.AddPageItem(pluginContext, applicationContext, pageItem))
                     {
-                        OnAddPage(pageContext);
+                        OnAddPage(pageItem.PageContext);
 
                         _httpServerContext?.Log.Debug
                         (

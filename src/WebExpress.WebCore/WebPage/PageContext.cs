@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -15,11 +14,6 @@ namespace WebExpress.WebCore.WebPage
     /// </summary>
     public class PageContext : IPageContext
     {
-        private readonly IEndpointManager _endpointManager;
-        private readonly Type _parentType;
-        private readonly UriResource _contextPath;
-        private readonly IUriPathSegment _pathSegment;
-
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
@@ -48,15 +42,14 @@ namespace WebExpress.WebCore.WebPage
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the resource title.
+        /// Returns the page title.
         /// </summary>
         public string PageTitle { get; internal set; }
 
         /// <summary>
         /// Returns the parent or null if not used.
         /// </summary>
-        public IEndpointContext ParentContext => _endpointManager.GetEndpoints(_parentType, ApplicationContext)
-            .FirstOrDefault();
+        public IEndpointContext ParentContext { get; internal set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
@@ -76,38 +69,18 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the context path.
         /// </summary>
-        public UriResource ContextPath
-        {
-            get
-            {
-                var parentContext = ParentContext;
-                if (parentContext != null)
-                {
-                    return UriResource.Combine(ParentContext?.Uri, _contextPath);
-                }
-
-                return UriResource.Combine(ApplicationContext.ContextPath, _contextPath);
-            }
-        }
+        public UriResource ContextPath { get; internal set; }
 
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_pathSegment);
+        public UriResource Uri { get; internal set; }
 
         /// <summary>
-        /// Initializes a new instance of the class with the specified parent type and context path.
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
-        /// <param name="parentType">The type of the parent resource.</param>
-        /// <param name="contextPath">The context path of the resource.</param>
-        /// <param name="pathSegment">The path segment of the resource.</param>
-        public PageContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
+        public PageContext()
         {
-            _endpointManager = endpointManager;
-            _parentType = parentType;
-            _contextPath = contextPath;
-            _pathSegment = pathSegment;
         }
 
         /// <summary>

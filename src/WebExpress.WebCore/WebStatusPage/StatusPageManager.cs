@@ -297,7 +297,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 new StatusMessage(message)
             );
             var pageType = pageInstance.GetType();
-            var pageContext = new PageContext(_componentHub.EndpointManager, null, request.Uri, new UriPathSegmentRoot());
+            var pageContext = new PageContext();
             var renderContext = new RenderContext(pageInstance as IEndpoint, pageContext, request);
             var visualTreeContext = new VisualTreeContext(renderContext);
 

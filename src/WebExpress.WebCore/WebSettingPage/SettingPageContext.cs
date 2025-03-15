@@ -1,8 +1,5 @@
-﻿using System;
-using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebPage;
+﻿using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebSettingPage.Model;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSettingPage
 {
@@ -40,12 +37,8 @@ namespace WebExpress.WebCore.WebSettingPage
         /// <summary>
         /// Initializes a new instance of the class with the specified parent type and context path.
         /// </summary>
-        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
-        /// <param name="parentType">The type of the parent resource.</param>
-        /// <param name="contextPath">The context path of the resource.</param>
-        /// <param name="pathSegment">The path segment of the resource.</param>
-        public SettingPageContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
-            : base(endpointManager, parentType, contextPath, pathSegment)
+        public SettingPageContext()
+            : base()
         {
         }
     }
