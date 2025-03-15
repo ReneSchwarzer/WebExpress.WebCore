@@ -280,12 +280,12 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the category property of the setting groups.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingCategoryA), new[] { SettingSection.Preferences, SettingSection.Primary })]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingCategoryA), new[] { SettingSection.Preferences, SettingSection.Primary })]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingCategoryA), new[] { SettingSection.Preferences, SettingSection.Primary })]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingCategoryB), new SettingSection[0])]
-        [InlineData(typeof(TestApplicationA), null, new[] { SettingSection.Secondary })]
-        public void GroupCategory(Type applicationType, Type settingCategoryType, params SettingSection[] sections)
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingCategoryA))]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingCategoryA))]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingCategoryA))]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingCategoryB))]
+        [InlineData(typeof(TestApplicationA), null)]
+        public void GroupCategory(Type applicationType, Type settingCategoryType)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
