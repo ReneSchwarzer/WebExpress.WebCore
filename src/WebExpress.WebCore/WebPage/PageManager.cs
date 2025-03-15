@@ -361,6 +361,15 @@ namespace WebExpress.WebCore.WebPage
                     scopes.Add(pageType);
                 }
 
+                if (segment == default && parent == default && contextPath == "")
+                {
+                    var assemblyName = assembly.GetName().Name;
+                    var fullClassName = pageType.FullName;
+                    var path = fullClassName[(assemblyName.Length + 1)..^(pageType.Name.Length + 1)];
+
+                    contextPath = "/" + path.ToLower().Replace('.', '/');
+                }
+
                 // assign the page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
@@ -377,7 +386,7 @@ namespace WebExpress.WebCore.WebPage
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment(),
+                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(pageType.Name.ToLower()),
                         Attributes = attributes.Select(x => x.AttributeType)
                     };
 

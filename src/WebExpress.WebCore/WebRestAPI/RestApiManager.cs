@@ -303,13 +303,13 @@ namespace WebExpress.WebCore.WebRestApi
         {
             var assembly = pluginContext?.Assembly;
 
-            foreach (var resourceType in assembly.GetTypes()
+            foreach (var resrApiType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
                 .Where(x => x.GetInterface(typeof(IRestApi).Name) != null))
             {
-                var id = resourceType.FullName?.ToLower();
+                var id = resrApiType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var title = resourceType.Name;
+                var title = resrApiType.Name;
                 var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
@@ -318,12 +318,12 @@ namespace WebExpress.WebCore.WebRestApi
                 var methods = new List<CrudMethod>();
                 var version = 1u;
 
-                foreach (var customAttribute in resourceType.CustomAttributes
+                foreach (var customAttribute in resrApiType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = resrApiType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
                     else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
                     {
@@ -353,7 +353,7 @@ namespace WebExpress.WebCore.WebRestApi
                     }
                 }
 
-                foreach (var customAttribute in resourceType.CustomAttributes
+                foreach (var customAttribute in resrApiType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IRestApiAttribute))))
                 {
                     if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
@@ -363,12 +363,21 @@ namespace WebExpress.WebCore.WebRestApi
 
                 }
 
+                if (segment == default && parent == default && contextPath == "")
+                {
+                    var assemblyName = assembly.GetName().Name;
+                    var fullClassName = resrApiType.FullName;
+                    var path = fullClassName[(assemblyName.Length + 1)..^(resrApiType.Name.Length + 1)];
+
+                    contextPath = "/" + path.ToLower().Replace('.', '/');
+                }
+
                 // assign the rest api to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
                     var restApiContext = new RestApiContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
                     {
-                        EndpointId = new ComponentId(resourceType.FullName),
+                        EndpointId = new ComponentId(resrApiType.FullName),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         Cache = cache,
@@ -382,14 +391,14 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         ParentType = parent,
                         RestApiContext = restApiContext,
-                        RestApiClass = resourceType,
+                        RestApiClass = resrApiType,
                         Methods = methods.Distinct(),
                         Version = version,
                         Cache = cache,
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment()
+                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(resrApiType.Name.ToLower())
                     };
 
                     if (_dictionary.AddRestApiItem(pluginContext, applicationContext, restApiItem))

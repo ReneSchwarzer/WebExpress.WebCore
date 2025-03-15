@@ -516,6 +516,15 @@ namespace WebExpress.WebCore.WebSettingPage
                     scopes.Add(settingPageType);
                 }
 
+                if (segment == default && parent == default && contextPath == "")
+                {
+                    var assemblyName = assembly.GetName().Name;
+                    var fullClassName = settingPageType.FullName;
+                    var path = fullClassName[(assemblyName.Length + 1)..^(settingPageType.Name.Length + 1)];
+
+                    contextPath = "/" + path.ToLower().Replace('.', '/');
+                }
+
                 // assign the setting page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
@@ -536,7 +545,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         Cache = cache,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment(),
+                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(settingPageType.Name.ToLower()),
                         Attributes = attributes.Select(x => x.AttributeType)
                     };
 

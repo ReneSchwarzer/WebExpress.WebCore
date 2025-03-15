@@ -8,9 +8,8 @@ namespace WebExpress.WebCore.Test
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:pageb.label")]
-    [Segment("pageb", "webindex:homepage.label")]
-    [ContextPath(null)]
     [Parent<TestResourceA>]
+    [ContextPath("/b")]
     public sealed class TestPageB : IPage, IScope
     {
         /// <summary>

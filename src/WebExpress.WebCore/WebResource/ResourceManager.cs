@@ -166,6 +166,15 @@ namespace WebExpress.WebCore.WebResource
                     }
                 }
 
+                if (segment == default && parent == default && contextPath == "")
+                {
+                    var assemblyName = assembly.GetName().Name;
+                    var fullClassName = resourceType.FullName;
+                    var path = fullClassName[(assemblyName.Length + 1)..^(resourceType.Name.Length + 1)];
+
+                    contextPath = "/" + path.ToLower().Replace('.', '/');
+                }
+
                 // assign the resource to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
@@ -184,7 +193,7 @@ namespace WebExpress.WebCore.WebResource
                         Conditions = conditions,
                         ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment.ToPathSegment()
+                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(resourceType.Name.ToLower()),
                     };
 
                     if (_dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem))

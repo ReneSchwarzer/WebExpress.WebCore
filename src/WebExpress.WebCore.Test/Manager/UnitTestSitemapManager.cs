@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.Web.Home;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
@@ -23,7 +24,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(46, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(58, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -43,13 +44,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/resc", "webexpress.webcore.test.testresourcec")]
         [InlineData("http://localhost:8080/server/resd", "webexpress.webcore.test.testresourced")]
         [InlineData("http://localhost:8080/server/appa/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/appa/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/appa/resa/B/testpageb", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server/appa/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/appb/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/appb/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/appb/resa/b/testpageb", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server/appb/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/resa/b/TestPageB", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/appa/1/apia", "webexpress.webcore.test.testrestapia")]
@@ -93,8 +94,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestResourceC), "/server/appa/resc")]
         [InlineData(typeof(TestResourceD), "/server/appa/resd")]
         [InlineData(typeof(TestPageA), "/server/appa/pagea")]
-        [InlineData(typeof(TestPageB), "/server/appa/resa/pageb")]
+        [InlineData(typeof(TestPageB), "/server/appa/resa/b/testpageb")]
         [InlineData(typeof(TestPageC), "/server")]
+        [InlineData(typeof(TestPageH), "/server/appa/web/home/testpageh")]
         public void GetUri(Type resourceType, string expected)
         {
             // preconditions
@@ -124,13 +126,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/resc", "webexpress.webcore.test.testresourcec")]
         [InlineData("http://localhost:8080/server/resd", "webexpress.webcore.test.testresourced")]
         [InlineData("http://localhost:8080/server/appa/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/appa/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/appa/resa/B/testpageb", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server/appa/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/appb/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/appb/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/appb/resa/b/TestPageB", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server/appb/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/pagea", "webexpress.webcore.test.testpagea")]
-        [InlineData("http://localhost:8080/server/resa/pageb", "webexpress.webcore.test.testpageb")]
+        [InlineData("http://localhost:8080/server/resa/b/testpageb", "webexpress.webcore.test.testpageb")]
         [InlineData("http://localhost:8080/server", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/", "webexpress.webcore.test.testpagec")]
         [InlineData("http://localhost:8080/server/appa/1/apia", "webexpress.webcore.test.testrestapia")]

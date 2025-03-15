@@ -1,20 +1,19 @@
 ﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebPage;
 
-namespace WebExpress.WebCore.Test
+namespace WebExpress.WebCore.Test.Web.Home
 {
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:pagec.label")]
-    [Segment(null, "webindex:homepage.label")]
-    public sealed class TestPageC : Page<TestVisualTree>
+    public sealed class TestPageH : Page<TestVisualTree>
     {
         /// <summary>
         /// Initialization of the page. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="pageContext">The context of the page.</param>
-        private TestPageC(IPageContext pageContext)
+        private TestPageH(IPageContext pageContext)
         {
             // test the injection
             if (pageContext == null)

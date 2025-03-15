@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(9, componentHub.PageManager.Pages.Count());
+            Assert.Equal(12, componentHub.PageManager.Pages.Count());
         }
 
         /// <summary>
@@ -94,13 +94,13 @@ namespace WebExpress.WebCore.Test.Manager
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestPageA), "/server/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/server/appa/resa")]
+        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/server/appa/resa/b")]
         [InlineData(typeof(TestApplicationA), typeof(TestPageC), "/server/appa")]
         [InlineData(typeof(TestApplicationB), typeof(TestPageA), "/server/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/server/appb/resa")]
+        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/server/appb/resa/b")]
         [InlineData(typeof(TestApplicationB), typeof(TestPageC), "/server/appb")]
         [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/server")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/server/resa")]
+        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/server/resa/b")]
         [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/server")]
         public void ContextPath(Type applicationType, Type resourceType, string path)
         {
