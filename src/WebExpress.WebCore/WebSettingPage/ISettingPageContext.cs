@@ -1,6 +1,5 @@
 ﻿using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.WebSettingPage
 {

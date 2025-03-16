@@ -1,7 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebSettingPage;
-using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.Test.Manager
 {

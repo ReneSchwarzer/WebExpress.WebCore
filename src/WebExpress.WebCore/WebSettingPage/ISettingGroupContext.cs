@@ -2,7 +2,6 @@
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.WebSettingPage
 {

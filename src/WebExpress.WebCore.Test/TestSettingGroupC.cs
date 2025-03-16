@@ -1,6 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebSettingPage;
-using WebExpress.WebCore.WebSettingPage.Model;
 
 namespace WebExpress.WebCore.Test
 {

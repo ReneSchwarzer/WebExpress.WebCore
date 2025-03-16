@@ -1,5 +1,5 @@
 ﻿using System;
-using WebExpress.WebCore.WebSettingPage.Model;
+using WebExpress.WebCore.WebSettingPage;
 
 namespace WebExpress.WebCore.WebAttribute
 {

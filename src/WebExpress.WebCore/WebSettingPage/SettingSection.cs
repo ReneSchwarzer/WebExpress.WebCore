@@ -1,4 +1,4 @@
-﻿namespace WebExpress.WebCore.WebSettingPage.Model
+﻿namespace WebExpress.WebCore.WebSettingPage
 {
     /// <summary>
     /// Definition of keys for the identification of sections in Wen pages, which can be occupied by components.
