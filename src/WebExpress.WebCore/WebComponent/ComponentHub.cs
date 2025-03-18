@@ -21,6 +21,7 @@ using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
+using WebExpress.WebCore.WebTheme;
 
 namespace WebExpress.WebCore.WebComponent
 {
@@ -50,6 +51,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly JobManager _jobManager;
         private readonly TaskManager _taskManager;
         private readonly IdentityManager _identityManager;
+        private readonly ThemeManager _themeManager;
         private int _lastCounter = 0;
 
         /// <summary>
@@ -85,7 +87,8 @@ namespace WebExpress.WebCore.WebComponent
                 _internationalizationManager,
                 _identityManager,
                 _sessionManager,
-                _taskManager
+                _taskManager,
+                _themeManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
         /// <summary>
@@ -203,6 +206,12 @@ namespace WebExpress.WebCore.WebComponent
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
+        /// Returns the theme manager.
+        /// </summary>
+        /// <returns>The instance of the theme manager.</returns>
+        public IThemeManager ThemeManager => _themeManager;
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
@@ -231,6 +240,7 @@ namespace WebExpress.WebCore.WebComponent
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
             _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
+            _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
 

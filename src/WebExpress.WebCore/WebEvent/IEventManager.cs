@@ -18,10 +18,11 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Returns the event handler contexts.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TEvent">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of event handler contexts.</returns>
-        IEnumerable<IEventHandlerContext> GetEventHandlers<T>(IApplicationContext applicationContext) where T : IEvent;
+        IEnumerable<IEventHandlerContext> GetEventHandlers<TEvent>(IApplicationContext applicationContext)
+            where TEvent : IEvent;
 
         /// <summary>
         /// Returns the event handler contexts.
@@ -34,10 +35,11 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Raises the specified event.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TEvent">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="sender">The sender object.</param>
         /// <param name="argument">The event argument.</param>
-        void RaiseEvent<T>(IApplicationContext applicationContext, object sender, IEventArgument argument) where T : IEvent;
+        void RaiseEvent<TEvent>(IApplicationContext applicationContext, object sender, IEventArgument argument)
+            where TEvent : IEvent;
     }
 }

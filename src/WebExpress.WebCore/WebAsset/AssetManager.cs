@@ -9,7 +9,6 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAsset
@@ -21,26 +20,23 @@ namespace WebExpress.WebCore.WebAsset
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly AssetItemDictionary _itemDictionary = [];
+        private readonly AssetItemDictionary _itemDictionary = new();
         private readonly AssetEndpointDictionary _endpointDictionary = [];
 
         /// <summary>
         /// An event that fires when an asset is added.
         /// </summary>
-        public event EventHandler<IAssetContext> AddResource;
+        public event EventHandler<IAssetContext> AddAsset;
 
         /// <summary>
         /// An event that fires when an asset is removed.
         /// </summary>
-        public event EventHandler<IAssetContext> RemoveResource;
+        public event EventHandler<IAssetContext> RemoveAsset;
 
         /// <summary>
         /// Returns all asset contexts.
         /// </summary>
-        public IEnumerable<IAssetContext> Assets => _itemDictionary.Values
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x)
-            .Select(x => x.AssetContext);
+        public IEnumerable<IAssetContext> Assets => _itemDictionary.All.Select(x => x.AssetContext);
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -70,9 +66,7 @@ namespace WebExpress.WebCore.WebAsset
                 HandleRequest = (request, endpointContext) =>
                 {
                     var assetContext = endpointContext as IAssetContext;
-                    var asset = _itemDictionary.Values
-                        .SelectMany(x => x.Values)
-                        .SelectMany(x => x)
+                    var asset = _itemDictionary.All
                         .FirstOrDefault(x => request.Uri.ToString().ToLower().Replace('/', '.').EndsWith(x.AssetContext.EndpointId.ToString()));
 
                     if (asset != null)
@@ -84,8 +78,8 @@ namespace WebExpress.WebCore.WebAsset
                 }
             };
 
-            AddResource += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
-            RemoveResource += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+            AddAsset += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
+            RemoveAsset += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
             _componentHub.EndpointManager.Register<AssetContext>(endpointtRegistration);
 
@@ -103,7 +97,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <param name="pluginContext">The context of the plugin whose resources are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_itemDictionary.ContainsKey(pluginContext))
+            if (_itemDictionary.ContainsPlugin(pluginContext))
             {
                 return;
             }
@@ -119,7 +113,7 @@ namespace WebExpress.WebCore.WebAsset
         {
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_itemDictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                if (_itemDictionary.ContainsApplication(pluginContext, applicationContext))
                 {
                     continue;
                 }
@@ -165,7 +159,7 @@ namespace WebExpress.WebCore.WebAsset
 
                         if (_itemDictionary.AddAssetItem(pluginContext, applicationContext, assetItem))
                         {
-                            OnAddResource(assetContext);
+                            OnAddAsset(assetContext);
                             _httpServerContext?.Log.Debug(
                                 I18N.Translate(
                                     "webexpress.webcore:assetmanager.addresource",
@@ -185,22 +179,9 @@ namespace WebExpress.WebCore.WebAsset
         /// <param name="pluginContext">The context of the plugin that contains the resources to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            foreach (var assetContext in _itemDictionary.Remove(pluginContext))
             {
-                return;
-            }
-
-            // the plugin has not been registered in the manager
-            if (_itemDictionary.TryGetValue(pluginContext, out var value))
-            {
-                foreach (var resourceItem in value.Values
-                    .SelectMany(x => x))
-                {
-                    OnRemoveResource(resourceItem.AssetContext);
-                    resourceItem.Dispose();
-                }
-
-                _itemDictionary.Remove(pluginContext);
+                OnRemoveAsset(assetContext);
             }
         }
 
@@ -210,23 +191,9 @@ namespace WebExpress.WebCore.WebAsset
         /// <param name="applicationContext">The context of the application that contains the resources to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            foreach (var assetContext in _itemDictionary.Remove(applicationContext))
             {
-                return;
-            }
-
-            foreach (var pluginDict in _itemDictionary.Values)
-            {
-                foreach (var assetList in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
-                {
-                    foreach (var assetItem in assetList)
-                    {
-                        OnRemoveResource(assetItem.AssetContext);
-                        assetItem.Dispose();
-                    }
-                }
-
-                pluginDict.Remove(applicationContext);
+                OnRemoveAsset(assetContext);
             }
         }
 
@@ -237,14 +204,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <returns>An enumeration of asset contexts.</returns>
         public IEnumerable<IAssetContext> GetAssets(IPluginContext pluginContext)
         {
-            if (_itemDictionary.TryGetValue(pluginContext, out var pluginResources))
-            {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.AssetContext);
-            }
-
-            return [];
+            return _itemDictionary.GetAssets(pluginContext);
         }
 
         /// <summary>
@@ -254,29 +214,25 @@ namespace WebExpress.WebCore.WebAsset
         /// <returns>An enumeration of asset contextes.</returns>
         public IEnumerable<IAssetContext> GetAssets(IApplicationContext applicationContext)
         {
-            return _itemDictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x)
-                .Where(x => x.AssetContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.AssetContext);
+            return _itemDictionary.GetAssets(applicationContext);
         }
 
         /// <summary>
-        /// Raises the AddResource event.
+        /// Raises the AddAsset event.
         /// </summary>
-        /// <param name="resourceContext">The asset context.</param>
-        private void OnAddResource(IAssetContext resourceContext)
+        /// <param name="assetContext">The asset context.</param>
+        private void OnAddAsset(IAssetContext assetContext)
         {
-            AddResource?.Invoke(this, resourceContext);
+            AddAsset?.Invoke(this, assetContext);
         }
 
         /// <summary>
-        /// Raises the RemoveResource event.
+        /// Raises the RemoveAsset event.
         /// </summary>
-        /// <param name="resourceContext">The asset context.</param>
-        private void OnRemoveResource(IAssetContext resourceContext)
+        /// <param name="assetContext">The asset context.</param>
+        private void OnRemoveAsset(IAssetContext assetContext)
         {
-            RemoveResource?.Invoke(this, resourceContext);
+            RemoveAsset?.Invoke(this, assetContext);
         }
 
         /// <summary>

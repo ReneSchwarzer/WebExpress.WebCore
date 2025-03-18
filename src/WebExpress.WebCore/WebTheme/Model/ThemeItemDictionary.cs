@@ -3,36 +3,34 @@ using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebPlugin;
 
-namespace WebExpress.WebCore.WebAsset.Model
+namespace WebExpress.WebCore.WebTheme.Model
 {
     /// <summary>
-    /// Represents a dictionary that maps plugin contexts to application contexts and asset items.
-    /// key = plugin context
-    /// value = { key = resource type, value = ressource item }
+    /// Represents a dictionary that stores theme items based on plugin and application contexts.
     /// </summary>
-    internal class AssetItemDictionary
+    internal class ThemeItemDictionary
     {
-        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<AssetItem>>> _dictionary = [];
+        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<ThemeItem>>> _dictionary = new();
 
         /// <summary>
-        /// Returns all asset items.
+        /// Returns all theme items.
         /// </summary>
-        public IEnumerable<AssetItem> All => _dictionary.Values
+        public IEnumerable<ThemeItem> All => _dictionary.Values
             .SelectMany(x => x.Values)
             .SelectMany(x => x);
 
         /// <summary>
-        /// Adds a asset item to the dictionary.
+        /// Adds a theme item to the dictionary.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
-        /// <param name="assetItem">The resource item.</param>
-        /// <returns>True if the resource item was added successfully, false if an element with the same status code already exists.</returns>
-        public bool AddAssetItem(IPluginContext pluginContext, IApplicationContext applicationContext, AssetItem assetItem)
+        /// <param name="themeItem">The theme item.</param>
+        /// <returns>True if the theme item was added successfully, false if an element with the same status code already exists.</returns>
+        public bool AddThemeItem(IPluginContext pluginContext, IApplicationContext applicationContext, ThemeItem themeItem)
         {
-            var type = assetItem.AssetClass;
+            var type = themeItem.ThemeClass;
 
-            if (!typeof(IAsset).IsAssignableFrom(type))
+            if (!typeof(ITheme).IsAssignableFrom(type))
             {
                 return false;
             }
@@ -44,16 +42,16 @@ namespace WebExpress.WebCore.WebAsset.Model
 
             var appContextDict = _dictionary[pluginContext];
 
-            if (!appContextDict.TryGetValue(applicationContext, out List<AssetItem> value))
+            if (!appContextDict.TryGetValue(applicationContext, out List<ThemeItem> value))
             {
-                value = ([]);
+                value = [];
                 appContextDict[applicationContext] = value;
             }
 
             var assetList = value;
 
-            assetList.RemoveAll(x => x.AssetContext?.EndpointId == assetItem.AssetContext.EndpointId);
-            assetList.Add(assetItem);
+            assetList.RemoveAll(x => x.ThemeContext?.ThemeId == themeItem.ThemeContext.ThemeId);
+            assetList.Add(themeItem);
 
             return true;
         }
@@ -62,8 +60,8 @@ namespace WebExpress.WebCore.WebAsset.Model
         /// Removes all resources associated with the specified plugin context.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin that contains the resources to remove.</param>
-        /// <returns>An enumeration of asset contexts that were removed.</returns>
-        public IEnumerable<IAssetContext> Remove(IPluginContext pluginContext)
+        /// <returns>An enumeration of theme contexts that were removed.</returns>
+        public IEnumerable<IThemeContext> Remove(IPluginContext pluginContext)
         {
             if (pluginContext == null)
             {
@@ -84,33 +82,33 @@ namespace WebExpress.WebCore.WebAsset.Model
 
                 _dictionary.Remove(pluginContext);
 
-                return items.Select(x => x.AssetContext);
+                return items.Select(x => x.ThemeContext);
             }
 
             return [];
         }
 
         /// <summary>
-        /// Removes all assets associated with the specified application context.
+        /// Removes all themes associated with the specified application context.
         /// </summary>
         /// <param name="applicationContext">The context of the application that contains the resources to remove.</param>
-        /// <returns>An enumeration of asset contexts that were removed.</returns>
-        internal IEnumerable<IAssetContext> Remove(IApplicationContext applicationContext)
+        /// <returns>An enumeration of theme contexts that were removed.</returns>
+        internal IEnumerable<IThemeContext> Remove(IApplicationContext applicationContext)
         {
             if (applicationContext == null)
             {
                 return [];
             }
 
-            var removedAssets = new List<IAssetContext>();
+            var removedThemes = new List<IThemeContext>();
 
             foreach (var pluginDict in _dictionary.Values)
             {
-                foreach (var assetList in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
+                foreach (var themeList in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
                 {
-                    foreach (var assetItem in assetList)
+                    foreach (var assetItem in themeList)
                     {
-                        removedAssets.Add(assetItem.AssetContext);
+                        removedThemes.Add(assetItem.ThemeContext);
                         assetItem.Dispose();
                     }
                 }
@@ -118,7 +116,7 @@ namespace WebExpress.WebCore.WebAsset.Model
                 pluginDict.Remove(applicationContext);
             }
 
-            return removedAssets;
+            return removedThemes;
         }
 
         /// <summary>
@@ -148,17 +146,17 @@ namespace WebExpress.WebCore.WebAsset.Model
         }
 
         /// <summary>
-        /// Returns the asset items from the dictionary.
+        /// Returns the theme items from the dictionary.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>
-        /// <returns>An IEnumerable of asset items</returns>
-        public IEnumerable<AssetItem> GetAssetItems(IApplicationContext applicationContext)
+        /// <returns>An IEnumerable of theme items</returns>
+        public IEnumerable<ThemeItem> GetThemeItems(IApplicationContext applicationContext)
         {
             if (_dictionary.ContainsKey(applicationContext?.PluginContext))
             {
                 var appContextDict = _dictionary[applicationContext?.PluginContext];
 
-                if (appContextDict.TryGetValue(applicationContext, out List<AssetItem> value))
+                if (appContextDict.TryGetValue(applicationContext, out List<ThemeItem> value))
                 {
                     var assetList = value;
 
@@ -170,34 +168,34 @@ namespace WebExpress.WebCore.WebAsset.Model
         }
 
         /// <summary>
-        /// Returns an enumeration of all containing asset contexts of a plugin.
+        /// Returns an enumeration of all containing theme contexts of a plugin.
         /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose asset are to be registered.</param>
-        /// <returns>An enumeration of asset contexts.</returns>
-        public IEnumerable<IAssetContext> GetAssets(IPluginContext pluginContext)
+        /// <param name="pluginContext">A context of a plugin whose theme are to be registered.</param>
+        /// <returns>An enumeration of theme contexts.</returns>
+        public IEnumerable<IThemeContext> GetThemes(IPluginContext pluginContext)
         {
             if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
             {
                 return pluginResources
                     .SelectMany(x => x.Value)
-                    .Select(x => x.AssetContext);
+                    .Select(x => x.ThemeContext);
             }
 
             return [];
         }
 
         /// <summary>
-        /// Returns an enumeration of asset contextes.
+        /// Returns an enumeration of theme contextes.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>An enumeration of asset contextes.</returns>
-        public IEnumerable<IAssetContext> GetAssets(IApplicationContext applicationContext)
+        /// <returns>An enumeration of theme contextes.</returns>
+        public IEnumerable<IThemeContext> GetThemes(IApplicationContext applicationContext)
         {
             return _dictionary.Values
                 .SelectMany(x => x.Values)
                 .SelectMany(x => x)
-                .Where(x => x.AssetContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.AssetContext);
+                .Where(x => x.ThemeContext.ApplicationContext.Equals(applicationContext))
+                .Select(x => x.ThemeContext);
         }
     }
 }

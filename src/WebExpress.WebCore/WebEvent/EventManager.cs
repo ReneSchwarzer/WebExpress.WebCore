@@ -69,12 +69,13 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Returns the event handler contexts.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TEvent">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An IEnumerable of event handler contexts.</returns>
-        public IEnumerable<IEventHandlerContext> GetEventHandlers<T>(IApplicationContext applicationContext) where T : IEvent
+        public IEnumerable<IEventHandlerContext> GetEventHandlers<TEvent>(IApplicationContext applicationContext)
+            where TEvent : IEvent
         {
-            return _dictionary.GetEventHandlerItems<T>(applicationContext)
+            return _dictionary.GetEventHandlerItems<TEvent>(applicationContext)
                 .Select(x => x.EventHandlerContext);
         }
 
@@ -93,13 +94,14 @@ namespace WebExpress.WebCore.WebEvent
         /// <summary>
         /// Raises the specified event.
         /// </summary>
-        /// <typeparam name="T">The type of event.</typeparam>
+        /// <typeparam name="TEvent">The type of event.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="sender">The sender object.</param>
         /// <param name="argument">The event argument.</param>
-        public void RaiseEvent<T>(IApplicationContext applicationContext, object sender, IEventArgument argument) where T : IEvent
+        public void RaiseEvent<TEvent>(IApplicationContext applicationContext, object sender, IEventArgument argument)
+            where TEvent : IEvent
         {
-            var eventHandlers = _dictionary.GetEventHandlerItems<T>(applicationContext);
+            var eventHandlers = _dictionary.GetEventHandlerItems<TEvent>(applicationContext);
 
             foreach (var eventHandler in eventHandlers)
             {
@@ -317,16 +319,6 @@ namespace WebExpress.WebCore.WebEvent
         }
 
         /// <summary>
-        /// Raises the event when an application is removed.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The context of the application being removed.</param>
-        private void OnRemoveApplication(object sender, IApplicationContext e)
-        {
-            Remove(e);
-        }
-
-        /// <summary>
         /// Raises the event when an application is added.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -334,6 +326,16 @@ namespace WebExpress.WebCore.WebEvent
         private void OnAddApplication(object sender, IApplicationContext e)
         {
             Register(e);
+        }
+
+        /// <summary>
+        /// Raises the event when an application is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being removed.</param>
+        private void OnRemoveApplication(object sender, IApplicationContext e)
+        {
+            Remove(e);
         }
 
         /// <summary>
@@ -372,6 +374,8 @@ namespace WebExpress.WebCore.WebEvent
             _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -19,6 +19,7 @@ using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
+using WebExpress.WebCore.WebTheme;
 
 namespace WebExpress.WebCore.WebComponent
 {
@@ -155,6 +156,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         ISessionManager SessionManager { get; }
+
+        /// <summary>
+        /// Returns the theme manager.
+        /// </summary>
+        /// <returns>The instance of the theme manager.</returns>
+        IThemeManager ThemeManager { get; }
 
         /// <summary>
         /// Returns a component based on its id.

@@ -14,12 +14,12 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// An event that fires when an asset is added.
         /// </summary>
-        event EventHandler<IAssetContext> AddResource;
+        event EventHandler<IAssetContext> AddAsset;
 
         /// <summary>
         /// An event that fires when an asset is removed.
         /// </summary>
-        event EventHandler<IAssetContext> RemoveResource;
+        event EventHandler<IAssetContext> RemoveAsset;
 
         /// <summary>
         /// Returns all asset contexts.

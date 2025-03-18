@@ -148,7 +148,7 @@ jobmanager.initialization=Der Jobmanager wurde initialisiert.
 jobmanager.register=Der Job '{0}' wurde der Anwendung '{1}' zugewiesen und im Jobmanager registriert.
 jobmanager.duplicate=Der Job '{0}' wurde bereits in der Anwendung '{1}' registriert.
 jobmanager.jobless=Der Job '{0}' besitzt keine Angaben zu einem Job.
-jobmanager.job=Job: '{0}' für Modul '{1}'
+jobmanager.job=Job: '{0}' für Anwendung '{1}'
 jobmanager.job.process=Der Job '{0}' wird ausgeführt.
 jobmanager.cron.parseerror=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' kann nicht verarbeitet werden.
 jobmanager.cron.range=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' ist außerhalb des gültigen Bereiches.
@@ -157,16 +157,20 @@ fragmentmanager.initialization=Der Fragmentmanager wurde initialisiert.
 fragmentmanager.register=Das Fragment '{0}' wurde in der Sektion '{1}' der Anwendung '{2}' registriert.
 fragmentmanager.error.section=Die Angabe der Sektion ist fehlerhaft.
 fragmentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' nicht.
-fragmentmanager.moduleless=Das Fragment '{0}' aus dem Plugin '{1}' besitzt keine Angaben zum Modul.
 fragmentmanager.addfragment.duplicate=Das Fragment '{0}' aus dem Plugin '{1}' ist bereits hinzugefügt worden.
 fragmentmanager.titel=Fragmente:
-fragmentmanager.fragment=Fragment: '{0}'
+fragmentmanager.fragment=Fragment: '{0}' für die Anwendung '{1}'.
 
 identitymanager.initialization=Der Identitymanager wurde initialisiert.
 identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
 identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der Anwendung '{1}' registriert.
 identitymanager.registerrole=Die Rolle '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
 identitymanager.duplicaterole=Die Rolle '{0}' wurde bereits in der Anwendung '{1}' registriert.
+
+thememanager.initialization=Der Thememanager wurde initialisiert.
+thememanager.addtheme=Das Theme '{0}' wurde in der Anwendung '{1}' registiert.
+thememanager.titel=Designvorlagen:
+thememanager.theme=Designvorlage: '{0}' für die Anwendung '{1}'.
 
 resource.variable.duplicate=Variable '{0}' bereits vorhanden!
 resource.file={0}: Datei '{1}' wurde geladen.
