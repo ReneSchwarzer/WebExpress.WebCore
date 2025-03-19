@@ -9,6 +9,7 @@ namespace WebExpress.WebCore.Test
     [Name("TestThemeA")]
     [Description("A dummy theme for testing.")]
     [Image("webexpress.webcore.test.testthemea.png")]
+    [ThemeMode(ThemeMode.Dark)]
     public sealed class TestThemeA : ITheme
     {
         /// <summary>
@@ -17,6 +18,6 @@ namespace WebExpress.WebCore.Test
         /// <value>
         /// A string representing the text color in hexadecimal format.
         /// </value>
-        public static string TextColor => "000000";
+        public static string TextColor => "FFFFFF";
     }
 }

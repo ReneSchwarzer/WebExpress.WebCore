@@ -39,5 +39,10 @@ namespace WebExpress.WebCore.WebTheme
         /// Returns the description of the theme.
         /// </summary>
         public string Description { get; internal set; }
+
+        /// <summary>
+        /// Returns the mode of the theme.
+        /// </summary>
+        public ThemeMode ThemeMode { get; internal set; }
     }
 }

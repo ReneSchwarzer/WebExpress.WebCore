@@ -154,5 +154,28 @@ namespace WebExpress.WebCore.Test.Manager
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.Image);
         }
+
+        /// <summary>
+        /// Test the theme mode property of the theme.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestThemeA), ThemeMode.Dark)]
+        [InlineData(typeof(TestApplicationA), typeof(TestThemeB), ThemeMode.Light)]
+        [InlineData(typeof(TestApplicationB), typeof(TestThemeA), ThemeMode.Dark)]
+        [InlineData(typeof(TestApplicationB), typeof(TestThemeB), ThemeMode.Light)]
+        [InlineData(typeof(TestApplicationC), typeof(TestThemeA), ThemeMode.Dark)]
+        [InlineData(typeof(TestApplicationC), typeof(TestThemeB), ThemeMode.Light)]
+        public void Mode(Type applicationType, Type themeType, ThemeMode expected)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+
+            // test execution
+            var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
+
+            Assert.NotNull(theme);
+            Assert.Equal(expected, theme?.ThemeMode);
+        }
     }
 }

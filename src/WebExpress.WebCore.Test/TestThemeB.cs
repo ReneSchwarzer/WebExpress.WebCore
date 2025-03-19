@@ -15,6 +15,6 @@ namespace WebExpress.WebCore.Test
         /// <value>
         /// A string representing the text color in hexadecimal format.
         /// </value>
-        public static string TextColor => "FFFFFF";
+        public static string TextColor => "000000";
     }
 }
