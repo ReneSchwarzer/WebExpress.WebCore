@@ -10,6 +10,7 @@ namespace WebExpress.WebCore.Test
     [Description("A dummy theme for testing.")]
     [Image("webexpress.webcore.test.testthemea.png")]
     [ThemeMode(ThemeMode.Dark)]
+    [ThemeStyle("/asserts/css/themea.css")]
     public sealed class TestThemeA : ITheme
     {
         /// <summary>

@@ -155,6 +155,7 @@ namespace WebExpress.WebCore.WebTheme
                 var name = default(string);
                 var description = default(string);
                 var mode = ThemeMode.Light;
+                var style = default(string);
 
                 foreach (var customAttribute in themeType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IThemeAttribute))))
@@ -182,6 +183,10 @@ namespace WebExpress.WebCore.WebTheme
                             mode = ThemeMode.Light;
                         }
                     }
+                    else if (customAttribute.AttributeType == typeof(ThemeStyleAttribute))
+                    {
+                        style ??= customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
                 }
 
                 // assign the theme to existing applications
@@ -195,7 +200,8 @@ namespace WebExpress.WebCore.WebTheme
                         Name = name,
                         Description = description,
                         Image = image != null ? UriResource.Combine(applicationContext.ContextPath, image) : null,
-                        ThemeMode = mode
+                        ThemeMode = mode,
+                        ThemeStyle = style != null ? UriResource.Combine(applicationContext.ContextPath, style) : null,
                     };
 
                     var themeItem = new ThemeItem()

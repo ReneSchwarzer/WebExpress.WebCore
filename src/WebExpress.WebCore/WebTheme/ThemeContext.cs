@@ -44,5 +44,10 @@ namespace WebExpress.WebCore.WebTheme
         /// Returns the mode of the theme.
         /// </summary>
         public ThemeMode ThemeMode { get; internal set; }
+
+        /// <summary>
+        /// Returns the URI resource for the css theme style.
+        /// </summary>
+        public UriResource ThemeStyle { get; internal set; }
     }
 }

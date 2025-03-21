@@ -177,5 +177,28 @@ namespace WebExpress.WebCore.Test.Manager
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.ThemeMode);
         }
+
+        /// <summary>
+        /// Test the theme style property of the theme.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestThemeA), "/server/appa/asserts/css/themea.css")]
+        [InlineData(typeof(TestApplicationA), typeof(TestThemeB), null)]
+        [InlineData(typeof(TestApplicationB), typeof(TestThemeA), "/server/appb/asserts/css/themea.css")]
+        [InlineData(typeof(TestApplicationB), typeof(TestThemeB), null)]
+        [InlineData(typeof(TestApplicationC), typeof(TestThemeA), "/server/asserts/css/themea.css")]
+        [InlineData(typeof(TestApplicationC), typeof(TestThemeB), null)]
+        public void ThemeStyle(Type applicationType, Type themeType, string expected)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+
+            // test execution
+            var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
+
+            Assert.NotNull(theme);
+            Assert.Equal(expected, theme?.ThemeStyle);
+        }
     }
 }
