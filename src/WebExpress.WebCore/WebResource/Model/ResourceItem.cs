@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource.Model
@@ -11,27 +14,35 @@ namespace WebExpress.WebCore.WebResource.Model
     /// </summary>
     internal class ResourceItem : IDisposable
     {
-        private readonly IResourceManager _resourceManager;
+        /// <summary>
+        /// Returns the endpoint id.
+        /// </summary>
+        public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the parent type.
+        /// Returns the context of the associated plugin.
         /// </summary>
-        public Type ParentType { get; set; }
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns or sets the type of resource.
         /// </summary>
-        public Type ResourceClass { get; set; }
+        public Type ResourceClass { get; internal set; }
 
         /// <summary>
         /// Returns or sets the instance of the resource, if the resource is cached, otherwise null.
         /// </summary>
-        public IEndpoint Instance { get; set; }
+        public IEndpoint Instance { get; internal set; }
 
         /// <summary>
         /// Returns or sets the paths of the resource.
         /// </summary>
-        public UriResource ContextPath { get; set; }
+        public UriEndpoint ContextPath { get; internal set; }
 
         /// <summary>
         /// Returns or sets the path segment.
@@ -41,17 +52,22 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <summary>
         /// Returns or sets whether all subpaths should be taken into sitemap.
         /// </summary>
-        public bool IncludeSubPaths { get; set; }
+        public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
         /// </summary>
-        public IEnumerable<ICondition> Conditions { get; set; }
+        public IEnumerable<ICondition> Conditions { get; internal set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
-        public bool Cache { get; set; }
+        public bool Cache { get; internal set; }
+
+        /// <summary>
+        /// Returns the attributes associated with the page.
+        /// </summary>
+        public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
         /// Returns the resource context.
@@ -64,7 +80,6 @@ namespace WebExpress.WebCore.WebResource.Model
         /// <param name="resourceManager">The resource manager.</param>
         internal ResourceItem(IResourceManager resourceManager)
         {
-            _resourceManager = resourceManager;
         }
 
         /// <summary>
@@ -72,7 +87,6 @@ namespace WebExpress.WebCore.WebResource.Model
         /// </summary>
         public void Dispose()
         {
-
         }
 
         /// <summary>

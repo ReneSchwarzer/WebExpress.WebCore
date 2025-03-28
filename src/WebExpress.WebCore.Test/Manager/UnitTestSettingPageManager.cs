@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW.Settings;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebSettingPage;
 
@@ -70,12 +71,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the setting page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webexpress.webcore.test.testsettingpagea")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webexpress.webcore.test.testsettingpageb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "webexpress.webcore.test.www.settings.testsettingpagea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "webexpress.webcore.test.www.settings.testsettingpageb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageC), "webexpress.webcore.test.www.settings.testsettingpagec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "webexpress.webcore.test.www.settings.testsettingpagea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "webexpress.webcore.test.www.settings.testsettingpageb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageC), "webexpress.webcore.test.www.settings.testsettingpagec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "webexpress.webcore.test.www.settings.testsettingpagea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webexpress.webcore.test.www.settings.testsettingpageb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageC), "webexpress.webcore.test.www.settings.testsettingpagec")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
@@ -112,13 +116,16 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the setting page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "/server/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "/server/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "/server/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/server/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/server")]
-        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/server")]
-        public void ContextPath(Type applicationType, Type resourceType, string path)
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageA), "/server/appa/settings/testsettingpagea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageB), "/server/appa/settings/testsettingpageb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestSettingPageC), "/server/appa/settings/testsettingpagec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageA), "/server/appb/settings/testsettingpagea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageB), "/server/appb/settings/testsettingpageb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestSettingPageC), "/server/appb/settings/testsettingpagec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageA), "/server/settings/testsettingpagea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "/server/settings/testsettingpageb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestSettingPageC), "/server/settings/testsettingpagec")]
+        public void RoutePath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -126,7 +133,7 @@ namespace WebExpress.WebCore.Test.Manager
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(path, settingPage.ContextPath);
+            Assert.Equal(path, settingPage.Route.ToString());
         }
 
         /// <summary>

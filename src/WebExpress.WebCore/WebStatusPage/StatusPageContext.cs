@@ -1,7 +1,7 @@
 ﻿using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebStatusPage
 {
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Returns the status icon.
         /// </summary>
-        public UriResource StatusIcon { get; internal set; }
+        public IRoute StatusIcon { get; internal set; }
 
         /// <summary>
         /// Returns a string that represents the current object.

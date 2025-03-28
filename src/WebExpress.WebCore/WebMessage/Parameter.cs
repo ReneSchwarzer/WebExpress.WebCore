@@ -102,17 +102,17 @@ namespace WebExpress.WebCore.WebMessage
         /// <returns>The parameter list.</returns>
         public static List<Parameter> Create(params Parameter[] param)
         {
-            return new List<Parameter>(param);
+            return [.. param];
         }
 
         /// <summary>
         /// Returns the key.
         /// </summary>
-        /// <typeparam name="T">The type.</typeparam>
+        /// <typeparam name="TParameter">The type.</typeparam>
         /// <returns>The key.</returns>
-        public static string GetKey<T>() where T : Parameter
+        public static string GetKey<TParameter>() where TParameter : Parameter
         {
-            return (Activator.CreateInstance(typeof(T)) as T)?.Key;
+            return Activator.CreateInstance<TParameter>()?.Key;
         }
 
         /// <summary>

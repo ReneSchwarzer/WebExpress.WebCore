@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -13,7 +14,7 @@ namespace WebExpress.WebCore.WebAsset
     /// </summary>
     public class AssetContext : IAssetContext
     {
-        private readonly UriResource _contextPath;
+        private readonly IRoute _contextPath;
         private readonly IUriPathSegment _pathSegment;
 
         /// <summary>
@@ -37,11 +38,6 @@ namespace WebExpress.WebCore.WebAsset
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the parent or null if not used.
-        /// </summary>
-        public IEndpointContext ParentContext => null;
-
-        /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache => true;
@@ -52,21 +48,21 @@ namespace WebExpress.WebCore.WebAsset
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the context path.
+        /// Returns the internal routing path for the endpoint.
         /// </summary>
-        public UriResource ContextPath => UriResource.Combine(ApplicationContext.ContextPath, _contextPath);
+        public IRoute Route => RouteEndpoint.Combine(ApplicationContext.ContextPath, _contextPath, _pathSegment);
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns the attributes associated with the page.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_pathSegment);
+        public IEnumerable<Type> Attributes => [];
 
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
         /// </summary>
         /// <param name="contextPath">The context path of the resource.</param>
         /// <param name="pathSegment">The path segment of the resource.</param>
-        public AssetContext(UriResource contextPath, IUriPathSegment pathSegment)
+        public AssetContext(IRoute contextPath, IUriPathSegment pathSegment)
         {
             _contextPath = contextPath;
             _pathSegment = pathSegment;

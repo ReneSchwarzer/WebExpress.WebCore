@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="TestSettingPageC.cs" />
+    <None Include="WWW\Settings\TestSettingPageC.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,269 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using WebExpress.WebCore.WebUri;
+
+namespace WebExpress.WebCore.WebEndpoint
+{
+    /// <summary>
+    /// A route in WebExpress represents a logical internal path or pattern used to map endpoints within the sitemap.
+    /// 
+    /// While a URI (Uniform Resource Identifier) defines the complete, standardized external identifier of a resource
+    /// (e.g., http://example.com/path?query=value#fragment) and thus represents the external address of an endpoint,
+    /// a route represents the internal address of an endpoint that is used exclusively for internal purposes such as routing 
+    /// and request processing.
+    /// 
+    /// A route contains neither a scheme, nor an authority, nor other external components. Furthermore, it may include 
+    /// placeholders for dynamic segments (e.g., /users/{id}).
+    /// </summary>
+    public partial class RouteEndpoint : IRoute
+    {
+        /// <summary>
+        /// The segments of the route (e.g., /over/there).
+        /// </summary>
+        public IEnumerable<IUriPathSegment> PathSegments { get; private set; } = [new UriPathSegmentRoot()];
+
+        /// <summary>
+        /// Returns a string representation of the route.
+        /// </summary>
+        public string Display { get; set; }
+
+        /// <summary>
+        /// Determines if the route is the root.
+        /// </summary>
+        public bool IsRoot => PathSegments.Count() == 1;
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        public RouteEndpoint()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="scheme">The scheme (e.g. Http, FTP).</param>
+        /// <param name="authority">The authority (e.g. user@example.com:8080).</param>
+        /// <param name="uri">The uri.</param>
+        public RouteEndpoint(UriScheme scheme, UriAuthority authority, string uri)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        public RouteEndpoint(string route)
+        {
+            if (string.IsNullOrWhiteSpace(route) || route == "/") return;
+
+            PathSegments = PathSegments
+                .Concat(route.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => new UriPathSegmentConstant(x)));
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="route">The route.</param>
+        public RouteEndpoint(IRoute route)
+        {
+            PathSegments = route?.PathSegments.Select(x => x.Copy()) ?? [];
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(params IUriPathSegment[] segments)
+        {
+            if (segments.Length > 0)
+            {
+                PathSegments = PathSegments
+                    .Concat(segments.Select(x => x.Copy()));
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="route">The base route.</param>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(IRoute route, params string[] segments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="route">The base route.</param>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(IRoute route, params IUriPathSegment[] segments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="route">The route.</param>
+        /// <param name="segments">The path segments.</param>
+        /// <param name="extendedSegments">Other segments.</param>
+        public RouteEndpoint(IRoute route, IEnumerable<IUriPathSegment> segments, IEnumerable<IUriPathSegment> extendedSegments)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="scheme">The scheme (e.g. Http, FTP).</param>
+        /// <param name="authority">The authority (e.g. user@example.com:8080).</param>
+        /// <param name="fragment">References a position within a resource (e.g. #Anchor).</param>
+        /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier).</param>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuerry> query, IEnumerable<IUriPathSegment> segments)
+        {
+        }
+
+        /// <summary>
+        /// Concatenates the given path segment to the current route and returns a new instance of IRoute with the updated path.
+        /// </summary>
+        /// <param name="segment">The path segment to be concatenated with the existing route.</param>
+        /// <returns>A new IRoute instance representing the route after concatenation.</returns>
+        public IRoute Concat(string segment)
+        {
+            if (string.IsNullOrWhiteSpace(segment))
+            {
+                return this;
+            }
+
+            var copy = new RouteEndpoint((IRoute)this);
+            copy.PathSegments = copy.PathSegments
+                .Concat(segment.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => new UriPathSegmentConstant(x)));
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Concatenates the given path segment to the current route and returns a new instance of IRoute with the updated path.
+        /// </summary>
+        /// <param name="segments">An array of path segments to be concatenated to the existing route.</param>
+        /// <returns>A new IRoute instance representing the route after concatenation.</returns>
+        public virtual IRoute Concat(params IUriPathSegment[] segments)
+        {
+            if (segments.Length == 0)
+            {
+                return this;
+            }
+
+            var copy = new RouteEndpoint((IRoute)this);
+            copy.PathSegments = copy.PathSegments
+                .Select(x => x.Copy())
+                .Concat(segments.Where(x => !x.IsEmpty));
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Combines the specified routes into a compound route.
+        /// </summary>
+        /// <param name="routes">The routes to be combine.</param>
+        /// <returns>A combined route.</returns>
+        public static IRoute Combine(params IRoute[] routes)
+        {
+            var r = routes.Skip(1).Where(x => !x.IsRoot).SelectMany(x => x.PathSegments.Skip(1));
+            var copy = new RouteEndpoint(routes.FirstOrDefault());
+            copy.PathSegments = copy.PathSegments
+                .Concat(r);
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Combines the specified routes into a compound uri.
+        /// </summary>
+        /// <param name="baseRoute">The base route to be used as the starting point.</param>
+        /// <param name="routes">The routes to be combine.</param>
+        /// <returns>A combined route.</returns>
+        public static IRoute Combine(IRoute baseRoute, params string[] routes)
+        {
+            var copy = new RouteEndpoint(baseRoute);
+            copy.PathSegments = copy.PathSegments
+                .Concat(routes.Where(x => !string.IsNullOrWhiteSpace(x))
+                .SelectMany(x => x.Split('/', StringSplitOptions.RemoveEmptyEntries))
+                .Select(x => new UriPathSegmentConstant(x) as IUriPathSegment));
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Combines the specified base route, intermediate route, and enumerable segments into a compound route.
+        /// </summary>
+        /// <param name="baseRoute">The base route serving as the starting point.</param>
+        /// <param name="segments">The enumerable collection of path segments to be added.</param>
+        /// <returns>A new compound route combining all specified components.</returns>
+        public static IRoute Combine(IRoute baseRoute, IEnumerable<IUriPathSegment> segments)
+        {
+            var copy = new RouteEndpoint(baseRoute);
+            copy.PathSegments = copy.PathSegments
+                .Concat(segments);
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Combines the specified base route, intermediate route, and enumerable segments into a compound route.
+        /// </summary>
+        /// <param name="baseRoute">The base route serving as the starting point.</param>
+        /// <param name="intermediateRoute">The intermediate route to be appended, if not empty or whitespace.</param>
+        /// <param name="segments">The enumerable collection of path segments to be added.</param>
+        /// <returns>A new compound route combining all specified components.</returns>
+        public static IRoute Combine(IRoute baseRoute, string intermediateRoute, IEnumerable<IUriPathSegment> segments)
+        {
+            var copy = new RouteEndpoint(baseRoute);
+            copy.PathSegments = copy.PathSegments
+                .Concat(!string.IsNullOrWhiteSpace(intermediateRoute) ? [new UriPathSegmentConstant(intermediateRoute)] : [])
+                .Concat(segments);
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Combines the specified base route, intermediate route, and single segment into a compound route.
+        /// </summary>
+        /// <param name="baseRoute">The base route to be used as the starting point.</param>
+        /// <param name="intermediateRoute">The intermediate route to be appended.</param>
+        /// <param name="segment">The individual segment to be added to the resulting route.</param>
+        /// <returns>A newly combined route constructed from the provided components.</returns>
+        public static IRoute Combine(IRoute baseRoute, IRoute intermediateRoute, IUriPathSegment segment)
+        {
+            return Combine([baseRoute, intermediateRoute, new RouteEndpoint(segment)]);
+        }
+
+        /// <summary>
+        /// Converts a resource uri to a normal uri.
+        /// </summary>
+        /// <param name="uri">The uri to convert.</param>
+        public static implicit operator string(RouteEndpoint uri)
+        {
+            return uri?.ToString();
+        }
+
+        /// <summary>
+        /// Converts the route to a string.
+        /// </summary>
+        /// <returns>A string that represents the current route.</returns>
+        public override string ToString()
+        {
+            var path = "/" + string.Join
+            (
+                "/",
+                PathSegments.Where(x => x is not UriPathSegmentRoot)
+                    .Select(x => x.ToString().TrimStart('/'))
+            );
+
+            return path?.TrimEnd('/');
+        }
+    }
+}

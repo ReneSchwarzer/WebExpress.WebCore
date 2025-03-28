@@ -303,31 +303,29 @@ namespace WebExpress.WebCore.WebRestApi
         {
             var assembly = pluginContext?.Assembly;
 
-            foreach (var resrApiType in assembly.GetTypes()
+            foreach (var restApiType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
                 .Where(x => x.GetInterface(typeof(IRestApi).Name) != null))
             {
-                var id = resrApiType.FullName?.ToLower();
+                var id = restApiType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var title = resrApiType.Name;
-                var parent = default(Type);
+                var title = restApiType.Name;
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
                 var methods = new List<CrudMethod>();
-                var version = 1u;
+                var version = -1;
+                var attributes = restApiType.CustomAttributes
+                    .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
+                    !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
-                foreach (var customAttribute in resrApiType.CustomAttributes
+                foreach (var customAttribute in restApiType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = resrApiType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
-                    {
-                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        segment = restApiType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
                     else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
                     {
@@ -337,12 +335,14 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name
+                        && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(MethodAttribute).Name && customAttribute.AttributeType.Namespace == typeof(MethodAttribute).Namespace)
+                    else if (customAttribute.AttributeType.Name == typeof(MethodAttribute).Name
+                        && customAttribute.AttributeType.Namespace == typeof(MethodAttribute).Namespace)
                     {
                         var method = (CrudMethod)customAttribute.ConstructorArguments.FirstOrDefault().Value;
                         methods.Add(method);
@@ -353,63 +353,67 @@ namespace WebExpress.WebCore.WebRestApi
                     }
                 }
 
-                foreach (var customAttribute in resrApiType.CustomAttributes
+                foreach (var customAttribute in restApiType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IRestApiAttribute))))
                 {
-                    if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
+                    if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name
+                        && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
                     {
-                        version = Convert.ToUInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        version = Convert.ToInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
                     }
-
-                }
-
-                if (segment == default && parent == default && contextPath == "")
-                {
-                    var assemblyName = assembly.GetName().Name;
-                    var fullClassName = resrApiType.FullName;
-                    var path = fullClassName[(assemblyName.Length + 1)..^(resrApiType.Name.Length + 1)];
-
-                    contextPath = "/" + path.ToLower().Replace('.', '/');
                 }
 
                 // assign the rest api to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var restApiContext = new RestApiContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
+                    var routePath = EndpointManager.CreateEndpointRoute
+                    (
+                        restApiType,
+                        applicationContext,
+                        segment,
+                        [new UriPathSegmentConstant("api"), new UriPathSegmentVariableInt($"{version}") { VariableName = "apiVersion" }],
+                        ["api", "restapi", "rest"]
+                    );
+                    var versionPath = version < 1 ? "" : version.ToString();
+
+                    var restApiContext = new RestApiContext()
                     {
-                        EndpointId = new ComponentId(resrApiType.FullName),
+                        EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
+                        Route = routePath,
                         Cache = cache,
                         Conditions = conditions,
-                        Methods = methods,
-                        Version = version,
-                        IncludeSubPaths = includeSubPaths
+                        IncludeSubPaths = includeSubPaths,
+                        Attributes = attributes.Select(x => x.AttributeType),
+                        Version = version < 1 ? 1u : (uint)version,
+                        Methods = methods.Distinct()
                     };
 
-                    var restApiItem = new RestApiItem(_componentHub.RestApiManager)
+                    var restApiItem = new RestApiItem(_componentHub.EndpointManager)
                     {
-                        ParentType = parent,
+                        EndpointId = new ComponentId(restApiType.FullName),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
                         RestApiContext = restApiContext,
-                        RestApiClass = resrApiType,
+                        RestApiClass = restApiType,
                         Methods = methods.Distinct(),
-                        Version = version,
+                        Version = version < 1 ? 1u : (uint)version,
                         Cache = cache,
                         Conditions = conditions,
-                        ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(resrApiType.Name.ToLower())
+                        Attributes = attributes.Select(x => x.AttributeType)
                     };
 
                     if (_dictionary.AddRestApiItem(pluginContext, applicationContext, restApiItem))
                     {
-                        OnAddRestApi(restApiContext);
+                        OnAddRestApi(restApiItem.RestApiContext);
 
                         _httpServerContext?.Log.Debug
                         (
                             I18N.Translate
                             (
-                                "webexpress.webcore:restapimanager.addresource",
+                                "webexpress.webcore:restapimanager.addrestapi",
                                 id,
                                 applicationContext.ApplicationId
                             )

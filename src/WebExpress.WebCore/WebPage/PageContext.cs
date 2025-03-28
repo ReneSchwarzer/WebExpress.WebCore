@@ -47,11 +47,6 @@ namespace WebExpress.WebCore.WebPage
         public string PageTitle { get; internal set; }
 
         /// <summary>
-        /// Returns the parent or null if not used.
-        /// </summary>
-        public IEndpointContext ParentContext { get; internal set; }
-
-        /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
@@ -69,12 +64,12 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the context path.
         /// </summary>
-        public UriResource ContextPath { get; internal set; }
+        public UriEndpoint ContextPath { get; internal set; }
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns the internal routing path for the endpoint.
         /// </summary>
-        public UriResource Uri { get; internal set; }
+        public IRoute Route { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class.

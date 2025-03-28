@@ -21,6 +21,7 @@ namespace WebExpress.WebCore.WebSitemap
         private SitemapNode _root = new();
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
+        private readonly IUri _serverUri;
 
         /// <summary>
         /// Returns the side map.
@@ -39,6 +40,8 @@ namespace WebExpress.WebCore.WebSitemap
         {
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
+            _serverUri = new UriEndpoint(_httpServerContext.Endpoints.FirstOrDefault(e => e.Uri.StartsWith("https"))?.ToString()
+                ?? _httpServerContext.Endpoints.FirstOrDefault()?.ToString() ?? "");
 
             _httpServerContext.Log.Debug
             (
@@ -65,7 +68,7 @@ namespace WebExpress.WebCore.WebSitemap
                     ApplicationContext = x,
                     x.ContextPath.PathSegments
                 })
-                .OrderBy(x => x.PathSegments.Count);
+                .OrderBy(x => x.PathSegments.Count());
 
             foreach (var application in applications)
             {
@@ -81,9 +84,9 @@ namespace WebExpress.WebCore.WebSitemap
                 .Select(x => new
                 {
                     EndpointContext = x,
-                    x.Uri.PathSegments
+                    x.Route.PathSegments
                 })
-                .OrderBy(x => x.PathSegments.Count);
+                .OrderBy(x => x.PathSegments.Count());
 
             foreach (var item in resources)
             {
@@ -129,63 +132,45 @@ namespace WebExpress.WebCore.WebSitemap
         }
 
         /// <summary>
-        /// Determines the uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context 
+        /// in which the URI is valid. 
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
-        /// <paramref name="parameters"/>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(params Parameter[] parameters) where T : IEndpoint
-        {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(T));
-
-            var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
-
-            return node?.EndpointContext?.Uri.SetParameters(parameters);
-        }
-
-        /// <summary>
-        /// Determines the uri from the sitemap of a class, taking into account the context in which the uri is valid.
-        /// </summary>
-        /// <param name="resourceType">The resource type.</param>
-        /// <param name="parameters">The parameters to be considered for the URI.</param>
-        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        public UriResource GetUri(Type resourceType, params Parameter[] parameters)
-        {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(resourceType);
-
-            var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
-
-            return node?.EndpointContext?.Uri.SetParameters(parameters);
-        }
-
-        /// <summary>
-        /// Determines the uri from the sitemap of a class, taking into account the context in which the uri is valid.
-        /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
+        /// <typeparam name="TEndpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="applicationContext">The application context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(IApplicationContext applicationContext) where T : IEndpoint
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
+            where TEndpoint : IEndpoint
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(T), applicationContext);
+            return GetUri(typeof(TEndpoint), applicationContext, parameters);
+        }
+
+        /// <summary>
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
+        /// </summary>
+        /// <param name="endpointType">The endpoint type.</param>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters)
+        {
+            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
             var node = _root.GetPreOrder()
                 .Where(x => endpointContexts.Contains(x.EndpointContext))
                 .FirstOrDefault();
 
-            return node?.EndpointContext?.Uri;
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).SetParameters(parameters);
         }
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="TEnpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid/>/b').</typeparam>
+        /// <typeparam name="TEnpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="endpointContext">The endpoint context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<TEnpoint>(IEndpointContext endpointContext) where TEnpoint : IEndpoint
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri<TEnpoint>(IEndpointContext endpointContext)
+            where TEnpoint : IEndpoint
         {
             var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
@@ -194,7 +179,7 @@ namespace WebExpress.WebCore.WebSitemap
                 .Where(x => endpointContexts.Contains(x.EndpointContext))
                 .FirstOrDefault();
 
-            return node?.EndpointContext?.Uri;
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null);
         }
 
         /// <summary>
@@ -202,7 +187,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="uri">The URI resource to search for.</param>
         /// <returns>The endpoint context if found, otherwise null.</returns>
-        public IEndpointContext GetEndpoint(UriResource uri)
+        public IEndpointContext GetEndpoint(UriEndpoint uri)
         {
             var variables = new Dictionary<string, string>();
             var result = SearchNode
@@ -417,7 +402,7 @@ namespace WebExpress.WebCore.WebSitemap
                     {
                         EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriResource([.. outPathSegments])
+                        Uri = new UriEndpoint([.. outPathSegments])
                     };
                 }
                 else if (node.IsLeaf && nextPathSegment != null && node.EndpointContext != null && node.EndpointContext.IncludeSubPaths)
@@ -426,7 +411,7 @@ namespace WebExpress.WebCore.WebSitemap
                     {
                         EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriResource([.. outPathSegments])
+                        Uri = new UriEndpoint([.. outPathSegments])
                     };
                 }
 
@@ -441,7 +426,7 @@ namespace WebExpress.WebCore.WebSitemap
             {
                 EndpointContext = node.EndpointContext,
                 SearchContext = searchContext,
-                Uri = new UriResource([.. outPathSegments])
+                Uri = new UriEndpoint([.. outPathSegments])
             };
         }
 

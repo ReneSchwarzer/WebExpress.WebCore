@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPage;
 
@@ -20,7 +21,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(12, componentHub.PageManager.Pages.Count());
+            Assert.Equal(33, componentHub.PageManager.Pages.Count());
         }
 
         /// <summary>
@@ -44,21 +45,23 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "webexpress.webcore.test.testpagea")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "webexpress.webcore.test.testpageb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "webexpress.webcore.test.testpagec")]
-        public void Id(Type applicationType, Type resourceType, string id)
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Index), "webexpress.webcore.test.www.index")]
+        [InlineData(typeof(TestApplicationA), typeof(About), "webexpress.webcore.test.www.about")]
+        [InlineData(typeof(TestApplicationA), typeof(Contact), "webexpress.webcore.test.www.contact")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Index), "webexpress.webcore.test.www.blog.index")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Post.Index), "webexpress.webcore.test.www.blog.post.index")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Post.Add), "webexpress.webcore.test.www.blog.post.add")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Post.PostId.Edit), "webexpress.webcore.test.www.blog.post.postid.edit")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Post.PostId.Index), "webexpress.webcore.test.www.blog.post.postid.index")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Index), "webexpress.webcore.test.www.products.index")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.List), "webexpress.webcore.test.www.products.list")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), "webexpress.webcore.test.www.products.details.index")]
+        public void Id(Type applicationType, Type pageType, string id)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-            var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
+            var page = componentHub.PageManager.GetPages(pageType, application)?.FirstOrDefault();
 
             // test execution
             Assert.Equal(id, page.EndpointId.ToString());
@@ -68,15 +71,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the title property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "webindex:pagea.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "webindex:pageb.label")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "webindex:pagec.label")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "webindex:pagea.label")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "webindex:pageb.label")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "webindex:pagec.label")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "webindex:pagea.label")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "webindex:pageb.label")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "webindex:pagec.label")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Index), "webindex:home.label")]
+        [InlineData(typeof(TestApplicationA), typeof(About), "webindex:about.label")]
+        [InlineData(typeof(TestApplicationA), typeof(Contact), "webindex:contact.label")]
+        [InlineData(typeof(TestApplicationB), typeof(WWW.Index), "webindex:home.label")]
+        [InlineData(typeof(TestApplicationB), typeof(About), "webindex:about.label")]
+        [InlineData(typeof(TestApplicationB), typeof(Contact), "webindex:contact.label")]
+        [InlineData(typeof(TestApplicationC), typeof(WWW.Index), "webindex:home.label")]
+        [InlineData(typeof(TestApplicationC), typeof(About), "webindex:about.label")]
+        [InlineData(typeof(TestApplicationC), typeof(Contact), "webindex:contact.label")]
 
         public void Title(Type applicationType, Type resourceType, string title)
         {
@@ -93,16 +96,16 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageA), "/server/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), "/server/appa/resa/b")]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageC), "/server/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageA), "/server/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), "/server/appb/resa/b")]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageC), "/server/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageA), "/server")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageB), "/server/resa/b")]
-        [InlineData(typeof(TestApplicationC), typeof(TestPageC), "/server")]
-        public void ContextPath(Type applicationType, Type resourceType, string path)
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Index), "/server/appa")]
+        [InlineData(typeof(TestApplicationA), typeof(About), "/server/appa/about")]
+        [InlineData(typeof(TestApplicationA), typeof(Contact), "/server/appa/contact")]
+        [InlineData(typeof(TestApplicationB), typeof(WWW.Index), "/server/appb")]
+        [InlineData(typeof(TestApplicationB), typeof(About), "/server/appb/about")]
+        [InlineData(typeof(TestApplicationB), typeof(Contact), "/server/appb/contact")]
+        [InlineData(typeof(TestApplicationC), typeof(WWW.Index), "/server")]
+        [InlineData(typeof(TestApplicationC), typeof(About), "/server/about")]
+        [InlineData(typeof(TestApplicationC), typeof(Contact), "/server/contact")]
+        public void RoutePath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -110,7 +113,7 @@ namespace WebExpress.WebCore.Test.Manager
             var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(path, page.ContextPath);
+            Assert.Equal(path, page.Route.ToString());
         }
 
         /// <summary>

@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test.Uri
     [Collection("NonParallelTests")]
     public class UnitTestUriRelativeExtendedPath
     {
-        private readonly UriResource Uri = new UriResource("http://user@example.com:80");
+        private readonly UriEndpoint Uri = new UriEndpoint("http://user@example.com:80");
 
         [Fact]
         public void ExtendedPath_0()
@@ -23,10 +23,10 @@ namespace WebExpress.WebCore.Test.Uri
                 new UriPathSegmentConstant("y")
             };
 
-            var resourceUri = new UriResource(Uri, segments);
-            resourceUri.ServerRoot = new UriResource("http://user@example.com:80");
-            resourceUri.ApplicationRoot = new UriResource("http://user@example.com:80");
-            resourceUri.EndpointRoot = new UriResource("http://user@example.com:80/a/b/c");
+            var resourceUri = new UriEndpoint(Uri, segments);
+            resourceUri.ServerRoot = new UriEndpoint("http://user@example.com:80");
+            resourceUri.ApplicationRoot = new UriEndpoint("http://user@example.com:80");
+            resourceUri.EndpointRoot = new UriEndpoint("http://user@example.com:80/a/b/c");
 
             Assert.True
             (

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage.Model
 {
@@ -15,9 +13,6 @@ namespace WebExpress.WebCore.WebPage.Model
     /// </summary>
     internal class PageItem : IDisposable
     {
-        private readonly IEndpointManager _endpointManager;
-        private PageContext _pageContext;
-
         /// <summary>
         /// Returns the endpoint id.
         /// </summary>
@@ -39,11 +34,6 @@ namespace WebExpress.WebCore.WebPage.Model
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns or sets the parent type.
-        /// </summary>
-        public Type ParentType { get; set; }
-
-        /// <summary>
         /// Returns or sets the type of page.
         /// </summary>
         public Type PageClass { get; set; }
@@ -59,16 +49,6 @@ namespace WebExpress.WebCore.WebPage.Model
         /// determine whether content and how content should be displayed.
         /// </summary>
         public IEnumerable<Type> Scopes { get; set; }
-
-        /// <summary>
-        /// Returns or sets the paths of the resource.
-        /// </summary>
-        public UriResource ContextPath { get; set; }
-
-        /// <summary>
-        /// Returns or sets the path segment.
-        /// </summary>
-        public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
         /// Returns or sets whether all subpaths should be taken into sitemap.
@@ -98,38 +78,7 @@ namespace WebExpress.WebCore.WebPage.Model
         /// <summary>
         /// Returns the page context.
         /// </summary>
-        public IPageContext PageContext
-        {
-            get
-            {
-                _pageContext ??= new PageContext()
-                {
-                    PageTitle = Title,
-                    EndpointId = EndpointId,
-                    PluginContext = PluginContext,
-                    ApplicationContext = ApplicationContext,
-                    Cache = Cache,
-                    Scopes = Scopes,
-                    Conditions = Conditions,
-                    IncludeSubPaths = IncludeSubPaths,
-                    Attributes = Attributes,
-                };
-
-                var parentContext = _endpointManager.GetEndpoints(ParentType, ApplicationContext)
-                    .FirstOrDefault();
-
-                var contextPath = UriResource.Combine
-                (
-                    parentContext?.Uri ?? ApplicationContext?.ContextPath, ContextPath
-                );
-
-                _pageContext.ParentContext = parentContext;
-                _pageContext.ContextPath = contextPath;
-                _pageContext.Uri = contextPath.Append(PathSegment);
-
-                return _pageContext;
-            }
-        }
+        public IPageContext PageContext { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -137,7 +86,6 @@ namespace WebExpress.WebCore.WebPage.Model
         /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
         internal PageItem(IEndpointManager endpointManager)
         {
-            _endpointManager = endpointManager;
         }
 
         /// <summary>
@@ -145,7 +93,6 @@ namespace WebExpress.WebCore.WebPage.Model
         /// </summary>
         public void Dispose()
         {
-
         }
 
         /// <summary>

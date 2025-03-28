@@ -8,9 +8,9 @@ using System.Xml.Serialization;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPackage;
-using WebExpress.WebCore.WebUri;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]
 
@@ -183,13 +183,13 @@ namespace WebExpress.WebCore
 
             var context = new HttpServerContext
             (
-                config.Uri,
+                new RouteEndpoint(config.Route),
                 config.Endpoints,
                 Path.GetFullPath(packageBase),
                 Path.GetFullPath(assetBase),
                 Path.GetFullPath(dataBase),
                 Path.GetDirectoryName(configFile),
-                new UriResource(config.ContextPath),
+                new RouteEndpoint(config.ContextPath),
                 culture,
                 log,
                 null

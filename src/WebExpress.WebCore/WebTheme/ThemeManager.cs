@@ -6,10 +6,10 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebTheme.Model;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebTheme
 {
@@ -199,9 +199,9 @@ namespace WebExpress.WebCore.WebTheme
                         ApplicationContext = applicationContext,
                         Name = name,
                         Description = description,
-                        Image = image != null ? UriResource.Combine(applicationContext.ContextPath, image) : null,
+                        Image = image != null ? RouteEndpoint.Combine(applicationContext.ContextPath, image) : null,
                         ThemeMode = mode,
-                        ThemeStyle = style != null ? UriResource.Combine(applicationContext.ContextPath, style) : null,
+                        ThemeStyle = style != null ? RouteEndpoint.Combine(applicationContext.ContextPath, style) : null,
                     };
 
                     var themeItem = new ThemeItem()

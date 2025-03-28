@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// The uri of the request.
         /// </summary>
-        public UriResource Uri => RenderContext?.Request?.Uri;
+        public UriEndpoint Uri => RenderContext?.Request?.Uri;
 
         /// <summary>
         /// Return or sets the render context.

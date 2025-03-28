@@ -142,7 +142,7 @@ namespace WebExpress.WebCore.WebAsset
                     // assign the asset to existing applications
                     foreach (var applicationContext in applicationContexts)
                     {
-                        var assetContext = new AssetContext(new UriResource(), new UriPathSegmentConstant($"assets/{id}"))
+                        var assetContext = new AssetContext(new RouteEndpoint(), new UriPathSegmentConstant($"assets/{id}"))
                         {
                             EndpointId = new ComponentId(id),
                             PluginContext = pluginContext,
@@ -267,7 +267,7 @@ namespace WebExpress.WebCore.WebAsset
             var assembly = typeof(AssetManager).Assembly;
             var assemblyName = assembly.GetName().Name.ToLower();
 
-            var context = new AssetContext(new UriResource(), new UriPathSegmentConstant("assets"))
+            var context = new AssetContext(new RouteEndpoint(), new UriPathSegmentConstant("assets"))
             {
                 ApplicationContext = e,
                 PluginContext = new PluginContext()

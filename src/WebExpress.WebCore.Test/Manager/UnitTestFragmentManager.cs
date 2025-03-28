@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebPage;
@@ -92,9 +93,9 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(IScope), 0)]
         [InlineData(typeof(TestApplicationA), typeof(TestScopeA), 1)]
-        [InlineData(typeof(TestApplicationA), typeof(TestPageB), 1)]
+        [InlineData(typeof(TestApplicationA), typeof(About), 1)]
         [InlineData(typeof(TestApplicationB), typeof(IScope), 0)]
-        [InlineData(typeof(TestApplicationB), typeof(TestPageB), 1)]
+        [InlineData(typeof(TestApplicationB), typeof(About), 1)]
         public void GetFragments(Type applicationType, Type scopeType, int count)
         {
             // preconditions
@@ -115,7 +116,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeA), false)]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeB), false)]
-        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestPageB), false)]
+        [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(About), false)]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(IScope), true)]
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeD), true)]
         public void Render(Type applicationType, Type sectionType, Type scopeType, bool empty)

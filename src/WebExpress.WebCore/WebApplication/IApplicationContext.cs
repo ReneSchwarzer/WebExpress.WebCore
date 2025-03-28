@@ -1,6 +1,6 @@
 ﻿using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebApplication
 {
@@ -42,11 +42,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Returns the context path. This is mounted in the context path of the server.
         /// </summary>
-        UriResource ContextPath { get; }
+        IRoute ContextPath { get; }
 
         /// <summary>
         /// Returns the icon uri.
         /// </summary>
-        UriResource Icon { get; }
+        IRoute Icon { get; }
     }
 }

@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.Test.Manager
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
             // test execution
-            Assert.Equal(icon, statusPage?.StatusIcon);
+            Assert.Equal(icon, statusPage?.StatusIcon?.ToString());
         }
 
         /// <summary>

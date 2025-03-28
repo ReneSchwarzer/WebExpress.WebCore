@@ -32,38 +32,31 @@ namespace WebExpress.WebCore.WebSitemap
         SearchResult SearchResource(Uri requestUri, SearchContext searchContext);
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
-        /// <paramref name="parameters"/>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<TEndpoint>(params Parameter[] parameters)
-            where TEndpoint : IEndpoint;
-
-        /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
-        /// </summary>
-        /// <param name="resourceType">The resource type.</param>
-        /// <param name="parameters">The parameters to be considered for the URI.</param>
-        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        UriResource GetUri(Type resourceType, params Parameter[] parameters);
-
-        /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
-        /// </summary>
-        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
+        /// <typeparam name="TEndpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="applicationContext">The application context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<TEndpoint>(IApplicationContext applicationContext)
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
             where TEndpoint : IEndpoint;
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="TEndpoint">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/guid/b').</typeparam>
+        /// <param name="endpointType">The endpoint type.</param>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters);
+
+        /// <summary>
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
+        /// </summary>
+        /// <typeparam name="TEndpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
         /// <param name="endpointContext">The endpoint context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        UriResource GetUri<TEndpoint>(IEndpointContext endpointContext)
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        IUri GetUri<TEndpoint>(IEndpointContext endpointContext)
             where TEndpoint : IEndpoint;
 
         /// <summary>
@@ -71,6 +64,6 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="uri">The URI resource to search for.</param>
         /// <returns>The endpoint context if found, otherwise null.</returns>
-        IEndpointContext GetEndpoint(UriResource uri);
+        IEndpointContext GetEndpoint(UriEndpoint uri);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebTheme
 {
@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebTheme
         /// <summary>
         /// Returns the image associated with the theme.
         /// </summary>
-        public UriResource Image { get; internal set; }
+        public IRoute Image { get; internal set; }
 
         /// <summary>
         /// Returns the name of the theme.
@@ -46,8 +46,8 @@ namespace WebExpress.WebCore.WebTheme
         public ThemeMode ThemeMode { get; internal set; }
 
         /// <summary>
-        /// Returns the URI resource for the css theme style.
+        /// Returns the route resource for the css theme style.
         /// </summary>
-        public UriResource ThemeStyle { get; internal set; }
+        public IRoute ThemeStyle { get; internal set; }
     }
 }

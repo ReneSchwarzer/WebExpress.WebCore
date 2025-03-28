@@ -98,13 +98,11 @@ assetmanager.initialization=Der Assetmanager wurde initialisiert.
 assetmanager.addresource=Das Asset '{0}' wurde in der Anwendung '{1}' registiert.
 
 pagemanager.initialization=Der Pagemanager wurde initialisiert.  
-pagemanager.addresource=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
-pagemanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.  
-pagemanager.resource=Seite: '{0}' für die Anwendung '{1}'  
+pagemanager.addpage=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
+pagemanager.page=Seite: '{0}' für die Anwendung '{1}'  
 
 restapimanager.initialization=Der RestApiManager wurde initialisiert.  
-restapimanager.addresource=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
-restapimanager.addresource.duplicate=Die Seite '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.  
+restapimanager.addrestapi=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
 restapimanager.resource=Seite: '{0}' für die Anwendung '{1}'  
 restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
 

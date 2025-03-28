@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebUri;
+using WebExpress.WebCore.WebEndpoint;
 
 namespace WebExpress.WebCore.WebPlugin
 {
@@ -52,11 +52,6 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the icon of the plugin.
         /// </summary>
-        UriResource Icon { get; }
-
-        /// <summary>
-        /// Returns the host context.
-        /// </summary>
-        IHttpServerContext Host { get; }
+        IRoute Icon { get; }
     }
 }

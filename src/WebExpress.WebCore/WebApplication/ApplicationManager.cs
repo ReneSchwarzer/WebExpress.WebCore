@@ -9,9 +9,9 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication.Model;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebApplication
 {
@@ -129,8 +129,8 @@ namespace WebExpress.WebCore.WebApplication
                     Description = description,
                     AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
-                    Icon = UriResource.Combine(_httpServerContext.ContextPath, contextPath, icon),
-                    ContextPath = UriResource.Combine(_httpServerContext.ContextPath, contextPath)
+                    Icon = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath, icon),
+                    ContextPath = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath)
                 };
 
                 // create application

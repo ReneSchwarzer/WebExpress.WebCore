@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.Test.Uri
         public void Test_0()
         {
             var str = "http://user@example.com:8080/abc#a?b=1&c=2";
-            var uri = new UriResource(str);
+            var uri = new UriEndpoint(str);
 
             Assert.Equal(uri.ToString(), str);
             Assert.Equal(UriScheme.Http, uri.Scheme);
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.Test.Uri
         public void Test_1()
         {
             var str = "http://vila/assets/img/vila.svg";
-            var uri = new UriResource(str);
+            var uri = new UriEndpoint(str);
 
             Assert.True
             (
@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.Test.Uri
         public void Test_2()
         {
             var str = "http://localhost";
-            var uri = new UriResource(str);
+            var uri = new UriEndpoint(str);
 
             Assert.True
             (
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.Test.Uri
         public void Test_3()
         {
             var str = "http://user@example.com:80/abc#a?b=1&c=2";
-            var uri = new UriResource(str);
+            var uri = new UriEndpoint(str);
 
             Assert.True
             (
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.Test.Uri
         public void Test_4()
         {
             var str = "http://user@example.com:80/abc#a?b=1&c=2";
-            var uri = new UriResource(str);
+            var uri = new UriEndpoint(str);
             var segments = new List<IUriPathSegment>
             {
                 new UriPathSegmentRoot(),
@@ -107,11 +107,11 @@ namespace WebExpress.WebCore.Test.Uri
                 new UriPathSegmentConstant("y")
             };
 
-            var resourceUri = new UriResource(uri, segments);
-            resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, extendetSegments);
-            resourceUri.ServerRoot = new UriResource("http://user@example.com:80");
-            resourceUri.ApplicationRoot = new UriResource("http://user@example.com:80");
-            resourceUri.EndpointRoot = new UriResource("http://user@example.com:80/abc");
+            var resourceUri = new UriEndpoint(uri, segments);
+            resourceUri = new UriEndpoint(resourceUri, resourceUri.PathSegments, extendetSegments);
+            resourceUri.ServerRoot = new UriEndpoint("http://user@example.com:80");
+            resourceUri.ApplicationRoot = new UriEndpoint("http://user@example.com:80");
+            resourceUri.EndpointRoot = new UriEndpoint("http://user@example.com:80/abc");
 
             Assert.True
             (

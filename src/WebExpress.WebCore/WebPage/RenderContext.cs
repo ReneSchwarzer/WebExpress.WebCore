@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// The uri of the request.
         /// </summary>
-        public UriResource Uri => Request?.Uri;
+        public UriEndpoint Uri => Request?.Uri;
 
         /// <summary>
         /// Returns the culture.

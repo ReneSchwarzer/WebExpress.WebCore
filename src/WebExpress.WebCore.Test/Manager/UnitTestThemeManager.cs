@@ -152,7 +152,7 @@ namespace WebExpress.WebCore.Test.Manager
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
             Assert.NotNull(theme);
-            Assert.Equal(expected, theme?.Image);
+            Assert.Equal(expected, theme?.Image?.ToString());
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace WebExpress.WebCore.Test.Manager
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
             Assert.NotNull(theme);
-            Assert.Equal(expected, theme?.ThemeStyle);
+            Assert.Equal(expected, theme?.ThemeStyle?.ToString());
         }
     }
 }

@@ -2,8 +2,8 @@
 using System.Globalization;
 using System.Reflection;
 using WebExpress.WebCore.Config;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore
 {
@@ -13,9 +13,9 @@ namespace WebExpress.WebCore
     public class HttpServerContext : IHttpServerContext
     {
         /// <summary>
-        /// Returns the uri of the web server.
+        /// Returns the route of the web server.
         /// </summary>
-        public string Uri { get; protected set; }
+        public IRoute Route { get; protected set; }
 
         /// <summary>
         /// Returns the endpoints to which the web server responds.
@@ -50,7 +50,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the basic context path.
         /// </summary>
-        public UriResource ContextPath { get; protected set; }
+        public IRoute ContextPath { get; protected set; }
 
         /// <summary>
         /// Returns the culture.
@@ -70,7 +70,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="uri">The uri of the web server.</param>
+        /// <param name="route">The uri of the route server.</param>
         /// <param name="endpoints">The endpoints to which the web server responds.</param>
         /// <param name="packageBaseFolder">The package home directory.chnis</param>
         /// <param name="assetBaseFolder">The asset home directory.</param>
@@ -82,13 +82,13 @@ namespace WebExpress.WebCore
         /// <param name="host">The host.</param>
         public HttpServerContext
         (
-            string uri,
+            IRoute route,
             ICollection<EndpointConfig> endpoints,
             string packageBaseFolder,
             string assetBaseFolder,
             string dataBaseFolder,
             string configBaseFolder,
-            UriResource contextPath,
+            IRoute contextPath,
             CultureInfo culture,
             ILog log,
             IHost host
@@ -97,7 +97,7 @@ namespace WebExpress.WebCore
             var assembly = typeof(HttpServer).Assembly;
             Version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
-            Uri = uri;
+            Route = route;
             Endpoints = endpoints;
             PackagePath = packageBaseFolder;
             AssetPath = assetBaseFolder;

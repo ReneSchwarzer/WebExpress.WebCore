@@ -88,7 +88,7 @@ namespace WebExpress.WebCore.Test.Manager
             var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId.ToString() == Path.GetFileName(uri));
 
             // test execution
-            Assert.Equal(uri, asset?.Uri);
+            Assert.Equal(uri, asset?.Route.ToString());
         }
 
         /// <summary>

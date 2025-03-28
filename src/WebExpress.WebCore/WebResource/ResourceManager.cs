@@ -11,7 +11,6 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
 using WebExpress.WebCore.WebStatusPage;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource
 {
@@ -130,11 +129,13 @@ namespace WebExpress.WebCore.WebResource
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var parent = default(Type);
                 var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var attributes = resourceType.CustomAttributes
+                    .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
+                    !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
                 foreach (var customAttribute in resourceType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
@@ -142,14 +143,6 @@ namespace WebExpress.WebCore.WebResource
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
-                    {
-                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    }
-                    else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
-                    {
-                        contextPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
                     {
@@ -166,39 +159,38 @@ namespace WebExpress.WebCore.WebResource
                     }
                 }
 
-                if (segment == default && parent == default && contextPath == "")
-                {
-                    var assemblyName = assembly.GetName().Name;
-                    var fullClassName = resourceType.FullName;
-                    var path = fullClassName[(assemblyName.Length + 1)..^(resourceType.Name.Length + 1)];
-
-                    contextPath = "/" + path.ToLower().Replace('.', '/');
-                }
-
                 // assign the resource to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var resourceContext = new ResourceContext(_componentHub.EndpointManager, parent, new UriResource(contextPath), segment.ToPathSegment())
+                    var routePath = EndpointManager.CreateEndpointRoute(resourceType, applicationContext, segment);
+                    var resourceContext = new ResourceContext()
                     {
-                        EndpointId = new ComponentId(resourceType.FullName),
+                        EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
-                        ApplicationContext = applicationContext
-                    };
-                    var resourceItem = new ResourceItem(_componentHub.ResourceManager)
-                    {
-                        ParentType = parent,
-                        ResourceClass = resourceType,
-                        ResourceContext = resourceContext,
+                        ApplicationContext = applicationContext,
+                        Route = routePath,
                         Cache = cache,
                         Conditions = conditions,
-                        ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(resourceType.Name.ToLower()),
+                        Attributes = attributes.Select(x => x.AttributeType)
+                    };
+
+                    var resourceItem = new ResourceItem(_componentHub.ResourceManager)
+                    {
+                        EndpointId = new ComponentId(id),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
+                        ResourceContext = resourceContext,
+                        ResourceClass = resourceType,
+                        Cache = cache,
+                        Conditions = conditions,
+                        IncludeSubPaths = includeSubPaths,
+                        Attributes = attributes.Select(x => x.AttributeType)
                     };
 
                     if (_dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem))
                     {
-                        OnAddResource(resourceContext);
+                        OnAddResource(resourceItem.ResourceContext);
                         _httpServerContext?.Log.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:resourcemanager.addresource",

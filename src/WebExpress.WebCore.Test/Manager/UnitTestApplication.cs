@@ -112,7 +112,7 @@ namespace WebExpress.WebCore.Test.Manager
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
-            Assert.Equal(icon, application.Icon);
+            Assert.Equal(icon, application.Icon.ToString());
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.Test.Manager
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
-            Assert.Equal(contextPath, application.ContextPath);
+            Assert.Equal(contextPath, application.ContextPath.ToString());
         }
 
         /// <summary>

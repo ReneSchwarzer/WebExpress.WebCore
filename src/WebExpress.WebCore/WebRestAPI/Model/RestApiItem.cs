@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebRestApi.Model
@@ -10,27 +14,35 @@ namespace WebExpress.WebCore.WebRestApi.Model
     /// </summary>
     internal class RestApiItem : IDisposable
     {
-        private readonly IRestApiManager _restApiManager;
+        /// <summary>
+        /// Returns the endpoint id.
+        /// </summary>
+        public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the parent type.
+        /// Returns the associated plugin context.
         /// </summary>
-        public Type ParentType { get; set; }
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the corresponding application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns or sets the type of rest api resource.
         /// </summary>
-        public Type RestApiClass { get; set; }
+        public Type RestApiClass { get; internal set; }
 
         /// <summary>
         /// Returns or sets the instance of the rest api resource, if the rest api resource is cached, otherwise null.
         /// </summary>
-        public IRestApi Instance { get; set; }
+        public IRestApi Instance { get; internal set; }
 
         /// <summary>
         /// Returns or sets the paths of the resource.
         /// </summary>
-        public UriResource ContextPath { get; set; }
+        public UriEndpoint ContextPath { get; internal set; }
 
         /// <summary>
         /// Returns or sets the path segment.
@@ -40,32 +52,32 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <summary>
         /// Returns or sets whether all subpaths should be taken into sitemap.
         /// </summary>
-        public bool IncludeSubPaths { get; set; }
+        public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the rest api resource to be active.
         /// </summary>
-        public IEnumerable<ICondition> Conditions { get; set; }
+        public IEnumerable<ICondition> Conditions { get; internal set; }
 
         /// <summary>
         /// Returns the crud methods.
         /// </summary>
-        public IEnumerable<CrudMethod> Methods { get; set; }
+        public IEnumerable<CrudMethod> Methods { get; internal set; }
 
         /// <summary>
         /// Returns the version number of the rest api.
         /// </summary>
-        public uint Version { get; set; }
+        public uint Version { get; internal set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
-        public bool Cache { get; set; }
+        public bool Cache { get; internal set; }
 
         /// <summary>
-        /// Returns whether it is a optional rest api resource.
+        /// Returns the attributes associated with the page.
         /// </summary>
-        public bool Optional { get; set; }
+        public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
         /// Returns the rest api contexts.
@@ -75,10 +87,9 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="RestApiItem"/> class.
         /// </summary>
-        /// <param name="restApiManager">The rest api manager.</param>
-        internal RestApiItem(IRestApiManager restApiManager)
+        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
+        internal RestApiItem(IEndpointManager endpointManager)
         {
-            _restApiManager = restApiManager;
         }
 
         /// <summary>

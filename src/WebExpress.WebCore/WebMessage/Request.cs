@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri { get; internal set; }
+        public UriEndpoint Uri { get; internal set; }
 
         /// <summary>
         /// Returns the parameters.
@@ -151,7 +151,7 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Uri = new UriResource
+            Uri = new UriEndpoint
             (
                 Scheme,
                 new UriAuthority()

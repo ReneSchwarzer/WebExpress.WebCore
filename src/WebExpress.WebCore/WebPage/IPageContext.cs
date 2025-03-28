@@ -20,10 +20,5 @@ namespace WebExpress.WebCore.WebPage
         /// determine whether content and how content should be displayed.
         /// </summary>
         IEnumerable<Type> Scopes { get; }
-
-        /// <summary>
-        /// Returns the attributes associated with the page.
-        /// </summary>
-        IEnumerable<Type> Attributes { get; }
     }
 }

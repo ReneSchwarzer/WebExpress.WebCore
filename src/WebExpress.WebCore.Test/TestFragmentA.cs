@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebAttribute;
+﻿using WebExpress.WebCore.Test.WWW;
+using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebHtml;
@@ -11,7 +12,7 @@ namespace WebExpress.WebCore.Test
     /// </summary>
     [Section<TestSectionA>()]
     [Scope<TestScopeA>]
-    [Scope<TestPageB>]
+    [Scope<About>]
     [Order(0)]
     public sealed class TestFragmentA : IFragment
     {

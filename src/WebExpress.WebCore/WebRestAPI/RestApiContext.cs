@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -15,11 +14,6 @@ namespace WebExpress.WebCore.WebRestApi
     /// </summary>
     public class RestApiContext : IRestApiContext
     {
-        private readonly IEndpointManager _endpointManager;
-        private readonly Type _parentType;
-        private readonly UriResource _contextPath;
-        private readonly IUriPathSegment _pathSegment;
-
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
@@ -46,12 +40,6 @@ namespace WebExpress.WebCore.WebRestApi
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the parent or null if not used.
-        /// </summary>
-        public IEndpointContext ParentContext => _endpointManager.GetEndpoints(_parentType, ApplicationContext)
-            .FirstOrDefault();
-
-        /// <summary>
         /// Returns the version number of the rest api.
         /// </summary>
         public uint Version { get; internal set; }
@@ -67,40 +55,25 @@ namespace WebExpress.WebCore.WebRestApi
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the context path.
+        /// Returns the attributes associated with the page.
         /// </summary>
-        public UriResource ContextPath
-        {
-            get
-            {
-                var parentContext = ParentContext;
-                if (parentContext != null)
-                {
-                    return UriResource.Combine(ParentContext?.Uri, _contextPath, Version.ToString());
-                }
-
-                return UriResource.Combine(ApplicationContext?.ContextPath, _contextPath, Version.ToString());
-            }
-        }
+        public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns the context path.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(_pathSegment);
+        public UriEndpoint ContextPath { get; internal set; }
+
+        /// <summary>
+        /// Returns the internal routing path for the endpoint.
+        /// </summary>
+        public IRoute Route { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class with the specified parent type and context path.
         /// </summary>
-        /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
-        /// <param name="parentType">The type of the parent resource.</param>
-        /// <param name="contextPath">The context path of the resource.</param>
-        /// <param name="pathSegment">The path segment of the resource.</param>
-        public RestApiContext(IEndpointManager endpointManager, Type parentType, UriResource contextPath, IUriPathSegment pathSegment)
+        public RestApiContext()
         {
-            _endpointManager = endpointManager;
-            _parentType = parentType;
-            _contextPath = contextPath;
-            _pathSegment = pathSegment;
         }
 
         /// <summary>

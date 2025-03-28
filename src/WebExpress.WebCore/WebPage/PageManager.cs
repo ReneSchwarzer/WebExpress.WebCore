@@ -14,7 +14,6 @@ using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -303,8 +302,6 @@ namespace WebExpress.WebCore.WebPage
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
                 var title = pageType.Name;
-                var parent = default(Type);
-                var contextPath = string.Empty;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
@@ -319,14 +316,6 @@ namespace WebExpress.WebCore.WebPage
                     if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
                         segment = pageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(ParentAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ParentAttribute<>).Namespace)
-                    {
-                        parent = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    }
-                    else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
-                    {
-                        contextPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
                     {
@@ -361,32 +350,36 @@ namespace WebExpress.WebCore.WebPage
                     scopes.Add(pageType);
                 }
 
-                if (segment == default && parent == default && contextPath == "")
-                {
-                    var assemblyName = assembly.GetName().Name;
-                    var fullClassName = pageType.FullName;
-                    var path = fullClassName[(assemblyName.Length + 1)..^(pageType.Name.Length + 1)];
-
-                    contextPath = "/" + path.ToLower().Replace('.', '/');
-                }
-
                 // assign the page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
+                    var routePath = EndpointManager.CreateEndpointRoute(pageType, applicationContext, segment);
+                    var pageContext = new PageContext()
+                    {
+                        EndpointId = new ComponentId(id),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
+                        PageTitle = title,
+                        Route = routePath,
+                        Scopes = scopes,
+                        Cache = cache,
+                        Conditions = conditions,
+                        IncludeSubPaths = includeSubPaths,
+                        Attributes = attributes.Select(x => x.AttributeType)
+                    };
+
                     var pageItem = new PageItem(_componentHub.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
+                        PageContext = pageContext,
                         Title = title,
-                        ParentType = parent,
                         PageClass = pageType,
                         Scopes = scopes,
                         Cache = cache,
                         Conditions = conditions,
-                        ContextPath = new UriResource(contextPath),
                         IncludeSubPaths = includeSubPaths,
-                        PathSegment = segment?.ToPathSegment() ?? new UriPathSegmentConstant(pageType.Name.ToLower()),
                         Attributes = attributes.Select(x => x.AttributeType)
                     };
 
@@ -398,7 +391,7 @@ namespace WebExpress.WebCore.WebPage
                         (
                             I18N.Translate
                             (
-                                "webexpress.webcore:pagemanager.addresource",
+                                "webexpress.webcore:pagemanager.addpage",
                                 id,
                                 applicationContext.ApplicationId
                             )

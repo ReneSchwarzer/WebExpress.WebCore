@@ -79,7 +79,7 @@ namespace WebExpress.WebCore
         {
             HttpServerContext = new HttpServerContext
             (
-                context.Uri,
+                context.Route,
                 context.Endpoints,
                 context.PackagePath,
                 context.AssetPath,
@@ -263,12 +263,12 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var resourceUri = new UriResource(request.Uri, searchResult.Uri.PathSegments);
-                resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count)?.PathSegments)
+                var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
+                resourceUri = new UriEndpoint((IUri)resourceUri)
                 {
-                    ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments),
-                    ApplicationRoot = new UriResource(request.Uri, searchResult.EndpointContext?.ApplicationContext?.ContextPath.PathSegments),
-                    EndpointRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments)
+                    ServerRoot = new UriEndpoint(request.Uri, HttpServerContext.ContextPath.PathSegments),
+                    ApplicationRoot = new UriEndpoint(request.Uri, searchResult.EndpointContext?.ApplicationContext?.ContextPath.PathSegments),
+                    EndpointRoot = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments)
                 };
 
                 request.Uri = resourceUri;

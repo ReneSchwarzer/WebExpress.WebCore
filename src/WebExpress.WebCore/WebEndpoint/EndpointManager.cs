@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
 {
@@ -14,7 +18,9 @@ namespace WebExpress.WebCore.WebEndpoint
     /// </summary>
     public sealed class EndpointManager : IEndpointManager, ISystemComponent
     {
-        //private readonly IComponentHub _componentHub;
+        private static readonly string[] _namespacePrefixes = ["page", "pages", "webpage", "webpages", "website", "www", "web"];
+        private static readonly string _indexPrefix = "index";
+        private static readonly string[] _classSuffixes = ["page"];
         private readonly IHttpServerContext _httpServerContext;
         private readonly Dictionary<Type, EndpointRegistration> _registrations = [];
 
@@ -138,6 +144,108 @@ namespace WebExpress.WebCore.WebEndpoint
         /// </summary>
         public void Dispose()
         {
+        }
+
+        /// <summary>
+        /// Returns the route of an endpoint based on the class type, application context and segment attributes.
+        /// </summary>
+        /// <param name="classType">The type of the class.</param>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="segment">The segment attribute.</param>
+        /// <param name="intermediateSegments">The intermediate segments.</param>
+        /// <param name="namespacePrefixes">The namespace prefixes.</param>
+        /// <returns>The route of the endpoint.</returns>
+        public static IRoute CreateEndpointRoute
+        (
+            Type classType,
+            IApplicationContext applicationContext,
+            ISegmentAttribute segment,
+            IEnumerable<IUriPathSegment> intermediateSegments = null,
+            string[] namespacePrefixes = null
+        )
+        {
+            var assemblyName = classType.Assembly.GetName().Name;
+            var fullClassName = classType.FullName;
+            var className = _classSuffixes?.FirstOrDefault(s => classType.Name.ToLowerInvariant().EndsWith(s, StringComparison.OrdinalIgnoreCase)) is string suffix
+                ? classType.Name.ToLowerInvariant()[..^suffix.Length]
+                : classType.Name.ToLowerInvariant();
+            var segments = (fullClassName.Length - className.Length - 1 > assemblyName.Length)
+                 ? fullClassName[(assemblyName.Length + 1)..^(classType.Name.Length + 1)].ToLowerInvariant().Split('.', StringSplitOptions.RemoveEmptyEntries)
+                 : [];
+
+            var segmentAttributesMapping = segments.Select((segment, index) => new
+            {
+                FullNamespace = $"{assemblyName}.{string.Join(".", segments.Take(index + 1))}",
+                Segment = segment
+            }).Select(s =>
+            {
+                var segmentResult = default(IUriPathSegment);
+                var name = default(string);
+                var description = default(string);
+                var icon = default(IIcon);
+
+                var typeName = $"{s.FullNamespace}.SegmentInfo";
+                var segmentInfoType = classType.Assembly.GetType(typeName, throwOnError: false, ignoreCase: true);
+
+                if (segmentInfoType != null)
+                {
+                    var segAttrType = segmentInfoType.CustomAttributes
+                        .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                        .Select(x => x.AttributeType)
+                        .FirstOrDefault();
+
+                    var segInstance = segAttrType != null
+                        ? segmentInfoType.GetCustomAttribute(segAttrType, false) as ISegmentAttribute
+                        : null;
+                    var nameAttr = segmentInfoType.CustomAttributes
+                        .FirstOrDefault(x => x.AttributeType == typeof(NameAttribute));
+                    var descAttr = segmentInfoType.CustomAttributes
+                        .FirstOrDefault(x => x.AttributeType == typeof(DescriptionAttribute));
+                    var iconAttr = segmentInfoType.CustomAttributes
+                        .FirstOrDefault(x => x.AttributeType.IsGenericType &&
+                                             x.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>));
+
+                    segmentResult = segInstance?.ToPathSegment();
+                    name = nameAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    description = descAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    icon = iconAttr != null
+                        ? Activator.CreateInstance(iconAttr.AttributeType.GenericTypeArguments.FirstOrDefault()) as IIcon
+                        : null;
+                }
+
+                return new
+                {
+                    Segment = segmentResult ?? new UriPathSegmentConstant(s.Segment),
+                    Name = name,
+                    Description = description,
+                    Icon = icon
+                };
+            });
+
+            segmentAttributesMapping = segmentAttributesMapping.Any() && _namespacePrefixes
+                .Contains(segmentAttributesMapping
+                .First().Segment
+                .ToString())
+                ? segmentAttributesMapping.Skip(1)
+                : segmentAttributesMapping;
+
+            segmentAttributesMapping = segmentAttributesMapping.Any() && (namespacePrefixes ?? [])
+                .Contains(segmentAttributesMapping
+                .First().Segment
+                .ToString())
+                ? segmentAttributesMapping.Skip(1)
+                : segmentAttributesMapping;
+
+            var uri = RouteEndpoint.Combine
+                (
+                    applicationContext.ContextPath,
+                    (intermediateSegments ?? [])
+                        .Concat(segmentAttributesMapping
+                        .Select(x => x.Segment))
+                )
+                .Concat(segment?.ToPathSegment() ?? new UriPathSegmentConstant(!className.StartsWith(_indexPrefix) ? className : null));
+
+            return uri;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
 {
@@ -33,11 +33,6 @@ namespace WebExpress.WebCore.WebEndpoint
         IEnumerable<ICondition> Conditions { get; }
 
         /// <summary>
-        /// Returns the parent or null if not used.
-        /// </summary>
-        IEndpointContext ParentContext { get; }
-
-        /// <summary>
         /// Determines whether the resource is created once and reused each time it is called.
         /// </summary>
         bool Cache { get; }
@@ -48,13 +43,13 @@ namespace WebExpress.WebCore.WebEndpoint
         bool IncludeSubPaths { get; }
 
         /// <summary>
-        /// Returns the context path.
+        /// Returns the internal routing path for the endpoint.
         /// </summary>
-        UriResource ContextPath { get; }
+        IRoute Route { get; }
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns the attributes associated with the page.
         /// </summary>
-        UriResource Uri { get; }
+        IEnumerable<Type> Attributes { get; }
     }
 }

@@ -9,9 +9,9 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin.Model;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPlugin
 {
@@ -177,8 +177,7 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = assembly.GetName().Name.ToLower(),
                         Manufacturer = assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        Version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
-                        Host = _httpServerContext
+                        Version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                     };
 
                     if (!_dictionary.ContainsKey(id))
@@ -278,10 +277,9 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = name,
                         Manufacturer = type.Assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = type.Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        Icon = UriResource.Combine(_httpServerContext?.ContextPath, icon),
+                        Icon = RouteEndpoint.Combine(_httpServerContext?.ContextPath, icon),
                         Description = description,
-                        Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
-                        Host = _httpServerContext
+                        Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                     };
 
                     hasUnfulfilledDependencies = HasUnfulfilledDependencies(id, dependencies.Select(x => new ComponentId(x)));

@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW.Resources;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebResource;
 
@@ -44,18 +45,18 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the resource.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "webexpress.webcore.test.testresourcea")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "webexpress.webcore.test.testresourceb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "webexpress.webcore.test.testresourcec")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "webexpress.webcore.test.testresourced")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "webexpress.webcore.test.www.resources.testresourcea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "webexpress.webcore.test.www.resources.testresourceb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "webexpress.webcore.test.www.resources.testresourcec")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "webexpress.webcore.test.www.resources.testresourced")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "webexpress.webcore.test.www.resources.testresourcea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "webexpress.webcore.test.www.resources.testresourceb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "webexpress.webcore.test.www.resources.testresourcec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "webexpress.webcore.test.www.resources.testresourced")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "webexpress.webcore.test.www.resources.testresourcea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "webexpress.webcore.test.www.resources.testresourceb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "webexpress.webcore.test.www.resources.testresourcec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "webexpress.webcore.test.www.resources.testresourced")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
@@ -71,20 +72,20 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the resource.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "/server/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "/server/appa/resa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "/server/appa")]
-        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "/server/appa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "/server/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "/server/appb/resa")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "/server/appb")]
-        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "/server/appb")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "/server")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "/server/resa")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/server")]
-        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/server")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceA), "/server/appa/resources/testresourcea")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceB), "/server/appa/resources/testresourceb")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceC), "/server/appa/resources/testresourcec")]
+        [InlineData(typeof(TestApplicationA), typeof(TestResourceD), "/server/appa/resources/testresourced")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceA), "/server/appb/resources/testresourcea")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceB), "/server/appb/resources/testresourceb")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceC), "/server/appb/resources/testresourcec")]
+        [InlineData(typeof(TestApplicationB), typeof(TestResourceD), "/server/appb/resources/testresourced")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceA), "/server/resources/testresourcea")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceB), "/server/resources/testresourceb")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceC), "/server/resources/testresourcec")]
+        [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "/server/resources/testresourced")]
 
-        public void ContextPath(Type applicationType, Type resourceType, string path)
+        public void RoutePath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -92,7 +93,7 @@ namespace WebExpress.WebCore.Test.Manager
             var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(path, resource.ContextPath);
+            Assert.Equal(path, resource.Route.ToString());
         }
 
         /// <summary>

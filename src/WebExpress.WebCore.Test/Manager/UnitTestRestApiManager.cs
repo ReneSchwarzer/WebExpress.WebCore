@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW.Api;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebRestApi;
 
@@ -44,15 +45,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "webexpress.webcore.test.testrestapia")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "webexpress.webcore.test.testrestapib")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.testrestapic")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "webexpress.webcore.test.www.api.testrestapia")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "webexpress.webcore.test.www.api.testrestapib")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "webexpress.webcore.test.www.api.testrestapic")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "webexpress.webcore.test.www.api.testrestapia")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "webexpress.webcore.test.www.api.testrestapib")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "webexpress.webcore.test.www.api.testrestapic")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "webexpress.webcore.test.www.api.testrestapia")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "webexpress.webcore.test.www.api.testrestapib")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.www.api.testrestapic")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
             // preconditions
@@ -68,16 +69,16 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "/server/appa/1")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "/server/appa/1/apia/2")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "/server/appa/1/apia/2/apib/3")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "/server/appb/1")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "/server/appb/1/apia/2")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "/server/appb/1/apia/2/apib/3")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/server/1")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/server/1/apia/2")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/server/1/apia/2/apib/3")]
-        public void ContextPath(Type applicationType, Type resourceType, string path)
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "/server/appa/api/1/testrestapia")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "/server/appa/api/2/testrestapib")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "/server/appa/api/3/testrestapic")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "/server/appb/api/1/testrestapia")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "/server/appb/api/2/testrestapib")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "/server/appb/api/3/testrestapic")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "/server/api/1/testrestapia")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "/server/api/2/testrestapib")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/server/api/3/testrestapic")]
+        public void RoutePath(Type applicationType, Type resourceType, string path)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -85,7 +86,7 @@ namespace WebExpress.WebCore.Test.Manager
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
             // test execution
-            Assert.Equal(path, api?.ContextPath);
+            Assert.Equal(path, api?.Route.ToString());
         }
 
         /// <summary>

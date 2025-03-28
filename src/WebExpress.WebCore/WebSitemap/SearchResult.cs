@@ -35,6 +35,6 @@ namespace WebExpress.WebCore.WebSitemap
         /// Returns the uri.
         /// </summary>
         /// <returns>The uri.</returns>
-        public UriResource Uri { get; internal set; }
+        public UriEndpoint Uri { get; internal set; }
     }
 }

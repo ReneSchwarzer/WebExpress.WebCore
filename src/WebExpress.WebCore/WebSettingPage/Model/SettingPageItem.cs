@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -16,9 +15,6 @@ namespace WebExpress.WebCore.WebSettingPage.Model
     /// </summary>
     public class SettingPageItem : IDisposable
     {
-        private readonly IEndpointManager _endpointManager;
-        private SettingPageContext _settingPageContext;
-
         /// <summary>
         /// Returns the endpoint id.
         /// </summary>
@@ -37,40 +33,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <summary>
         /// Returns the setting page context.
         /// </summary>
-        public ISettingPageContext SettingPageContext
-        {
-            get
-            {
-                _settingPageContext ??= new SettingPageContext()
-                {
-                    PageTitle = PageTitle,
-                    EndpointId = EndpointId,
-                    PluginContext = PluginContext,
-                    ApplicationContext = ApplicationContext,
-                    Cache = Cache,
-                    Scopes = Scopes,
-                    Conditions = Conditions,
-                    IncludeSubPaths = IncludeSubPaths,
-                    Attributes = Attributes,
-                    SettingGroup = SettingGroup,
-                    Icon = Icon,
-                };
-
-                var parentContext = _endpointManager.GetEndpoints(ParentType, ApplicationContext)
-                    .FirstOrDefault();
-
-                var contextPath = UriResource.Combine
-                (
-                    parentContext?.Uri ?? ApplicationContext.ContextPath, ContextPath
-                );
-
-                _settingPageContext.ParentContext = parentContext;
-                _settingPageContext.ContextPath = contextPath;
-                _settingPageContext.Uri = contextPath.Append(PathSegment);
-
-                return _settingPageContext;
-            }
-        }
+        public ISettingPageContext SettingPageContext { get; internal set; }
 
         /// <summary>
         /// Returns the class type of the setting page.
@@ -90,7 +53,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <summary>
         /// Returns or sets the paths of the resource.
         /// </summary>
-        public UriResource ContextPath { get; set; }
+        public UriEndpoint ContextPath { get; set; }
 
         /// <summary>
         /// Returns or sets the path segment.
@@ -160,7 +123,6 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <param name="endpointManager">The endpoint manager responsible for managing endpoints.</param>
         internal SettingPageItem(IEndpointManager endpointManager)
         {
-            _endpointManager = endpointManager;
         }
 
         /// <summary>
