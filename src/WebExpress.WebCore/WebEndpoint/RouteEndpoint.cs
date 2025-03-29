@@ -170,7 +170,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// </summary>
         /// <param name="routes">The routes to be combine.</param>
         /// <returns>A combined route.</returns>
-        public static IRoute Combine(params IRoute[] routes)
+        public static RouteEndpoint Combine(params IRoute[] routes)
         {
             var r = routes.Skip(1).Where(x => !x.IsRoot).SelectMany(x => x.PathSegments.Skip(1));
             var copy = new RouteEndpoint(routes.FirstOrDefault());
@@ -186,12 +186,15 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <param name="baseRoute">The base route to be used as the starting point.</param>
         /// <param name="routes">The routes to be combine.</param>
         /// <returns>A combined route.</returns>
-        public static IRoute Combine(IRoute baseRoute, params string[] routes)
+        public static RouteEndpoint Combine(IRoute baseRoute, params string[] routes)
         {
             var copy = new RouteEndpoint(baseRoute);
             copy.PathSegments = copy.PathSegments
-                .Concat(routes.Where(x => !string.IsNullOrWhiteSpace(x))
-                .SelectMany(x => x.Split('/', StringSplitOptions.RemoveEmptyEntries))
+                .Concat(routes.Where
+                (
+                    x => !string.IsNullOrWhiteSpace(x))
+                        .SelectMany(x => x.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                )
                 .Select(x => new UriPathSegmentConstant(x) as IUriPathSegment));
 
             return copy;
@@ -203,7 +206,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <param name="baseRoute">The base route serving as the starting point.</param>
         /// <param name="segments">The enumerable collection of path segments to be added.</param>
         /// <returns>A new compound route combining all specified components.</returns>
-        public static IRoute Combine(IRoute baseRoute, IEnumerable<IUriPathSegment> segments)
+        public static RouteEndpoint Combine(IRoute baseRoute, IEnumerable<IUriPathSegment> segments)
         {
             var copy = new RouteEndpoint(baseRoute);
             copy.PathSegments = copy.PathSegments
@@ -213,12 +216,31 @@ namespace WebExpress.WebCore.WebEndpoint
         }
 
         /// <summary>
-        /// Converts a resource uri to a normal uri.
+        /// Combines the specified base route, intermediate route, and enumerable segments into a compound route.
         /// </summary>
-        /// <param name="uri">The uri to convert.</param>
-        public static implicit operator string(RouteEndpoint uri)
+        /// <param name="baseRoute">The base route serving as the starting point.</param>
+        /// <param name="segments">The path segment(s) to be added.</param>
+        /// <returns>A new compound route combining all specified components.</returns>
+        public static RouteEndpoint Combine(IRoute baseRoute, string segments)
         {
-            return uri?.ToString();
+            var copy = new RouteEndpoint(baseRoute);
+            copy.PathSegments = copy.PathSegments
+                .Concat
+                (
+                    segments?.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                        ?.Select(x => new UriPathSegmentConstant(x)) ?? []
+                );
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Converts a route to a string.
+        /// </summary>
+        /// <param name="route">The uri to convert.</param>
+        public static implicit operator string(RouteEndpoint route)
+        {
+            return route?.ToString();
         }
 
         /// <summary>
