@@ -1,4 +1,4 @@
-﻿using WebExpress.WebCore.Test.Fixture;
+﻿using System.Globalization;
 using WebExpress.WebCore.WebJob;
 
 namespace WebExpress.WebCore.Test.Schedule
@@ -9,228 +9,166 @@ namespace WebExpress.WebCore.Test.Schedule
     [Collection("NonParallelTests")]
     public class UnitTestClock
     {
-        [Fact]
-        public void Synchronize_1()
+        /// <summary>
+        /// Test the synchronization of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData(0, 0, 0, 0, 0)]
+        [InlineData(0, 0, 0, 30, 0)]
+        [InlineData(0, 0, -5, 0, 5)]
+        [InlineData(0, 0, 5, 0, 0)]
+        [InlineData(-1, 0, 0, 0, 24 * 60)]
+        [InlineData(-1, -10, 0, 0, (24 * 60) + (10 * 60))]
+        public void Synchronize(int? days, int? hours, int? minutes, int? seconds, int expected)
         {
+            // preconditions
             var dateTime = DateTime.Now;
 
-            var clock = new Clock(DateTime.Now.AddMinutes(-5));
+            if (days.HasValue)
+            {
+                dateTime = dateTime.AddDays(days.Value);
+            }
 
+            if (hours.HasValue)
+            {
+                dateTime = dateTime.AddHours(hours.Value);
+            }
+
+            if (minutes.HasValue)
+            {
+                dateTime = dateTime.AddMinutes(minutes.Value);
+            }
+
+            if (seconds.HasValue)
+            {
+                dateTime = dateTime.AddSeconds(seconds.Value);
+            }
+
+            var clock = new Clock(dateTime);
+
+            // test execution
             var elapsed = clock.Synchronize();
 
-            Assert.True
-            (
-               elapsed.Count() == 5
-            );
+            Assert.Equal(expected, elapsed.Count());
         }
 
-        [Fact]
-        public void Synchronize_2()
+        /// <summary>
+        /// Test the == operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", true)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
+        public void CompareEquals(string dateTime1, string dateTime2, bool expected)
         {
-            var dateTime = DateTime.Now;
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var clock = new Clock(DateTime.Now.AddDays(-1));
-
-            var elapsed = clock.Synchronize();
-
-            Assert.True
-            (
-               elapsed.Count() == 60 * 24
-            );
+            // test execution
+            Assert.Equal(expected, clock1 == clock2);
         }
 
-        [Fact]
-        public void Compare_Equals_1()
+        /// <summary>
+        /// Test the != operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", false)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
+        public void CompareInequality(string dateTime1, string dateTime2, bool expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var res = clock1 == clock2;
-
-            Assert.True
-            (
-               res
-            );
+            // test execution
+            Assert.Equal(expected, clock1 != clock2);
         }
 
-        [Fact]
-        public void Compare_Equals_2()
+        /// <summary>
+        /// Test the less operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", false)]
+        [InlineData("2021-01-01 00:00:00", "2020-12-31 23:59:00", false)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
+        public void CompareLess(string dateTime1, string dateTime2, bool expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(5));
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var res = clock1 == clock2;
-
-            Assert.True
-            (
-               !res
-            );
+            // test execution
+            Assert.Equal(expected, clock1 < clock2);
         }
 
-        [Fact]
-        public void Compare_Inequality_1()
+        /// <summary>
+        /// Test the greater operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", false)]
+        [InlineData("2021-01-01 00:00:00", "2020-12-31 23:59:00", true)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
+        public void CompareGreater(string dateTime1, string dateTime2, bool expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var res = clock1 != clock2;
-
-            Assert.True
-            (
-               !res
-            );
+            // test execution
+            Assert.Equal(expected, clock1 > clock2);
         }
 
-        [Fact]
-        public void Compare_Inequality_2()
+        /// <summary>
+        /// Test the less or equal operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", true)]
+        [InlineData("2021-01-01 00:00:00", "2020-12-31 23:59:00", false)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
+        public void CompareLessOrEqual(string dateTime1, string dateTime2, bool expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(5));
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var res = clock1 != clock2;
-
-            Assert.True
-            (
-               res
-            );
+            // test execution
+            Assert.Equal(expected, clock1 <= clock2);
         }
 
-        [Fact]
-        public void Compare_Less_1()
+        /// <summary>
+        /// Test the greater or equals operator of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2020-12-31 23:59:00", true)]
+        [InlineData("2021-01-01 00:00:00", "2020-12-31 23:59:00", true)]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
+        public void CompareGreaterOrEqual(string dateTime1, string dateTime2, bool expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
+            // preconditions
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            var res = clock1 < clock2;
-
-            Assert.True
-            (
-               !res
-            );
+            // test execution
+            Assert.Equal(expected, clock1 >= clock2);
         }
 
-        [Fact]
-        public void Compare_Less_2()
+        /// <summary>
+        /// Test the carry of the clock.
+        /// </summary>
+        [Theory]
+        [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00")]
+        [InlineData("2021-02-27 23:58:00", "2021-02-27 23:59:00")]
+        [InlineData("2021-02-28 23:59:00", "2021-03-01 00:00:00")]
+        [InlineData("2024-02-28 23:59:00", "2024-02-29 00:00:00")]
+        [InlineData("2024-02-29 23:59:00", "2024-03-01 00:00:00")]
+        public void Tick(string dateTime1, string expected)
         {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(5));
-
-            var res = clock1 < clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Compare_Greater_1()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
-
-            var res = clock1 > clock2;
-
-            Assert.True
-            (
-               !res
-            );
-        }
-
-        [Fact]
-        public void Compare_Greater_2()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(-5).AddDays(-5));
-
-            var res = clock1 > clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Compare_LessOrEqual_1()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
-
-            var res = clock1 <= clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Compare_LessOrEqual_2()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(5));
-
-            var res = clock1 <= clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Compare_GreaterOrEqual_1()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(clock1);
-
-            var res = clock1 >= clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Compare_GreaterOrEqual_2()
-        {
-            var clock1 = new Clock();
-            var clock2 = new Clock(DateTime.Now.AddMinutes(-5).AddDays(-5));
-
-            var res = clock1 >= clock2;
-
-            Assert.True
-            (
-               res
-            );
-        }
-
-        [Fact]
-        public void Carry_1()
-        {
-            var clock1 = new Clock(new DateTime(2020, 12, 31, 23, 59, 0));
-            var clock2 = new Clock(new DateTime(2021, 1, 1, 0, 0, 0));
+            var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
+            var clock2 = new Clock(DateTime.ParseExact(expected, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             clock1.Tick();
 
-            Assert.True
-            (
-               clock1 == clock2
-            );
-        }
-
-        [Fact]
-        public void Carry_2()
-        {
-            var clock1 = new Clock(new DateTime(2021, 2, 28, 23, 59, 0));
-            var clock2 = new Clock(new DateTime(2021, 3, 1, 0, 0, 0));
-            clock1.Tick();
-
-            Assert.True
-            (
-               clock1 == clock2
-            );
+            // test execution
+            Assert.Equal(clock2, clock1);
         }
     }
 }
