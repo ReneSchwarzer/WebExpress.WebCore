@@ -169,7 +169,7 @@ namespace WebExpress.WebCore.WebEndpoint
             var className = _classSuffixes?.FirstOrDefault(s => classType.Name.ToLowerInvariant().EndsWith(s, StringComparison.OrdinalIgnoreCase)) is string suffix
                 ? classType.Name.ToLowerInvariant()[..^suffix.Length]
                 : classType.Name.ToLowerInvariant();
-            var segments = (fullClassName.Length - className.Length - 1 > assemblyName.Length)
+            var segments = (fullClassName.Length - classType.Name.Length - 1 > assemblyName.Length)
                  ? fullClassName[(assemblyName.Length + 1)..^(classType.Name.Length + 1)].ToLowerInvariant().Split('.', StringSplitOptions.RemoveEmptyEntries)
                  : [];
 

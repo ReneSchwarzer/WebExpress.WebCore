@@ -59,5 +59,21 @@ namespace WebExpress.WebCore.Test.Route
 
             Assert.Equal(expected, combine.ToString());
         }
+
+        /// <summary>
+        /// Test the combine method.
+        /// </summary>
+        [Theory]
+        [InlineData("/a/b/c", null, "/a/b/c")]
+        [InlineData("/a/b/c", "", "/a/b/c")]
+        [InlineData("/a/b/c", "d", "/a/b/c/d")]
+        [InlineData("/a/b/c", "/d/e/f", "/a/b/c/d/e/f")]
+        public void CombineSegment(string baseRoute, string segment, string expected)
+        {
+            // test execution
+            var combine = RouteEndpoint.Combine(new RouteEndpoint(baseRoute), segment);
+
+            Assert.Equal(expected, combine.ToString());
+        }
     }
 }
