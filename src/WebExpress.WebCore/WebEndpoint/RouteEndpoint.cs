@@ -121,7 +121,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <param name="fragment">References a position within a resource (e.g. #Anchor).</param>
         /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier).</param>
         /// <param name="segments">The path segments.</param>
-        public RouteEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuerry> query, IEnumerable<IUriPathSegment> segments)
+        public RouteEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuery> query, IEnumerable<IUriPathSegment> segments)
         {
         }
 
@@ -210,35 +210,6 @@ namespace WebExpress.WebCore.WebEndpoint
                 .Concat(segments);
 
             return copy;
-        }
-
-        /// <summary>
-        /// Combines the specified base route, intermediate route, and enumerable segments into a compound route.
-        /// </summary>
-        /// <param name="baseRoute">The base route serving as the starting point.</param>
-        /// <param name="intermediateRoute">The intermediate route to be appended, if not empty or whitespace.</param>
-        /// <param name="segments">The enumerable collection of path segments to be added.</param>
-        /// <returns>A new compound route combining all specified components.</returns>
-        public static IRoute Combine(IRoute baseRoute, string intermediateRoute, IEnumerable<IUriPathSegment> segments)
-        {
-            var copy = new RouteEndpoint(baseRoute);
-            copy.PathSegments = copy.PathSegments
-                .Concat(!string.IsNullOrWhiteSpace(intermediateRoute) ? [new UriPathSegmentConstant(intermediateRoute)] : [])
-                .Concat(segments);
-
-            return copy;
-        }
-
-        /// <summary>
-        /// Combines the specified base route, intermediate route, and single segment into a compound route.
-        /// </summary>
-        /// <param name="baseRoute">The base route to be used as the starting point.</param>
-        /// <param name="intermediateRoute">The intermediate route to be appended.</param>
-        /// <param name="segment">The individual segment to be added to the resulting route.</param>
-        /// <returns>A newly combined route constructed from the provided components.</returns>
-        public static IRoute Combine(IRoute baseRoute, IRoute intermediateRoute, IUriPathSegment segment)
-        {
-            return Combine([baseRoute, intermediateRoute, new RouteEndpoint(segment)]);
         }
 
         /// <summary>

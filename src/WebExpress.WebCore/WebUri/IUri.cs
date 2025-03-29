@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        IEnumerable<UriQuerry> Query { get; }
+        IEnumerable<UriQuery> Query { get; }
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).

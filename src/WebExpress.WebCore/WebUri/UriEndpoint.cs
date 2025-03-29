@@ -6,8 +6,8 @@ using System.Text.RegularExpressions;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// An Uri represents a complete, fully qualified Uniform Resource Identifier (URI) that uniquely identifies a endpoint.
-    /// 
+    /// An Uri represents a complete, fully qualified Uniform Resource Identifier (URI) that uniquely 
+    /// identifies a endpoint (see RFC 3986).
     /// This interface encapsulates all components of a typical URI, such as the scheme (e.g., "http", "https"),
     /// the authority (e.g., "example.com"), path segments, query parameters, and fragment. It provides the external
     /// address used for resource identification and linking (e.g., "http://example.com/users/123").
@@ -18,14 +18,14 @@ namespace WebExpress.WebCore.WebUri
         /// A regular expression to match URIs.
         /// </summary>
         /// <returns>A Regex object for matching URIs.</returns>
-        [GeneratedRegex("^([a-z0-9+.-]+):(?://(?:((?:[a-z0-9-._~!$&'()*+,;=:]|%[0-9A-F]{2})*)@)?((?:[a-z0-9-._~!$&'()*+,;=]|%[0-9A-F]{2})*)(?::(\\d*))?(.*)?)$")]
+        [GeneratedRegex("^([a-zA-Z0-9+.-]+):(?://(?:((?:[a-zA-Z0-9-._~!$&'()*+,;=:]|%[0-9a-fA-F]{2})*)@)?((?:[a-zA-Z0-9-._~!$&'()*+,;=]|%[0-9a-fA-F]{2})*)(?::(\\d*))?(.*)?)$")]
         private static partial Regex UriRegex();
 
         /// <summary>
         /// Regular expression to match relative URIs.
         /// </summary>
         /// <returns>A Regex object for matching relative URIs.</returns>
-        [GeneratedRegex(@"^(\/([a-zA-Z0-9-+*%()=._/$]*))(#([a-zA-Z0-9-+*%()=._/$]*))?(\?(.*))?$")]
+        [GeneratedRegex(@"^(\/([a-zA-Z0-9-+*%()=._/$]*))?(\?([a-zA-Z0-9-+*%()=._/$&]*))?(#([a-zA-Z0-9-+*%()=._/$]*))?$")]
         private static partial Regex RelativeUriRegex();
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The path (e.g. /over/there).
         /// </summary>
-        public IEnumerable<IUriPathSegment> PathSegments { get; private set; } = [];
+        public IEnumerable<IUriPathSegment> PathSegments { get; private set; } = [new UriPathSegmentRoot()];
 
         /// <summary>
         /// Returns the extended segment of the endpoint's path, which is included only when the endpoint class has the IncludeSubPaths attribute enabled.
@@ -59,7 +59,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        public IEnumerable<UriQuerry> Query { get; } = [];
+        public IEnumerable<UriQuery> Query { get; } = [];
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
@@ -203,21 +203,19 @@ namespace WebExpress.WebCore.WebUri
 
             var relativeMatch = RelativeUriRegex().Match(uri);
 
-            PathSegments = PathSegments.Concat([new UriPathSegmentRoot()]);
-
             foreach (var p in relativeMatch.Groups[2].Value.Split('/', StringSplitOptions.RemoveEmptyEntries))
             {
                 PathSegments = PathSegments.Concat([new UriPathSegmentConstant(p)]);
             }
 
-            Fragment = relativeMatch.Groups[4].Success ? relativeMatch.Groups[4].Value : null;
-
-            foreach (var q in relativeMatch.Groups[6].Success ? relativeMatch.Groups[6].Value?.Split('&') : Enumerable.Empty<string>())
+            foreach (var q in relativeMatch.Groups[4].Success ? relativeMatch.Groups[4].Value?.Split('&') : [])
             {
                 var item = q.Split('=');
 
-                Query = Query.Concat([new UriQuerry(item[0], item.Length > 1 ? item[1] : null)]);
+                Query = Query.Concat([new UriQuery(item[0], item.Length > 1 ? item[1] : null)]);
             }
+
+            Fragment = relativeMatch.Groups[6].Success ? relativeMatch.Groups[6].Value : null;
         }
 
         /// <summary>
@@ -229,7 +227,7 @@ namespace WebExpress.WebCore.WebUri
             Scheme = uri?.Scheme ?? UriScheme.Http;
             Authority = uri?.Authority;
             PathSegments = uri?.PathSegments.Select(x => x.Copy()) ?? [];
-            Query = uri?.Query.Select(x => new UriQuerry(x.Key, x.Value)) ?? [];
+            Query = uri?.Query.Select(x => new UriQuery(x.Key, x.Value)) ?? [];
             Fragment = uri?.Fragment;
             ServerRoot = uri?.ServerRoot;
             ApplicationRoot = uri?.ApplicationRoot;
@@ -284,13 +282,13 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="fragment">References a position within a resource (e.g. #Anchor).</param>
         /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier).</param>
         /// <param name="segments">The path segments.</param>
-        public UriEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuerry> query, IEnumerable<IUriPathSegment> segments)
+        public UriEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuery> query, IEnumerable<IUriPathSegment> segments)
         {
             Scheme = scheme;
             Authority = authority;
             PathSegments = PathSegments.Concat([new UriPathSegmentRoot()]);
             PathSegments = PathSegments.Concat(segments?.Where(x => x is not UriPathSegmentRoot).Select(x => x.Copy()) ?? []);
-            Query = query.Select(x => new UriQuerry(x.Key, x.Value));
+            Query = query.Select(x => new UriQuery(x.Key, x.Value));
             Fragment = fragment;
         }
 
@@ -525,14 +523,14 @@ namespace WebExpress.WebCore.WebUri
                     .Select(x => x.ToString().TrimStart('/'))
             ).TrimEnd('/');
 
+            if (Query.Any())
+            {
+                uri += "?" + string.Join("&", Query.Select(x => x.ToString()));
+            }
+
             if (!string.IsNullOrWhiteSpace(Fragment))
             {
                 uri += "#" + Fragment;
-            }
-
-            if (Query.Any())
-            {
-                uri += "?" + string.Join("&", Query.Select(x => $"{x.Key}={x.Value}"));
             }
 
             return Scheme switch

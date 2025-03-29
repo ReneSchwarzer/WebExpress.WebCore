@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// Returns the internal routing path for the endpoint.
         /// </summary>
-        public IRoute Route => RouteEndpoint.Combine(ApplicationContext.ContextPath, _contextPath, _pathSegment);
+        public IRoute Route => RouteEndpoint.Combine(ApplicationContext.ContextPath, _contextPath.Concat(_pathSegment));
 
         /// <summary>
         /// Returns the attributes associated with the page.
