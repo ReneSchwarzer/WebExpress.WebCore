@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -163,6 +164,16 @@ namespace WebExpress.WebCore.WebEndpoint
                 .Concat(segments.Where(x => !x.IsEmpty));
 
             return copy;
+        }
+
+        /// <summary>
+        /// Converts the route to a URI.
+        /// </summary>
+        /// <param name="parameters">The parameters to be included in the URI.</param>
+        /// <returns>An instance of IUri representing the route as a URI.</returns>
+        public IUri ToUri(params Parameter[] parameters)
+        {
+            return new UriEndpoint(this).SetParameters(parameters);
         }
 
         /// <summary>

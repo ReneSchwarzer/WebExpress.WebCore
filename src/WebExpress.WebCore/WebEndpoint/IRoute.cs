@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -44,5 +45,12 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <param name="segments">An array of path segments to be concatenated to the existing route.</param>
         /// <returns>A new IRoute instance representing the route after concatenation.</returns>
         IRoute Concat(params IUriPathSegment[] segments);
+
+        /// <summary>
+        /// Converts the route to a URI.
+        /// </summary>
+        /// <param name="parameters">The parameters to be included in the URI.</param>
+        /// <returns>An instance of IUri representing the route as a URI.</returns>
+        IUri ToUri(params Parameter[] parameters);
     }
 }
