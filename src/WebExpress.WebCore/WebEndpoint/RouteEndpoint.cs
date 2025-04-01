@@ -82,7 +82,7 @@ namespace WebExpress.WebCore.WebEndpoint
             if (segments.Length > 0)
             {
                 PathSegments = PathSegments
-                    .Concat(segments.Select(x => x.Copy()));
+                    .Concat(segments.Where(x => !x.IsEmpty).Select(x => x.Copy()));
             }
         }
 
@@ -153,7 +153,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>A new IRoute instance representing the route after concatenation.</returns>
         public virtual IRoute Concat(params IUriPathSegment[] segments)
         {
-            if (segments.Length == 0)
+            if (segments == null || segments.Length == 0)
             {
                 return this;
             }
@@ -161,7 +161,29 @@ namespace WebExpress.WebCore.WebEndpoint
             var copy = new RouteEndpoint((IRoute)this);
             copy.PathSegments = copy.PathSegments
                 .Select(x => x.Copy())
-                .Concat(segments.Where(x => !x.IsEmpty));
+                .Concat(segments.Where(x => x != null).Where(x => !x.IsEmpty));
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Removes a specified segment from the route and returns a new instance of IRoute with the updated path.
+        /// </summary>
+        /// <param name="segments">The path segment to be removed from the existing route.</param>
+        /// <returns>A new IRoute instance representing the route after the segment removal.</returns>
+        public virtual IRoute RemoveSegment(string segments)
+        {
+            if (string.IsNullOrWhiteSpace(segments) || !ToString().Contains(segments))
+            {
+                return this;
+            }
+
+            var segmentParts = segments.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var copy = new RouteEndpoint((IRoute)this);
+
+            copy.PathSegments = copy.PathSegments
+                .Where(x => !segmentParts.Contains(x.Value))
+                .Select(x => x.Copy());
 
             return copy;
         }

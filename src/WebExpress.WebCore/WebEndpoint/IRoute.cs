@@ -47,6 +47,13 @@ namespace WebExpress.WebCore.WebEndpoint
         IRoute Concat(params IUriPathSegment[] segments);
 
         /// <summary>
+        /// Removes a specified segment from the route and returns a new instance of IRoute with the updated path.
+        /// </summary>
+        /// <param name="segments">The path segment to be removed from the existing route.</param>
+        /// <returns>A new IRoute instance representing the route after the segment removal.</returns>
+        IRoute RemoveSegment(string segments);
+
+        /// <summary>
         /// Converts the route to a URI.
         /// </summary>
         /// <param name="parameters">The parameters to be included in the URI.</param>

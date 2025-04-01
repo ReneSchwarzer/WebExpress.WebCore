@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Route
 {
@@ -16,13 +17,33 @@ namespace WebExpress.WebCore.Test.Route
         [InlineData("/a/b/c", "", "/a/b/c", 4)]
         [InlineData("/a/b/c", "d", "/a/b/c/d", 5)]
         [InlineData("/a/b/c", "/d/e/f", "/a/b/c/d/e/f", 7)]
-        public void Concat(string baseRoute, string segment, string expected, int count)
+        public void ConcatString(string baseRoute, string segment, string expected, int count)
         {
             // preconditions
-            var uri = new RouteEndpoint(baseRoute);
+            var route = new RouteEndpoint(baseRoute);
 
             // test execution
-            var concat = uri.Concat(segment);
+            var concat = route.Concat(segment);
+
+            Assert.Equal(expected, concat.ToString());
+            Assert.Equal(count, concat.PathSegments.Count());
+        }
+
+        /// <summary>
+        /// Test the concat method.
+        /// </summary>
+        [Theory]
+        [InlineData("/a/b/c", null, "/a/b/c", 4)]
+        [InlineData("/a/b/c", " ", "/a/b/c", 4)]
+        [InlineData("/a/b/c", "d", "/a/b/c/d", 5)]
+        [InlineData("/a/b/c", "/d/e/f", "/a/b/c/d/e/f", 7)]
+        public void ConcatSegment(string baseRoute, string segment, string expected, int count)
+        {
+            // preconditions
+            var route = new RouteEndpoint(baseRoute);
+
+            // test execution
+            var concat = route.Concat(segment != null ? [.. segment?.Split('/').Select(x => new UriPathSegmentConstant(x))] : null);
 
             Assert.Equal(expected, concat.ToString());
             Assert.Equal(count, concat.PathSegments.Count());
@@ -74,6 +95,26 @@ namespace WebExpress.WebCore.Test.Route
             var combine = RouteEndpoint.Combine(new RouteEndpoint(baseRoute), segment);
 
             Assert.Equal(expected, combine.ToString());
+        }
+
+        /// <summary>
+        /// Test the combine method.
+        /// </summary>
+        [Theory]
+        [InlineData("/a/b/c", null, "/a/b/c")]
+        [InlineData("/a/b/c", "", "/a/b/c")]
+        [InlineData("/a/b/c", "b", "/a/c")]
+        [InlineData("/a/b/c", "/b", "/a/c")]
+        [InlineData("/a/b/c", "/b/c", "/a")]
+        [InlineData("/a/b/c", "/a/c", "/a/b/c")]
+        public void RemoveSegment(string route, string segment, string expected)
+        {
+            // test execution
+            var routeEndpoint = new RouteEndpoint(route);
+
+            var removed = routeEndpoint.RemoveSegment(segment);
+
+            Assert.Equal(expected, removed.ToString());
         }
     }
 }

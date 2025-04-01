@@ -5,7 +5,6 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAsset
 {
@@ -14,9 +13,6 @@ namespace WebExpress.WebCore.WebAsset
     /// </summary>
     public class AssetContext : IAssetContext
     {
-        private readonly IRoute _contextPath;
-        private readonly IUriPathSegment _pathSegment;
-
         /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
@@ -50,7 +46,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// Returns the internal routing path for the endpoint.
         /// </summary>
-        public IRoute Route => RouteEndpoint.Combine(ApplicationContext.ContextPath, _contextPath.Concat(_pathSegment));
+        public IRoute Route { get; internal set; }
 
         /// <summary>
         /// Returns the attributes associated with the page.
@@ -60,12 +56,8 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
         /// </summary>
-        /// <param name="contextPath">The context path of the resource.</param>
-        /// <param name="pathSegment">The path segment of the resource.</param>
-        public AssetContext(IRoute contextPath, IUriPathSegment pathSegment)
+        public AssetContext()
         {
-            _contextPath = contextPath;
-            _pathSegment = pathSegment;
         }
 
         /// <summary>

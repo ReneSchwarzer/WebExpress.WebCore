@@ -150,7 +150,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// Returns the route of an endpoint based on the class type, application context and segment attributes.
         /// </summary>
         /// <param name="classType">The type of the class.</param>
-        /// <param name="applicationContext">The application context.</param>
+        /// <param name="contextRoute">The application context route.</param>
         /// <param name="segment">The segment attribute.</param>
         /// <param name="intermediateSegments">The intermediate segments.</param>
         /// <param name="namespacePrefixes">The namespace prefixes.</param>
@@ -158,7 +158,7 @@ namespace WebExpress.WebCore.WebEndpoint
         public static IRoute CreateEndpointRoute
         (
             Type classType,
-            IApplicationContext applicationContext,
+            IRoute contextRoute,
             ISegmentAttribute segment,
             IEnumerable<IUriPathSegment> intermediateSegments = null,
             string[] namespacePrefixes = null
@@ -173,18 +173,20 @@ namespace WebExpress.WebCore.WebEndpoint
                  ? fullClassName[(assemblyName.Length + 1)..^(classType.Name.Length + 1)].ToLowerInvariant().Split('.', StringSplitOptions.RemoveEmptyEntries)
                  : [];
 
-            var segmentAttributesMapping = segments.Select((segment, index) => new
+            var segmentMapping = segments.Select((segment, index) => new
             {
                 FullNamespace = $"{assemblyName}.{string.Join(".", segments.Take(index + 1))}",
                 Segment = segment
-            }).Select(s =>
+            });
+
+            var segmentAttributesMapping = segmentMapping.Select(s =>
             {
                 var segmentResult = default(IUriPathSegment);
                 var name = default(string);
                 var description = default(string);
                 var icon = default(IIcon);
 
-                var typeName = $"{s.FullNamespace}.SegmentInfo";
+                var typeName = $"{s.FullNamespace}.Index";
                 var segmentInfoType = classType.Assembly.GetType(typeName, throwOnError: false, ignoreCase: true);
 
                 if (segmentInfoType != null)
@@ -198,7 +200,7 @@ namespace WebExpress.WebCore.WebEndpoint
                         ? segmentInfoType.GetCustomAttribute(segAttrType, false) as ISegmentAttribute
                         : null;
                     var nameAttr = segmentInfoType.CustomAttributes
-                        .FirstOrDefault(x => x.AttributeType == typeof(NameAttribute));
+                        .FirstOrDefault(x => x.AttributeType == typeof(TitleAttribute));
                     var descAttr = segmentInfoType.CustomAttributes
                         .FirstOrDefault(x => x.AttributeType == typeof(DescriptionAttribute));
                     var iconAttr = segmentInfoType.CustomAttributes
@@ -236,14 +238,14 @@ namespace WebExpress.WebCore.WebEndpoint
                 ? segmentAttributesMapping.Skip(1)
                 : segmentAttributesMapping;
 
-            var uri = RouteEndpoint.Combine
-                (
-                    applicationContext.ContextPath,
-                    (intermediateSegments ?? [])
-                        .Concat(segmentAttributesMapping
-                        .Select(x => x.Segment))
-                )
-                .Concat(segment?.ToPathSegment() ?? new UriPathSegmentConstant(!className.StartsWith(_indexPrefix) ? className : null));
+            var endpointRoute = (intermediateSegments ?? [])
+                .Concat(segmentAttributesMapping.Select(x => x.Segment));
+
+            var classSegment = !className.StartsWith(_indexPrefix)
+                           ? segment?.ToPathSegment() ?? new UriPathSegmentConstant(className)
+                           : null;
+            var uri = RouteEndpoint.Combine(contextRoute, endpointRoute)
+                .Concat(classSegment);
 
             return uri;
         }

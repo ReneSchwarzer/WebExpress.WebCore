@@ -2,13 +2,12 @@
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebRestApi;
 
-namespace WebExpress.WebCore.Test.WWW.Api
+namespace WebExpress.WebCore.Test.WWW.Api._3
 {
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
     [Method(CrudMethod.GET)]
-    [Version(3)]
     public sealed class TestRestApiC : RestApi
     {
         /// <summary>

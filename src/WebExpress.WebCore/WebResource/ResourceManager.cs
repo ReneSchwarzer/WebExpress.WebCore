@@ -162,7 +162,13 @@ namespace WebExpress.WebCore.WebResource
                 // assign the resource to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var routePath = EndpointManager.CreateEndpointRoute(resourceType, applicationContext, segment);
+                    var prefix = applicationContext.ContextPath.Concat
+                    (
+                        applicationContext.PluginContext != pluginContext
+                            ? pluginContext.PluginName.ToLower()
+                            : ""
+                    );
+                    var routePath = EndpointManager.CreateEndpointRoute(resourceType, prefix, segment);
                     var resourceContext = new ResourceContext()
                     {
                         EndpointId = new ComponentId(id),

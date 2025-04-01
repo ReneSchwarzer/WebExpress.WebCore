@@ -81,6 +81,7 @@ namespace WebExpress.WebCore.WebSitemap
 
             // endpoints
             var resources = _componentHub.EndpointManager.Endpoints
+                .Where(x => x.Route != null)
                 .Select(x => new
                 {
                     EndpointContext = x,
@@ -373,7 +374,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="outPathSegments">The path segments.</param>
         /// <param name="searchContext">The search context.</param>
         /// <returns>The search result with the found resource</returns>
-        private static SearchResult SearchNode
+        private SearchResult SearchNode
         (
             SitemapNode node,
             Queue<string> inPathSegments,
@@ -402,16 +403,40 @@ namespace WebExpress.WebCore.WebSitemap
                     {
                         EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriEndpoint([.. outPathSegments])
+                        Uri = new UriEndpoint
+                        (
+                            [..
+                                outPathSegments.Concat(inPathSegments
+                                    .Select(x => new UriPathSegmentConstant(x)))
+                            ]
+                        )
+                        {
+                            BasePath = new UriEndpoint([.. outPathSegments])
+                        }
                     };
                 }
-                else if (node.IsLeaf && nextPathSegment != null && node.EndpointContext != null && node.EndpointContext.IncludeSubPaths)
+                else if
+                (
+                    node.IsLeaf
+                    && nextPathSegment != null
+                    && node.EndpointContext != null
+                    && node.EndpointContext.IncludeSubPaths
+                )
                 {
                     return new SearchResult()
                     {
                         EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriEndpoint([.. outPathSegments])
+                        Uri = new UriEndpoint
+                        (
+                            [..
+                                outPathSegments.Concat(inPathSegments
+                                    .Select(x => new UriPathSegmentConstant(x)))
+                            ]
+                        )
+                        {
+                            BasePath = new UriEndpoint([.. outPathSegments])
+                        }
                     };
                 }
 
@@ -422,12 +447,7 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // 404
-            return new SearchResult()
-            {
-                EndpointContext = node.EndpointContext,
-                SearchContext = searchContext,
-                Uri = new UriEndpoint([.. outPathSegments])
-            };
+            return null;
         }
 
         /// <summary>

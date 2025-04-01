@@ -142,11 +142,21 @@ namespace WebExpress.WebCore.WebAsset
                     // assign the asset to existing applications
                     foreach (var applicationContext in applicationContexts)
                     {
-                        var assetContext = new AssetContext(new RouteEndpoint(), new UriPathSegmentConstant($"assets/{id}"))
+                        var prefix = applicationContext.ContextPath
+                            .Concat(new UriPathSegmentConstant("assets"))
+                            .Concat
+                            (
+                                applicationContext.PluginContext != pluginContext
+                                    ? pluginContext.PluginName.ToLower()
+                                    : ""
+                            );
+
+                        var assetContext = new AssetContext()
                         {
                             EndpointId = new ComponentId(id),
                             PluginContext = pluginContext,
                             ApplicationContext = applicationContext,
+                            Route = prefix.Concat(new UriPathSegmentConstant($"{id}")),
                             IncludeSubPaths = false
                         };
 
@@ -154,7 +164,14 @@ namespace WebExpress.WebCore.WebAsset
                         {
                             AssetClass = typeof(Asset),
                             AssetContext = assetContext,
-                            Instance = ComponentActivator.CreateInstance<IAsset, IAssetContext>(typeof(Asset), assetContext, _httpServerContext, _componentHub, resource)
+                            Instance = ComponentActivator.CreateInstance<IAsset, IAssetContext>
+                            (
+                                typeof(Asset),
+                                assetContext,
+                                _httpServerContext,
+                                _componentHub,
+                                resource
+                            )
                         };
 
                         if (_itemDictionary.AddAssetItem(pluginContext, applicationContext, assetItem))
@@ -267,7 +284,7 @@ namespace WebExpress.WebCore.WebAsset
             var assembly = typeof(AssetManager).Assembly;
             var assemblyName = assembly.GetName().Name.ToLower();
 
-            var context = new AssetContext(new RouteEndpoint(), new UriPathSegmentConstant("assets"))
+            var context = new AssetContext()
             {
                 ApplicationContext = e,
                 PluginContext = new PluginContext()
@@ -276,7 +293,8 @@ namespace WebExpress.WebCore.WebAsset
                     Assembly = assembly
                 },
                 EndpointId = new ComponentId(assemblyName + ".asset"),
-                IncludeSubPaths = true
+                IncludeSubPaths = true,
+                Route = RouteEndpoint.Combine(e.ContextPath, "assets")
             };
 
             var asset = ComponentActivator.CreateInstance<IAsset, IAssetContext>(typeof(Asset), context, _httpServerContext, _componentHub);

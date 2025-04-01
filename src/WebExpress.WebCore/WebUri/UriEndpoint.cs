@@ -44,17 +44,15 @@ namespace WebExpress.WebCore.WebUri
         public IEnumerable<IUriPathSegment> PathSegments { get; private set; } = [new UriPathSegmentRoot()];
 
         /// <summary>
-        /// Returns the extended segment of the endpoint's path, which is included only when the endpoint class has the IncludeSubPaths attribute enabled.
-        /// For example, if the core endpoint is "http://example.com/server/app/endpoint" and the extended segment is "extended",
-        /// the complete URI becomes "http://example.com/server/app/endpoint/extended". In this case, the property returns the "extended" part.
+        /// Returns or sets the base path of the endpoint's URI.
+        /// The base path is included only when the endpoint class has the IncludeSubPaths attribute enabled.
+        /// For example, if the complete URI is "http://example.com/server/app/endpoint/extended",
+        /// the <c>BasePath</c> property will represent the "http://example.com/server/app/endpoint" portion of the URI.
         /// </summary>
-        public IUri ExtendedPath
-        {
-            get
-            {
-                return new UriEndpoint(Skip(EndpointRoot.PathSegments.Count()).PathSegments?.ToArray());
-            }
-        }
+        /// <value>
+        /// The base path as an <see cref="IUri"/> object, or <c>null</c> if the IncludeSubPaths attribute is not enabled.
+        /// </value>
+        public IUri BasePath { get; set; }
 
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
@@ -94,25 +92,6 @@ namespace WebExpress.WebCore.WebUri
         /// Determines if the uri is empty.
         /// </summary>
         public bool Empty => !PathSegments.Any();
-
-        /// <summary>
-        /// Retrieves the base URI of the endpoint. When the IncludeSubPaths attribute is enabled on the endpoint class,
-        /// the complete URI may include extra path segments. For example, the core endpoint could be
-        /// "http://example.com/server/app/endpoint", but with IncludeSubPaths enabled, the full URI might become
-        /// "http://example.com/server/app/endpoint/extended". In such cases, this property returns only the base URI:
-        /// "http://example.com/server/app/endpoint".
-        /// </summary>
-        public virtual IUri EndpointRoot { get; set; }
-
-        /// <summary>
-        /// Returns the root of the application.
-        /// </summary>
-        public virtual IUri ApplicationRoot { get; set; }
-
-        /// <summary>
-        /// Returns the root of the server.
-        /// </summary>
-        public virtual IUri ServerRoot { get; set; }
 
         /// <summary>
         /// Determines if the Uri is the root.
@@ -229,9 +208,6 @@ namespace WebExpress.WebCore.WebUri
             PathSegments = uri?.PathSegments.Select(x => x.Copy()) ?? [];
             Query = uri?.Query.Select(x => new UriQuery(x.Key, x.Value)) ?? [];
             Fragment = uri?.Fragment;
-            ServerRoot = uri?.ServerRoot;
-            ApplicationRoot = uri?.ApplicationRoot;
-            EndpointRoot = uri?.EndpointRoot;
         }
 
         /// <summary>
@@ -256,9 +232,6 @@ namespace WebExpress.WebCore.WebUri
         public UriEndpoint(IUri uri, IEnumerable<IUriPathSegment> segments)
             : this(uri.Scheme, uri.Authority, uri.Fragment, uri.Query, segments)
         {
-            ServerRoot = uri.ServerRoot;
-            ApplicationRoot = uri.ApplicationRoot;
-            EndpointRoot = uri.EndpointRoot;
         }
 
         /// <summary>
@@ -270,8 +243,6 @@ namespace WebExpress.WebCore.WebUri
         public UriEndpoint(IUri uri, IEnumerable<IUriPathSegment> segments, IEnumerable<IUriPathSegment> extendedSegments)
             : this(uri.Scheme, uri.Authority, uri.Fragment, uri.Query, extendedSegments != null ? segments.Union(extendedSegments) : segments)
         {
-            ServerRoot = uri.ServerRoot;
-            ApplicationRoot = uri.ApplicationRoot;
         }
 
         /// <summary>
@@ -286,7 +257,6 @@ namespace WebExpress.WebCore.WebUri
         {
             Scheme = scheme;
             Authority = authority;
-            PathSegments = PathSegments.Concat([new UriPathSegmentRoot()]);
             PathSegments = PathSegments.Concat(segments?.Where(x => x is not UriPathSegmentRoot).Select(x => x.Copy()) ?? []);
             Query = query.Select(x => new UriQuery(x.Key, x.Value));
             Fragment = fragment;

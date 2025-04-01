@@ -264,13 +264,6 @@ namespace WebExpress.WebCore
             if (searchResult != null)
             {
                 var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
-                resourceUri = new UriEndpoint((IUri)resourceUri)
-                {
-                    ServerRoot = new UriEndpoint(request.Uri, HttpServerContext.ContextPath.PathSegments),
-                    ApplicationRoot = new UriEndpoint(request.Uri, searchResult.EndpointContext?.ApplicationContext?.ContextPath.PathSegments),
-                    EndpointRoot = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments)
-                };
-
                 request.Uri = resourceUri;
 
                 try

@@ -1,5 +1,7 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.Test.WWW.Api;
+using WebExpress.WebCore.Test.WWW.Api._1;
+using WebExpress.WebCore.Test.WWW.Api._2;
+using WebExpress.WebCore.Test.WWW.Api._3;
 using WebExpress.WebCore.Test.WWW.Resources;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebSitemap;
@@ -25,7 +27,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(82, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(79, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -53,9 +55,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server", "webexpress.webcore.test.www.index")]
         [InlineData("http://localhost:8080/server/about", "webexpress.webcore.test.www.about")]
         [InlineData("http://localhost:8080/server/contact", "webexpress.webcore.test.www.contact")]
-        [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api.testrestapia")]
-        [InlineData("http://localhost:8080/server/appa/api/2/testrestapib", "webexpress.webcore.test.www.api.testrestapib")]
-        [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api.testrestapic")]
+        [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api._1.testrestapia")]
+        [InlineData("http://localhost:8080/server/appa/api/2/testrestapib", "webexpress.webcore.test.www.api._2.testrestapib")]
+        [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api._3.testrestapic")]
         [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.asset")]
@@ -63,7 +65,6 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.js", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
-
         public void SearchResource(string uri, string id)
         {
             // preconditions
@@ -80,7 +81,7 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock(), searchResult.EndpointContext);
+            componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock(), searchResult?.EndpointContext);
 
             Assert.Equal(id, searchResult?.EndpointContext?.EndpointId.ToString());
         }
@@ -108,8 +109,8 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(WWW.Blog.Post.PostId.Edit), 1, "/server/appa/blog/post/1/edit")]
         [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Index), null, "/server/appa/products")]
         [InlineData(typeof(TestApplicationA), typeof(WWW.Products.List), null, "/server/appa/products/list")]
-        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), null, "/server/appa/products/details/${testparametera}")]
-        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), 2, "/server/appa/products/details/2")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), null, "/server/appa/products/${testparametera}")]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), 2, "/server/appa/products/2")]
         public void GetUri(Type applicationType, Type resourceType, int? param, string expected)
         {
             // preconditions
@@ -138,9 +139,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/assets/css.mycss.css", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.js", "webexpress.webcore.asset")]
         [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api.testrestapia")]
-        [InlineData("http://localhost:8080/server/appa/api/2/TestRestApiB", "webexpress.webcore.test.www.api.testrestapib")]
-        [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api.testrestapic")]
+        [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api._1.testrestapia")]
+        [InlineData("http://localhost:8080/server/appa/api/2/TestRestApiB", "webexpress.webcore.test.www.api._2.testrestapib")]
+        [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api._3.testrestapic")]
         [InlineData("http://localhost:8080/server/appa", "webexpress.webcore.test.www.index")]
         [InlineData("http://localhost:8080/server/appa/", "webexpress.webcore.test.www.index")]
         [InlineData("http://localhost:8080/server/appa/about", "webexpress.webcore.test.www.about")]
@@ -154,12 +155,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/blog/post/10E96737-5C72-4C25-9E74-F96D8863D123/edit", "webexpress.webcore.test.www.blog.post.postid.edit")]
         [InlineData("http://localhost:8080/server/appa/blog/post/10E96737-5C72-4C25-9E74-F96D8863D123", "webexpress.webcore.test.www.blog.post.postid.index")]
         [InlineData("http://localhost:8080/server/appa/blog/post/10E96737-5C72-4C25-9E74-F96D8863D123/", "webexpress.webcore.test.www.blog.post.postid.index")]
+        [InlineData("http://localhost:8080/server/appa/Products", "webexpress.webcore.test.www.products.index")]
         [InlineData("http://localhost:8080/server/appa/Products/", "webexpress.webcore.test.www.products.index")]
-        [InlineData("http://localhost:8080/server/appa/Products/Index", "webexpress.webcore.test.www.products.index")]
         [InlineData("http://localhost:8080/server/appa/Products/list", "webexpress.webcore.test.www.products.list")]
-        [InlineData("http://localhost:8080/server/appa/products/details", "webexpress.webcore.test.www.products.details.index")]
-        [InlineData("http://localhost:8080/server/appa/products/details/10E96737-5C72-4C25-9E74-F96D8863D123", "webexpress.webcore.test.www.products.details.index")]
-        [InlineData("http://localhost:8080/server/appa/products/details/10E96737-5C72-4C25-9E74-F96D8863D123/", "webexpress.webcore.test.www.products.details.index")]
+        [InlineData("http://localhost:8080/server/appa/products/10E96737-5C72-4C25-9E74-F96D8863D123", "webexpress.webcore.test.www.products.details.index")]
+        [InlineData("http://localhost:8080/server/appa/products/10E96737-5C72-4C25-9E74-F96D8863D123/", "webexpress.webcore.test.www.products.details.index")]
         public void GetEndpoint(string uri, string expected)
         {
             // preconditions

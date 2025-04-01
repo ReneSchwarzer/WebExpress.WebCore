@@ -27,11 +27,15 @@ namespace WebExpress.WebCore.WebUri
         IEnumerable<IUriPathSegment> PathSegments { get; }
 
         /// <summary>
-        /// Returns the extended segment of the endpoint's path, which is included only when the endpoint class has the IncludeSubPaths attribute enabled.
-        /// For example, if the core endpoint is "http://example.com/server/app/endpoint" and the extended segment is "extended",
-        /// the complete URI becomes "http://example.com/server/app/endpoint/extended". In this case, the property returns the "extended" part.
+        /// Returns or sets the base path of the endpoint's URI.
+        /// The base path is included only when the endpoint class has the IncludeSubPaths attribute enabled.
+        /// For example, if the complete URI is "http://example.com/server/app/endpoint/extended",
+        /// the <c>BasePath</c> property will represent the "http://example.com/server/app/endpoint" portion of the URI.
         /// </summary>
-        IUri ExtendedPath { get; }
+        /// <value>
+        /// The base path as an <see cref="IUri"/> object, or <c>null</c> if the IncludeSubPaths attribute is not enabled.
+        /// </value>
+        public IUri BasePath { get; set; }
 
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
@@ -52,25 +56,6 @@ namespace WebExpress.WebCore.WebUri
         /// Determines if the uri is empty.
         /// </summary>
         bool Empty { get; }
-
-        /// <summary>
-        /// Retrieves the base URI of the endpoint. When the IncludeSubPaths attribute is enabled on the endpoint class,
-        /// the complete URI may include extra path segments. For example, the core endpoint could be
-        /// "http://example.com/server/app/endpoint", but with IncludeSubPaths enabled, the full URI might become
-        /// "http://example.com/server/app/endpoint/extended". In such cases, this property returns only the base URI:
-        /// "http://example.com/server/app/endpoint".
-        /// </summary>
-        IUri EndpointRoot { get; }
-
-        /// <summary>
-        /// Returns the root of the application.
-        /// </summary>
-        IUri ApplicationRoot { get; }
-
-        /// <summary>
-        /// Returns the root of the server.
-        /// </summary>
-        IUri ServerRoot { get; }
 
         /// <summary>
         /// Determines if the Uri is the root.

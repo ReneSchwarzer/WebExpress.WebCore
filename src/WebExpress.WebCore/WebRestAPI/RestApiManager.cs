@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
@@ -20,12 +21,15 @@ namespace WebExpress.WebCore.WebRestApi
     /// <summary>
     /// The rest api manager manages rest api resources, which can be called with a URI (Uniform page Identifier).
     /// </summary>
-    public class RestApiManager : IRestApiManager
+    public partial class RestApiManager : IRestApiManager
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly RestApiDictionary _dictionary = [];
         private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+
+        [GeneratedRegex(@"\.(?:_|V|v)(\d+)\.")]
+        private static partial Regex ApiVersionRegex();
 
         /// <summary>
         /// An event that fires when an rest api resource is added.
@@ -315,7 +319,9 @@ namespace WebExpress.WebCore.WebRestApi
                 var conditions = new List<ICondition>();
                 var cache = false;
                 var methods = new List<CrudMethod>();
-                var version = -1;
+                var match = ApiVersionRegex().Match(id);
+                var versionSegment = match.Success ? match.Groups[0].Value.Replace(".", "") : "";
+                var version = match.Success && uint.TryParse(match.Groups[1].Value, out var result) ? result : 1u;
                 var attributes = restApiType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                     !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -353,28 +359,24 @@ namespace WebExpress.WebCore.WebRestApi
                     }
                 }
 
-                foreach (var customAttribute in restApiType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IRestApiAttribute))))
-                {
-                    if (customAttribute.AttributeType.Name == typeof(VersionAttribute).Name
-                        && customAttribute.AttributeType.Namespace == typeof(VersionAttribute).Namespace)
-                    {
-                        version = Convert.ToInt32(customAttribute.ConstructorArguments.FirstOrDefault().Value);
-                    }
-                }
-
                 // assign the rest api to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
+                    var prefix = applicationContext.ContextPath.Concat
+                    (
+                        applicationContext.PluginContext != pluginContext
+                            ? pluginContext.PluginName.ToLower()
+                            : ""
+                    );
+
                     var routePath = EndpointManager.CreateEndpointRoute
                     (
                         restApiType,
-                        applicationContext,
+                        prefix,
                         segment,
-                        [new UriPathSegmentConstant("api"), new UriPathSegmentVariableInt($"{version}") { VariableName = "apiVersion" }],
+                        [new UriPathSegmentConstant("api"), new UriPathSegmentVariableInt($"{version}") { VariableName = "_apiVersion" }],
                         ["api", "restapi", "rest"]
-                    );
-                    var versionPath = version < 1 ? "" : version.ToString();
+                    ).RemoveSegment(versionSegment);
 
                     var restApiContext = new RestApiContext()
                     {
@@ -386,7 +388,7 @@ namespace WebExpress.WebCore.WebRestApi
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
                         Attributes = attributes.Select(x => x.AttributeType),
-                        Version = version < 1 ? 1u : (uint)version,
+                        Version = version,
                         Methods = methods.Distinct()
                     };
 
@@ -398,7 +400,7 @@ namespace WebExpress.WebCore.WebRestApi
                         RestApiContext = restApiContext,
                         RestApiClass = restApiType,
                         Methods = methods.Distinct(),
-                        Version = version < 1 ? 1u : (uint)version,
+                        Version = version,
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,

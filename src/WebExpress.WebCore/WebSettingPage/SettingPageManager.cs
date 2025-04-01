@@ -520,7 +520,13 @@ namespace WebExpress.WebCore.WebSettingPage
                 // assign the setting page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var routePath = EndpointManager.CreateEndpointRoute(settingPageType, applicationContext, segment);
+                    var prefix = applicationContext.ContextPath.Concat
+                    (
+                        applicationContext.PluginContext != pluginContext
+                            ? pluginContext.PluginName.ToLower()
+                            : ""
+                    );
+                    var routePath = EndpointManager.CreateEndpointRoute(settingPageType, prefix, segment);
                     var settingPageContext = new SettingPageContext()
                     {
                         EndpointId = new ComponentId(id),

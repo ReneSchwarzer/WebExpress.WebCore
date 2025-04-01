@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebUri;
+﻿using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
 {
@@ -142,20 +143,49 @@ namespace WebExpress.WebCore.Test.Uri
         }
 
         /// <summary>
-        /// Test the extended path property.
+        /// Test the merge method.
         /// </summary>
         [Theory]
-        [InlineData("http://user@example.com/x/y/z", "http://user@example.com/", "/x/y/z")]
-        [InlineData("http://user@example.com/a/b/c/x/y/z", "http://user@example.com/a/b/c", "/x/y/z")]
-        public void ExtendedPath(string uri, string endpointUri, string expected)
+        [InlineData("http://www.example.com", "/a/b/c", "http://www.example.com/a/b/c")]
+        [InlineData("http://www.example.com/", "/a/b/c", "http://www.example.com/a/b/c")]
+        [InlineData("http://www.example.com/a/b/c", "/a/b/c", "http://www.example.com/a/b/c")]
+        [InlineData("http://www.example.com/a/$guid/c", "/a/$guid/c", "http://www.example.com/a/$guid/c")]
+        public void Merge(string uri, string route, string expected)
+        {
+            // preconditions
+            var random = Guid.NewGuid().ToString();
+            var uriEndpoint = new UriEndpoint(uri.Replace("$guid", random));
+            var routeEndpoint = new RouteEndpoint
+            (
+                [.. route.Split('/').Select
+                (
+                    x => (IUriPathSegment)(x == "$guid"
+                        ? new UriPathSegmentVariableGuid("guid") { Value = random }
+                        : new UriPathSegmentConstant(x))
+                )]
+            );
+
+            // test execution
+            var resourceUri = new UriEndpoint(uriEndpoint, routeEndpoint.PathSegments);
+
+            Assert.Equal(expected.Replace("$guid", random), resourceUri?.ToString());
+        }
+
+        /// <summary>
+        /// Test the base path property.
+        /// </summary>
+        [Theory]
+        [InlineData("http://user@example.com/x/y/z", "http://user@example.com/x", "http://user@example.com/x")]
+        [InlineData("http://user@example.com/a/b/c/x/y/z", "http://user@example.com/a/b/c", "http://user@example.com/a/b/c")]
+        public void BasePath(string uri, string baseUri, string expected)
         {
             var resourceUri = new UriEndpoint(uri)
             {
-                EndpointRoot = new UriEndpoint(endpointUri)
+                BasePath = new UriEndpoint(baseUri)
             };
 
             Assert.Equal(uri, resourceUri.ToString());
-            Assert.Equal(expected, resourceUri.ExtendedPath.ToString());
+            Assert.Equal(expected, resourceUri.BasePath.ToString());
         }
     }
 }

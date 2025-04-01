@@ -7,6 +7,7 @@ namespace WebExpress.WebCore.Test.WWW.Blog.Post.PostId
     /// A dummy class for testing purposes.
     /// </summary>
     [Title("webindex:index.label")]
+    [SegmentGuid<TestParameterA>("segment")]
     public sealed class Index : IPage<VisualTree>
     {
         /// <summary>

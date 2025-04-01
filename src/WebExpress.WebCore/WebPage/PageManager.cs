@@ -353,7 +353,13 @@ namespace WebExpress.WebCore.WebPage
                 // assign the page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var routePath = EndpointManager.CreateEndpointRoute(pageType, applicationContext, segment);
+                    var prefix = applicationContext.ContextPath.Concat
+                    (
+                        applicationContext.PluginContext != pluginContext
+                            ? pluginContext.PluginName.ToLower()
+                            : ""
+                    );
+                    var routePath = EndpointManager.CreateEndpointRoute(pageType, prefix, segment);
                     var pageContext = new PageContext()
                     {
                         EndpointId = new ComponentId(id),
