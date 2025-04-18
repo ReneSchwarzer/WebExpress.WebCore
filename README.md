@@ -1,8 +1,7 @@
 ![WebExpress](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress/main/assets/banner.png)
 
 # WebExpress
-`WebExpress` is a lightweight web server optimized for use in low-performance environments (e.g. Raspberry PI). By providing 
-language (e.g. C#). Some advantages of `WebExpress` are:
+`WebExpress` is a lightweight web server optimized for use in low-performance environments (e.g. Raspberry PI). By providing a powerful plugin system and a comprehensive API, web applications can be easily and quickly integrated into a .net language (e.g. C#). Some dvantages of `WebExpress` are:
 
 - It is easy to use.
 - It offers a variety of features and tools that can help you build and manage your website.
