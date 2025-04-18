@@ -18,7 +18,7 @@ The `WebExpress` family includes the following projects:
 - [WebExpress.WebApp](https://github.com/ReneSchwarzer/WebExpress.WebApp#readme) - Business application template for `WebExpress` applications.
 
 # WebExpress.WebCore
-`WebCore` is part of the `WebExpres` family and includes the basic elements of a `WebExpress` application.
+`WebCore` is part of the `WebExpress` family and includes the basic elements of a `WebExpress` application.
 
 # Download 
 The current binaries are available for download [here](https://github.com/ReneSchwarzer/WebExpress/releases).
