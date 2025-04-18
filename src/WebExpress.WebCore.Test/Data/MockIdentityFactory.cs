@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.Test.Data
         /// <summary>
         /// Creates a list of test users with mock identities.
         /// </summary>
-        /// <returns>A list of identitys.</returns>
+        /// <returns>A list of identities.</returns>
         private static IEnumerable<MockIdentity> CreateTestUsers()
         {
             var passwort = new SecureString();
