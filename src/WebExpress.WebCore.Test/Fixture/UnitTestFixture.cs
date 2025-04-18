@@ -191,11 +191,12 @@ namespace WebExpress.WebCore.Test.Fixture
             var request = CrerateRequestMock();
 
             return new RenderContext(null, CreratePageContextMock(applicationContext, scopes), request);
-        }
+        }
+
         /// <summary>
         /// Create a fake page context for unit testing.
         /// </summary>
-        /// <param name="applicationContext">The application context. If null, defaults to null.</param>
+        /// <param name="scopes">The scopes of the page.</param>
         /// <param name="scopes">The scopes of the page.</param></param>
         /// <returns>A fake context for testing.</returns>
         public static PageContext CreratePageContextMock(IApplicationContext applicationContext = null, IEnumerable<Type> scopes = null)
