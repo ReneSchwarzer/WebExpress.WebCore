@@ -316,6 +316,12 @@ namespace WebExpress.WebCore.WebPackage
             if (File.Exists(catalogeFile))
             {
                 using var catalog = new StreamReader(catalogeFile);
+
+                if (catalog.BaseStream.Length == 0)
+                {
+                    return;
+                }
+
                 var serializer = new XmlSerializer(typeof(PackageCatalog));
                 var items = (PackageCatalog)serializer.Deserialize(catalog);
 

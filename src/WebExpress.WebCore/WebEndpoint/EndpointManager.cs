@@ -239,7 +239,7 @@ namespace WebExpress.WebCore.WebEndpoint
                 : segmentAttributesMapping;
 
             var endpointRoute = (intermediateSegments ?? [])
-                .Concat(segmentAttributesMapping.Select(x => x.Segment));
+                .Concat(segmentAttributesMapping.Where(x => !x.Segment.IsEmpty).Select(x => x.Segment));
 
             var classSegment = !className.StartsWith(_indexPrefix)
                            ? segment?.ToPathSegment() ?? new UriPathSegmentConstant(className)
