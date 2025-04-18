@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Represents an HTML attribute that can be added to an HTML element.
+    /// </summary>
     public class HtmlAttribute : IHtmlAttribute
     {
         /// <summary>
@@ -15,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Value { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlAttribute()
         {
@@ -23,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         public HtmlAttribute(string name)
@@ -32,7 +35,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
@@ -52,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
             builder.Append(Name);
             builder.Append("=\"");
             builder.Append(Value);
-            builder.Append("\"");
+            builder.Append('"');
         }
     }
 }

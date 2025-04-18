@@ -4,7 +4,7 @@ namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// An attribute without value.
-    /// e.g. required in input <input required>
+    /// e.g. required in input required
     /// </summary>
     public class HtmlAttributeNoneValue : IHtmlAttribute
     {
@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Name { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlAttributeNoneValue()
         {
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name.</param>
         public HtmlAttributeNoneValue(string name)

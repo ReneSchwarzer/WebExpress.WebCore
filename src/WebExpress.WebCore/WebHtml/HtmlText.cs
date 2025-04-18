@@ -13,14 +13,14 @@ namespace WebExpress.WebCore.WebHtml
         public string Value { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlText()
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The text.</param>
         public HtmlText(string value)

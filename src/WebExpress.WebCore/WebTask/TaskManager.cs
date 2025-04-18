@@ -1,44 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebTask.Model;
 
 namespace WebExpress.WebCore.WebTask
 {
     /// <summary>
     /// Management of ad-hoc tasks.
     /// </summary>
-    public class TaskManager : IComponent, ISystemComponent
+    public class TaskManager : ITaskManager, ISystemComponent
     {
-        /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
+        private readonly IComponentHub _componentHub;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly TaskDictionary _dictionary = [];
 
         /// <summary>
-        /// Returns the directory in which the active jobs are listed.
+        /// Returns the collection of tasks.
         /// </summary>
-        private TaskDictionary Dictionary { get; } = new TaskDictionary();
+        public IEnumerable<ITask> Tasks => _dictionary.Values;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        internal TaskManager()
+        /// <param name="componentHub">The component hub.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private TaskManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-        }
+            _componentHub = componentHub;
+            _httpServerContext = httpServerContext;
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
-
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:applicationmanager.initialization")
+                I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
         }
 
@@ -49,7 +45,7 @@ namespace WebExpress.WebCore.WebTask
         /// <returns>True if this task already exists, false otherwise.</returns>
         public bool ContainsTask(string id)
         {
-            return Dictionary.ContainsKey(id?.ToLower());
+            return _dictionary.ContainsKey(id?.ToLower());
         }
 
         /// <summary>
@@ -59,9 +55,9 @@ namespace WebExpress.WebCore.WebTask
         /// <returns>The task or null.</returns>
         public ITask GetTask(string id)
         {
-            if (Dictionary.ContainsKey(id?.ToLower()))
+            if (_dictionary.ContainsKey(id?.ToLower()))
             {
-                return Dictionary[id?.ToLower()];
+                return _dictionary[id?.ToLower()];
             }
 
             return null;
@@ -77,17 +73,15 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (!Dictionary.ContainsKey(id))
+            if (_dictionary.TryGetValue(id, out var value))
             {
-                var task = new Task() { Id = id, State = TaskState.Created, Arguments = args };
-                Dictionary.Add(key, task);
-
-                task.Initialization();
-
-                return task;
+                return value;
             }
 
-            return Dictionary[id];
+            var task = ComponentActivator.CreateInstance<Task>(_httpServerContext, _componentHub, [id, args]);
+            _dictionary.Add(key, task);
+
+            return task;
         }
 
         /// <summary>
@@ -109,23 +103,21 @@ namespace WebExpress.WebCore.WebTask
         /// <param name="handler">The event handler.</param>
         /// <param name="args">The event argument.</param>
         /// <returns>The task or null.</returns>
-        public ITask CreateTask<T>(string id, EventHandler<TaskEventArgs> handler, params object[] args) where T : Task, new()
+        public ITask CreateTask<T>(string id, EventHandler<TaskEventArgs> handler, params object[] args) where T : Task
         {
             var key = id?.ToLower();
 
-            if (!Dictionary.ContainsKey(id))
+            if (_dictionary.TryGetValue(id, out var value))
             {
-                var task = new Task() { Id = id, State = TaskState.Created, Arguments = args };
-                Dictionary.Add(key, task);
-
-                task.Initialization();
-
-                task.Process += handler;
-
-                return task;
+                return value;
             }
 
-            return Dictionary[id];
+            var task = ComponentActivator.CreateInstance<T>(_httpServerContext, _componentHub, [id, args]);
+            _dictionary.Add(key, task);
+
+            task.Process += handler;
+
+            return task;
         }
 
         /// <summary>
@@ -136,20 +128,15 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = task?.Id.ToLower();
 
-            if (Dictionary.ContainsKey(key))
-            {
-                Dictionary.Remove(key);
-            }
+            _dictionary.Remove(key);
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
+        /// Release of unmanaged resources reserved during use.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

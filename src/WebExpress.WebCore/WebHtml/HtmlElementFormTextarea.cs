@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// Represents an element for multi-line text input.
     /// </summary>
-    public class HtmlElementFormTextarea : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormTextarea : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Value
         {
             get => string.Join(string.Empty, Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormTextarea()
             : base("textarea")
@@ -126,13 +126,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormTextarea(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

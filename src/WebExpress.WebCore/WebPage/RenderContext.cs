@@ -1,90 +1,66 @@
 ﻿using System.Globalization;
-using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
 {
-    public class RenderContext : II18N
+    /// <summary>
+    /// Represents the context in which rendering occurs, providing access to the page, request, culture, and visual tree.
+    /// </summary>
+    public class RenderContext : IRenderContext
     {
         /// <summary>
-        /// The page where the control is rendered.
+        /// Returns the page context.
         /// </summary>
-        public IPage Page { get; internal set; }
+        public IPageContext PageContext { get; protected set; }
 
         /// <summary>
         /// Returns the request.
         /// </summary>
-        public Request Request { get; internal set; }
-
-        /// <summary>
-        /// Returns the host context.
-        /// </summary>
-        public IHttpServerContext Host => Request.ServerContext;
+        public Request Request { get; protected set; }
 
         /// <summary>
         /// The uri of the request.
         /// </summary>
-        public UriResource Uri => Request.Uri;
-
-        /// <summary>
-        /// Returns the context path.
-        /// </summary>
-        public UriResource ContextPath => Page?.ResourceContext?.ContextPath;
+        public UriEndpoint Uri => Request?.Uri;
 
         /// <summary>
         /// Returns the culture.
         /// </summary>
-        public CultureInfo Culture
-        {
-            get { return Page?.Culture; }
-            set { }
-        }
+        public CultureInfo Culture => Request?.Culture;
 
         /// <summary>
-        /// Provides the context of the associated application.
+        /// Returns the endpoint associated with the rendering context.
         /// </summary>
-        public IApplicationContext ApplicationContext => Page?.ApplicationContext;
+        public IEndpoint Endpoint { get; protected set; }
 
         /// <summary>
-        /// Returns the contents of a page.
-        /// </summary>
-        public IVisualTree VisualTree { get; protected set; }
-
-        /// <summary>
-        /// Returns the log for writing status messages to the console and to a log file.
-        /// </summary>
-        public Log Log { get; private set; }
-
-        /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public RenderContext()
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="page">The page where the control is rendered.</param>
-        /// <param name="request">The request.</param>
-        /// <param name="visualTree">The visual tree.</param>
-        public RenderContext(IPage page, Request request, IVisualTree visualTree)
+        /// <param name="endpoint">The endpoint associated with the rendering context.</param>
+        /// <param name="pageContext">The page context.</param>
+        /// <param name="request">The request associated with the rendering context.</param>
+        public RenderContext(IEndpoint endpoint, IPageContext pageContext, Request request)
         {
-            Page = page;
+            Endpoint = endpoint;
+            PageContext = pageContext;
             Request = request;
-            VisualTree = visualTree;
-            Culture = (Page as Resource).Culture;
         }
 
         /// <summary>
         /// Copy-Constructor
         /// </summary>
-        /// <param name="context">The context to copy./param>
+        /// <param name="context">The context to copy.</param>
         public RenderContext(RenderContext context)
-            : this(context?.Page, context?.Request, context?.VisualTree)
+            : this(context.Endpoint, context?.PageContext, context?.Request)
         {
         }
     }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebExpress.WebCore.WebHtml
+﻿namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents the columns that contain the actual data of a table.
@@ -8,7 +6,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableTbody : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTbody()
             : base("tbody")
@@ -16,23 +14,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableTbody(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementTableTbody(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

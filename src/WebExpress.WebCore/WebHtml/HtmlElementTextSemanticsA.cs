@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the text.
@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join("", Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTextSemanticsA()
             : base("a")
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The content of the html element.</param>
         public HtmlElementTextSemanticsA(string text)
@@ -79,23 +79,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTextSemanticsA(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementTextSemanticsA(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

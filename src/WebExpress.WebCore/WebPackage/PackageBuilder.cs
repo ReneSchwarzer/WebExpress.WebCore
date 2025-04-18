@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml.Serialization;
+using WebExpress.WebCore.WebPackage.Model;
 
 namespace WebExpress.WebCore.WebPackage
 {

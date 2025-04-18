@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using System;
-using System.Linq;
 using System.Net;
 using System.Text;
 
 namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents the context of an HTTP request and response.
+    /// </summary>
     public class HttpContext
     {
         /// <summary>
         /// The context of the web server.
         /// </summary>
-        public IHttpServerContext ServerContext { get; protected set; }
+        public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
         /// Returns or sets the id.
@@ -49,19 +51,18 @@ namespace WebExpress.WebCore.WebMessage
         public Uri Uri { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         internal HttpContext()
         {
-
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
-        /// <param name="serverContext">The context of the Web server.</param>
-        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext serverContext)
+        /// <param name="httpServerContext">The context of the Web server.</param>
+        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext httpServerContext)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
@@ -73,10 +74,10 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Encoding = requestFeature.Headers.ContentEncoding.Any() ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
+            Encoding = requestFeature.Headers.ContentEncoding.Count != 0 ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
-            Request = new Request(contextFeatures, serverContext, header);
+            Request = new Request(contextFeatures, header, httpServerContext);
         }
     }
 }

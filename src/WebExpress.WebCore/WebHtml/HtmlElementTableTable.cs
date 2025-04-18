@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         public List<HtmlElementTableTr> Rows { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableTable()
             : base("table")
@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.WebHtml
             var column = new HtmlElementTableThead(Columns);
             column.ToString(builder, deep + 1);
 
-            var body = new HtmlElementTableTbody(Rows);
+            var body = new HtmlElementTableTbody(Rows.ToArray());
             body.ToString(builder, deep + 1);
 
             ToPostString(builder, deep);

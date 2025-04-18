@@ -4,6 +4,9 @@ using System.Net;
 
 namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents the context for an HTTP exception, inheriting from <see cref="HttpContext"/>.
+    /// </summary>
     public class HttpExceptionContext : HttpContext
     {
         /// <summary>
@@ -12,14 +15,14 @@ namespace WebExpress.WebCore.WebMessage
         public Exception Exception { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="exception">An exception that prevented the creation of the context.</param>
         /// <param name="contextFeatures">Initial set of features.</param>
         public HttpExceptionContext(Exception exception, IFeatureCollection contextFeatures)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
-            var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
+            //var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
 
             Features = contextFeatures;
             Id = connectionFeature.ConnectionId;

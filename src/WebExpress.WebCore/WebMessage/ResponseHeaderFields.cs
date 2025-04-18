@@ -5,57 +5,57 @@ using System.Text;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616
+    /// Represents the response header fields as per RFC 2616.
     /// </summary>
     public class ResponseHeaderFields
     {
         /// <summary>
-        /// Liefert oder setzt die Content-Länge
+        /// Returns or sets the content length.
         /// </summary>
         public int ContentLength { get; set; }
 
         /// <summary>
-        /// Liefert oder setzt den Content-Typ
+        /// Returns or sets the content type.
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// Liefert oder setzt die Sprache des Content
+        /// Returns or sets the content language.
         /// </summary>
         public string ContentLanguage { get; set; }
 
         /// <summary>
-        /// Liefert oder setzt die Direktiven für das Caching (siehe RFC 7234)
+        /// Returns or sets the cache control directives (see RFC 7234).
         /// </summary>
         public string CacheControl { get; set; }
 
         /// <summary>
-        /// ContentDisposition
+        /// Returns or sets the content disposition.
         /// </summary>
         public string ContentDisposition { get; set; }
 
         /// <summary>
-        /// Die Basic Authentication (Basisauthentifizierung) nach RFC 2617
+        /// Returns or sets a value indicating whether basic authentication (as per RFC 2617) is required.
         /// </summary>
         public bool WWWAuthenticate { get; set; }
 
         /// <summary>
-        /// Location
+        /// Returns or sets the location.
         /// </summary>
         public string Location { get; set; }
 
         /// <summary>
-        /// Benutzerdefinierte Header
+        /// Returns the custom headers.
         /// </summary>
-        public Dictionary<string, string> CustomHeader { get; private set; }
+        public IDictionary<string, string> CustomHeader { get; private set; }
 
         /// <summary>
-        /// Liefert oder setzt die Cookies
+        /// Returns the cookies.
         /// </summary>
-        public CookieCollection Cookies { get; } = new CookieCollection();
+        public CookieCollection Cookies { get; } = [];
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResponseHeaderFields()
         {
@@ -65,10 +65,10 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Setzt ein benutzerdefinierten Header
+        /// Adds a custom header.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
+        /// <param name="key">The header key.</param>
+        /// <param name="value">The header value.</param>
         public void AddCustomHeader(string key, string value)
         {
             if (!CustomHeader.ContainsKey(key))
@@ -82,9 +82,9 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// In Stringform umwandeln
+        /// Converts the response header fields to a string representation.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string representation of the response header fields.</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();

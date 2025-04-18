@@ -3,7 +3,14 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
 {
-    public class SegmentUIntAttribute : Attribute, IResourceAttribute, ISegmentAttribute
+    /// <summary>
+    /// Attribute to define a segment with an unsigned integer variable in the URI path.
+    /// </summary>
+    /// <remarks>
+    /// This attribute is used to specify a segment in the URI path that contains an unsigned integer variable.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class SegmentUIntAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -16,7 +23,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="variableName">The name of the variable.</param>
         /// <param name="display">The display string.</param>
@@ -32,23 +39,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            //var expression = @"^\d$";
-
-            //var callBackDisplay = new Func<string, string, CultureInfo, string>((segment, moduleId, culture) =>
-            //{
-            //    return Display;
-            //});
-
-            //var callBackValiables = new Func<string, IDictionary<string, string>>(segment =>
-            //{
-            //    var dict = new Dictionary<string, string>
-            //    {
-            //        { VariableName, segment }
-            //    };
-
-            //    return dict;
-            //});
-
             return new UriPathSegmentVariableUInt(VariableName, Display);
         }
     }

@@ -11,10 +11,10 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementSectionHeader()
             : base("header")
@@ -23,23 +23,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementSectionHeader(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementSectionHeader(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            base.Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

@@ -1,17 +1,29 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebStatusPage;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response for a bad request (HTTP 400). See RFC 2616 Section 6
     /// </summary>
+    [StatusCode(400)]
     public class ResponseBadRequest : Response
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResponseBadRequest()
+            : this(null)
         {
-            var content = "<html><head><title>404</title></head><body>404 - Bad Request</body></html>";
-            Status = 400;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="message">The user defined status message or null.</param>
+        public ResponseBadRequest(StatusMessage message)
+        {
+            var content = message?.Message ?? "<html><head><title>404</title></head><body>404 - Bad Request</body></html>";
             Reason = "Bad Request";
 
             Header.ContentType = "text/html";

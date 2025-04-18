@@ -3,7 +3,11 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
 {
-    public class SegmentIntAttribute : Attribute, IResourceAttribute, ISegmentAttribute
+    /// <summary>
+    /// Attribute to define an integer segment in a URI path.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class SegmentIntAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -16,7 +20,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="variableName">The name of the variable.</param>
         /// <param name="display">The display string.</param>

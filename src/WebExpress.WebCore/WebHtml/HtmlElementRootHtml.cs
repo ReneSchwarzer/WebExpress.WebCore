@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         public HtmlElementSectionBody Body { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementRootHtml()
             : base("html")

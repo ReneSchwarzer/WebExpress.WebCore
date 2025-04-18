@@ -19,20 +19,13 @@ namespace WebExpress.WebCore.WebResource
         public string RootDirectory { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        public ResourceFile()
+        /// <param name="resourceContext">The resource context.</param>
+        public ResourceFile(IResourceContext resourceContext)
+            : base(resourceContext)
         {
             Gard = new object();
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The context.</param>
-        public override void Initialization(IResourceContext context)
-        {
-            base.Initialization(context);
         }
 
         /// <summary>
@@ -44,8 +37,7 @@ namespace WebExpress.WebCore.WebResource
         {
             lock (Gard)
             {
-                var contextPath = ResourceContext.ContextPath;
-                var url = request.Uri.ToString()[contextPath.ToString().Length..];
+                var url = request.Uri.ToString()[ResourceContext.Route.ToString().Length..];
 
                 var path = System.IO.Path.GetFullPath(RootDirectory + url);
 
@@ -117,7 +109,7 @@ namespace WebExpress.WebCore.WebResource
                         break;
                 }
 
-                request.ServerContext.Log.Debug(InternationalizationManager.I18N("webexpress:resource.file", request.RemoteEndPoint, request.Uri));
+                request.HttpServerContext.Log.Debug(I18N.Translate("webexpress.webcore:resource.file", request.RemoteEndPoint, request.Uri));
 
                 return response;
             }

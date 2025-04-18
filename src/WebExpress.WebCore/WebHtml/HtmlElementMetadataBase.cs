@@ -25,7 +25,7 @@
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMetadataBase()
             : base("base")
@@ -34,7 +34,7 @@
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="url">The uri.</param>
         public HtmlElementMetadataBase(string url)

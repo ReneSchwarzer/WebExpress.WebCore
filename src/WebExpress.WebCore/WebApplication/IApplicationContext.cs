@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebApplication
 {
     /// <summary>
     /// The application context.
     /// </summary>
-    public interface IApplicationContext
+    public interface IApplicationContext : IContext
     {
         /// <summary>
         /// Provides the context of the associated plugin.
@@ -30,11 +30,6 @@ namespace WebExpress.WebCore.WebApplication
         string Description { get; }
 
         /// <summary>
-        /// Returns an enumeration of options. Options enable optional resources.
-        /// </summary>
-        IEnumerable<string> Options { get; }
-
-        /// <summary>
         /// Returns the asset directory. This is mounted in the asset directory of the server.
         /// </summary>
         string AssetPath { get; }
@@ -47,11 +42,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Returns the context path. This is mounted in the context path of the server.
         /// </summary>
-        UriResource ContextPath { get; }
+        IRoute ContextPath { get; }
 
         /// <summary>
         /// Returns the icon uri.
         /// </summary>
-        UriResource Icon { get; }
+        IRoute Icon { get; }
     }
 }

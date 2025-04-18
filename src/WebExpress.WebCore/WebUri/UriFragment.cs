@@ -3,10 +3,10 @@ namespace WebExpress.WebCore.WebUri
     /// <summary>
     /// Uri which consists only of the fragment (e.g. #).
     /// </summary>
-    public class UriFragment : UriResource
+    public class UriFragment : UriEndpoint
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public UriFragment()
         {

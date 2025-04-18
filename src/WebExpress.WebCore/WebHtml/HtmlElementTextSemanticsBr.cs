@@ -6,7 +6,7 @@
     public class HtmlElementTextSemanticsBr : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTextSemanticsBr()
             : base("br", false)

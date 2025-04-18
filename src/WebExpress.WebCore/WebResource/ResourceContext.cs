@@ -1,62 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
-using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebResource
 {
+    /// <summary>
+    /// Represents the context of a resource.
+    /// </summary>
     public class ResourceContext : IResourceContext
     {
         /// <summary>
+        /// Returns the resource id.
+        /// </summary>
+        public IComponentId EndpointId { get; internal set; }
+
+        /// <summary>
         /// Returns the associated plugin context.
         /// </summary>
-        public IPluginContext PluginContext { get; private set; }
+        public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the associated application context.
+        /// Returns the corresponding application context.
         /// </summary>
-        public IApplicationContext ApplicationContext => ModuleContext?.ApplicationContext;
-
-        /// <summary>
-        /// Returns the corresponding module context.
-        /// </summary>
-        public IModuleContext ModuleContext { get; private set; }
-
-        /// <summary>
-        /// Returns the scope names that provides the resource. The scope name
-        /// is a string with a name (e.g. global, admin), which can be used by elements to 
-        /// determine whether content and how content should be displayed.
-        /// </summary>
-        public IEnumerable<string> Scopes { get; internal set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.
         /// </summary>
-        public IEnumerable<ICondition> Conditions { get; internal set; } = new List<ICondition>();
-
-        /// <summary>
-        /// Returns the resource id.
-        /// </summary>
-        public string ResourceId { get; internal set; }
-
-        /// <summary>
-        /// Returns the resource title.
-        /// </summary>
-        public string ResourceTitle { get; internal set; }
-
-        /// <summary>
-        /// Returns the parent or null if not used.
-        /// </summary>
-        public IResourceContext ParentContext => ComponentManager.ResourceManager.Resources
-            .Where(x => !string.IsNullOrWhiteSpace(ResourceItem.ParentId))
-            .Where(x => x.ResourceId.Equals(ResourceItem.ParentId, StringComparison.OrdinalIgnoreCase))
-            .Where(x => x.ModuleContext.ApplicationContext == ModuleContext.ApplicationContext)
-            .FirstOrDefault();
+        public IEnumerable<ICondition> Conditions { get; internal set; } = [];
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
@@ -64,40 +40,39 @@ namespace WebExpress.WebCore.WebResource
         public bool Cache { get; internal set; }
 
         /// <summary>
+        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// </summary>
+        public bool IncludeSubPaths { get; internal set; }
+
+        /// <summary>
         /// Returns the context path.
         /// </summary>
-        public UriResource ContextPath
-        {
-            get
-            {
-                var parentContext = ParentContext;
-                if (parentContext != null)
-                {
-                    return UriResource.Combine(ParentContext?.Uri, ResourceItem.ContextPath);
-                }
+        public UriEndpoint ContextPath { get; internal set; }
 
-                return UriResource.Combine(ModuleContext.ContextPath, ResourceItem.ContextPath);
-            }
+        /// <summary>
+        /// Returns the internal routing path for the endpoint.
+        /// </summary>
+        public IRoute Route { get; internal set; }
+
+        /// <summary>
+        /// Returns the attributes associated with the page.
+        /// </summary>
+        public IEnumerable<Type> Attributes { get; internal set; }
+
+        /// <summary>
+        /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.
+        /// </summary>
+        public ResourceContext()
+        {
         }
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns a string that represents the current object.
         /// </summary>
-        public UriResource Uri => ContextPath.Append(ResourceItem.PathSegment);
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        internal ResourceContext(IModuleContext moduleContext)
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
         {
-            PluginContext = moduleContext?.PluginContext;
-            ModuleContext = moduleContext;
+            return $"Resource: {EndpointId}";
         }
-
-        /// <summary>
-        /// Returns or sets the resource item.
-        /// </summary>
-        internal ResourceItem ResourceItem { get; set; }
     }
 }

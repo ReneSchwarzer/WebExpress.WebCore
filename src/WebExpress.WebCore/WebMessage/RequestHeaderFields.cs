@@ -8,7 +8,7 @@ using System.Text;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// see RFC 2616
+    /// Represents the header fields of an HTTP request as defined in RFC 2616.
     /// </summary>
     public class RequestHeaderFields
     {
@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the accepted media types.
         /// </summary>
-        public ICollection<string> Accept { get; private set; }
+        public IEnumerable<string> Accept { get; private set; }
 
         /// <summary>
         /// Returns the accepted encodings.
@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the cookies.
         /// </summary>
-        public ICollection<Cookie> Cookies { get; } = new List<Cookie>();
+        public IEnumerable<Cookie> Cookies { get; } = [];
 
         /// <summary>
         /// Returns the referer. The referer header echoes the absolute or partial address from 
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebMessage
         public string Referer { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
         internal RequestHeaderFields(IFeatureCollection contextFeatures)
@@ -92,12 +92,14 @@ namespace WebExpress.WebCore.WebMessage
             ContentType = requestFeature.Headers.ContentType;
             ContentLength = requestFeature.Headers.ContentLength ?? 0;
             ContentLanguage = requestFeature.Headers.ContentLanguage;
-            ContentEncoding = requestFeature.Headers.ContentEncoding.Any() ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
+            ContentEncoding = requestFeature.Headers.ContentEncoding.Count != 0 ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
             Accept = requestFeature.Headers.Accept;
             AcceptEncoding = requestFeature.Headers.AcceptEncoding;
             AcceptLanguage = requestFeature.Headers.AcceptLanguage.SelectMany(x => x.Split(';', StringSplitOptions.RemoveEmptyEntries));
             UserAgent = requestFeature.Headers.UserAgent;
             Referer = requestFeature.Headers.Referer;
+
+            var cookies = new List<Cookie>();
 
             foreach (var cookie in requestFeature.Headers.Cookie)
             {
@@ -105,8 +107,10 @@ namespace WebExpress.WebCore.WebMessage
                 var key = split[0];
                 var value = split[1];
 
-                Cookies.Add(new Cookie(key, value));
+                cookies.Add(new Cookie(key, value));
             }
+
+            Cookies = cookies;
 
             Authorization = RequestAuthorization.Parse(requestFeature.Headers.Authorization);
         }

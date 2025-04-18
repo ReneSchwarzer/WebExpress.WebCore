@@ -1,8 +1,12 @@
-﻿using WebExpress.WebCore.WebModule;
+﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebJob
 {
+    /// <summary>
+    /// Represents the job context.
+    /// </summary>
     public class JobContext : IJobContext
     {
         /// <summary>
@@ -11,37 +15,18 @@ namespace WebExpress.WebCore.WebJob
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding module context.
+        /// Returns the corresponding application context.
         /// </summary>
-        public IModuleContext ModuleContext { get; internal set; }
+        public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
         /// Returns the job id. 
         /// </summary>
-        public string JobId { get; internal set; }
+        public IComponentId JobId { get; internal set; }
 
         /// <summary>
         /// Returns the cron-object.
         /// </summary>
         public Cron Cron { get; internal set; }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        internal JobContext(IModuleContext moduleContext)
-        {
-            PluginContext = moduleContext?.PluginContext;
-            ModuleContext = moduleContext;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        internal JobContext(IPluginContext pluginContext)
-        {
-            PluginContext = pluginContext;
-        }
     }
 }

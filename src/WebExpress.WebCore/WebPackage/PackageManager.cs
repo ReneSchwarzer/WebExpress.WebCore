@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,6 +13,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebLog;
+using WebExpress.WebCore.WebPackage.Model;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebPackage
@@ -19,22 +22,21 @@ namespace WebExpress.WebCore.WebPackage
     /// <summary>
     /// The package manager manages packages with WebExpress extensions. The packages must be in WebExpressPackage format (*.wxp).
     /// </summary>
-    public sealed class PackageManager : IComponent, ISystemComponent
+    public sealed class PackageManager : IPackageManager, ISystemComponent
     {
+        private readonly ComponentHub _componentHub;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly PluginManager _pluginManager;
+
         /// <summary>
         /// An event that fires when an package is added.
         /// </summary>
-        public static event EventHandler<PackageCatalogItem> AddPackage;
+        public event EventHandler<PackageCatalogItem> AddPackage;
 
         /// <summary>
         /// An event that fires when an package is removed.
         /// </summary>
-        public static event EventHandler<PackageCatalogItem> RemovePackage;
-
-        /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
+        public event EventHandler<PackageCatalogItem> RemovePackage;
 
         /// <summary>
         /// Thread Termination.
@@ -44,27 +46,25 @@ namespace WebExpress.WebCore.WebPackage
         /// <summary>
         /// Returns the catalog of installed packages.
         /// </summary>
-        private PackageCatalog Catalog { get; } = new PackageCatalog();
+        public PackageCatalog Catalog { get; } = new PackageCatalog();
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        internal PackageManager()
+        /// <param name="componentHub">The component hub.</param>
+        /// <param name="pluginManager">The plugin manager.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private PackageManager(IComponentHub componentHub, IPluginManager pluginManager, IHttpServerContext httpServerContext)
         {
+            _componentHub = componentHub as ComponentHub;
+            _pluginManager = pluginManager as PluginManager;
 
-        }
+            _httpServerContext = httpServerContext;
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
-
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:packagemanager.initialization")
+                I18N.Translate("webexpress.webcore:packagemanager.initialization")
             );
         }
 
@@ -74,22 +74,22 @@ namespace WebExpress.WebCore.WebPackage
         internal void Execute()
         {
             // load the default plugins
-            ComponentManager.PluginManager.Register();
+            _pluginManager.Register();
 
             // boot default elements 
-            ComponentManager.BootComponent(ComponentManager.PluginManager.Plugins);
+            _componentHub.BootComponent(_pluginManager.Plugins);
 
             LoadCatalog();
 
             foreach (var package in Catalog.Packages)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(HttpServerContext.PackagePath, package.File));
+                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package.File));
 
                 package.Metadata = packagesFromFile?.Metadata;
 
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N("webexpress:packagemanager.existing", package.File)
+                    I18N.Translate("webexpress.webcore:packagemanager.existing", package.File)
                 );
 
                 if (package.State != PackageCatalogeItemState.Disable)
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.WebPackage
             SaveCatalog();
 
             // build sitemap
-            ComponentManager.SitemapManager.Refresh();
+            _componentHub.SitemapManager.Refresh();
 
             Task.Factory.StartNew(() =>
             {
@@ -132,17 +132,17 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         public void Scan()
         {
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
-                    "webexpress:packagemanager.scan",
-                    HttpServerContext.PackagePath
+                    "webexpress.webcore:packagemanager.scan",
+                    _httpServerContext.PackagePath
                 )
             );
 
             // determine all WebExpress packages from the file system
-            var packageFiles = Directory.GetFiles(HttpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
+            var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
 
             // all packages that are not yet installed
             var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x != null).Select(x => x.File)).ToList();
@@ -155,7 +155,7 @@ namespace WebExpress.WebCore.WebPackage
 
             foreach (var package in newPackages)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(HttpServerContext.PackagePath, package));
+                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
 
                 ExtractPackage(packagesFromFile);
                 RegisterPackage(packagesFromFile);
@@ -163,11 +163,11 @@ namespace WebExpress.WebCore.WebPackage
 
                 Catalog.Packages.Add(packagesFromFile);
 
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
-                        "webexpress:packagemanager.add",
+                        "webexpress.webcore:packagemanager.add",
                         package
                     )
                 );
@@ -175,15 +175,15 @@ namespace WebExpress.WebCore.WebPackage
 
             foreach (var package in removePackages)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(HttpServerContext.PackagePath, package));
+                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
 
                 Catalog.Packages.Add(packagesFromFile);
 
-                HttpServerContext.Log.Debug
+                _httpServerContext.Log.Debug
                 (
-                    InternationalizationManager.I18N
+                    I18N.Translate
                     (
-                        "webexpress:packagemanager.remove",
+                        "webexpress.webcore:packagemanager.remove",
                         package
                     )
                 );
@@ -220,10 +220,10 @@ namespace WebExpress.WebCore.WebPackage
             //    }
             //}
 
-            if (newPackages.Any() || removePackages.Any())
+            if (newPackages.Count != 0 || removePackages.Count != 0)
             {
                 // build sitemap
-                ComponentManager.SitemapManager.Refresh();
+                _componentHub.SitemapManager.Refresh();
 
                 // save the catalog
                 SaveCatalog();
@@ -292,14 +292,14 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                _httpServerContext.Log.Exception(ex);
             }
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
-                    "webexpress:packagemanager.packagenotfound",
+                    "webexpress.webcore:packagemanager.packagenotfound",
                     file
                 )
             );
@@ -312,10 +312,16 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void LoadCatalog()
         {
-            var catalogeFile = Path.Combine(HttpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
             if (File.Exists(catalogeFile))
             {
                 using var catalog = new StreamReader(catalogeFile);
+
+                if (catalog.BaseStream.Length == 0)
+                {
+                    return;
+                }
+
                 var serializer = new XmlSerializer(typeof(PackageCatalog));
                 var items = (PackageCatalog)serializer.Deserialize(catalog);
 
@@ -323,6 +329,8 @@ namespace WebExpress.WebCore.WebPackage
                 //Catalog.Packages.RemoveAll(x => !x.System);
                 Catalog.Packages.AddRange(items.Packages);
             }
+
+            Log();
         }
 
         /// <summary>
@@ -330,18 +338,18 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void SaveCatalog()
         {
-            var catalogeFile = Path.Combine(HttpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
 
             using var fs = new FileStream(catalogeFile, FileMode.Create);
             using var writer = new XmlTextWriter(fs, Encoding.Unicode);
             var serializer = new XmlSerializer(typeof(PackageCatalog));
 
             writer.Formatting = Formatting.Indented;
-            serializer.Serialize(writer, Catalog, new XmlSerializerNamespaces(new[] { new XmlQualifiedName("", "") }));
+            serializer.Serialize(writer, Catalog, new XmlSerializerNamespaces([new XmlQualifiedName("", "")]));
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:packagemanager.save")
+                I18N.Translate("webexpress.webcore:packagemanager.save")
             );
         }
 
@@ -351,14 +359,14 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void ExtractPackage(PackageCatalogItem package)
         {
-            var packageFile = Path.Combine(HttpServerContext.PackagePath, package?.File);
+            var packageFile = Path.Combine(_httpServerContext.PackagePath, package?.File);
 
             if (File.Exists(packageFile))
             {
                 using var zip = ZipFile.Open(packageFile, ZipArchiveMode.Read);
 
                 var specEntry = zip.Entries.Where(x => Path.GetExtension(x.FullName) == ".spec").FirstOrDefault();
-                var extractedPath = Path.Combine(HttpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+                var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
 
                 if (!Directory.Exists(extractedPath))
                 {
@@ -371,7 +379,7 @@ namespace WebExpress.WebCore.WebPackage
                 {
                     var entryFileName = Path.Combine(extractedPath, entry?.FullName);
 
-                    if (entryFileName.EndsWith("/"))
+                    if (entryFileName.EndsWith('/'))
                     {
                         if (!Directory.Exists(entryFileName))
                         {
@@ -401,14 +409,12 @@ namespace WebExpress.WebCore.WebPackage
         private void RegisterPackage(PackageCatalogItem package)
         {
             // load plugins
-            foreach (var plugin in package?.Metadata.PluginSources ?? Enumerable.Empty<string>())
+            foreach (var plugin in package?.Metadata.PluginSources ?? [])
             {
-                var pluginContexts = ComponentManager.PluginManager.Register(GetTargetPath(package, plugin));
+                var pluginContexts = _pluginManager.Register(GetTargetPath(package, plugin));
 
                 package.Plugins.AddRange(pluginContexts);
             }
-
-            ComponentManager.LogStatus();
         }
 
         /// <summary>
@@ -417,7 +423,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void BootPackage(PackageCatalogItem package)
         {
-            ComponentManager.BootComponent(package.Plugins);
+            _componentHub.BootComponent(package.Plugins);
         }
 
         /// <summary>
@@ -430,7 +436,7 @@ namespace WebExpress.WebCore.WebPackage
         {
             return Path.GetFullPath(Path.Combine
             (
-                HttpServerContext.PackagePath,
+                _httpServerContext.PackagePath,
                 Path.GetFileNameWithoutExtension(package?.File), plugin, GetTFM(), $"{Path.GetFileName(plugin)}.dll"
             ));
         }
@@ -439,7 +445,7 @@ namespace WebExpress.WebCore.WebPackage
         /// Determines the target framework.
         /// </summary>
         /// <returns>The TFM</returns>
-        private string GetTFM()
+        private static string GetTFM()
         {
             var targetFrameworkAttribute = Assembly.GetExecutingAssembly()
                     .GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
@@ -470,10 +476,34 @@ namespace WebExpress.WebCore.WebPackage
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
+        {
+            if (Catalog.Packages.Count == 0)
+            {
+                return;
+            }
+
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
+                I18N.Translate("webexpress.webcore:packagemanager.titel")
+            };
+
+            foreach (var package in Catalog.Packages)
+            {
+                list.Add
+                (
+                    I18N.Translate("webexpress.webcore:packagemanager.package", package.Id)
+                );
+            }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
         {
         }
     }

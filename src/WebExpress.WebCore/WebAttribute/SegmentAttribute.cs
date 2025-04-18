@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// A static path segment.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class SegmentAttribute : Attribute, IResourceAttribute, ISegmentAttribute
+    public class SegmentAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
         /// Returns or set the segment of the uri path.
@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The segment of the uri path.</param>
         /// <param name="display">The display string.</param>

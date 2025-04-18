@@ -1,0 +1,37 @@
+﻿using WebExpress.WebCore.Test.Fixture;
+
+namespace WebExpress.WebCore.Test.Manager
+{
+    /// <summary>
+    /// Test the component manager.
+    /// </summary>
+    [Collection("NonParallelTests")]
+    public class UnitTestComponentManager
+    {
+        /// <summary>
+        /// Test the plugin manager property of the component manager.
+        /// </summary>
+        [Fact]
+        public void PluginManager()
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateComponentHubMock();
+
+            // test execution
+            Assert.NotNull(componentHub.PluginManager);
+        }
+
+        /// <summary>
+        /// Test the application manager property of the component manager.
+        /// </summary>
+        [Fact]
+        public void ApplicationManager()
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateComponentHubMock();
+
+            // test execution
+            Assert.NotNull(componentHub.ApplicationManager);
+        }
+    }
+}

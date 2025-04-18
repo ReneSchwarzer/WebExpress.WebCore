@@ -23,10 +23,10 @@ namespace WebExpress.WebCore.Config
         public List<EndpointConfig> Endpoints { get; set; }
 
         /// <summary>
-        /// The uri of the web server.
+        /// The route of the web server.
         /// </summary>
-        [XmlElement("uri")]
-        public string Uri { get; set; }
+        [XmlElement("route")]
+        public string Route { get; set; }
 
         /// <summary>
         /// The limitations.
@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.Config
         public SettingLogItem Log { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HttpServerConfig()
         {

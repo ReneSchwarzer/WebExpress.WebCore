@@ -5,17 +5,19 @@ namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents a control that can be used to select from a range of options.
+    /// </summary>
+    /// <code>
     /// <select name="top5" size="2">
     ///  <option>Michael Jackson</option>
-    ///  <option selected>Tom Waits</option>
+    ///  <option selected="">Tom Waits</option>
     /// </select>
-    /// </summary>
-    public class HtmlElementFieldSelect : HtmlElement, IHtmlFormularItem
+    /// </code>
+    public class HtmlElementFieldSelect : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the name of the input field.
@@ -63,7 +65,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldSelect()
             : base("select")
@@ -72,13 +74,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFieldSelect(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

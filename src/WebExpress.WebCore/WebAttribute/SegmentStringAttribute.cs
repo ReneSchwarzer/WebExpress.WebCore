@@ -3,7 +3,11 @@ using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
 {
-    public class SegmentStringAttribute : Attribute, IResourceAttribute, ISegmentAttribute
+    /// <summary>
+    /// Attribute to define a segment string in a URI path.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public class SegmentStringAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -16,7 +20,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Display { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="variableName">The name of the variable.</param>
         /// <param name="display">The display string.</param>
@@ -32,18 +36,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            //var expression = "^[^\"]*$";
-
-            //var callBackDisplay = new Func<string, string, CultureInfo, string>((segment, moduleId, culture) =>
-            //{
-            //    return null;
-            //});
-
-            //var callBackValiables = new Func<string, IDictionary<string, string>>(segment =>
-            //{
-            //    return null;
-            //});
-
             return new UriPathSegmentVariableString(VariableName, Display);
         }
     }

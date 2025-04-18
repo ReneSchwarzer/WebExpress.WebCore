@@ -8,9 +8,9 @@ namespace WebExpress.WebCore.WebUri
     public class UriPathSegmentVariableDouble : UriPathSegmentVariable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentVariableDouble(string name, object tag = null)
             : base(name, tag)
@@ -23,9 +23,9 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="value">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="display">The display text.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentVariableDouble(string name, string display, object tag = null)
@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
         public UriPathSegmentVariableDouble(UriPathSegmentVariableDouble segment)

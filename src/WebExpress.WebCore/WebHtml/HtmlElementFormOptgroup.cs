@@ -8,16 +8,16 @@ namespace WebExpress.WebCore.WebHtml
     /// <select name="top5" size="5">
     ///  <optgroup label="Names with A">
     ///   <option value="1">Michael Jackson</option>
-    ///   <option value="2" selected>Tom Waits</option>
+    ///   <option value="2" selected="">Tom Waits</option>
     ///  </optgroup>
     /// </select>
     /// </summary>
-    public class HtmlElementFormOptgroup : HtmlElement, IHtmlFormularItem
+    public class HtmlElementFormOptgroup : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the label.
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOptgroup()
             : base("optgroup")
@@ -37,13 +37,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormOptgroup(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

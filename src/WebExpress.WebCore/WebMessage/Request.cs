@@ -8,9 +8,8 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
-using WebExpress.WebCore.WebSession;
+using WebExpress.WebCore.WebSession.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebMessage
@@ -24,7 +23,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// The context of the web server.
         /// </summary>
-        public IHttpServerContext ServerContext { get; protected set; }
+        public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
         /// Returns the request method (e.g. POST).
@@ -34,12 +33,12 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriResource Uri { get; internal set; }
+        public UriEndpoint Uri { get; internal set; }
 
         /// <summary>
         /// Returns the parameters.
         /// </summary>
-        private ParameterDictionary Param { get; } = new ParameterDictionary();
+        private ParameterDictionary Param { get; } = [];
 
         /// <summary>
         /// Returns the session.
@@ -67,29 +66,9 @@ namespace WebExpress.WebCore.WebMessage
         public EndPoint RemoteEndPoint { get; private set; }
 
         /// <summary>
-        /// Returns a boolean value that indicates whether the client sending this request is authenticated.
-        /// </summary>
-        //public bool IsAuthenticated { get; private set; }  //=> RawRequuest.IsAuthenticated;
-
-        /// <summary>
-        /// Returns a boolean value that indicates whether the request was sent from the local computer.
-        /// </summary>
-        //public bool IsLocal { get; private set; }  //=> RawRequuest.IsLocal;
-
-        /// <summary>
         /// Returns a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
         /// </summary>
         public bool IsSecureConnection { get; private set; }
-
-        /// <summary>
-        /// Returns a boolean value indicating whether the tcp connection was a web socket request.
-        /// </summary>
-        //public bool IsWebSocketRequest { get; private set; }  // => RawRequuest.IsWebSocketRequest;
-
-        /// <summary>
-        /// Returns a boolean value that indicates whether the client is requesting a persistent connection.
-        /// </summary>
-        //public bool KeepAlive { get; private set; }  //=> RawRequuest.KeepAlive;
 
         /// <summary>
         /// Returns the shema. This can be http or https.
@@ -118,7 +97,7 @@ namespace WebExpress.WebCore.WebMessage
                 }
                 catch
                 {
-                    return ServerContext.Culture ?? CultureInfo.CurrentCulture;
+                    return HttpServerContext.Culture ?? CultureInfo.CurrentCulture;
                 }
             }
         }
@@ -129,19 +108,19 @@ namespace WebExpress.WebCore.WebMessage
         public byte[] Content { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
-        /// <param name="serverContext">The context of the web server.</param>
         /// <param name="header">The header.</param>
-        internal Request(IFeatureCollection contextFeatures, IHttpServerContext serverContext, RequestHeaderFields header)
+        /// <param name="httpServerContext">The context of the web server.</param>
+        internal Request(IFeatureCollection contextFeatures, RequestHeaderFields header, IHttpServerContext httpServerContext)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
             var requestIdentifierFeature = contextFeatures.Get<IHttpRequestIdentifierFeature>();
             //var sessionFeature = contextFeatures.Get<ISessionFeature>();
 
-            ServerContext = serverContext;
+            HttpServerContext = httpServerContext;
             RequestTraceIdentifier = requestIdentifierFeature.TraceIdentifier;
             Protocoll = requestFeature.Protocol;
 
@@ -172,7 +151,7 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Uri = new UriResource
+            Uri = new UriEndpoint
             (
                 Scheme,
                 new UriAuthority()
@@ -250,7 +229,6 @@ namespace WebExpress.WebCore.WebMessage
             }
 
             var contentType = Header.ContentType?.Split(';');
-            //var contentStr = Encoding.UTF8.GetString(Content);
 
             switch (TypeEnctypeExtensions.Convert(contentType.FirstOrDefault()))
             {
@@ -260,7 +238,7 @@ namespace WebExpress.WebCore.WebMessage
                         var boundaryValue = "--" + boundary?.Split('=').Skip(1)?.FirstOrDefault();
                         var offset = 0;
                         int pos = 0;
-                        var dispositions = new List<Tuple<int, int>>(); // Item1=Position, Item2=Länge
+                        var dispositions = new List<Tuple<int, int>>(); // Item1=position, Item2=size
 
                         // determine dispositions
                         for (var i = 0; i < Content.Length; i++)
@@ -451,9 +429,9 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         private void ParseSessionParams()
         {
-            Session = ComponentManager.SessionManager.GetSession(this);
+            Session = WebEx.ComponentHub.SessionManager?.GetSession(this);
 
-            var property = Session.GetProperty<SessionPropertyParameter>();
+            var property = Session?.GetProperty<SessionPropertyParameter>();
             if (property != null && property.Params != null)
             {
                 foreach (var param in property.Params)
@@ -481,13 +459,11 @@ namespace WebExpress.WebCore.WebMessage
         /// <param name="param">The parameter.</param>
         public void AddParameter(Parameter param)
         {
-            if (!Param.ContainsKey(param.Key.ToLower()))
+            var key = param.Key.ToLower();
+
+            if (!Param.TryAdd(key, param))
             {
-                Param.Add(param.Key.ToLower(), param);
-            }
-            else
-            {
-                Param[param.Key.ToLower()] = param;
+                Param[key] = param;
             }
         }
 

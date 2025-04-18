@@ -17,13 +17,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
-using WebExpress.WebCore.WebApplication;
-using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
 using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebResource;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
 
@@ -32,7 +29,7 @@ namespace WebExpress.WebCore
     /// <summary>
     /// The web server for processing http requests (see RFC 2616). The web server uses Kestrel internally.
     /// </summary>
-    public class HttpServer : IHost, II18N, IHttpApplication<HttpContext>
+    public class HttpServer : IHost, IHttpApplication<HttpContext>
     {
         /// <summary>
         /// Event is triggered after the web server is started.
@@ -75,14 +72,14 @@ namespace WebExpress.WebCore
         public long RequestNumber { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">Der Serverkontext.</param>
         public HttpServer(HttpServerContext context)
         {
             HttpServerContext = new HttpServerContext
             (
-                context.Uri,
+                context.Route,
                 context.Endpoints,
                 context.PackagePath,
                 context.AssetPath,
@@ -95,8 +92,6 @@ namespace WebExpress.WebCore
             );
 
             Culture = HttpServerContext.Culture;
-
-            ComponentManager.Initialization(HttpServerContext);
         }
 
         /// <summary>
@@ -106,12 +101,12 @@ namespace WebExpress.WebCore
         {
             if (HttpServerContext != null && HttpServerContext.Log != null)
             {
-                HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.run"));
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
 
             if (!HttpListener.IsSupported)
             {
-                HttpServerContext.Log.Error(message: this.I18N("webexpress:httpserver.notsupported"));
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
             }
 
             var logger = new LogFactory();
@@ -122,7 +117,7 @@ namespace WebExpress.WebCore
             serviceCollection.AddMemoryCache();
             serviceCollection.AddLogging(x =>
             {
-                x.SetMinimumLevel(LogLevel.Trace);
+                x.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 x.AddProvider(logger);
             });
             serviceCollection.AddHttpLogging(x =>
@@ -151,7 +146,7 @@ namespace WebExpress.WebCore
 
             Kestrel.StartAsync(this, ServerToken);
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.start"), args: new object[] { ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString() });
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.start"), args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]);
 
             Started?.Invoke(this, new EventArgs());
         }
@@ -171,10 +166,10 @@ namespace WebExpress.WebCore
                 var port = uri.Port;
                 var host = asterisk ? Dns.GetHostEntry(Dns.GetHostName()) : Dns.GetHostEntry(uri.Host);
                 var addressList = host.AddressList
-                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : Array.Empty<IPAddress>())
+                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
-                HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.endpoint"), args: endPoint.Uri);
+                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
 
                 foreach (var ipAddress in addressList)
                 {
@@ -190,9 +185,8 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Error(message: this.I18N("webexpress:httpserver.listen.exeption"), args: endPoint);
+                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
                 HttpServerContext.Log.Exception(ex);
-
             }
         }
 
@@ -205,26 +199,26 @@ namespace WebExpress.WebCore
         {
             serverOptions.Value.Listen(endPoint);
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
-        /// Adds an endpoint.
+        /// Adds an endpoint with HTTPS configuration.
         /// </summary>
         /// <param name="serverOptions">The server options.</param>
-        /// <param name="pfxFile">The certificate.</param>
-        /// <param name="password">The password to the certificate.</param>
         /// <param name="endPoint">The endpoint.</param>
+        /// <param name="pfxFile">The path to the PFX file containing the certificate.</param>
+        /// <param name="password">The password for the PFX file.</param>
         private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint, string pfxFile, string password)
         {
             serverOptions.Value.Listen(endPoint, configure =>
             {
-                var cert = new X509Certificate2(pfxFile, password);
+                var cert = X509CertificateLoader.LoadPkcs12FromFile(pfxFile, password, X509KeyStorageFlags.DefaultKeySet);
 
                 configure.UseHttps(cert);
             });
 
-            HttpServerContext.Log.Info(message: this.I18N("webexpress:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -234,9 +228,6 @@ namespace WebExpress.WebCore
         {
             // End running threads
             Kestrel.StopAsync(ServerToken);
-
-            // Stop running
-            ComponentManager.ShutDown();
         }
 
         /// <summary>
@@ -253,17 +244,17 @@ namespace WebExpress.WebCore
             var culture = request.Culture;
             var uri = request?.Uri;
 
-            HttpServerContext.Log.Debug(message: this.I18N("webexpress:httpserver.connected"), args: context.RemoteEndPoint);
-            HttpServerContext.Log.Info(InternationalizationManager.I18N
+            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
+            HttpServerContext.Log.Info(I18N.Translate
             (
-                "webexpress:httpserver.request",
+                "webexpress.webcore:httpserver.request",
                 context.RemoteEndPoint,
                 ++RequestNumber,
                 $"{request?.Method} {request?.Uri} {request?.Protocoll}"
             ));
 
             // search page in sitemap
-            var searchResult = ComponentManager.SitemapManager.SearchResource(context.Uri, new SearchContext()
+            var searchResult = WebEx.ComponentHub.SitemapManager.SearchResource(context.Uri, new SearchContext()
             {
                 Culture = culture,
                 HttpContext = context,
@@ -272,13 +263,7 @@ namespace WebExpress.WebCore
 
             if (searchResult != null)
             {
-                var resourceUri = new UriResource(request.Uri, searchResult.Uri.PathSegments);
-                resourceUri = new UriResource(resourceUri, resourceUri.PathSegments, request.Uri.Skip(resourceUri.PathSegments.Count())?.PathSegments);
-                resourceUri.ServerRoot = new UriResource(request.Uri, HttpServerContext.ContextPath.PathSegments);
-                resourceUri.ApplicationRoot = new UriResource(request.Uri, searchResult.ApplicationContext?.ContextPath.PathSegments);
-                resourceUri.ModuleRoot = new UriResource(request.Uri, searchResult.ModuleContext?.ContextPath.PathSegments);
-                resourceUri.ResourceRoot = new UriResource(request.Uri, searchResult.Uri.PathSegments);
-
+                var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
                 request.Uri = resourceUri;
 
                 try
@@ -286,16 +271,9 @@ namespace WebExpress.WebCore
                     // execute resource
                     request.AddParameter(searchResult.Uri.Parameters.Select(x => new Parameter(x.Key, x.Value, ParameterScope.Url)));
 
-                    if (searchResult.Instance != null)
+                    if (searchResult.EndpointContext != null)
                     {
-                        searchResult.Instance?.PreProcess(request);
-                        response = searchResult.Instance?.Process(request);
-                        response = searchResult.Instance?.PostProcess(request, response);
-
-                        if (searchResult.Instance is IPage)
-                        {
-                            response.Content += $"<!-- {stopwatch.ElapsedMilliseconds} ms -->";
-                        }
+                        response = WebEx.ComponentHub.EndpointManager.HandleRequest(request, searchResult.EndpointContext);
 
                         if (response is ResponseNotFound)
                         {
@@ -365,9 +343,9 @@ namespace WebExpress.WebCore
 
             stopwatch.Stop();
 
-            HttpServerContext.Log.Info(InternationalizationManager.I18N
+            HttpServerContext.Log.Info(I18N.Translate
             (
-                "webexpress:httpserver.request.done",
+                "webexpress.webcore:httpserver.request.done",
                 context?.RemoteEndPoint,
                 RequestNumber,
                 stopwatch.ElapsedMilliseconds,
@@ -393,7 +371,6 @@ namespace WebExpress.WebCore
                 responseFeature.StatusCode = response.Status;
                 responseFeature.ReasonPhrase = response.Reason;
                 responseFeature.Headers.KeepAlive = "true";
-                responseFeature.Headers.Add("PageID", "Test");
 
                 if (response.Header.Location != null)
                 {
@@ -415,7 +392,7 @@ namespace WebExpress.WebCore
                     responseFeature.Headers.WWWAuthenticate = "Basic realm=\"Bereich\"";
                 }
 
-                if (response.Header.Cookies.Any())
+                if (response.Header.Cookies.Count != 0)
                 {
                     responseFeature.Headers.SetCookie = string.Join(" ", response.Header.Cookies);
                 }
@@ -454,73 +431,28 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Creates a status page
         /// </summary>
-        /// <param name="massage">The error message.</param>
+        /// <param name="message">The error message.</param>
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private Response CreateStatusPage<T>(string massage, Request request, SearchResult searchResult = null) where T : Response, new()
+        private static Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
         {
             var response = new T() as Response;
-            var culture = Culture;
-
-            try
-            {
-                culture = new CultureInfo(request?.Header?.AcceptLanguage?.FirstOrDefault()?.ToLower());
-            }
-            catch
-            {
-            }
 
             if (searchResult != null)
             {
-                var statusPage = ComponentManager.ResponseManager.CreateStatusPage
+                return WebEx.ComponentHub.StatusPageManager.CreateStatusResponse
                 (
-                    massage,
+                    message,
                     response.Status,
-                    searchResult?.ModuleContext?.PluginContext ??
-                    searchResult?.ApplicationContext?.PluginContext
+                    searchResult?.EndpointContext?.ApplicationContext,
+                    request
                 );
-
-                if (statusPage == null)
-                {
-                    return response;
-                }
-
-                if (statusPage is II18N i18n)
-                {
-                    i18n.Culture = culture;
-                }
-
-                if (statusPage is Resource resource)
-                {
-                    resource.ApplicationContext = searchResult?.ApplicationContext ?? new ApplicationContext()
-                    {
-                        PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                        searchResult?.ApplicationContext?.PluginContext,
-                        ApplicationId = "webex",
-                        ApplicationName = "WebExpress",
-                        ContextPath = new UriResource()
-                    };
-
-                    resource.ModuleContext = searchResult?.ModuleContext ?? new ModuleContext()
-                    {
-                        ApplicationContext = resource.ApplicationContext,
-                        PluginContext = searchResult?.ModuleContext?.PluginContext ??
-                        searchResult?.ApplicationContext?.PluginContext,
-                        ModuleId = "webex",
-                        ModuleName = "WebExpress",
-                        ContextPath = new UriResource()
-                    };
-
-                    resource.Initialization(new ResourceContext(resource.ModuleContext));
-                }
-
-                return statusPage.Process(request);
             }
 
-            var message = $"<html><head><title>{response.Status}</title></head><body>" +
-                          $"<p>{massage}<br/><p>" +
-                          $"</body></html>";
+            message = $"<html><head><title>{response.Status}</title></head><body>" +
+                      $"<p>{message}<br/><p>" +
+                      $"</body></html>";
 
             response.Content = message;
             response.Header.ContentLength = message.Length;
@@ -538,7 +470,7 @@ namespace WebExpress.WebCore
         {
             try
             {
-                return new HttpContext(contextFeatures, this.HttpServerContext);
+                return new HttpContext(contextFeatures, HttpServerContext);
             }
             catch (Exception ex)
             {

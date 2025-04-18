@@ -1,48 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebSession
 {
-    public class SessionManager : IComponent, ISystemComponent
+    /// <summary>
+    /// Represents a session manager that handles session creation and retrieval.
+    /// </summary>
+    public class SessionManager : ISessionManager, ISystemComponent
     {
-        /// <summary>
-        /// Returns or sets the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly SessionDictionary _dictionary = [];
 
         /// <summary>
-        /// Returns the directory in which the sessions are stored on the server side.
-        /// </summary>
-        private SessionDictionary Dictionary { get; } = new SessionDictionary();
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        internal SessionManager()
-        {
-        }
-
-        /// <summary>
-        /// Initialization
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private SessionManager(IHttpServerContext context)
         {
-            HttpServerContext = context;
+            _httpServerContext = context;
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:sessionmanager.initialization")
+                I18N.Translate("webexpress.webcore:sessionmanager.initialization")
             );
         }
 
         /// <summary>
-        /// Creates a session or returns an existing session.
+        /// Creates a session or returns an existing session based on the provided request.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The session.</returns>
@@ -55,30 +45,30 @@ namespace WebExpress.WebCore.WebSession
                 .Cookies?.Where(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
 
-            Guid Guid = Guid.NewGuid();
+            var guid = Guid.NewGuid();
 
             try
             {
-                Guid = Guid.Parse(sessionCookie?.Value);
+                guid = Guid.Parse(sessionCookie?.Value);
             }
             catch
             {
 
             }
 
-            if (sessionCookie != null && Dictionary.ContainsKey(Guid))
+            if (sessionCookie != null && _dictionary.TryGetValue(guid, out Session value))
             {
-                session = Dictionary[Guid];
+                session = value;
                 session.Updated = DateTime.Now;
             }
             else
             {
                 // no or invalid session => assign new session
-                session = new Session(Guid);
+                session = new Session(guid);
 
-                lock (Dictionary)
+                lock (_dictionary)
                 {
-                    Dictionary[Guid] = session;
+                    _dictionary[guid] = session;
                 }
             }
 
@@ -86,13 +76,11 @@ namespace WebExpress.WebCore.WebSession
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
+        /// Release of unmanaged resources reserved during use.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        public void Dispose()
         {
+            GC.SuppressFinalize(this);
         }
     }
 }

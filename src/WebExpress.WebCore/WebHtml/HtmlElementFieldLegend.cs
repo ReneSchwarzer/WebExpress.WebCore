@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a label for an <fieldset>element.
+    /// Represents a label for an fieldset element.
     /// </summary>
     public class HtmlElementFieldLegend : HtmlElement
     {
@@ -13,11 +13,11 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join("", Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFieldLegend()
             : base("legend")
@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="text">The content of the html element.</param>
         public HtmlElementFieldLegend(string text)

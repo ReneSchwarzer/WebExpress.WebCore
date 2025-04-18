@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebHtml
 {
+    /// <summary>
+    /// Interface for HTML elements.
+    /// </summary>
     public interface IHtml
     {
         /// <summary>

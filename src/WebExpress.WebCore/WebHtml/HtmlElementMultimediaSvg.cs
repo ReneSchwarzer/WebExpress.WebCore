@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the width.
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMultimediaSvg()
             : base("svg")
@@ -49,23 +49,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementMultimediaSvg(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementMultimediaSvg(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            base.Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

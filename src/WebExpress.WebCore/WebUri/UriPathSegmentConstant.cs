@@ -5,7 +5,7 @@ using WebExpress.WebCore.Internationalization;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// constant path segment.
+    /// Constant path segment.
     /// </summary>
     public class UriPathSegmentConstant : IUriPathSegmentConstant
     {
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => string.IsNullOrWhiteSpace(Value) || Value.Equals("/");
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The name.</param>
         /// <param name="tag">The tag or null</param>
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="value">The name.</param>
         /// <param name="display">The display text.</param>
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="culture">The culture.</param>
         public virtual string GetDisplay(CultureInfo culture)
         {
-            return InternationalizationManager.I18N(culture, Display);
+            return I18N.Translate(culture, Display);
         }
 
         /// <summary>

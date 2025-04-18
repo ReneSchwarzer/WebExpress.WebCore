@@ -3,9 +3,9 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<Title>WebExpress.WebCore</Title>
-		<Version>0.0.7.0</Version>
-		<AssemblyVersion>0.0.7.0</AssemblyVersion>
-		<TargetFramework>net8.0</TargetFramework>
+		<Version>0.0.8.0</Version>
+		<AssemblyVersion>0.0.8.0</AssemblyVersion>
+		<TargetFramework>net9.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
 		<RepositoryUrl>https://github.com/ReneSchwarzer/WebExpress.git</RepositoryUrl>
 		<Authors>Rene_Schwarzer@hotmail.de</Authors>
@@ -14,7 +14,7 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Description>Core library of the WebExpress web server.</Description>
-		<PackageVersion>0.0.7-alpha</PackageVersion>
+		<PackageVersion>0.0.8-alpha</PackageVersion>
 		<PackageProjectUrl>https://github.com/ReneSchwarzer/WebExpress</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,6 +22,7 @@
 		<PackageTags>webexpress</PackageTags>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<IsPackable>true</IsPackable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,6 +37,7 @@
 
 	<ItemGroup>
 		<Folder Include="Setting\" />
+		<Folder Include="WebEndpoint\Model\" />
 	</ItemGroup>
 
 	<ItemGroup>

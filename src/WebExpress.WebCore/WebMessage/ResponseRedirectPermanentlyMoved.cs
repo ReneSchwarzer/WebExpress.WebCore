@@ -1,16 +1,18 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿using WebExpress.WebCore.WebAttribute;
+
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// siehe RFC 2616 Tz. 6
+    /// Represents a response according to RFC 2616 Section 6.
     /// </summary>
+    [StatusCode(301)]
     public class ResponseRedirectPermanentlyMoved : Response
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ResponseRedirectPermanentlyMoved(string location)
         {
-            Status = 301;
             Reason = "permanently moved";
 
             Header.Location = location;

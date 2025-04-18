@@ -6,10 +6,10 @@ namespace WebExpress.WebCore.WebAttribute
     /// Marks a plugin as dependent on another plugin.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class DependencyAttribute : System.Attribute, IPluginAttribute
+    public class DependencyAttribute : Attribute, IPluginAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="dependency">The Id of the plugin to which there is a dependency.</param>
         public DependencyAttribute(string dependency)

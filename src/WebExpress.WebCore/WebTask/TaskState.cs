@@ -1,5 +1,9 @@
 ﻿namespace WebExpress.WebCore.WebTask
 {
+
+    /// <summary>
+    /// Represents the various states a task can be in.
+    /// </summary>
     public enum TaskState
     {
         /// <summary>

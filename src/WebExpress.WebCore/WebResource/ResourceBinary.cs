@@ -13,9 +13,11 @@ namespace WebExpress.WebCore.WebResource
         public byte[] Data { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        public ResourceBinary()
+        /// <param name="resourceContext">The resource context.</param>
+        public ResourceBinary(IResourceContext resourceContext)
+            : base(resourceContext)
         {
         }
 

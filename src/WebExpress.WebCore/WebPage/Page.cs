@@ -1,13 +1,11 @@
-﻿using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebResource;
-
-namespace WebExpress.WebCore.WebPage
+﻿namespace WebExpress.WebCore.WebPage
 {
     /// <summary>
     /// The prototype of a website.
     /// </summary>
-    /// <typeparam name="T">An implementation of the visualization tree.</typeparam>
-    public abstract class Page<T> : Resource, IPage where T : RenderContext, new()
+    /// <typeparam name="TVisualTree">An implementation of the visualization tree.</typeparam>
+    public abstract class Page<TVisualTree> : IPage<TVisualTree>
+        where TVisualTree : IVisualTree, new()
     {
         /// <summary>
         /// Returns or sets the page title.
@@ -15,20 +13,15 @@ namespace WebExpress.WebCore.WebPage
         public string Title { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Returns the page context.
+        /// </summary>
+        public IPageContext PageContext { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
         /// </summary>
         public Page()
         {
-
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The context of the resource.</param>
-        public override void Initialization(IResourceContext context)
-        {
-            base.Initialization(context);
         }
 
         /// <summary>
@@ -36,36 +29,21 @@ namespace WebExpress.WebCore.WebPage
         /// The function throws the RedirectException.
         /// </summary>
         /// <param name="uri">The uri to redirect to.</param>
-        public void Redirecting(string uri)
+        public virtual void Redirecting(string uri)
         {
             throw new RedirectException(uri?.ToString());
         }
 
         /// <summary>
-        /// Processing of the resource.
+        /// Processing of the page.
         /// </summary>
-        /// <param name="request">The request.</param>
-        /// <returns>The response.</returns>
-        public override Response Process(Request request)
-        {
-            var context = new T()
-            {
-                Page = this,
-                Request = request
-            };
-
-            Process(context);
-
-            return new ResponseOK()
-            {
-                Content = context.VisualTree.Render(context)
-            };
-        }
+        /// <param name="renderContext">The context for rendering the page.</param>
+        /// <param name="visualTree">The visual tree to be rendered.</param>
+        public abstract void Process(IRenderContext renderContext, TVisualTree visualTree);
 
         /// <summary>
-        /// Processing of the resource.
+        /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
         /// </summary>
-        /// <param name="context">The context for rendering the page.</param>
-        public abstract void Process(T context);
+        public abstract void Dispose();
     }
 }

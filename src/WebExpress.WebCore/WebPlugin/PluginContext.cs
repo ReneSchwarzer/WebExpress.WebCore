@@ -1,8 +1,12 @@
 ﻿using System.Reflection;
-using WebExpress.WebCore.WebUri;
+using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 
 namespace WebExpress.WebCore.WebPlugin
 {
+    /// <summary>
+    /// Represents the context of a plugin, providing access to its metadata and host context.
+    /// </summary>
     public class PluginContext : IPluginContext
     {
         /// <summary>
@@ -13,7 +17,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the plugin id.
         /// </summary>
-        public string PluginId { get; internal set; }
+        public IComponentId PluginId { get; internal set; }
 
         /// <summary>
         /// Returns the name of the plugin.
@@ -48,15 +52,10 @@ namespace WebExpress.WebCore.WebPlugin
         /// <summary>
         /// Returns the icon of the plugin.
         /// </summary>
-        public UriResource Icon { get; internal set; }
+        public IRoute Icon { get; internal set; }
 
         /// <summary>
-        /// Returns the host context.
-        /// </summary>
-        public IHttpServerContext Host { get; internal set; }
-
-        /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public PluginContext()
         {
@@ -68,7 +67,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>The string that uniquely represents the plugin.</returns>
         public override string ToString()
         {
-            return PluginId;
+            return $"Plugin: {PluginId}";
         }
     }
 }

@@ -5,11 +5,11 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Indicates that a status page ist default
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class DefaultAttribute : Attribute, IStatusPageAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public DefaultAttribute()
         {

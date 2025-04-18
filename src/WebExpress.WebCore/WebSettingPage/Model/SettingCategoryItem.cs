@@ -1,0 +1,55 @@
+﻿using System;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebPlugin;
+
+namespace WebExpress.WebCore.WebSettingPage.Model
+{
+    /// <summary>
+    /// Represents an item on the setting category.
+    /// </summary>
+    public class SettingCategoryItem : IDisposable
+    {
+        /// <summary>
+        /// Returns the context of the associated plugin.
+        /// </summary>
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the setting category context.
+        /// </summary>
+        public ISettingCategoryContext SettingCategoryContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the class type of the setting category.
+        /// </summary>
+        public Type SettingCategoryClass { get; internal set; }
+
+        /// <summary>
+        /// Returns the human-readable name or a internationalization key of the category.
+        /// </summary>
+        public string Name { get; internal set; }
+
+        /// <summary>
+        /// Returns the human-readable description or a internationalization key of the category. 
+        /// </summary>
+        public string Description { get; internal set; }
+
+        /// <summary>
+        /// Returns the section.
+        /// </summary>
+        public SettingSection Section { get; internal set; }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+    }
+}

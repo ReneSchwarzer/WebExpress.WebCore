@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebExpress.WebCore.WebHtml
+﻿namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
     /// Represents the group of table rows that contain the labels of the table columns.
@@ -8,7 +6,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableThead : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementTableThead()
             : base("thead")
@@ -16,23 +14,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTableThead(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="nodes">The content of the html element.</param>
-        public HtmlElementTableThead(IEnumerable<IHtmlNode> nodes)
-            : this()
-        {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
     }
 }

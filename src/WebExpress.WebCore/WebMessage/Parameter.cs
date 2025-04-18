@@ -4,6 +4,9 @@ using System.Text;
 
 namespace WebExpress.WebCore.WebMessage
 {
+    /// <summary>
+    /// Represents a parameter with a key, value, and scope.
+    /// </summary>
     public class Parameter
     {
         /// <summary>
@@ -12,24 +15,24 @@ namespace WebExpress.WebCore.WebMessage
         public ParameterScope Scope { get; private set; }
 
         /// <summary>
-        /// The key.
+        /// Returns the key of the parameter.
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
-        /// The value.
+        /// Returns the value of the parameter.
         /// </summary>
         public string Value { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public Parameter()
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -48,7 +51,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -67,7 +70,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -80,7 +83,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
@@ -99,17 +102,17 @@ namespace WebExpress.WebCore.WebMessage
         /// <returns>The parameter list.</returns>
         public static List<Parameter> Create(params Parameter[] param)
         {
-            return new List<Parameter>(param);
+            return [.. param];
         }
 
         /// <summary>
         /// Returns the key.
         /// </summary>
-        /// <typeparam name="T">The type.</typeparam>
+        /// <typeparam name="TParameter">The type.</typeparam>
         /// <returns>The key.</returns>
-        public static string GetKey<T>() where T : Parameter
+        public static string GetKey<TParameter>() where TParameter : Parameter
         {
-            return (Activator.CreateInstance(typeof(T)) as T)?.Key;
+            return Activator.CreateInstance<TParameter>()?.Key;
         }
 
         /// <summary>

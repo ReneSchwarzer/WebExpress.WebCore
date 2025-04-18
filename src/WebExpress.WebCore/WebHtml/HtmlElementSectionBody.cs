@@ -5,14 +5,14 @@ using System.Text;
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents the main content of an HTML document. Each document can contain only one <body>element.
+    /// Represents the main content of an HTML document. Each document can contain only one body element.
     /// </summary>
     public class HtmlElementSectionBody : HtmlElement, IHtmlElementSection
     {
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        public new List<IHtmlNode> Elements => base.Elements;
+        public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
         /// Returns or sets the script elements.
@@ -44,22 +44,22 @@ namespace WebExpress.WebCore.WebHtml
         private List<HtmlElementScriptingScript> ElementScriptLinks { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementSectionBody()
             : base("body")
         {
-            ElementScriptLinks = new List<HtmlElementScriptingScript>();
+            ElementScriptLinks = [];
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementSectionBody(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

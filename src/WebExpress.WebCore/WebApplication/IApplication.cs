@@ -1,18 +1,12 @@
-﻿using System;
+﻿using WebExpress.WebCore.WebComponent;
 
 namespace WebExpress.WebCore.WebApplication
 {
     /// <summary>
     /// This interface represents an application.
     /// </summary>
-    public interface IApplication : IDisposable
+    public interface IApplication : IComponent
     {
-        /// <summary>
-        /// Initialization of the application .
-        /// </summary>
-        /// <param name="context">The context.</param>
-        void Initialization(IApplicationContext context);
-
         /// <summary>
         /// Called when the application starts working. The call is concurrent.
         /// </summary>

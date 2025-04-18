@@ -5,12 +5,12 @@ using WebExpress.WebCore.Internationalization;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// constant path segment.
+    /// Represents the root segment of a URI path.
     /// </summary>
     public class UriPathSegmentRoot : IUriPathSegment
     {
         /// <summary>
-        /// Returns or sets the id.
+        /// Returns the ID of the segment.
         /// </summary>
         public string Id => "ROOT";
 
@@ -30,16 +30,15 @@ namespace WebExpress.WebCore.WebUri
         public object Tag { get; set; }
 
         /// <summary>
-        /// Checks for empty path segment.
+        /// Returns a value indicating whether the path segment is empty.
         /// </summary>
         public bool IsEmpty => false;
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="UriPathSegmentRoot"/> class.
         /// </summary>
-        /// <param name="value">The name.</param>
         /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
+        /// <param name="tag">The tag or null.</param>
         public UriPathSegmentRoot(string display = null, object tag = null)
         {
             Value = "/";
@@ -48,10 +47,10 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Checks whether the node matches the path element.
+        /// Checks whether the node matches the specified path element.
         /// </summary>
         /// <param name="value">The value to check.</param>
-        /// <returns>True if the path element matched, false otherwise.</returns>
+        /// <returns>True if the path element matches, false otherwise.</returns>
         public bool IsMatched(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -64,19 +63,19 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Make a deep copy.
+        /// Creates a deep copy of the current segment.
         /// </summary>
-        /// <returns>The copy.</returns>
+        /// <returns>A copy of the current segment.</returns>
         public virtual IUriPathSegment Copy()
         {
             return new UriPathSegmentRoot(Display, Tag);
         }
 
         /// <summary>
-        /// Compare the object.
+        /// Compares the current segment with another object.
         /// </summary>
-        /// <param name="obj">The comparison object.</param>
-        /// <returns>true if equals, false otherwise</returns>
+        /// <param name="obj">The object to compare with.</param>
+        /// <returns>True if the objects are equal, false otherwise.</returns>
         public virtual bool Equals(IUriPathSegment obj)
         {
             if (obj == null)
@@ -84,16 +83,17 @@ namespace WebExpress.WebCore.WebUri
                 return false;
             }
 
-            return obj is UriPathSegmentRoot segment;
+            return obj is UriPathSegmentRoot;
         }
 
         /// <summary>
-        /// Returns or sets the display text.
+        /// Returns the display text for the specified culture.
         /// </summary>
         /// <param name="culture">The culture.</param>
+        /// <returns>The display text for the specified culture.</returns>
         public virtual string GetDisplay(CultureInfo culture)
         {
-            return InternationalizationManager.I18N(culture, Display);
+            return I18N.Translate(culture, Display);
         }
 
         /// <summary>

@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebUri;
+
+namespace WebExpress.WebCore.WebRestApi
+{
+    /// <summary>
+    /// Represents the context of a rest api resource.
+    /// </summary>
+    public class RestApiContext : IRestApiContext
+    {
+        /// <summary>
+        /// Returns the associated plugin context.
+        /// </summary>
+        public IPluginContext PluginContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the corresponding application context.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the conditions that must be met for the resource to be active.
+        /// </summary>
+        public IEnumerable<ICondition> Conditions { get; internal set; } = [];
+
+        /// <summary>
+        /// Returns the crud methods.
+        /// </summary>
+        public IEnumerable<CrudMethod> Methods { get; internal set; } = [];
+
+        /// <summary>
+        /// Returns the endpoint id.
+        /// </summary>
+        public IComponentId EndpointId { get; internal set; }
+
+        /// <summary>
+        /// Returns the version number of the rest api.
+        /// </summary>
+        public uint Version { get; internal set; }
+
+        /// <summary>
+        /// Returns whether the resource is created once and reused each time it is called.
+        /// </summary>
+        public bool Cache { get; internal set; }
+
+        /// <summary>
+        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// </summary>
+        public bool IncludeSubPaths { get; internal set; }
+
+        /// <summary>
+        /// Returns the attributes associated with the page.
+        /// </summary>
+        public IEnumerable<Type> Attributes { get; internal set; }
+
+        /// <summary>
+        /// Returns the context path.
+        /// </summary>
+        public UriEndpoint ContextPath { get; internal set; }
+
+        /// <summary>
+        /// Returns the internal routing path for the endpoint.
+        /// </summary>
+        public IRoute Route { get; internal set; }
+
+        /// <summary>
+        /// Initializes a new instance of the class with the specified parent type and context path.
+        /// </summary>
+        public RestApiContext()
+        {
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            return $"RestApi: {EndpointId}";
+        }
+    }
+}

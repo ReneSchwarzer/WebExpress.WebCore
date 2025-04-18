@@ -1,94 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebModule;
+using WebExpress.WebCore.WebJob.Model;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebJob
 {
-    /// <summary>
-    /// Processing of cyclic jobs
-    /// </summary>
-    public sealed class JobManager : IComponentPlugin, ISystemComponent, IExecutableElements
+    /// <remarks>
+    /// This class manages the processing of cyclic jobs. It provides methods to register, remove, and execute jobs.
+    /// </remarks>
+    public sealed class JobManager : IJobManager, ISystemComponent, IExecutableElements
     {
-        /// <summary>
-        /// Thread termination.
-        /// </summary>
-        private CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
+        private readonly IComponentHub _componentHub;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly ScheduleDictionary _staticScheduleDictionary = [];
+        private readonly List<ScheduleItem> _dynamicScheduleList = [];
+        private readonly CancellationTokenSource _tokenSource = new();
+        private readonly Clock _clock = new();
 
         /// <summary>
-        /// The clock for determining the execution of the crons.
+        /// An event that fires when an job is added.
         /// </summary>
-        private Clock Clock { get; } = new Clock();
+        public event EventHandler<IJobContext> AddJob;
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
+        /// An event that fires when an job is removed.
         /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
+        public event EventHandler<IJobContext> RemoveJob;
 
         /// <summary>
-        /// Returns the directory where the static jobs are listed.
+        /// Returns all job contextes.
         /// </summary>
-        private ScheduleDictionary StaticScheduleDictionary { get; } = new ScheduleDictionary();
+        public IEnumerable<IJobContext> Jobs => _staticScheduleDictionary
+            .SelectMany(x => x.Value)
+            .SelectMany(x => x.Value)
+            .SelectMany(x => x.Value)
+            .Select(x => x.JobContext)
+            .Union(_dynamicScheduleList.Select(x => x.JobContext));
 
         /// <summary>
-        /// Returns the directory where the dynamic jobs are listed.
+        /// Initializes a new instance of the class.
         /// </summary>
-        private IEnumerable<ScheduleDynamicItem> DynamicScheduleList { get; set; } = new List<ScheduleDynamicItem>();
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        internal JobManager()
+        /// <param name="componentHub">The component hub.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private JobManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
-            ComponentManager.PluginManager.AddPlugin += (sender, pluginContext) =>
-            {
-                Register(pluginContext);
-            };
+            _componentHub = componentHub;
 
-            ComponentManager.PluginManager.RemovePlugin += (sender, pluginContext) =>
-            {
-                Remove(pluginContext);
-            };
+            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _httpServerContext = httpServerContext;
 
-            ComponentManager.ModuleManager.AddModule += (sender, moduleContext) =>
-            {
-                AssignToModule(moduleContext);
-            };
-
-            ComponentManager.ModuleManager.RemoveModule += (sender, moduleContext) =>
-            {
-                DetachFromModule(moduleContext);
-            };
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
-
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N
+                I18N.Translate
                 (
-                    "webexpress:jobmanager.initialization"
+                    "webexpress.webcore:jobmanager.initialization"
                 )
             );
         }
 
         /// <summary>
-        /// Discovers and registers jobs from the specified plugin.
+        /// Discovers and binds static jobs to an application.
         /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose jobs are to be registered.</param>
-        public void Register(IPluginContext pluginContext)
+        /// <param name="pluginContext">The context of the plugin whose jobs are to be associated.</param>
+        private void Register(IPluginContext pluginContext)
+        {
+            if (_staticScheduleDictionary.ContainsKey(pluginContext))
+            {
+                return;
+            }
+
+            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+        }
+
+        /// <summary>
+        /// Discovers and binds jobs to an application.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application whose jobs are to be associated.</param>
+        private void Register(IApplicationContext applicationContext)
+        {
+            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            {
+                if (_staticScheduleDictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                {
+                    continue;
+                }
+
+                Register(pluginContext, [applicationContext]);
+            }
+        }
+
+        /// <summary>
+        /// Registers resources for a given plugin and application context.
+        /// </summary>
+        /// <param name="pluginContext">The plugin context.</param>
+        /// <param name="applicationContexts">The application context (optional).</param>
+        private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
             var assembly = pluginContext?.Assembly;
 
@@ -101,12 +119,12 @@ namespace WebExpress.WebCore.WebJob
                 ))
             {
                 var id = job.FullName?.ToLower();
+
                 var minute = "*";
                 var hour = "*";
                 var day = "*";
                 var month = "*";
                 var weekday = "*";
-                var moduleId = string.Empty;
 
                 foreach (var customAttribute in job.CustomAttributes.Where(x => x.AttributeType == typeof(JobAttribute)))
                 {
@@ -117,186 +135,183 @@ namespace WebExpress.WebCore.WebJob
                     weekday = customAttribute.ConstructorArguments.Skip(4).FirstOrDefault().Value?.ToString();
                 }
 
-                foreach (var customAttribute in job.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IModuleAttribute))))
+                // assign the job to existing applications
+                foreach (var applicationContext in applicationContexts)
                 {
-                    if (customAttribute.AttributeType.Name == typeof(ModuleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ModuleAttribute<>).Namespace)
+                    var jobContext = new JobContext()
                     {
-                        moduleId = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault()?.FullName?.ToLower();
-                    }
-                }
+                        JobId = new ComponentId(job.FullName),
+                        PluginContext = pluginContext,
+                        ApplicationContext = applicationContext,
+                        Cron = new Cron(_httpServerContext, minute, hour, day, month, weekday),
+                    };
 
-                if (string.IsNullOrWhiteSpace(moduleId))
-                {
-                    // no module specified
-                    HttpServerContext.Log.Warning
-                    (
-                        InternationalizationManager.I18N
-                        (
-                            "webexpress:jobmanager.moduleless", id
-                        )
-                    );
-                }
-
-                // register the job
-                if (!StaticScheduleDictionary.ContainsKey(pluginContext))
-                {
-                    StaticScheduleDictionary.Add(pluginContext, new List<ScheduleStaticItem>());
-                }
-
-                var dictItem = StaticScheduleDictionary[pluginContext];
-
-                dictItem.Add(new ScheduleStaticItem()
-                {
-                    Assembly = assembly,
-                    JobId = id,
-                    Type = job,
-                    Cron = new Cron(pluginContext.Host, minute, hour, day, month, weekday),
-                    moduleId = moduleId
-                });
-
-                HttpServerContext.Log.Debug
-                (
-                    InternationalizationManager.I18N
-                    (
-                        "webexpress:jobmanager.job.register", moduleId, id
-                    )
-                );
-
-                // assign the job to existing modules.
-                foreach (var moduleContext in ComponentManager.ModuleManager.GetModules(pluginContext, moduleId))
-                {
-                    if (moduleContext.PluginContext != pluginContext)
+                    if (job != default)
                     {
-                        // job is not part of the module
-                        HttpServerContext.Log.Warning
+                        if (_staticScheduleDictionary.AddScheduleItem
                         (
-                            InternationalizationManager.I18N
+                            pluginContext,
+                            applicationContext,
+                            new ScheduleItem(_componentHub, _httpServerContext, pluginContext, applicationContext, jobContext, job)
+                        ))
+                        {
+                            OnAddJob(jobContext);
+
+                            _httpServerContext.Log.Debug
                             (
-                                "webexpress:jobmanager.wrongmodule",
-                                moduleContext.ModuleId, id
+                                I18N.Translate
+                                (
+                                    "webexpress.webcore:jobmanager.register",
+                                    id,
+                                    applicationContext.ApplicationId
+                                )
+                            );
+                        }
+                        else
+                        {
+                            _httpServerContext.Log.Debug
+                            (
+                                I18N.Translate
+                                (
+                                    "webexpress.webcore:jobmanager.duplicate",
+                                    id,
+                                    applicationContext.ApplicationId
+                                )
+                            );
+                        }
+                    }
+                    else
+                    {
+                        _httpServerContext.Log.Debug
+                        (
+                            I18N.Translate
+                            (
+                                "webexpress.webcore:jobmanager.jobless",
+                                id
                             )
                         );
                     }
-
-                    AssignToModule(moduleContext);
                 }
             }
         }
 
         /// <summary>
-        /// Discovers and registers entries from the specified plugin.
+        /// Removes all jobs associated with the specified plugin context.
         /// </summary>
-        /// <param name="pluginContexts">A list with plugin contexts that contain the jobs.</param>
-        public void Register(IEnumerable<IPluginContext> pluginContexts)
+        /// <param name="pluginContext">The context of the plugin that contains the jobs to remove.</param>
+        internal void Remove(IPluginContext pluginContext)
         {
-            foreach (var pluginContext in pluginContexts)
+            if (pluginContext == null)
             {
-                Register(pluginContext);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Registers a job.
-        /// </summary>
-        /// <param name="pluginContext">The plugin context.</param>
-        /// <param name="cron">The cropn-object.</param>
-        /// <returns>The job.</returns>
-        public IJob Register<T>(IPluginContext pluginContext, Cron cron) where T : IJob
-        {
-            // create context
-            var jobContext = new JobContext(pluginContext)
+            // the plugin has not been registered in the manager
+            if (_staticScheduleDictionary.TryGetValue(pluginContext, out var value))
             {
-                JobId = typeof(T).FullName?.ToLower(),
-                Cron = cron
-            };
-
-            var jobInstance = Activator.CreateInstance(typeof(T)) as IJob;
-            jobInstance.Initialization(jobContext);
-
-            var item = new ScheduleDynamicItem()
-            {
-                JobContext = jobContext,
-                Instance = jobInstance
-            };
-
-            DynamicScheduleList = DynamicScheduleList.Append(item);
-
-            return jobInstance;
-        }
-
-        /// <summary>
-        /// Registers a job.
-        /// </summary>
-        /// <param name="moduleContext">The module context.</param>
-        /// <param name="cron">The cropn-object.</param>
-        /// <returns>The job.</returns>
-        public IJob Register<T>(IModuleContext moduleContext, Cron cron) where T : IJob
-        {
-            // create context
-            var jobContext = new JobContext(moduleContext)
-            {
-                JobId = typeof(T).FullName?.ToLower(),
-                Cron = cron
-            };
-
-            var jobInstance = Activator.CreateInstance(typeof(T)) as IJob;
-            jobInstance.Initialization(jobContext);
-
-            var item = new ScheduleDynamicItem()
-            {
-                JobContext = jobContext,
-                Instance = jobInstance
-            };
-
-            DynamicScheduleList = DynamicScheduleList.Append(item);
-
-            return jobInstance;
-        }
-
-        /// <summary>
-        /// Assign existing job to the module.
-        /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void AssignToModule(IModuleContext moduleContext)
-        {
-            foreach (var scheduleItem in StaticScheduleDictionary.Values.SelectMany(x => x))
-            {
-                if (scheduleItem.moduleId.Equals(moduleContext?.ModuleId))
+                foreach (var scheduleItem in value.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x))
                 {
-                    scheduleItem.AddModule(moduleContext);
+                    OnRemoveJob(scheduleItem.JobContext);
+                    scheduleItem.Dispose();
                 }
+
+                _staticScheduleDictionary.Remove(pluginContext);
             }
         }
 
         /// <summary>
-        /// Remove an existing modules to the job.
+        /// Removes all jobs associated with the specified application context.
         /// </summary>
-        /// <param name="moduleContext">The context of the module.</param>
-        private void DetachFromModule(IModuleContext moduleContext)
+        /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
+        internal void Remove(IApplicationContext applicationContext)
         {
-            foreach (var scheduleItem in StaticScheduleDictionary.Values.SelectMany(x => x))
+            if (applicationContext == null)
             {
-                if (scheduleItem.moduleId.Equals(moduleContext?.ModuleId))
+                return;
+            }
+
+            foreach (var pluginDict in _staticScheduleDictionary.Values)
+            {
+                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
                 {
-                    scheduleItem.DetachModule(moduleContext);
+                    foreach (var scheduleItem in appDict.Values.SelectMany(x => x))
+                    {
+                        OnRemoveJob(scheduleItem.JobContext);
+                        scheduleItem.Dispose();
+                    }
                 }
+
+                pluginDict.Remove(applicationContext);
             }
         }
 
         /// <summary>
-        /// Retruns the schedule item for a given plugin.
+        /// Removes a dynamic job.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <returns>An enumeration of the schedule item for the given plugin.</returns>
-        internal IEnumerable<ScheduleStaticItem> GetScheduleItems(IPluginContext pluginContext)
+        /// <param name="job">The job to remove.</param>
+        public void Remove(IJob job)
         {
-            if (pluginContext == null || !StaticScheduleDictionary.ContainsKey(pluginContext))
-            {
-                return Enumerable.Empty<ScheduleStaticItem>();
-            }
+            _dynamicScheduleList.RemoveAll(x => x == job);
+        }
 
-            return StaticScheduleDictionary[pluginContext];
+        /// <summary>
+        /// Raises the AddJob event.
+        /// </summary>
+        /// <param name="jobContext">The job context.</param>
+        private void OnAddJob(IJobContext jobContext)
+        {
+            AddJob?.Invoke(this, jobContext);
+        }
+
+        /// <summary>
+        /// Raises the RemoveJob event.
+        /// </summary>
+        /// <param name="jobContext">The job context.</param>
+        private void OnRemoveJob(IJobContext jobContext)
+        {
+            RemoveJob?.Invoke(this, jobContext);
+        }
+
+        /// <summary>
+        /// Raises the event when an plugin is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the plugin being added.</param>
+        private void OnAddPlugin(object sender, IPluginContext e)
+        {
+            Register(e);
+        }
+
+        /// <summary>  
+        /// Raises the event when a plugin is removed.  
+        /// </summary>  
+        /// <param name="sender">The source of the event.</param>  
+        /// <param name="e">The context of the plugin being removed.</param>  
+        private void OnRemovePlugin(object sender, IPluginContext e)
+        {
+            Remove(e);
+        }
+
+        /// <summary>
+        /// Raises the event when an application is removed.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being removed.</param>
+        private void OnRemoveApplication(object sender, IApplicationContext e)
+        {
+            Remove(e);
+        }
+
+        /// <summary>
+        /// Raises the event when an application is added.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The context of the application being added.</param>
+        private void OnAddApplication(object sender, IApplicationContext e)
+        {
+            Register(e);
         }
 
         /// <summary>
@@ -306,7 +321,7 @@ namespace WebExpress.WebCore.WebJob
         {
             Task.Factory.StartNew(() =>
             {
-                while (!TokenSource.IsCancellationRequested)
+                while (!_tokenSource.IsCancellationRequested)
                 {
                     Update();
 
@@ -314,7 +329,7 @@ namespace WebExpress.WebCore.WebJob
                     Thread.Sleep(secendsLeft * 1000);
                 }
 
-            }, TokenSource.Token);
+            }, _tokenSource.Token);
         }
 
         /// <summary>
@@ -322,19 +337,21 @@ namespace WebExpress.WebCore.WebJob
         /// </summary>
         private void Update()
         {
-            foreach (var clock in Clock.Synchronize())
+            foreach (var clock in _clock.Synchronize())
             {
-                foreach (var scheduleItemValue in StaticScheduleDictionary.Values
-                    .SelectMany(x => x)
-                    .SelectMany(x => x.Dictionary.Values))
+                foreach (var scheduleItemValue in _staticScheduleDictionary
+                    .SelectMany(x => x.Value)
+                    .SelectMany(x => x.Value)
+                    .SelectMany(x => x.Value)
+                    .Union(_dynamicScheduleList.Select(x => x)))
                 {
-                    if (scheduleItemValue.JobContext.Cron.Matching(Clock))
+                    if (scheduleItemValue.JobContext.Cron.Matching(_clock))
                     {
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
-                                "webexpress:jobmanager.job.process",
+                                "webexpress.webcore:jobmanager.job.process",
                                 scheduleItemValue.JobContext.JobId
                             )
                         );
@@ -342,19 +359,19 @@ namespace WebExpress.WebCore.WebJob
                         Task.Factory.StartNew(() =>
                         {
                             scheduleItemValue.Instance?.Process();
-                        }, TokenSource.Token);
+                        }, _tokenSource.Token);
                     }
                 }
 
-                foreach (var scheduleItemValue in DynamicScheduleList)
+                foreach (var scheduleItemValue in _dynamicScheduleList)
                 {
-                    if (scheduleItemValue.JobContext.Cron.Matching(Clock))
+                    if (scheduleItemValue.JobContext.Cron.Matching(_clock))
                     {
-                        HttpServerContext.Log.Debug
+                        _httpServerContext.Log.Debug
                         (
-                            InternationalizationManager.I18N
+                            I18N.Translate
                             (
-                                "webexpress:jobmanager.job.process",
+                                "webexpress.webcore:jobmanager.job.process",
                                 scheduleItemValue.JobContext.JobId
                             )
                         );
@@ -362,70 +379,39 @@ namespace WebExpress.WebCore.WebJob
                         Task.Factory.StartNew(() =>
                         {
                             scheduleItemValue.Instance?.Process();
-                        }, TokenSource.Token);
+                        }, _tokenSource.Token);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Stop running the scheduler.
+        /// Returns a JobContext instance associated with an application.
         /// </summary>
-        public void ShutDown()
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="jobType">The type of the job.</param>
+        /// <returns>A JobContext instance.</returns>
+        public IJobContext GetJob(IApplicationContext applicationContext, Type jobType)
         {
-            TokenSource.Cancel();
+            return _staticScheduleDictionary
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .SelectMany(x => x.Value)
+                .Union(_dynamicScheduleList.Select(x => x))
+                .FirstOrDefault(x => x.JobContext.ApplicationContext == applicationContext && x.JobClass == jobType)?.JobContext;
         }
 
         /// <summary>
-        /// Removes all jobs associated with the specified plugin context.
+        /// Release of unmanaged resources reserved during use.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin that contains the jobs to remove.</param>
-        public void Remove(IPluginContext pluginContext)
+        public void Dispose()
         {
-            // the plugin has not been registered in the manager
-            if (!StaticScheduleDictionary.ContainsKey(pluginContext))
-            {
-                return;
-            }
+            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
-            foreach (var scheduleItem in StaticScheduleDictionary[pluginContext])
-            {
-                scheduleItem.Dispose();
-            }
-
-            StaticScheduleDictionary.Remove(pluginContext);
-        }
-
-        /// <summary>
-        /// Removes a job.
-        /// </summary>
-        /// <param name="job">The job to remove.</param>
-        public void Remove(IJob job)
-        {
-            DynamicScheduleList = DynamicScheduleList.Where(x => x != job);
-        }
-
-        /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
-        {
-            foreach (var scheduleItem in GetScheduleItems(pluginContext))
-            {
-                output.Add
-                (
-                    string.Empty.PadRight(deep) +
-                    InternationalizationManager.I18N
-                    (
-                        "webexpress:jobmanager.job",
-                        scheduleItem.JobId,
-                        scheduleItem.ModuleContext
-                    )
-                );
-            }
+            _tokenSource.Cancel();
         }
     }
 }

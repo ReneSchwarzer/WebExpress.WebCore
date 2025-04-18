@@ -2,6 +2,9 @@
 
 namespace WebExpress.WebCore.WebAttribute
 {
+    /// <summary>
+    /// Interface for converting an object to a URI path segment.
+    /// </summary>
     public interface ISegmentAttribute
     {
         /// <summary>

@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebApplication
 {
+    /// <summary>
+    /// Represents the context of an application.
+    /// </summary>
     public class ApplicationContext : IApplicationContext
     {
         /// <summary>
@@ -27,11 +29,6 @@ namespace WebExpress.WebCore.WebApplication
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns an enumeration of options. Options enable optional resources.
-        /// </summary>
-        public IEnumerable<string> Options { get; internal set; }
-
-        /// <summary>
         /// Returns the asset directory. This is mounted in the asset directory of the server.
         /// </summary>
         public string AssetPath { get; internal set; }
@@ -44,27 +41,27 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Returns the context path. This is mounted in the context path of the server.
         /// </summary>
-        public UriResource ContextPath { get; internal set; }
+        public IRoute ContextPath { get; internal set; }
 
         /// <summary>
         /// Returns the icon uri.
         /// </summary>
-        public UriResource Icon { get; internal set; }
+        public IRoute Icon { get; internal set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public ApplicationContext()
         {
         }
 
         /// <summary>
-        /// Conversion of the apllication context into its string representation.
+        /// Conversion of the application context into its string representation.
         /// </summary>
         /// <returns>The string that uniquely represents the application.</returns>
         public override string ToString()
         {
-            return $"Application {ApplicationId}";
+            return $"Application: {ApplicationId}";
         }
     }
 }

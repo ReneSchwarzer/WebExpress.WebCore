@@ -8,23 +8,26 @@ using System.Xml.Serialization;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebUri;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebLog;
+using WebExpress.WebCore.WebPackage;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]
 
 namespace WebExpress.WebCore
 {
-    public class WebEx
+    /// <summary>
+    /// The class provides a web server application for WebExpress.
+    /// </summary>
+    public sealed class WebEx
     {
+        private static IComponentHub _componentHub;
+        private HttpServer _httpServer;
+
         /// <summary>
         /// Returns or sets the name of the web server.
         /// </summary>
         public string Name { get; set; } = "WebExpress";
-
-        /// <summary>
-        /// The http(s) server.
-        /// </summary>
-        private HttpServer HttpServer { get; set; }
 
         /// <summary>
         /// Returns the program version.
@@ -32,19 +35,9 @@ namespace WebExpress.WebCore
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// Entry point of application.
+        /// Returns the component hub.
         /// </summary>
-        /// <param name="args">Call arguments.</param>
-        /// <returns>The return code. 0 on success. A number greater than 0 for errors.</returns>
-        public static int Main(string[] args)
-        {
-            var app = new WebEx()
-            {
-                Name = Assembly.GetExecutingAssembly().GetName().Name
-            };
-
-            return app.Execution(args);
-        }
+        public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
         /// Running the application.
@@ -103,7 +96,7 @@ namespace WebExpress.WebCore
                     return 1;
                 }
 
-                WebPackage.PackageBuilder.Create(argumentDict["spec"], argumentDict["config"], argumentDict["target"], argumentDict["output"]);
+                PackageBuilder.Create(argumentDict["spec"], argumentDict["config"], argumentDict["target"], argumentDict["output"]);
 
                 return 0;
             }
@@ -126,7 +119,7 @@ namespace WebExpress.WebCore
             Initialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
 
             // start the manager
-            ComponentManager.Execute();
+            (_componentHub as ComponentHub).Execute();
 
             // starting the web server
             Start();
@@ -151,7 +144,7 @@ namespace WebExpress.WebCore
         /// Initialization
         /// </summary>
         /// <param name="args">The valid arguments.</param>
-        /// <param param name="configFile">The configuration file.</param>
+        /// <param name="configFile">The configuration file.</param>
         private void Initialization(string args, string configFile)
         {
             // Config laden
@@ -190,46 +183,48 @@ namespace WebExpress.WebCore
 
             var context = new HttpServerContext
             (
-                config.Uri,
+                new RouteEndpoint(config.Route),
                 config.Endpoints,
                 Path.GetFullPath(packageBase),
                 Path.GetFullPath(assetBase),
                 Path.GetFullPath(dataBase),
                 Path.GetDirectoryName(configFile),
-                new UriResource(config.ContextPath),
+                new RouteEndpoint(config.ContextPath),
                 culture,
                 log,
                 null
             );
 
-            HttpServer = new HttpServer(context)
+            _httpServer = new HttpServer(context)
             {
                 Config = config
             };
 
+            _componentHub = ComponentActivator.CreateInstance<ComponentHub>(_httpServer.HttpServerContext);
+
             // start logging
-            HttpServer.HttpServerContext.Log.Begin(config.Log);
+            _httpServer.HttpServerContext.Log.Begin(config.Log);
 
             // log program start
-            HttpServer.HttpServerContext.Log.Seperator('/');
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.startup"));
-            HttpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.version"), args: Version);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.arguments"), args: args);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.workingdirectory"), args: Environment.CurrentDirectory);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.packagebase"), args: config.PackageBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.assetbase"), args: config.AssetBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.database"), args: config.DataBase);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.configuration"), args: Path.GetFileName(configFile));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.logdirectory"), args: Path.GetDirectoryName(HttpServer.HttpServerContext.Log.Filename));
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.log"), args: Path.GetFileName(HttpServer.HttpServerContext.Log.Filename));
+            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.startup"));
+            _httpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.version"), args: Version);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.arguments"), args: args);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.workingdirectory"), args: Environment.CurrentDirectory);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.packagebase"), args: config.PackageBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.assetbase"), args: config.AssetBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.database"), args: config.DataBase);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.configuration"), args: Path.GetFileName(configFile));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.logdirectory"), args: Path.GetDirectoryName(_httpServer.HttpServerContext.Log.Filename));
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.log"), args: Path.GetFileName(_httpServer.HttpServerContext.Log.Filename));
             foreach (var v in config.Endpoints)
             {
-                HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.uri"), args: v.Uri);
+                _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.uri"), args: v.Uri);
             }
 
-            HttpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Seperator('=');
 
             if (!Directory.Exists(config.PackageBase))
             {
@@ -254,7 +249,7 @@ namespace WebExpress.WebCore
         /// </summary>
         private void Start()
         {
-            HttpServer.Start();
+            _httpServer.Start();
 
             Thread.CurrentThread.Join();
         }
@@ -264,17 +259,40 @@ namespace WebExpress.WebCore
         /// </summary>
         private void Exit()
         {
-            HttpServer.Stop();
+            _httpServer.Stop();
 
             // end of program log
-            HttpServer.HttpServerContext.Log.Seperator('=');
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.errors"), args: HttpServer.HttpServerContext.Log.ErrorCount);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.warnings"), args: HttpServer.HttpServerContext.Log.WarningCount);
-            HttpServer.HttpServerContext.Log.Info(message: InternationalizationManager.I18N("webexpress:app.done"));
-            HttpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.errors"), args: _httpServer.HttpServerContext.Log.ErrorCount);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.warnings"), args: _httpServer.HttpServerContext.Log.WarningCount);
+            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.done"));
+            _httpServer.HttpServerContext.Log.Seperator('/');
+
+            // Stop running
+            (_componentHub as ComponentHub).ShutDown();
 
             // stop logging
-            HttpServer.HttpServerContext.Log.Close();
+            _httpServer.HttpServerContext.Log.Close();
+        }
+
+        /// <summary>
+        /// Returns a component based on its id.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>The instance of the component or null.</returns>
+        public static IComponentManager GetComponent(string id)
+        {
+            return _componentHub.GetComponentManager(id);
+        }
+
+        /// <summary>
+        /// Returns a component based on its type.
+        /// </summary>
+        /// <typeparam name="T">The component class.</typeparam>
+        /// <returns>The instance of the component or null.</returns>
+        public static T GetComponent<T>() where T : IComponentManager
+        {
+            return _componentHub.GetComponentManager<T>();
         }
     }
 }

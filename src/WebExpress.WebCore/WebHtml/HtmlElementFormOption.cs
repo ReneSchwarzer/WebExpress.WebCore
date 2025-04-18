@@ -4,13 +4,15 @@ using System.Text;
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a selection option within an <select>element, or a suggestion within an <datalist>element.
-    /// <select name="top5" size="5">
-    ///  <option>Michael Jackson</option>
-    ///  <option selected>Tom Waits</option>
-    /// </select>
+    /// Represents a selection option within an select element, or a suggestion within an datalist element.
     /// </summary>
-    public class HtmlElementFormOption : HtmlElement, IHtmlFormularItem
+    /// <code>
+    /// <select name="top5" size="5">
+    ///   <option>Michael Jackson</option>
+    ///   <option selected="">Tom Waits</option>
+    /// </select>
+    /// </code>
+    public class HtmlElementFormOption : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
         /// Returns or sets the text.
@@ -18,7 +20,7 @@ namespace WebExpress.WebCore.WebHtml
         public string Text
         {
             get => string.Join("", Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value));
-            set { Elements.Clear(); Elements.Add(new HtmlText(value)); }
+            set { Clear(); Add(new HtmlText(value)); }
         }
 
         /// <summary>
@@ -40,7 +42,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOption()
             : base("option")
@@ -48,13 +50,13 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementFormOption(params IHtmlNode[] nodes)
             : this()
         {
-            Elements.AddRange(nodes);
+            Add(nodes);
         }
 
         /// <summary>

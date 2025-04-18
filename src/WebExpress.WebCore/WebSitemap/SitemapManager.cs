@@ -1,52 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebModule;
-using WebExpress.WebCore.WebPage;
-using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebResource;
+using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebSitemap
 {
     /// <summary>
-    /// The resource manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
+    /// The sitemap manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
     /// </summary>
-    public sealed class SitemapManager : IComponent, ISystemComponent
+    public sealed class SitemapManager : ISitemapManager, ISystemComponent
     {
-        /// <summary>
-        /// Returns the reference to the context of the host.
-        /// </summary>
-        public IHttpServerContext HttpServerContext { get; private set; }
+        private SitemapNode _root = new();
+        private readonly IComponentHub _componentHub;
+        private readonly IHttpServerContext _httpServerContext;
+        private readonly IUri _serverUri;
 
         /// <summary>
         /// Returns the side map.
         /// </summary>
-        private SitemapNode SiteMap { get; set; } = new SitemapNode();
+        public IEnumerable<IEndpointContext> SiteMap => _root.GetPreOrder()
+            .Where(x => x != null)
+            .Select(x => x.EndpointContext);
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        internal SitemapManager()
+        /// <param name="componentHub">The component hub.</param>
+        /// <param name="httpServerContext">The reference to the context of the host.</param>
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
+        private SitemapManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
+            _componentHub = componentHub;
+            _httpServerContext = httpServerContext;
+            _serverUri = new UriEndpoint(_httpServerContext.Endpoints.FirstOrDefault(e => e.Uri.StartsWith("https"))?.ToString()
+                ?? _httpServerContext.Endpoints.FirstOrDefault()?.ToString() ?? "");
 
-        }
-
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        /// <param name="context">The reference to the context of the host.</param>
-        public void Initialization(IHttpServerContext context)
-        {
-            HttpServerContext = context;
-
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:sitemapmanager.initialization")
+                I18N.Translate("webexpress.webcore:sitemapmanager.initialization")
             );
         }
 
@@ -57,13 +56,13 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var newSiteMapNode = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
 
-            HttpServerContext.Log.Debug
+            _httpServerContext.Log.Debug
             (
-                InternationalizationManager.I18N("webexpress:sitemapmanager.refresh")
+                I18N.Translate("webexpress.webcore:sitemapmanager.refresh")
             );
 
             // applications
-            var applications = ComponentManager.ApplicationManager.Applications
+            var applications = _componentHub.ApplicationManager.Applications
                 .Select(x => new
                 {
                     ApplicationContext = x,
@@ -80,33 +79,14 @@ namespace WebExpress.WebCore.WebSitemap
                 ));
             }
 
-            // modules
-            var modules = ComponentManager.ModuleManager.Modules
+            // endpoints
+            var resources = _componentHub.EndpointManager.Endpoints
+                .Where(x => x.Route != null)
                 .Select(x => new
                 {
-                    ModuleContext = x,
-                    x.ContextPath.PathSegments
+                    EndpointContext = x,
+                    x.Route.PathSegments
                 })
-                .OrderBy(x => x.PathSegments.Count());
-
-            foreach (var module in modules)
-            {
-                MergeSitemap(newSiteMapNode, CreateSiteMap
-                (
-                    new Queue<IUriPathSegment>(module.PathSegments),
-                    module.ModuleContext
-                ));
-            }
-
-            // resourcen
-            var resources = ComponentManager.ResourceManager.ResourceItems
-                .SelectMany(x => x.ResourceContexts
-                .Select(y => new
-                {
-                    Item = x,
-                    ResourceContext = y,
-                    y.Uri.PathSegments
-                }))
                 .OrderBy(x => x.PathSegments.Count());
 
             foreach (var item in resources)
@@ -114,19 +94,13 @@ namespace WebExpress.WebCore.WebSitemap
                 MergeSitemap(newSiteMapNode, CreateSiteMap
                 (
                     new Queue<IUriPathSegment>(item.PathSegments),
-                    item.Item,
-                    item.ResourceContext
+                    item.EndpointContext
                 ));
             }
 
-            SiteMap = newSiteMapNode;
+            _root = newSiteMapNode;
 
-            using (var frame = new LogFrameSimple(HttpServerContext.Log))
-            {
-                var list = new List<string>();
-                PrepareForLog(null, list, 2);
-                HttpServerContext.Log.Info(string.Join(Environment.NewLine, list));
-            }
+            Log();
         }
 
         /// <summary>
@@ -140,15 +114,15 @@ namespace WebExpress.WebCore.WebSitemap
             var variables = new Dictionary<string, string>();
             var result = SearchNode
             (
-                SiteMap,
-                new Queue<string>(requestUri.Segments.Select(x => (x == "/" ? x : (x.EndsWith("/") ? x[..^1] : x)))),
+                _root,
+                new Queue<string>(requestUri.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
                 new Queue<IUriPathSegment>(),
                 searchContext
             );
 
-            if (result != null && result.ResourceContext != null)
+            if (result != null && result.EndpointContext != null)
             {
-                if (!result.ResourceContext.Conditions.Any() || result.ResourceContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request)))
+                if (!result.EndpointContext.Conditions.Any() || result.EndpointContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request)))
                 {
                     return result;
                 }
@@ -159,50 +133,102 @@ namespace WebExpress.WebCore.WebSitemap
         }
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context 
+        /// in which the URI is valid. 
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
-        /// <paramref name="parameters"/>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(params Parameter[] parameters) where T : IResource
+        /// <typeparam name="TEndpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
+            where TEndpoint : IEndpoint
         {
-            var node = SiteMap.GetPreOrder()
-                .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
-                .FirstOrDefault();
-
-            return node?.ResourceContext?.Uri.SetParameters(parameters);
+            return GetUri(typeof(TEndpoint), applicationContext, parameters);
         }
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
-        /// <param name="resourceContext">The module context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(IModuleContext moduleContext) where T : IResource
+        /// <param name="endpointType">The endpoint type.</param>
+        /// <param name="applicationContext">The application context.</param>
+        /// <param name="parameters">The parameters to be considered for the uri.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters)
         {
-            var node = SiteMap.GetPreOrder()
-                .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
-                .Where(x => x.ModuleContext == moduleContext)
+            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
+
+            var node = _root.GetPreOrder()
+                .Where(x => endpointContexts.Contains(x.EndpointContext))
                 .FirstOrDefault();
 
-            return node?.ResourceContext?.Uri;
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).SetParameters(parameters);
         }
 
         /// <summary>
-        /// Determines the Uri from the sitemap of a class, taking into account the context in which the uri is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="T">The class from which the uri is to be determined. The class uri must not have any dynamic components (such as '/a/<guid>/b').</typeparam>
-        /// <param name="resourceContext">The module context.</param>
-        /// <returns>Returns the uri taking into account the context or null.</returns>
-        public UriResource GetUri<T>(IResourceContext resourceContext) where T : IResource
+        /// <typeparam name="TEnpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
+        /// <param name="endpointContext">The endpoint context.</param>
+        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        public IUri GetUri<TEnpoint>(IEndpointContext endpointContext)
+            where TEnpoint : IEndpoint
         {
-            var node = SiteMap.GetPreOrder()
-                .Where(x => x.ResourceItem?.ResourceClass == typeof(T))
-                .Where(x => x.ModuleContext == resourceContext.ModuleContext)
+            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
+                .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
+
+            var node = _root.GetPreOrder()
+                .Where(x => endpointContexts.Contains(x.EndpointContext))
                 .FirstOrDefault();
 
-            return node?.ResourceContext?.Uri;
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null);
+        }
+
+        /// <summary>
+        /// Retrieves the endpoint context associated with the given URI.
+        /// </summary>
+        /// <param name="uri">The URI resource to search for.</param>
+        /// <returns>The endpoint context if found, otherwise null.</returns>
+        public IEndpointContext GetEndpoint(UriEndpoint uri)
+        {
+            var variables = new Dictionary<string, string>();
+            var result = SearchNode
+            (
+                _root,
+                new Queue<string>(uri.PathSegments.Select(x => x.ToString())),
+                new Queue<IUriPathSegment>(),
+                new SearchContext()
+            );
+            return result?.EndpointContext;
+        }
+
+        /// <summary>
+        /// Creates the sitemap. Works recursively.
+        /// It is important for the algorithm that the addition of application is sorted 
+        /// by the number of path segments in ascending order.
+        /// </summary>
+        /// <param name="contextPathSegments">The path segments of the context path.</param>
+        /// <param name="applicationContext">The application context.</param>
+        /// <returns>The sitemap root node.</returns>
+        private static SitemapNode CreateSiteMap
+        (
+            Queue<IUriPathSegment> contextPathSegments,
+            IApplicationContext applicationContext
+        )
+        {
+            if (contextPathSegments.Peek() is UriPathSegmentRoot)
+            {
+                contextPathSegments.Dequeue();
+            }
+
+            var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
+            var next = CreateSiteMap(contextPathSegments, applicationContext, root);
+
+            if (next != null)
+            {
+                root.Children.Add(next);
+            }
+
+            return root;
         }
 
         /// <summary>
@@ -218,18 +244,23 @@ namespace WebExpress.WebCore.WebSitemap
         (
             Queue<IUriPathSegment> contextPathSegments,
             IApplicationContext applicationContext,
-            SitemapNode parent = null
+            SitemapNode parent
         )
         {
-            var pathSegment = contextPathSegments.Any() ? contextPathSegments.Dequeue() : null;
+            var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
+
+            if (pathSegment == null)
+            {
+                return null;
+            }
+
             var node = new SitemapNode()
             {
-                PathSegment = pathSegment as IUriPathSegment,
+                PathSegment = pathSegment,
                 Parent = parent,
-                ApplicationContext = applicationContext
             };
 
-            if (contextPathSegments.Any())
+            if (contextPathSegments.Count != 0)
             {
                 node.Children.Add(CreateSiteMap(contextPathSegments, applicationContext, node));
             }
@@ -239,69 +270,71 @@ namespace WebExpress.WebCore.WebSitemap
 
         /// <summary>
         /// Creates the sitemap. Works recursively.
-        /// It is important for the algorithm that the addition of module is sorted 
+        /// It is important for the algorithm that the addition is sorted 
         /// by the number of path segments in ascending order.
         /// </summary>
         /// <param name="contextPathSegments">The path segments of the context path.</param>
-        /// <param name="moduleContext">The application context.</param>
-        /// <param name="parent">The parent node or null if root.</param>
+        /// <param name="endpointContext">The endpoint context.</param>
         /// <returns>The sitemap root node.</returns>
         private static SitemapNode CreateSiteMap
         (
             Queue<IUriPathSegment> contextPathSegments,
-            IModuleContext moduleContext,
-            SitemapNode parent = null
+            IEndpointContext endpointContext
         )
         {
-            var pathSegment = contextPathSegments.Any() ? contextPathSegments.Dequeue() : null;
-            var node = new SitemapNode()
+            if (contextPathSegments.Peek() is UriPathSegmentRoot)
             {
-                PathSegment = pathSegment as IUriPathSegment,
-                Parent = parent,
-                ApplicationContext = moduleContext?.ApplicationContext,
-                ModuleContext = moduleContext
-            };
-
-            if (contextPathSegments.Any())
-            {
-                node.Children.Add(CreateSiteMap(contextPathSegments, moduleContext, node));
+                contextPathSegments.Dequeue();
             }
 
-            return node;
+            var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
+            var next = CreateSiteMap(contextPathSegments, endpointContext, root);
+
+            if (next != null)
+            {
+                root.Children.Add(next);
+            }
+            else
+            {
+                root.EndpointContext = endpointContext;
+            }
+
+            return root;
         }
 
         /// <summary>
         /// Creates the sitemap. Works recursively.
-        /// It is important for the algorithm that the addition of resources is sorted 
+        /// It is important for the algorithm that the addition of endpoint is sorted 
         /// by the number of path segments in ascending order.
         /// </summary>
         /// <param name="contextPathSegments">The path segments of the context path.</param>
-        /// <param name="resourceItem">The resource item.</param>
-        /// <param name="resourceContext">The resource context.</param>
+        /// <param name="endpointContext">The endpoint context.</param>
         /// <param name="parent">The parent node or null if root.</param>
         /// <returns>The sitemap parent node.</returns>
         private static SitemapNode CreateSiteMap
         (
             Queue<IUriPathSegment> contextPathSegments,
-            ResourceItem resourceItem,
-            IResourceContext resourceContext,
+            IEndpointContext endpointContext,
             SitemapNode parent = null
         )
         {
-            var pathSegment = contextPathSegments.Any() ? contextPathSegments.Dequeue() : null;
+            var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
+
+            if (pathSegment == null)
+            {
+                return null;
+            }
+
             var node = new SitemapNode()
             {
-                PathSegment = pathSegment as IUriPathSegment,
+                PathSegment = pathSegment,
                 Parent = parent,
-                ResourceItem = !contextPathSegments.Any() ? resourceItem : null,
-                ApplicationContext = resourceContext?.ModuleContext?.ApplicationContext,
-                ModuleContext = resourceContext?.ModuleContext,
-                ResourceContext = resourceContext
+                EndpointContext = endpointContext
             };
 
-            if (contextPathSegments.Any())
+            if (contextPathSegments.Count != 0)
             {
-                node.Children.Add(CreateSiteMap(contextPathSegments, resourceItem, resourceContext, node));
+                node.Children.Add(CreateSiteMap(contextPathSegments, endpointContext, node));
             }
 
             return node;
@@ -312,7 +345,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="first">The first sitemap to be merged.</param>
         /// <param name="second">The second sitemap to be merged.</param>
-        private void MergeSitemap(SitemapNode first, SitemapNode second)
+        private static void MergeSitemap(SitemapNode first, SitemapNode second)
         {
             if (first.PathSegment.Equals(second.PathSegment))
             {
@@ -320,15 +353,7 @@ namespace WebExpress.WebCore.WebSitemap
                 {
                     foreach (var fc in first.Children.Where(x => x.PathSegment.Equals(sc.PathSegment)))
                     {
-                        if (fc.ResourceItem == null)
-                        {
-                            fc.ResourceItem = sc.ResourceItem;
-                            fc.ApplicationContext = sc.ApplicationContext;
-                            fc.ModuleContext = sc.ModuleContext;
-                            fc.ResourceContext = sc.ResourceContext;
-                            fc.Instance = sc.Instance;
-                            fc.Parent = sc.Parent;
-                        }
+                        fc.EndpointContext ??= sc.EndpointContext;
 
                         MergeSitemap(fc, sc);
                         return;
@@ -357,8 +382,8 @@ namespace WebExpress.WebCore.WebSitemap
             SearchContext searchContext
         )
         {
-            var pathSegment = inPathSegments.Any() ? inPathSegments.Dequeue() : null;
-            var nextPathSegment = inPathSegments.Any() ? inPathSegments.Peek() : null;
+            var pathSegment = inPathSegments.Count != 0 ? inPathSegments.Dequeue() : null;
+            var nextPathSegment = inPathSegments.Count != 0 ? inPathSegments.Peek() : null;
 
             if (IsMatched(node, pathSegment))
             {
@@ -368,34 +393,50 @@ namespace WebExpress.WebCore.WebSitemap
                     variable.Value = pathSegment;
                 }
 
+                var type = node.EndpointContext?.GetType();
+
                 outPathSegments.Enqueue(copy);
 
-                if (nextPathSegment == null && node.ResourceItem != null)
+                if (nextPathSegment == null)
                 {
                     return new SearchResult()
                     {
-                        Id = node.ResourceItem.ResourceId,
-                        Title = node.ResourceItem.Title,
-                        ApplicationContext = node.ApplicationContext,
-                        ModuleContext = node.ModuleContext,
-                        ResourceContext = node.ResourceContext,
+                        EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriResource(outPathSegments.ToArray()),
-                        Instance = CreateInstance(node, new UriResource(outPathSegments.ToArray()), searchContext),
+                        Uri = new UriEndpoint
+                        (
+                            [..
+                                outPathSegments.Concat(inPathSegments
+                                    .Select(x => new UriPathSegmentConstant(x)))
+                            ]
+                        )
+                        {
+                            BasePath = new UriEndpoint([.. outPathSegments])
+                        }
                     };
                 }
-                else if (node.IsLeaf && nextPathSegment != null && node.ResourceItem != null && node.ResourceItem.IncludeSubPaths)
+                else if
+                (
+                    node.IsLeaf
+                    && nextPathSegment != null
+                    && node.EndpointContext != null
+                    && node.EndpointContext.IncludeSubPaths
+                )
                 {
                     return new SearchResult()
                     {
-                        Id = node.ResourceItem.ResourceId,
-                        Title = node.ResourceItem.Title,
-                        ApplicationContext = node.ApplicationContext,
-                        ModuleContext = node.ModuleContext,
-                        ResourceContext = node.ResourceContext,
+                        EndpointContext = node.EndpointContext,
                         SearchContext = searchContext,
-                        Uri = new UriResource(outPathSegments.ToArray()),
-                        Instance = CreateInstance(node, new UriResource(outPathSegments.ToArray()), searchContext),
+                        Uri = new UriEndpoint
+                        (
+                            [..
+                                outPathSegments.Concat(inPathSegments
+                                    .Select(x => new UriPathSegmentConstant(x)))
+                            ]
+                        )
+                        {
+                            BasePath = new UriEndpoint([.. outPathSegments])
+                        }
                     };
                 }
 
@@ -406,62 +447,7 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // 404
-            return new SearchResult()
-            {
-                ApplicationContext = node.ApplicationContext,
-                ModuleContext = node.ModuleContext,
-                ResourceContext = node.ResourceContext,
-                SearchContext = searchContext,
-                Uri = new UriResource(outPathSegments.ToArray())
-            };
-        }
-
-        /// <summary>
-        /// Creates a new instance or if caching is active, a possibly existing instance is returned.
-        /// </summary>
-        /// <param name="node">The sitemap node.</param>
-        /// <param name="uri">The uri.</param>
-        /// <param name="context">The search context.</param>
-        /// <returns>The instance or null.</returns>
-        private static IResource CreateInstance(SitemapNode node, UriResource uri, SearchContext context)
-        {
-            if (node == null || node.ResourceItem == null || node.ResourceContext == null)
-            {
-                return null;
-            }
-
-            if (node.ResourceContext.Cache && node.Instance != null)
-            {
-                return node.Instance;
-            }
-
-            var instance = Activator.CreateInstance(node.ResourceItem.ResourceClass) as IResource;
-
-            if (instance is II18N i18n)
-            {
-                i18n.Culture = context.Culture;
-            }
-
-            if (instance is Resource resorce)
-            {
-                resorce.Id = node.ResourceItem?.ResourceId;
-                resorce.ApplicationContext = node.ResourceContext?.ModuleContext?.ApplicationContext;
-                resorce.ModuleContext = node.ResourceContext?.ModuleContext;
-            }
-
-            if (instance is IPage page)
-            {
-                page.Title = node.ResourceItem?.Title;
-            }
-
-            instance.Initialization(node.ResourceContext);
-
-            if (node.ResourceContext.Cache)
-            {
-                node.Instance = instance;
-            }
-
-            return instance;
+            return null;
         }
 
         /// <summary>
@@ -477,38 +463,59 @@ namespace WebExpress.WebCore.WebSitemap
                 return false;
             }
 
-            return node.PathSegment.IsMatched(pathSegement);
+            return node.PathSegment?.IsMatched(pathSegement) ?? false;
         }
 
         /// <summary>
         /// Information about the component is collected and prepared for output in the log.
         /// </summary>
-        /// <param name="pluginContext">The context of the plugin.</param>
-        /// <param name="output">A list of log entries.</param>
-        /// <param name="deep">The shaft deep.</param>
-        public void PrepareForLog(IPluginContext pluginContext, IList<string> output, int deep)
+        private void Log()
         {
-            output.Add
-            (
-                InternationalizationManager.I18N
-                (
-                    "webexpress:sitemapmanager.sitemap"
-                )
-            );
+            if (!SiteMap.Any())
+            {
+                return;
+            }
 
-            var preorder = SiteMap
-                .GetPreOrder()
-                .Select(x => InternationalizationManager.I18N
+            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            var list = new List<string>
+            {
+                I18N.Translate
                 (
-                    "webexpress:sitemapmanager.preorder",
+                    "webexpress.webcore:sitemapmanager.titel"
+                )
+            };
+
+            var preorder = _root
+                .GetPreOrder()
+                .Select(x => I18N.Translate
+                (
+                    "webexpress.webcore:sitemapmanager.preorder",
                     "  " + x.ToString().PadRight(60),
-                    x.ResourceItem?.ResourceId ?? ""
+                    x.EndpointContext?.EndpointId.ToString() ?? ""
                 ));
 
             foreach (var node in preorder)
             {
-                output.Add(node);
+                list.Add(node);
             }
+
+            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current sitemap.
+        /// </summary>
+        /// <returns>A string that represents the current sitemap.</returns>
+        public override string ToString()
+        {
+            return string.Join(" | ", _root.GetPreOrder());
+        }
+
+        /// <summary>
+        /// Release of unmanaged resources reserved during use.
+        /// </summary>
+        public void Dispose()
+        {
         }
     }
 }

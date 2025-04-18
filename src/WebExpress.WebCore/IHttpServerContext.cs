@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using WebExpress.WebCore.Config;
-using WebExpress.WebCore.WebUri;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebLog;
 
 namespace WebExpress.WebCore
 {
@@ -11,9 +12,9 @@ namespace WebExpress.WebCore
     public interface IHttpServerContext
     {
         /// <summary>
-        /// Returns the uri of the web server.
+        /// Returns the route of the web server.
         /// </summary>
-        string Uri { get; }
+        IRoute Route { get; }
 
         /// <summary>
         /// Returns the endpoints to which the web server responds.
@@ -48,7 +49,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the basic context path.
         /// </summary>
-        UriResource ContextPath { get; }
+        IRoute ContextPath { get; }
 
         /// <summary>
         /// Returns the culture.
@@ -58,7 +59,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns the log for writing status messages to the console and to a log file.
         /// </summary>
-        Log Log { get; }
+        ILog Log { get; }
 
         /// <summary>
         /// Returns the host.

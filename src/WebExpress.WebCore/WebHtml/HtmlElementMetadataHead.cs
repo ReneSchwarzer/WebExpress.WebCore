@@ -10,156 +10,117 @@ namespace WebExpress.WebCore.WebHtml
     /// </summary>
     public class HtmlElementMetadataHead : HtmlElement, IHtmlElementMetadata
     {
+        private readonly HtmlElementMetadataTitle _elementTitle = new HtmlElementMetadataTitle();
+        private readonly HtmlElementMetadataBase _elementBase = new HtmlElementMetadataBase();
+        private IEnumerable<HtmlElementMetadataLink> _elementFavicons = [];
+        private IEnumerable<HtmlElementMetadataStyle> _elementStyles = [];
+        private IEnumerable<HtmlElementScriptingScript> _elementScripts = [];
+        private IEnumerable<HtmlElementScriptingScript> _elementScriptLinks = [];
+        private IEnumerable<HtmlElementMetadataLink> _elementCssLinks = [];
+        private IEnumerable<HtmlElementMetadataMeta> _elementMeta = [];
+
         /// <summary>
         /// Returns or sets the title.
         /// </summary>
         public string Title
         {
-            get => ElementTitle.Title;
-            set => ElementTitle.Title = value;
+            get => _elementTitle.Title;
+            set => _elementTitle.Title = value;
         }
-
-        /// <summary>
-        /// Returns or sets the title element.
-        /// </summary>
-        private HtmlElementMetadataTitle ElementTitle { get; set; }
 
         /// <summary>
         /// Returns or sets the base.
         /// </summary>
         public string Base
         {
-            get => ElementBase.Href;
-            set => ElementBase.Href = value;
+            get => _elementBase.Href;
+            set => _elementBase.Href = value;
         }
-
-        /// <summary>
-        /// Returns or sets the element base.
-        /// </summary>
-        private HtmlElementMetadataBase ElementBase { get; set; }
 
         /// <summary>
         /// Returns or sets the favicon.
         /// </summary>
         public IEnumerable<Favicon> Favicons
         {
-            get => (from x in ElementFavicons select new Favicon(x.Href, x.Type)).ToList();
+            get => _elementFavicons.Select(x => new Favicon(x.Href, x.Type));
             set
             {
-                ElementFavicons.Clear();
-                ElementFavicons.AddRange
-                (
-                    from x in value
-                    select new HtmlElementMetadataLink()
-                    {
-                        Href = x.Url,
-                        Rel = "icon",
-                        Type = x.Mediatype != TypeFavicon.Default ? x.GetMediatyp() : ""
-                    });
+                _elementFavicons = value.Select(x => new HtmlElementMetadataLink()
+                {
+                    Href = x.Url,
+                    Rel = "icon",
+                    Type = x.Mediatype != TypeFavicon.Default ? x.GetMediatyp() : ""
+                });
             }
         }
-
-        /// <summary>
-        /// Returns or sets the favicon link.
-        /// </summary>
-        private List<HtmlElementMetadataLink> ElementFavicons { get; set; }
 
         /// <summary>
         /// Returns or sets the internal stylesheet.
         /// </summary>
         public IEnumerable<string> Styles
         {
-            get => (from x in ElementStyles select x.Code).ToList();
-            set { ElementStyles.Clear(); ElementStyles.AddRange(from x in value select new HtmlElementMetadataStyle(x)); }
+            get => _elementStyles.Select(x => x.Code);
+            set { _elementStyles = value.Select(x => new HtmlElementMetadataStyle(x)); }
         }
-
-        /// <summary>
-        /// Returns or sets the style elements.
-        /// </summary>
-        private List<HtmlElementMetadataStyle> ElementStyles { get; set; }
 
         /// <summary>
         /// Returns or sets the scripts.
         /// </summary>
         public IEnumerable<string> Scripts
         {
-            get => (from x in ElementScripts select x.Code).ToList();
-            set { ElementScripts.Clear(); ElementScripts.AddRange(from x in value select new HtmlElementScriptingScript(x)); }
+            get => _elementScriptLinks.Select(x => x.Code);
+            set { _elementScripts = value.Select(x => new HtmlElementScriptingScript(x)); }
         }
-
-        /// <summary>
-        /// Returns or sets the script elements.
-        /// </summary>
-        private List<HtmlElementScriptingScript> ElementScripts { get; set; }
 
         /// <summary>
         /// Returns or sets the text/javascript.
         /// </summary>
         public IEnumerable<string> ScriptLinks
         {
-            get => (from x in ElementScriptLinks select x.Src).ToList();
+            get => _elementScriptLinks.Select(x => x.Src);
             set
             {
-                ElementScriptLinks.Clear(); ElementScriptLinks.AddRange(from x in value
-                                                                        select new HtmlElementScriptingScript() { Language = "javascript", Src = x, Type = "text/javascript" });
+                _elementScriptLinks = value.Select(x => new HtmlElementScriptingScript()
+                {
+                    Language = "javascript",
+                    Src = x,
+                    Type = "text/javascript"
+                });
             }
         }
-
-        /// <summary>
-        /// Returns or sets the external scripts.
-        /// </summary>
-        private List<HtmlElementScriptingScript> ElementScriptLinks { get; set; }
 
         /// <summary>
         /// Returns or sets the internal stylesheet.
         /// </summary>
         public IEnumerable<string> CssLinks
         {
-            get => (from x in ElementCssLinks select x.Href).ToList();
+            get => _elementCssLinks.Select(x => x.Href);
             set
             {
-                ElementCssLinks.Clear(); ElementCssLinks.AddRange(from x in value
-                                                                  select new HtmlElementMetadataLink() { Rel = "stylesheet", Href = x, Type = "text/css" });
+                _elementCssLinks = value.Select(x => new HtmlElementMetadataLink()
+                {
+                    Rel = "stylesheet",
+                    Href = x,
+                    Type = "text/css"
+                });
             }
         }
-
-        /// <summary>
-        /// Returns or sets the css link.
-        /// </summary>
-        private List<HtmlElementMetadataLink> ElementCssLinks { get; set; }
 
         /// <summary>
         /// Returns or sets the metadata.
         /// </summary>
         public IEnumerable<KeyValuePair<string, string>> Meta
         {
-            get => (from x in ElementMeta select new KeyValuePair<string, string>(x.Key, x.Value)).ToList();
-            set
-            {
-                ElementMeta.Clear(); ElementMeta.AddRange(from x in value
-                                                          select new HtmlElementMetadataMeta(x.Key, x.Value));
-            }
+            get => _elementMeta.Select(x => new KeyValuePair<string, string>(x.Key, x.Value));
+            set { _elementMeta = value.Select(x => new HtmlElementMetadataMeta(x.Key, x.Value)); }
         }
 
         /// <summary>
-        /// Returns or sets the metadata elements.
-        /// </summary>
-        private List<HtmlElementMetadataMeta> ElementMeta { get; set; }
-
-        /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementMetadataHead()
             : base("head")
         {
-            ElementTitle = new HtmlElementMetadataTitle();
-            ElementBase = new HtmlElementMetadataBase();
-            ElementFavicons = new List<HtmlElementMetadataLink>();
-            ElementStyles = new List<HtmlElementMetadataStyle>();
-            ElementScripts = new List<HtmlElementScriptingScript>();
-            ElementScriptLinks = new List<HtmlElementScriptingScript>();
-            ElementCssLinks = new List<HtmlElementMetadataLink>();
-            ElementMeta = new List<HtmlElementMetadataMeta>();
         }
 
         /// <summary>
@@ -173,7 +134,7 @@ namespace WebExpress.WebCore.WebHtml
 
             if (!string.IsNullOrWhiteSpace(Title))
             {
-                ElementTitle.ToString(builder, deep + 1);
+                _elementTitle.ToString(builder, deep + 1);
             }
 
             if (!string.IsNullOrWhiteSpace(Base))
@@ -181,32 +142,32 @@ namespace WebExpress.WebCore.WebHtml
                 //ElementBase.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementFavicons)
+            foreach (var v in _elementFavicons)
             {
                 v.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementStyles)
+            foreach (var v in _elementStyles)
             {
                 v.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementScriptLinks)
+            foreach (var v in _elementScriptLinks)
             {
                 v.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementScripts)
+            foreach (var v in _elementScripts)
             {
                 v.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementCssLinks)
+            foreach (var v in _elementCssLinks)
             {
                 v.ToString(builder, deep + 1);
             }
 
-            foreach (var v in ElementMeta)
+            foreach (var v in _elementMeta)
             {
                 v.ToString(builder, deep + 1);
             }

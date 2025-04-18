@@ -39,10 +39,15 @@ componentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' n
 componentmanager.duplicate=Die Komponente '{0}' wurde bereits registriert.
 componentmanager.remove=Die Komponente '{0}' wurde entfernt.
 componentmanager.component=Komponenten:
+componentmanager.name=Komponente: '{0}'
+
+logmanager.initialization=Der Logmanager wurde initialisiert.
+logmanager.titel=Logmanager
 
 internationalizationmanager.initialization=Der Internationalisierungsmanager wurde initialisiert.
 internationalizationmanager.register=Das Plugin '{0}' wurde im Internationalizationmanager registriert.
 
+packagemanager.titel=Paketmanager:
 packagemanager.initialization=Der Paketmanager wurde initialisiert.
 packagemanager.existing=Das Paket '{0}' ist im Katalog registriert.
 packagemanager.add=Das Paket '{0}' wird im Katalog neu aufgenommen.
@@ -51,23 +56,26 @@ packagemanager.scan=Das Verzeichnis '{0}' wird auf neue Pakete gescannt.
 packagemanager.save=Der Katalog wird gespeichert.
 packagemanager.packagenotfound=Das Paket '{0}' wurde nicht im Dateisystem gefunden.
 packagemanager.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
+packagemanager.package=Package: '{0}'
 
 pluginmanager.initialization=Der Pluginmanager wurde initialisiert.
 pluginmanager.load={0}.dll wird geladen. Version = '{1}'
 pluginmanager.created=Das Plugin '{0}' wurde erstellt und im PluginManager registriert.
 pluginmanager.duplicate=Das Plugin '{0}' wurde bereits im PluginManager registriert.
+pluginmanager.tomany=Es ist mehr als eine Pluginklasse vorhanden! Das Plugin '{0}' wird nicht geladen.
 pluginmanager.notavailable=Das Plugin '{0}' ist im PluginManager nicht vorhanden.
 pluginmanager.plugin=Plugin: '{0}'
 pluginmanager.pluginmanager.label=Plugin Manager:
 pluginmanager.pluginmanager.system=Systemplugin: '{0}'
 pluginmanager.pluginmanager.custom=Benutzerdefiniertes Plugin: '{0}'
 pluginmanager.pluginmanager.unfulfilleddependencies=Plugin mit unerfüllten Abhängigkeiten: '{0}'
-pluginmanager.plugin.initialization=Das Plugin '{0}' wurde initialisiert.
 pluginmanager.plugin.processing.start=Das Plugin '{0}' wird ausgeführt.
 pluginmanager.plugin.processing.end=Die Ausführung des Plugin '{0}' wurde beendet.
 pluginmanager.fulfilleddependencies=Das Plugin '{0}' erfüllt alle Abhängigkeiten.
 pluginmanager.unfulfilleddependencies=Das Plugin '{0}' erfüllt eine Abhängigkeit zu dem Plugin '{1}' nicht.
+pluginmanager.applicationless=Das Plugin '{0}' besitzt keine Angaben zur Anwendung.
 
+applicationmanager.titel=Anwendungsmanager:
 applicationmanager.initialization=Der Anwendungsmanager wurde initialisiert.
 applicationmanager.register=Die Anwendung '{0}' wurde erstellt und im Anwendungsmanager registriert.
 applicationmanager.duplicate=Die Anwendung '{0}' wurde bereits im Anwendungsmanager registriert.
@@ -77,55 +85,90 @@ applicationmanager.application.processing.start=Die Anwendung '{0}' wird ausgef�
 applicationmanager.application.processing.end=Die Ausführung der Anwendung '{0}' wurde beendet.
 applicationmanager.application.boot.notfound=Das Plugin '{0}' ist nicht bekannt.
 
-modulemanager.initialization=Der Modulmanager wurde initialisiert.
-modulemanager.register=Das Modul '{0}' wurde der Anwendung '{1}' zugewiesen und im Modulmanager registriert.
-modulemanager.duplicat=Das Modul '{0}' wurde bereits in der Anwendung '{1}' registriert.
-modulemanager.applicationless=Das Modul '{0}' besitzt keine Angaben zur Anwendung.
-modulemanager.module=Module: '{0}' für die Anwendung(n) '{1}'
-modulemanager.module.initialization=Das Modul '{1}' der Anwendung {0} wurde initialisiert.
-modulemanager.module.processing.start=Das Modul '{1}' der Anwendung {0} wird ausgeführt.
-modulemanager.module.processing.end=Die Ausführung des Modul '{1}' der Anwendung {0} wurde beendet.
-
 resourcemanager.initialization=Der Ressourcenmanager wurde initialisiert.
-resourcemanager.register={0} Ressource(n) wurden dem Modul '{1}' zugewiesen.
-resourcemanager.modulenotfound=Das Modul '{1}' wurde nicht gefunden, welches in der Ressource '{0}' angegeben wurde.
-resourcemanager.moduleless=Die Ressource '{0}' besitzt keine Angaben zum Modul.
-resourcemanager.addresource=Die Ressource '{0}' wurde in dem Modul '{1}' registiert.
-resourcemanager.addresource.duplicate=Die Ressource '{0}' des Moduls '{1}' ist bereits hinzugefügt worden.
-resourcemanager.addresource.error=Die Ressource '{0}' des Moduls '{1}' konnte nicht hinzugefügt werden.
-resourcemanager.sitemap=Inhalt der Sitemap für das Modul '{0}':
+resourcemanager.register={0} Ressource(n) wurden der Anwendung '{1}' zugewiesen.
+resourcemanager.addresource=Die Ressource '{0}' wurde in der Anwendung '{1}' registiert.
+resourcemanager.addresource.duplicate=Die Ressource '{0}' der Anwendung '{1}' ist bereits hinzugefügt worden.
+resourcemanager.addresource.error=Die Ressource '{0}' der Anwendung '{1}' konnte nicht hinzugefügt werden.
+resourcemanager.sitemap=Inhalt der Sitemap für die Anwendung '{0}':
 resourcemanager.wrongtype=Der Type '{0}' implementiert die Schnittstelle '{1}' nicht.
-resourcemanager.resource=Ressource: '{0}' für das Modul '{1}'
+resourcemanager.resource=Ressource: '{0}' für die Anwednung '{1}'
 
-responsemanager.initialization=Der Responsemanagermanager wurde initialisiert.
-responsemanager.register=Status {0} wurde im Module '{1}' registriert und der Statusseite '{2}' zugewiesen.
-responsemanager.duplicat=Der Status {0} wurde bereits im Module '{1}' registriert registriert. Die Statusseite '{2}' wird daher nicht verwendet.
-responsemanager.statuscode=Ein Statuscode wurde der Ressource '{1}' für das Modul '{0}' nicht zugewiesen.
-responsemanager.statuspage=Statuscode: '{0}'
+assetmanager.initialization=Der Assetmanager wurde initialisiert.
+assetmanager.addresource=Das Asset '{0}' wurde in der Anwendung '{1}' registiert.
 
+pagemanager.initialization=Der Pagemanager wurde initialisiert.  
+pagemanager.addpage=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
+pagemanager.page=Seite: '{0}' für die Anwendung '{1}'  
+
+restapimanager.initialization=Der RestApiManager wurde initialisiert.  
+restapimanager.addrestapi=Die Seite '{0}' wurde in der Anwendung '{1}' registiert.  
+restapimanager.resource=Seite: '{0}' für die Anwendung '{1}'  
+restapimanager.methodnotsupported=Die Methode '{0}' wird nicht unterstützt.
+
+statuspagemanager.titel=Statuspagemanager:
+statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
+statuspagemanager.register=Der Status '{0}' wurde registriert und der Statusseite '{1}' zugewiesen.
+statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
+statuspagemanager.statuscodeless=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
+statuspagemanager.statuspage=Statuscode: '{0}'
+
+sitemapmanager.titel=Sitemap:
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.
 sitemapmanager.refresh=Die Sitemap wird neu aufgebaut.
 sitemapmanager.alreadyassigned=Der Knoten der Sitemap '{0}' ist bereits zugewiesen. Die Ressource '{1}' wird nicht in die Sitemap aufgenommen.
 sitemapmanager.addresource=Die Ressource '{0}' wurde in der Sitemap registriert.
 sitemapmanager.addresource.error=Die Ressource '{0}' konnte nicht in der Sitemap hinzugefügt werden.
 sitemapmanager.preorder={0} => {1}
-sitemapmanager.sitemap=Sitemap:
 sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gemerdged werden.
 
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
 
-eventmanager.initialization=Der Eventmanager wurde initialisiert.
+settingpagemanager.initialization=Der Settingpagemanager wurde initialisiert.
+settingpagemanager.register.category=Die Einstellungskategorie '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.group=Die Einstellungsgruppe '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.page=Die Einstellungsseite '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.
+settingpagemanager.register.nocategory=Die Einstellungsseite '{0}' wurde keiner Einstellungskategorie zugewiesen.
+settingpagemanager.register.nogroup=Die Einstellungsseite '{0}' wurde keiner Einstellungsgruppe zugewiesen.
+settingpagemanager.category.general.name=Allgemeine Einstellungen
+settingpagemanager.category.general.description=Standardkategorie für allgemeine Anwendungseinstellungen.
+settingpagemanager.group.general.name=Allgemein
+settingpagemanager.group.general.description=Allgemeine Anwendungseinstellungen.
 
-jobmanager.initialization=Der Schedulemanager wurde initialisiert.
-jobmanager.register=Das Plugin '{0}' wurde im Schedulemanager registriert.
-jobmanager.job.register=Der Job '{1}' wurden dem Modul '{0}' zugewiesen.
-jobmanager.moduleless=Der Job '{0}' besitzt keine Angaben zum Modul.
-jobmanager.wrongmodule=Der Job '{1}' ist kein Teil des Moduls {0}.
-jobmanager.job=Job: '{0}' für Modul '{1}'
+eventmanager.titel=Eventmanager:
+eventmanager.initialization=Der Eventmanager wurde initialisiert.
+eventmanager.register=Der Eventhandler '{0}' wurde der Anwendung '{1}' zugewiesen und im Eventmanager registriert.
+eventmanager.duplicate=Der Eventhandler '{0}' wurde bereits in der Anwendung '{1}' registriert.
+eventmanager.eventless=Der Eventhandler '{0}' besitzt keine Angaben zu einem Event.
+eventmanager.handler=Eventhandler: '{0}' für die Anwendung '{1}'.
+
+jobmanager.initialization=Der Jobmanager wurde initialisiert.
+jobmanager.register=Der Job '{0}' wurde der Anwendung '{1}' zugewiesen und im Jobmanager registriert.
+jobmanager.duplicate=Der Job '{0}' wurde bereits in der Anwendung '{1}' registriert.
+jobmanager.jobless=Der Job '{0}' besitzt keine Angaben zu einem Job.
+jobmanager.job=Job: '{0}' für Anwendung '{1}'
 jobmanager.job.process=Der Job '{0}' wird ausgeführt.
 jobmanager.cron.parseerror=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' kann nicht verarbeitet werden.
 jobmanager.cron.range=Syntaxfehler in der Zeitangabe eines Jobs. Der Wert '{0}' ist außerhalb des gültigen Bereiches.
 
+fragmentmanager.initialization=Der Fragmentmanager wurde initialisiert.
+fragmentmanager.register=Das Fragment '{0}' wurde in der Sektion '{1}' der Anwendung '{2}' registriert.
+fragmentmanager.error.section=Die Angabe der Sektion ist fehlerhaft.
+fragmentmanager.wrongtype=Der Typ '{0}' implementiert die Schnittstelle '{1}' nicht.
+fragmentmanager.addfragment.duplicate=Das Fragment '{0}' aus dem Plugin '{1}' ist bereits hinzugefügt worden.
+fragmentmanager.titel=Fragmente:
+fragmentmanager.fragment=Fragment: '{0}' für die Anwendung '{1}'.
+
+identitymanager.initialization=Der Identitymanager wurde initialisiert.
+identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
+identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der Anwendung '{1}' registriert.
+identitymanager.registerrole=Die Rolle '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
+identitymanager.duplicaterole=Die Rolle '{0}' wurde bereits in der Anwendung '{1}' registriert.
+
+thememanager.initialization=Der Thememanager wurde initialisiert.
+thememanager.addtheme=Das Theme '{0}' wurde in der Anwendung '{1}' registiert.
+thememanager.titel=Designvorlagen:
+thememanager.theme=Designvorlage: '{0}' für die Anwendung '{1}'.
+
 resource.variable.duplicate=Variable '{0}' bereits vorhanden!
 resource.file={0}: Datei '{1}' wurde geladen.
-

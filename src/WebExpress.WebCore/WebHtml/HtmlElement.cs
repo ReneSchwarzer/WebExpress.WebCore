@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,9 @@ namespace WebExpress.WebCore.WebHtml
     /// </summary>
     public class HtmlElement : IHtmlNode
     {
+        private readonly List<IHtmlNode> _elements = [];
+        private readonly List<IHtmlAttribute> _attributes = [];
+
         /// <summary>
         /// Returns or sets the name. des Attributes
         /// </summary>
@@ -17,12 +21,12 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected List<IHtmlAttribute> Attributes { get; } = new List<IHtmlAttribute>();
+        protected IEnumerable<IHtmlAttribute> Attributes => _attributes;
 
         /// <summary>
-        /// Returns or sets the elements.
+        /// Returns the elements.
         /// </summary>
-        protected List<IHtmlNode> Elements { get; } = new List<IHtmlNode>();
+        protected IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Returns or sets the id.
@@ -94,24 +98,30 @@ namespace WebExpress.WebCore.WebHtml
 
         /// <summary>
         /// Determines whether the element needs an end tag.
-        /// e.g.: true = <div></div> false = <br>
+        /// e.g.: true = <div></div> false = <br/>
         /// </summary>
         public bool CloseTag { get; protected set; }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name of the item.</param>
+        /// <param name="name">The name of the HTML element.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag. Default is true.</param>
         public HtmlElement(string name, bool closeTag = true)
         {
+
             ElementName = name;
+
             CloseTag = closeTag;
-        }
+
+        }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name of the item.</param>
+        /// <param name="name">The name of the HTML element.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag.</param>
+        /// <param name="nodes">An array of IHtml nodes to be added to the element.</param>
         public HtmlElement(string name, bool closeTag, params IHtml[] nodes)
             : this(name, closeTag)
         {
@@ -119,19 +129,70 @@ namespace WebExpress.WebCore.WebHtml
             {
                 if (v is HtmlAttribute attr)
                 {
-                    Attributes.Add(attr);
+                    _attributes.Add(attr);
                 }
                 else if (v is HtmlElement element)
                 {
-                    Elements.Add(element);
+                    _elements.Add(element);
                 }
                 else if (v is HtmlText text)
                 {
-                    Elements.Add(text);
+                    _elements.Add(text);
                 }
             }
         }
 
+        /// <summary>
+        /// Adds one or more elements to the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void Add(params IHtmlNode[] elements)
+        {
+            _elements.AddRange(elements);
+        }
+
+        /// <summary>
+        /// Adds one or more elements to the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void Add(IEnumerable<IHtmlNode> elements)
+        {
+            _elements.AddRange(elements);
+        }
+
+        /// <summary>
+        /// Adds one or more elements to the beginning of the html element.
+        /// </summary>
+        /// <param name="elements">The elements to add.</param>
+        public void AddFirst(params IHtmlNode[] elements)
+        {
+            _elements.InsertRange(0, elements);
+        }
+        /// <summary>
+        /// Adds one or more attributes to the html element.
+        /// </summary>
+        /// <param name="attributes">The attributes to add.</param>
+        public void Add(params IHtmlAttribute[] attributes)
+        {
+            _attributes.AddRange(attributes);
+        }
+
+        /// <summary>
+        /// Clear all elements frrom the html element.
+        /// </summary>
+        public void Clear()
+        {
+            _elements.Clear();
+        }
+
+        /// <summary>
+        /// Clear all elements from the html element that match the given predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to match elements.</param>
+        protected void Clear(Func<IHtmlNode, bool> predicate)
+        {
+            _elements.RemoveAll(new Predicate<IHtmlNode>(predicate));
+        }
         /// <summary>
         /// Returns the value of an attribute.
         /// </summary>
@@ -139,7 +200,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The value of the attribute.</returns>
         protected string GetAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
@@ -156,7 +217,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>True if attribute exists, false otherwise.</returns>
         protected bool HasAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             return (a != null);
         }
@@ -168,13 +229,13 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="value">The value of the attribute.</param>
         protected void SetAttribute(string name, string value)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    Attributes.Remove(a);
+                    _attributes.Remove(a);
                 }
                 else if (a is HtmlAttribute)
                 {
@@ -185,7 +246,7 @@ namespace WebExpress.WebCore.WebHtml
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
-                    Attributes.Add(new HtmlAttribute(name, value));
+                    _attributes.Add(new HtmlAttribute(name, value));
                 }
             }
         }
@@ -196,11 +257,11 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         protected void SetAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a == null)
             {
-                Attributes.Add(new HtmlAttributeNoneValue(name));
+                _attributes.Add(new HtmlAttributeNoneValue(name));
             }
         }
 
@@ -210,11 +271,11 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         protected void RemoveAttribute(string name)
         {
-            var a = Attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a != null)
             {
-                Attributes.Remove(a);
+                _attributes.Remove(a);
             }
         }
 
@@ -225,7 +286,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The element.</returns>
         protected HtmlElement GetElement(string name)
         {
-            var a = Elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == name).FirstOrDefault();
+            var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == name).FirstOrDefault();
 
             return a as HtmlElement;
         }
@@ -238,14 +299,14 @@ namespace WebExpress.WebCore.WebHtml
         {
             if (element != null)
             {
-                var a = Elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == element.ElementName);
+                var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == element.ElementName);
 
                 foreach (var v in a)
                 {
-                    Elements.Remove(v);
+                    _elements.Remove(v);
                 }
 
-                Elements.Add(element);
+                _elements.Add(element);
             }
         }
 
@@ -255,7 +316,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The text.</returns>
         protected string GetText()
         {
-            var a = Elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value);
+            var a = _elements.Where(x => x is HtmlText).Select(x => (x as HtmlText).Value);
 
             return string.Join(" ", a);
         }
@@ -267,19 +328,19 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="deep">The call depth.</param>
         public virtual void ToString(StringBuilder builder, int deep)
         {
-            ToPreString(builder, deep);
-
             var closeTag = false;
             var nl = true;
 
-            if (Elements.Count == 1 && Elements.First() is HtmlText)
+            ToPreString(builder, deep);
+
+            if (_elements.Count == 1 && Elements.First() is HtmlText)
             {
                 closeTag = true;
                 nl = false;
 
-                Elements.First().ToString(builder, 0);
+                _elements.First().ToString(builder, 0);
             }
-            else if (Elements.Count > 0)
+            else if (_elements.Count > 0)
             {
                 closeTag = true;
                 var count = builder.Length;
@@ -294,7 +355,7 @@ namespace WebExpress.WebCore.WebHtml
                     nl = false;
                 }
             }
-            else if (Elements.Count == 0)
+            else if (_elements.Count == 0)
             {
                 nl = false;
             }
@@ -306,10 +367,10 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Convert to a string using a StringBuilder.
+        /// Converts the element to a string and appends it to the provided StringBuilder.
         /// </summary>
-        /// <param name="builder">The string builder.</param>
-        /// <param name="deep">The call depth.</param>
+        /// <param name="builder">The StringBuilder to append the string representation to.</param>
+        /// <param name="deep">The depth of the element in the HTML hierarchy, used for indentation.</param>
         protected virtual void ToPreString(StringBuilder builder, int deep)
         {
             if (!Inline)
@@ -318,22 +379,23 @@ namespace WebExpress.WebCore.WebHtml
                 builder.Append(string.Empty.PadRight(deep));
             }
 
-            builder.Append("<");
+            builder.Append('<');
             builder.Append(ElementName);
-            foreach (var v in Attributes)
+            foreach (var attribute in Attributes)
             {
-                builder.Append(" ");
-                v.ToString(builder, 0);
+                builder.Append(' ');
+                attribute.ToString(builder, 0);
             }
-            builder.Append(">");
+
+            builder.Append('>');
         }
 
         /// <summary>
-        /// Convert to a string using a string builder.
+        /// Converts the element to a string and appends the closing tag to the provided StringBuilder.
         /// </summary>
-        /// <param name="builder">The string builder.</param>
-        /// <param name="deep">The call depth.</param>
-        /// <param name="nl">Start the closing tag on a new line.</param>
+        /// <param name="builder">The StringBuilder to append the string representation to.</param>
+        /// <param name="deep">The depth of the element in the HTML hierarchy, used for indentation.</param>
+        /// <param name="nl">Indicates whether the closing tag should start on a new line.</param>
         protected virtual void ToPostString(StringBuilder builder, int deep, bool nl = true)
         {
             if (!Inline && nl)
@@ -344,7 +406,7 @@ namespace WebExpress.WebCore.WebHtml
 
             builder.Append("</");
             builder.Append(ElementName);
-            builder.Append(">");
+            builder.Append('>');
         }
 
         /// <summary>

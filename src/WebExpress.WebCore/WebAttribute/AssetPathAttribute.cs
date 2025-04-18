@@ -1,9 +1,16 @@
-﻿namespace WebExpress.WebCore.WebAttribute
+﻿using System;
+
+namespace WebExpress.WebCore.WebAttribute
 {
-    public class AssetPathAttribute : System.Attribute, IApplicationAttribute, IModuleAttribute
+
+    /// <summary>
+    /// Attribute to specify the path for assets in the application.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class AssetPathAttribute : Attribute, IApplicationAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="assetPath">The path for assets.</param>
         public AssetPathAttribute(string assetPath)

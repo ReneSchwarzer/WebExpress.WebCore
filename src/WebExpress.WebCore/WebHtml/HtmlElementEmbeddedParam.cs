@@ -2,17 +2,16 @@
 {
     /// <summary>
     /// Represents a parameter for a plugin that can be used for the display 
-    /// of an <object> embedded element.
+    /// of an object embedded element.
     /// </summary>
     public class HtmlElementEmbeddedParam : HtmlElement, IHtmlElementEmbedded
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementEmbeddedParam()
             : base("param", false)
         {
-
         }
     }
 }

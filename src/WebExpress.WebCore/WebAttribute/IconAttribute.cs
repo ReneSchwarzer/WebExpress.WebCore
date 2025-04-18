@@ -1,9 +1,15 @@
-﻿namespace WebExpress.WebCore.WebAttribute
+﻿using System;
+
+namespace WebExpress.WebCore.WebAttribute
 {
-    public class IconAttribute : System.Attribute, IPluginAttribute, IApplicationAttribute, IModuleAttribute
+    /// <summary>
+    /// Attribute to specify an icon for a plugin, application, or status page.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class IconAttribute : Attribute, IPluginAttribute, IApplicationAttribute, IStatusPageAttribute
     {
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="icon">The icon.</param>
         public IconAttribute(string icon)
