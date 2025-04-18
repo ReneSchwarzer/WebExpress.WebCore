@@ -59,23 +59,23 @@ namespace WebExpress.WebCore.Test.Data
         /// <returns>A list of identities.</returns>
         private static IEnumerable<MockIdentity> CreateTestUsers()
         {
-            var passwort = new SecureString();
-            passwort.AppendChar('a');
-            passwort.AppendChar('b');
-            passwort.AppendChar('c');
-            passwort.MakeReadOnly();
+            var password = new SecureString();
+            password.AppendChar('a');
+            password.AppendChar('b');
+            password.AppendChar('c');
+            password.MakeReadOnly();
 
-            var user = new MockIdentity(Guid.NewGuid(), "Alice", "alice@example.com", IdentityManager.ComputeHash(passwort));
+            var user = new MockIdentity(Guid.NewGuid(), "Alice", "alice@example.com", IdentityManager.ComputeHash(password));
             user.Assign([_groups.ElementAt(0)]);
 
             yield return user;
 
-            user = new MockIdentity(Guid.NewGuid(), "Bob", "bob@example.com", IdentityManager.ComputeHash(passwort));
+            user = new MockIdentity(Guid.NewGuid(), "Bob", "bob@example.com", IdentityManager.ComputeHash(password));
             user.Assign([_groups.ElementAt(1)]);
 
             yield return user;
 
-            user = new MockIdentity(Guid.NewGuid(), "Charlie", "charlie@example.com", IdentityManager.ComputeHash(passwort));
+            user = new MockIdentity(Guid.NewGuid(), "Charlie", "charlie@example.com", IdentityManager.ComputeHash(password));
             user.Assign([_groups.ElementAt(2)]);
 
             yield return user;
