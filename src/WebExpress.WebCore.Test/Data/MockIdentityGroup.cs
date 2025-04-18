@@ -31,8 +31,7 @@ namespace WebExpress.WebCore.Test.Data
         /// <param name="name">The name of the group.</param>
         public MockIdentityGroup(Guid id, string name)
         {
-            Id = id; ;
-            Name = name;
+            Id = id;
         }
 
         /// <summary>
