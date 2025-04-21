@@ -8,6 +8,7 @@ our tutorials offer something for everyone.
 # Getting Started
 Begin with our basic tutorial:
 - [HelloWorld](https://github.com/ReneSchwarzer/WebExpress.Tutorial.HelloWorld#readme)
+- [WebUI](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebUI#readme)
 - [WebApp](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebApp#readme)
 - [WebIndex](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebIndex#readme)
 
