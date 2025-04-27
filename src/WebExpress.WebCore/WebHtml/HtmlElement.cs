@@ -83,6 +83,15 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Returns or sets the theme.
+        /// </summary>
+        public string DataTheme
+        {
+            get => GetAttribute("data-bs-theme");
+            set => SetAttribute("data-bs-theme", value);
+        }
+
+        /// <summary>
         /// Returns or sets the on click attribute.
         /// </summary>
         public string OnClick
@@ -114,7 +123,8 @@ namespace WebExpress.WebCore.WebHtml
 
             CloseTag = closeTag;
 
-        }
+        }
+
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -167,7 +177,8 @@ namespace WebExpress.WebCore.WebHtml
         public void AddFirst(params IHtmlNode[] elements)
         {
             _elements.InsertRange(0, elements);
-        }
+        }
+
         /// <summary>
         /// Adds one or more attributes to the html element.
         /// </summary>
@@ -192,7 +203,8 @@ namespace WebExpress.WebCore.WebHtml
         protected void Clear(Func<IHtmlNode, bool> predicate)
         {
             _elements.RemoveAll(new Predicate<IHtmlNode>(predicate));
-        }
+        }
+
         /// <summary>
         /// Returns the value of an attribute.
         /// </summary>
@@ -407,6 +419,15 @@ namespace WebExpress.WebCore.WebHtml
             builder.Append("</");
             builder.Append(ElementName);
             builder.Append('>');
+        }
+
+        /// <summary>
+        /// Sets the valueless user-defined attribute.
+        /// </summary>
+        /// <param name="name">The attribute name.</param>
+        public void AddUserAttribute(string name)
+        {
+            SetAttribute(name);
         }
 
         /// <summary>
