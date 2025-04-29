@@ -118,13 +118,9 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag. Default is true.</param>
         public HtmlElement(string name, bool closeTag = true)
         {
-
             ElementName = name;
-
             CloseTag = closeTag;
-
         }
-
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -156,44 +152,59 @@ namespace WebExpress.WebCore.WebHtml
         /// Adds one or more elements to the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void Add(params IHtmlNode[] elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement Add(params IHtmlNode[] elements)
         {
             _elements.AddRange(elements);
+
+            return this;
         }
 
         /// <summary>
         /// Adds one or more elements to the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void Add(IEnumerable<IHtmlNode> elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement Add(IEnumerable<IHtmlNode> elements)
         {
             _elements.AddRange(elements);
+
+            return this;
         }
 
         /// <summary>
         /// Adds one or more elements to the beginning of the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void AddFirst(params IHtmlNode[] elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement AddFirst(params IHtmlNode[] elements)
         {
             _elements.InsertRange(0, elements);
+
+            return this;
         }
 
         /// <summary>
         /// Adds one or more attributes to the html element.
         /// </summary>
         /// <param name="attributes">The attributes to add.</param>
-        public void Add(params IHtmlAttribute[] attributes)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement Add(params IHtmlAttribute[] attributes)
         {
             _attributes.AddRange(attributes);
+
+            return this;
         }
 
         /// <summary>
         /// Clear all elements frrom the html element.
         /// </summary>
-        public void Clear()
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement Clear()
         {
             _elements.Clear();
+
+            return this;
         }
 
         /// <summary>
@@ -425,9 +436,12 @@ namespace WebExpress.WebCore.WebHtml
         /// Sets the valueless user-defined attribute.
         /// </summary>
         /// <param name="name">The attribute name.</param>
-        public void AddUserAttribute(string name)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement AddUserAttribute(string name)
         {
             SetAttribute(name);
+
+            return this;
         }
 
         /// <summary>
@@ -435,9 +449,12 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="name">The attribute name.</param>
         /// <param name="value">The value of the attribute.</param>
-        public void AddUserAttribute(string name, string value)
+        /// <returns>The current instance for method chaining.</returns>
+        public HtmlElement AddUserAttribute(string name, string value)
         {
             SetAttribute(name, value);
+
+            return this;
         }
 
         /// <summary>
