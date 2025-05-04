@@ -1,4 +1,5 @@
 ﻿using System;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -10,7 +11,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns or sets the redirection target.
         /// </summary>
-        public string Url { get; set; }
+        public IUri Uri { get; set; }
 
         /// <summary>
         /// Determines whether a permanent redirection should occur.
@@ -20,12 +21,12 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="url">The redirection target.</param> 
+        /// <param name="uri">The redirection target.</param> 
         /// <param name="permanent">true if 301 should be sent, false for 302.</param>
-        public RedirectException(string url, bool permanent = false)
-            : base("Redirecting to " + url)
+        public RedirectException(IUri uri, bool permanent = false)
+            : base("Redirecting to " + uri)
         {
-            Url = url;
+            Uri = uri;
             Permanet = permanent;
         }
     }

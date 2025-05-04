@@ -277,7 +277,7 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = name,
                         Manufacturer = type.Assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = type.Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        Icon = RouteEndpoint.Combine(_httpServerContext?.ContextPath, icon),
+                        Icon = RouteEndpoint.Combine(_httpServerContext?.Route, icon),
                         Description = description,
                         Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                     };

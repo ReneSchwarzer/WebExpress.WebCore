@@ -162,7 +162,7 @@ namespace WebExpress.WebCore.WebResource
                 // assign the resource to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.ContextPath.Concat
+                    var prefix = applicationContext.Route.Concat
                     (
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()

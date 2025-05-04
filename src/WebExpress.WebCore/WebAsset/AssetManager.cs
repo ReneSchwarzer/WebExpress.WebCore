@@ -142,7 +142,7 @@ namespace WebExpress.WebCore.WebAsset
                     // assign the asset to existing applications
                     foreach (var applicationContext in applicationContexts)
                     {
-                        var prefix = applicationContext.ContextPath
+                        var prefix = applicationContext.Route
                             .Concat(new UriPathSegmentConstant("assets"))
                             .Concat
                             (
@@ -294,7 +294,7 @@ namespace WebExpress.WebCore.WebAsset
                 },
                 EndpointId = new ComponentId(assemblyName + ".asset"),
                 IncludeSubPaths = true,
-                Route = RouteEndpoint.Combine(e.ContextPath, "assets")
+                Route = RouteEndpoint.Combine(e.Route, "assets")
             };
 
             var asset = ComponentActivator.CreateInstance<IAsset, IAssetContext>(typeof(Asset), context, _httpServerContext, _componentHub);

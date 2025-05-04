@@ -520,7 +520,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 // assign the setting page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.ContextPath.Concat
+                    var prefix = applicationContext.Route.Concat
                     (
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()

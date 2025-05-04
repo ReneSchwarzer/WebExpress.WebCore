@@ -129,8 +129,8 @@ namespace WebExpress.WebCore.WebApplication
                     Description = description,
                     AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
-                    Icon = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath, icon),
-                    ContextPath = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath)
+                    Icon = RouteEndpoint.Combine(_httpServerContext.Route, contextPath, icon),
+                    Route = RouteEndpoint.Combine(_httpServerContext.Route, contextPath)
                 };
 
                 // create application

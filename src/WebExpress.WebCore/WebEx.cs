@@ -189,7 +189,6 @@ namespace WebExpress.WebCore
                 Path.GetFullPath(assetBase),
                 Path.GetFullPath(dataBase),
                 Path.GetDirectoryName(configFile),
-                new RouteEndpoint(config.ContextPath),
                 culture,
                 log,
                 null

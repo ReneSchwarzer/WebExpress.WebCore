@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -11,14 +12,14 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ResponseRedirectTemporarilyMoved(string location)
+        public ResponseRedirectTemporarilyMoved(IUri location)
         {
             Reason = "temporarily moved";
             //Content = "<html></html>";
 
             //HeaderFields.ContentType = "text/html";
             //HeaderFields.ContentLength = Content.ToString().Length;
-            Header.Location = location;
+            Header.Location = location?.ToString();
         }
     }
 }

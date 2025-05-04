@@ -1,4 +1,6 @@
-﻿namespace WebExpress.WebCore.WebPage
+﻿using WebExpress.WebCore.WebUri;
+
+namespace WebExpress.WebCore.WebPage
 {
     /// <summary>
     /// The prototype of a website.
@@ -29,9 +31,9 @@
         /// The function throws the RedirectException.
         /// </summary>
         /// <param name="uri">The uri to redirect to.</param>
-        public virtual void Redirecting(string uri)
+        public virtual void Redirecting(IUri uri)
         {
-            throw new RedirectException(uri?.ToString());
+            throw new RedirectException(uri);
         }
 
         /// <summary>

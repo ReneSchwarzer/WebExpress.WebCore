@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.Test.Manager
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
-            Assert.Equal(contextPath, application.ContextPath.ToString());
+            Assert.Equal(contextPath, application.Route.ToString());
         }
 
         /// <summary>

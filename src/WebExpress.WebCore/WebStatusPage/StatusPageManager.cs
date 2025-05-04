@@ -156,7 +156,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         );
                     }
 
-                    var stausIcon = !string.IsNullOrEmpty(icon) ? RouteEndpoint.Combine(applicationContext.ContextPath, icon) : null;
+                    var stausIcon = !string.IsNullOrEmpty(icon) ? RouteEndpoint.Combine(applicationContext.Route, icon) : null;
                     var statusCode = statusResponse.GetCustomAttribute<StatusCodeAttribute>().StatusCode;
                     var statusPageContext = new StatusPageContext()
                     {

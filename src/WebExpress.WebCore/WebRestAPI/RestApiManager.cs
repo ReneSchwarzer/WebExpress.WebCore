@@ -362,7 +362,7 @@ namespace WebExpress.WebCore.WebRestApi
                 // assign the rest api to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.ContextPath.Concat
+                    var prefix = applicationContext.Route.Concat
                     (
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()

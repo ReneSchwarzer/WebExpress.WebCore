@@ -85,7 +85,6 @@ namespace WebExpress.WebCore
                 context.AssetPath,
                 context.DataPath,
                 context.ConfigPath,
-                context.ContextPath,
                 context.Culture,
                 context.Log,
                 this
@@ -311,11 +310,11 @@ namespace WebExpress.WebCore
                 {
                     if (ex.Permanet)
                     {
-                        response = new ResponseRedirectPermanentlyMoved(ex.Url);
+                        response = new ResponseRedirectPermanentlyMoved(ex.Uri);
                     }
                     else
                     {
-                        response = new ResponseRedirectTemporarilyMoved(ex.Url);
+                        response = new ResponseRedirectTemporarilyMoved(ex.Uri);
                     }
                 }
                 catch (Exception ex)

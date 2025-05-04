@@ -37,13 +37,12 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             return new HttpServerContext
             (
-                new RouteEndpoint("localhost"),
+                new RouteEndpoint("server"),
                 [],
                 "",
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
-                new RouteEndpoint("/server"),
                 CultureInfo.GetCultureInfo("en"),
                 new Log() { LogMode = LogMode.Off },
                 null

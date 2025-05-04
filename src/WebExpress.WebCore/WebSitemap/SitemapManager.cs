@@ -66,7 +66,7 @@ namespace WebExpress.WebCore.WebSitemap
                 .Select(x => new
                 {
                     ApplicationContext = x,
-                    x.ContextPath.PathSegments
+                    x.Route.PathSegments
                 })
                 .OrderBy(x => x.PathSegments.Count());
 

@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -11,11 +12,11 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ResponseRedirectPermanentlyMoved(string location)
+        public ResponseRedirectPermanentlyMoved(IUri location)
         {
             Reason = "permanently moved";
 
-            Header.Location = location;
+            Header.Location = location?.ToString();
         }
     }
 }

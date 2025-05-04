@@ -47,11 +47,6 @@ namespace WebExpress.WebCore
         string ConfigPath { get; }
 
         /// <summary>
-        /// Returns the basic context path.
-        /// </summary>
-        IRoute ContextPath { get; }
-
-        /// <summary>
         /// Returns the culture.
         /// </summary>
         CultureInfo Culture { get; }

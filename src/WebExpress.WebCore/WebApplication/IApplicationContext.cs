@@ -40,9 +40,9 @@ namespace WebExpress.WebCore.WebApplication
         string DataPath { get; }
 
         /// <summary>
-        /// Returns the context path. This is mounted in the context path of the server.
+        /// Returns the context path. This is mounted in the route of the server.
         /// </summary>
-        IRoute ContextPath { get; }
+        IRoute Route { get; }
 
         /// <summary>
         /// Returns the icon uri.

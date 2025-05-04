@@ -199,9 +199,9 @@ namespace WebExpress.WebCore.WebTheme
                         ApplicationContext = applicationContext,
                         Name = name,
                         Description = description,
-                        Image = image != null ? RouteEndpoint.Combine(applicationContext.ContextPath, image) : null,
+                        Image = image != null ? RouteEndpoint.Combine(applicationContext.Route, image) : null,
                         ThemeMode = mode,
-                        ThemeStyle = style != null ? RouteEndpoint.Combine(applicationContext.ContextPath, style) : null,
+                        ThemeStyle = style != null ? RouteEndpoint.Combine(applicationContext.Route, style) : null,
                     };
 
                     var themeItem = new ThemeItem()
