@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace WebExpress.WebCore.WebHtml
 {
@@ -8,21 +9,43 @@ namespace WebExpress.WebCore.WebHtml
     public static class Css
     {
         /// <summary>
-        /// Joins the specifying css classes into a string.
+        /// Joins the specified CSS classes into a single string, ensuring no duplicates and ignoring null or whitespace entries.
         /// </summary>
-        /// <param name="items">The individual css classes.</param>
-        /// <returns>The css classes as a string.</returns>
+        /// <param name="items">The individual CSS classes to join.</param>
+        /// <returns>A string containing the concatenated CSS classes.</returns>
         public static string Concatenate(params string[] items)
         {
             return string.Join(' ', items.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
         }
 
         /// <summary>
-        /// Removes the specified css classes from the string.
+        /// Joins the specified CSS classes into a single string, starting with a required first class, ensuring no duplicates and ignoring null or whitespace entries.
         /// </summary>
-        /// <param name="css">The css classes connected in a common string.</param>
-        /// <param name="remove">The css classes to remove.</param>
-        /// <returns>The css classes as a string.</returns>
+        /// <param name="first">The first CSS class, which is required.</param>
+        /// <param name="items">Additional CSS classes to join.</param>
+        /// <returns>A string containing the concatenated CSS classes.</returns>
+        public static string Concatenate(string first, params string[] items)
+        {
+            return string.Join(' ', new[] { first }.Union(items).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
+        }
+
+        /// <summary>
+        /// Joins the specified CSS classes into a single string, starting with a required first class, ensuring no duplicates and ignoring null or whitespace entries.
+        /// </summary>
+        /// <param name="first">The first CSS class, which is required.</param>
+        /// <param name="items">Additional CSS classes to join.</param>
+        /// <returns>A string containing the concatenated CSS classes.</returns>
+        public static string Concatenate(string first, IEnumerable<string> items)
+        {
+            return string.Join(' ', new[] { first }.Union(items).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct());
+        }
+
+        /// <summary>
+        /// Removes the specified CSS classes from a string of concatenated CSS classes.
+        /// </summary>
+        /// <param name="css">The string containing concatenated CSS classes.</param>
+        /// <param name="remove">The CSS classes to remove from the string.</param>
+        /// <returns>A string containing the remaining CSS classes after removal.</returns>
         public static string Remove(string css, params string[] remove)
         {
             return string.Join(' ', css.Split(' ').Where(x => !remove.Contains(x)));
