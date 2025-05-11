@@ -42,6 +42,15 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Returns or sets a value indicating whether the option is disabled.
+        /// </summary>
+        public bool Disabled
+        {
+            get => HasAttribute("disabled");
+            set { if (value) { SetAttribute("disabled"); } else { RemoveAttribute("disabled"); } }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public HtmlElementFormOption()
