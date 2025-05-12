@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        protected IEnumerable<IHtmlNode> Elements => _elements;
+        internal IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Returns or sets the id.
