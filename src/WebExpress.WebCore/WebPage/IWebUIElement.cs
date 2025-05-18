@@ -12,6 +12,11 @@ namespace WebExpress.WebCore.WebPage
         where TVisualTree : IVisualTree
     {
         /// <summary>
+        /// Returns the id.
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
         /// Converts the control to an HTML representation.
         /// </summary>
         /// <param name="renderContext">The context in which the ui element is rendered.</param>
