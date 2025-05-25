@@ -8,25 +8,25 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// The basis of all html elements (see RfC 1866).
     /// </summary>
-    public class HtmlElement : IHtmlNode
+    public class HtmlElement : IHtmlElement
     {
         private readonly List<IHtmlNode> _elements = [];
         private readonly List<IHtmlAttribute> _attributes = [];
 
         /// <summary>
-        /// Returns or sets the name. des Attributes
+        /// Returns or sets the name of the element.
         /// </summary>
         protected string ElementName { get; set; }
 
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected IEnumerable<IHtmlAttribute> Attributes => _attributes;
+        public IEnumerable<IHtmlAttribute> Attributes => _attributes;
 
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        internal IEnumerable<IHtmlNode> Elements => _elements;
+        public IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Returns or sets the id.
@@ -153,7 +153,7 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="elements">The elements to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement Add(params IHtmlNode[] elements)
+        public IHtmlElement Add(params IHtmlNode[] elements)
         {
             _elements.AddRange(elements);
 
@@ -165,7 +165,7 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="elements">The elements to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement Add(IEnumerable<IHtmlNode> elements)
+        public IHtmlElement Add(IEnumerable<IHtmlNode> elements)
         {
             _elements.AddRange(elements);
 
@@ -177,7 +177,7 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="elements">The elements to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement AddFirst(params IHtmlNode[] elements)
+        public IHtmlElement AddFirst(params IHtmlNode[] elements)
         {
             _elements.InsertRange(0, elements);
 
@@ -189,9 +189,61 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="attributes">The attributes to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement Add(params IHtmlAttribute[] attributes)
+        public IHtmlElement Add(params IHtmlAttribute[] attributes)
         {
             _attributes.AddRange(attributes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds one or more CSS class names to the current HTML element.
+        /// </summary>
+        /// <param name="classes">An array of CSS class names to add. Each class name must be a non-empty string.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement AddClass(params string[] classes)
+        {
+            Class = Css.Concatenate(Class, classes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the specified CSS class or classes from the current HTML element.
+        /// </summary>
+        /// <param name="classes">An array of class names to remove. Each class name must be a non-empty string.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement RemoveClass(params string[] classes)
+        {
+            Class = Css.Remove(Class, classes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds one or more CSS class names to the current HTML element.
+        /// </summary>
+        /// <remarks>If a specified class name already exists on the element, it will not be added
+        /// again.</remarks>
+        /// <param name="styles">An array of CSS class names to add. Each class name must be a valid CSS identifier.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement AddStyle(params string[] styles)
+        {
+            Style = Css.Concatenate(Style, styles);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the specified CSS styles from the current HTML element.
+        /// </summary>
+        /// <remarks>If a specified style does not exist on the element, it will be ignored. This method
+        /// is chainable, enabling multiple operations to be performed on the same element in a fluent manner.</remarks>
+        /// <param name="styles">An array of CSS style names to remove. Each style name should correspond to a valid CSS property.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement RemoveStyle(params string[] styles)
+        {
+            Style = Css.Remove(Style, styles);
 
             return this;
         }
@@ -200,7 +252,7 @@ namespace WebExpress.WebCore.WebHtml
         /// Clear all elements frrom the html element.
         /// </summary>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement Clear()
+        public IHtmlElement Clear()
         {
             _elements.Clear();
 
@@ -275,11 +327,16 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Setzt den Wert eines Attributs
+        /// Sets an attribute without a value
         /// </summary>
         /// <param name="name">The attribute name.</param>
         protected void SetAttribute(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a == null)
