@@ -91,7 +91,8 @@ namespace WebExpress.WebCore.WebRestApi
                                     return new ResponseOK
                                     {
                                         Content = content
-                                    };
+                                    }
+                                    .AddHeaderContentType("application/json");
                                 }
 
                                 return new ResponseOK();
@@ -387,7 +388,7 @@ namespace WebExpress.WebCore.WebRestApi
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType),
+                        Attributes = EndpointManager.GetAttributeInstances(attributes),
                         Version = version,
                         Methods = methods.Distinct()
                     };

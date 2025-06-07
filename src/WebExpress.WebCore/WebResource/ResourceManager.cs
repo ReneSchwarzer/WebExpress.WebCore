@@ -178,7 +178,7 @@ namespace WebExpress.WebCore.WebResource
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType)
+                        Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
                     var resourceItem = new ResourceItem(_componentHub.ResourceManager)

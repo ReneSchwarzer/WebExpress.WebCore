@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <summary>
         /// Returns the attributes associated with the page.
         /// </summary>
-        public IEnumerable<Type> Attributes => [];
+        public IEnumerable<Attribute> Attributes => [];
 
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.

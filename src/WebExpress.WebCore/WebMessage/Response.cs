@@ -34,5 +34,17 @@ namespace WebExpress.WebCore.WebMessage
         protected Response()
         {
         }
+
+        /// <summary>
+        /// Appends the specified content type to the existing Content-Type header value.
+        /// </summary>
+        /// <param name="contentType">The content type to append. Cannot be null or empty.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public Response AddHeaderContentType(string contentType)
+        {
+            Header.ContentType = contentType?.Trim();
+
+            return this;
+        }
     }
 }

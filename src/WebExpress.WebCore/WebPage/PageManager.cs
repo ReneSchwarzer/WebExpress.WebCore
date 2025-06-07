@@ -371,7 +371,7 @@ namespace WebExpress.WebCore.WebPage
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType)
+                        Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
                     var pageItem = new PageItem(_componentHub.EndpointManager)

@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns the attributes associated with the page.
         /// </summary>
-        public IEnumerable<Type> Attributes { get; internal set; }
+        public IEnumerable<Attribute> Attributes { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.

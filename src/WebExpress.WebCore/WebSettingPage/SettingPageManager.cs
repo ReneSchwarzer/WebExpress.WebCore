@@ -536,7 +536,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType),
+                        Attributes = EndpointManager.GetAttributeInstances(attributes),
                         PageTitle = title,
                         Scopes = scopes,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),

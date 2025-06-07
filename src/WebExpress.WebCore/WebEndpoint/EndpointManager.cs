@@ -249,5 +249,37 @@ namespace WebExpress.WebCore.WebEndpoint
 
             return uri;
         }
+
+        /// <summary>
+        /// Creates instances of attributes from a collection of <see cref="CustomAttributeData"/> objects.
+        /// </summary>
+        /// <param name="customAttributesData">A collection of objects representing the metadata of attributes.</param>
+        /// <returns>An enumerable of instances created from the provided metadata. If
+        /// no attributes are instantiated, an empty collection is returned.</returns>
+        public static IEnumerable<Attribute> GetAttributeInstances(IEnumerable<CustomAttributeData> customAttributesData)
+        {
+            List<Attribute> attributeInstances = [];
+
+            foreach (var attrData in customAttributesData)
+            {
+                var attributeType = attrData.AttributeType;
+                var constructorArgs = new List<object>();
+
+                // extract constructor arguments
+                foreach (var arg in attrData.ConstructorArguments)
+                {
+                    constructorArgs.Add(arg.Value);
+                }
+
+                // instantiate the attribute using Reflection
+                var attributeInstance = Activator.CreateInstance(attributeType, constructorArgs.ToArray()) as Attribute;
+                if (attributeInstance != null)
+                {
+                    attributeInstances.Add(attributeInstance);
+                }
+            }
+
+            return attributeInstances;
+        }
     }
 }
