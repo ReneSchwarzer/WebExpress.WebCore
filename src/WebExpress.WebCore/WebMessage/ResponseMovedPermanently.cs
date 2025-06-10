@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebStatusPage;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -13,9 +14,18 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseMovedPermanently()
-            : this(null)
         {
+        }
 
+        /// <summary>
+        /// Initializes a new instance of the class with the specified location.
+        /// </summary>
+        /// <remarks>The <paramref name="location"/> parameter specifies the new location of the resource.</remarks>
+        /// <param name="location">The URI to which the resource has been moved permanently. This value cannot be <see langword="null"/>.</param>
+        public ResponseMovedPermanently(IUri location)
+        {
+            Reason = "moved permanently";
+            Header.Location = location?.ToString();
         }
 
         /// <summary>
@@ -25,7 +35,7 @@ namespace WebExpress.WebCore.WebMessage
         public ResponseMovedPermanently(StatusMessage message)
         {
             var content = message?.Message ?? "<html><head><title>404</title></head><body>301 - Moved Permanently</body></html>";
-            Reason = "Moved Permanently";
+            Reason = "moved permanently";
 
             Header.ContentType = "text/html";
             Header.ContentLength = content.Length;

@@ -100,6 +100,10 @@ namespace WebExpress.WebCore.WebRestApi
                                 restApi.UpdateData(request);
 
                                 return new ResponseOK();
+                            case RequestMethod.PUT:
+                                restApi.UpdateData(request);
+
+                                return new ResponseOK();
                             case RequestMethod.DELETE:
                                 restApi.DeleteData(request);
 

@@ -494,7 +494,7 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="name">The attribute name.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement AddUserAttribute(string name)
+        public IHtmlElement AddUserAttribute(string name)
         {
             SetAttribute(name);
 
@@ -507,7 +507,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         /// <param name="value">The value of the attribute.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public HtmlElement AddUserAttribute(string name, string value)
+        public IHtmlElement AddUserAttribute(string name, string value)
         {
             SetAttribute(name, value);
 
@@ -538,9 +538,12 @@ namespace WebExpress.WebCore.WebHtml
         /// Removes an user-defined attribute.
         /// </summary>
         /// <param name="name">The attribute name.</param>
-        protected void RemoveUserAttribute(string name)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement RemoveUserAttribute(string name)
         {
             RemoveAttribute(name);
+
+            return this;
         }
 
         /// <summary>

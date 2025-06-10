@@ -107,5 +107,27 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="styles">An array of CSS style names to remove. Each style name should correspond to a valid CSS property.</param>
         /// <returns>The current instance, allowing for method chaining.</returns>
         IHtmlElement RemoveStyle(params string[] styles);
+
+        /// <summary>
+        /// Sets the valueless user-defined attribute.
+        /// </summary>
+        /// <param name="name">The attribute name.</param>
+        /// <returns>The current instance for method chaining.</returns>
+        IHtmlElement AddUserAttribute(string name);
+
+        /// <summary>
+        /// Sets the value of an user-defined attribute.
+        /// </summary>
+        /// <param name="name">The attribute name.</param>
+        /// <param name="value">The value of the attribute.</param>
+        /// <returns>The current instance for method chaining.</returns>
+        IHtmlElement AddUserAttribute(string name, string value);
+
+        /// <summary>
+        /// Removes an user-defined attribute.
+        /// </summary>
+        /// <param name="name">The attribute name.</param>
+        /// <returns>The current instance for method chaining.</returns>
+        IHtmlElement RemoveUserAttribute(string name);
     }
 }

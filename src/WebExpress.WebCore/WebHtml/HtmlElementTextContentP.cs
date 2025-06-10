@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace WebExpress.WebCore.WebHtml
@@ -41,6 +42,16 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="nodes">The content of the html element.</param>
         public HtmlElementTextContentP(params IHtmlNode[] nodes)
+            : this()
+        {
+            Add(nodes);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="nodes">The content of the html element.</param>
+        public HtmlElementTextContentP(IEnumerable<IHtmlNode> nodes)
             : this()
         {
             Add(nodes);

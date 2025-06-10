@@ -310,11 +310,11 @@ namespace WebExpress.WebCore
                 {
                     if (ex.Permanet)
                     {
-                        response = new ResponseRedirectPermanentlyMoved(ex.Uri);
+                        response = new ResponseMovedPermanently(ex.Uri);
                     }
                     else
                     {
-                        response = new ResponseRedirectTemporarilyMoved(ex.Uri);
+                        response = new ResponseMovedTemporarily(ex.Uri);
                     }
                 }
                 catch (Exception ex)

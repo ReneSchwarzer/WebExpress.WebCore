@@ -10,7 +10,6 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -130,10 +129,7 @@ namespace WebExpress.WebCore.WebPage
                     // execute the cached delegate
                     del.DynamicInvoke(renderContext, visualTreeInstance);
 
-                    return new ResponseOK()
-                    {
-                        Content = visualTreeInstance.Render(visualTreeContext)
-                    };
+                    return visualTreeInstance.GetResponse(visualTreeContext);
                 }
             };
 
