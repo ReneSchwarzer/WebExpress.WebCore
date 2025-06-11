@@ -13,12 +13,7 @@
             get => GetAttribute("href");
             set
             {
-                var url = value;
-
-                if (!string.IsNullOrWhiteSpace(url) && !url.EndsWith("/"))
-                {
-                    url += url + "/";
-                }
+                var url = value?.TrimEnd();
 
                 SetAttribute("href", url);
             }

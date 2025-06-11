@@ -10,6 +10,13 @@ namespace WebExpress.WebCore.WebMessage
     public class ResponseMovedTemporarily : Response
     {
         /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        public ResponseMovedTemporarily()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the class, representing an HTTP response indicating 
         /// that the requested resource has been temporarily moved to a new location.
         /// </summary>

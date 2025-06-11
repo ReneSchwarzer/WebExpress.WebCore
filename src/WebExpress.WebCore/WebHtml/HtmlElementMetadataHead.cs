@@ -139,7 +139,7 @@ namespace WebExpress.WebCore.WebHtml
 
             if (!string.IsNullOrWhiteSpace(Base))
             {
-                //ElementBase.ToString(builder, deep + 1);
+                _elementBase.ToString(builder, deep + 1);
             }
 
             foreach (var v in _elementFavicons)
