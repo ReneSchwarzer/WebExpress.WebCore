@@ -118,5 +118,11 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="uri">The Uri to be checked.</param>
         /// <returns>true if part of the uri, false otherwise.</returns>
         bool StartsWith(IUri uri);
+
+        /// <summary>
+        /// Sets the fragment component of the URI.
+        /// </summary>
+        /// <returns>A new IUri instance with the updated fragment. The original URI remains unchanged.</returns>
+        IUri SetFragment(string fragment);
     }
 }

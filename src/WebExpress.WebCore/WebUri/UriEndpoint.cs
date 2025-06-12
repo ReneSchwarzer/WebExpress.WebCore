@@ -459,6 +459,15 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
+        /// Sets the fragment component of the URI.
+        /// </summary>
+        /// <returns>A new IUri instance with the updated fragment. The original URI remains unchanged.</returns>
+        public IUri SetFragment(string fragment)
+        {
+            return new UriEndpoint(Scheme, Authority, fragment, Query, PathSegments);
+        }
+
+        /// <summary>
         /// Converts a resource uri to a normal uri.
         /// </summary>
         /// <param name="uri">The uri to convert.</param>
