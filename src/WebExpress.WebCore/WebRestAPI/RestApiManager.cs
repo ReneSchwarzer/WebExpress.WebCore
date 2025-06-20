@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
@@ -26,7 +24,6 @@ namespace WebExpress.WebCore.WebRestApi
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly RestApiDictionary _dictionary = [];
-        private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
         [GeneratedRegex(@"\.(?:_|V|v)(\d+)\.")]
         private static partial Regex ApiVersionRegex();
@@ -78,36 +75,15 @@ namespace WebExpress.WebCore.WebRestApi
                         switch (request.Method)
                         {
                             case RequestMethod.POST:
-                                restApi.CreateData(request);
-
-                                return new ResponseOK();
+                                return restApi.CreateData(request) ?? new ResponseOK();
                             case RequestMethod.GET:
-                                var data = restApi.GetData(request);
-                                if (data != null)
-                                {
-                                    var jsonData = JsonSerializer.Serialize(data, _jsonOptions);
-                                    var content = Encoding.UTF8.GetBytes(jsonData);
-
-                                    return new ResponseOK
-                                    {
-                                        Content = content
-                                    }
-                                    .AddHeaderContentType("application/json");
-                                }
-
-                                return new ResponseOK();
+                                return restApi.GetData(request) ?? new ResponseOK();
                             case RequestMethod.PATCH:
-                                restApi.UpdateData(request);
-
-                                return new ResponseOK();
+                                return restApi.UpdateData(request) ?? new ResponseOK();
                             case RequestMethod.PUT:
-                                restApi.UpdateData(request);
-
-                                return new ResponseOK();
+                                return restApi.UpdateData(request) ?? new ResponseOK();
                             case RequestMethod.DELETE:
-                                restApi.DeleteData(request);
-
-                                return new ResponseOK();
+                                return restApi.DeleteData(request) ?? new ResponseOK();
                         }
                     }
 

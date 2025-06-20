@@ -12,25 +12,28 @@ namespace WebExpress.WebCore.WebRestApi
         /// Creates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        void CreateData(Request request);
+        /// <returns>The response containing the result of the operation.</returns>
+        Response CreateData(Request request);
 
         /// <summary>
         /// Gets data.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns>The data.</returns>
-        object GetData(Request request);
+        /// <returns>The response containing the result of the operation.</returns>
+        Response GetData(Request request);
 
         /// <summary>
         /// Updates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        void UpdateData(Request request);
+        /// <returns>The response containing the result of the operation.</returns>
+        Response UpdateData(Request request);
 
         /// <summary>
         /// Deletes data.
         /// </summary>
         /// <param name="request">The request.</param>
-        void DeleteData(Request request);
+        /// <returns>The response containing the result of the operation.</returns>
+        Response DeleteData(Request request);
     }
 }
