@@ -172,3 +172,20 @@ thememanager.theme=Theme: '{0}' for application '{1}'.
 
 resource.variable.duplicate=Variable '{0}' already exists!
 resource.file={0}: File '{1}' has been loaded.
+
+validation.required={0} is required.
+validation.too_long= {0} must not exceed {1} characters.
+validation.too_short={0} must be at least {1} characters.
+validation.regex_mismatch={0} is invalid.
+validation.out_of_range={0} must be between {1} and {2}.
+validation.not_integer={0} must be a valid integer.
+validation.invalid_email={0} must be a valid email address.
+validation.mismatch={0} must equal '{1}'.
+validation.must_differ={0} must not be '{1}'.
+validation.prefix_mismatch={0} must start with '{1}'.
+validation.invalid_choice={0} must be one of: {1}.
+validation.missing_fragment={0} must contain '{1}'.
+validation.suffix_mismatch={0} must end with '{1}'.
+validation.invalid_enum={0} must be a valid {1} value.
+validation.invalid_date={0} must be a valid date.
+ 

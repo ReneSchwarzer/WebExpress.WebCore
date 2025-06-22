@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.Test.Fixture
             var firstLine = content.Split('\n').FirstOrDefault();
             var lines = content.Split(_separator, StringSplitOptions.None);
             var filteredLines = lines.Skip(1).TakeWhile(line => !string.IsNullOrWhiteSpace(line));
-            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault()) + filteredLines.LastOrDefault().Length + 4 : 0;
+            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault() ?? "") + filteredLines.LastOrDefault()?.Length ?? 0 + 4 : 0;
             var innerContent = pos < content.Length ? content[pos..] : "";
             var contentBytes = Encoding.UTF8.GetBytes(innerContent);
 

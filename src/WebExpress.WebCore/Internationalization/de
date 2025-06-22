@@ -172,3 +172,19 @@ thememanager.theme=Designvorlage: '{0}' für die Anwendung '{1}'.
 
 resource.variable.duplicate=Variable '{0}' bereits vorhanden!
 resource.file={0}: Datei '{1}' wurde geladen.
+
+validation.required={0} ist erforderlich.
+validation.too_long={0} darf {1} Zeichen nicht überschreiten.
+validation.too_short={0} muss mindestens {1} Zeichen lang sein.
+validation.regex_mismatch={0} ist ungültig.
+validation.out_of_range={0} muss zwischen {1} und {2} liegen.
+validation.not_integer={0} muss eine gültige Ganzzahl sein.
+validation.invalid_email={0} muss eine gültige E-Mail-Adresse sein.
+validation.mismatch={0} muss '{1}' entsprechen.
+validation.must_differ={0} darf nicht '{1}' sein.
+validation.prefix_mismatch={0} muss mit '{1}' beginnen.
+validation.invalid_choice={0} muss einer der folgenden Werte sein: {1}.
+validation.missing_fragment={0} muss '{1}' enthalten.
+validation.suffix_mismatch={0} muss mit '{1}' enden.
+validation.invalid_enum={0} muss ein gültiger {1}-Wert sein.
+validation.invalid_date={0} muss ein gültiges Datum sein.
