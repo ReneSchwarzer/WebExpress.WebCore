@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(79, componentManager.SitemapManager.SiteMap.Count());
+            Assert.Equal(97, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -58,12 +58,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api._1.testrestapia")]
         [InlineData("http://localhost:8080/server/appa/api/2/testrestapib", "webexpress.webcore.test.www.api._2.testrestapib")]
         [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api._3.testrestapic")]
-        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/css.mycss.css", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.test.css.mycss.css")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.test.js.myjavascript.js")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.test.js.myjavascript.mini.js")]
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
         public void SearchResource(string uri, string id)
         {
@@ -133,12 +130,9 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/resources/testresourceb", "webexpress.webcore.test.www.resources.testresourceb")]
         [InlineData("http://localhost:8080/server/appa/resources/testresourcec", "webexpress.webcore.test.www.resources.testresourcec")]
         [InlineData("http://localhost:8080/server/appa/resources/testresourced", "webexpress.webcore.test.www.resources.testresourced")]
-        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/css.mycss.css", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.js", "webexpress.webcore.asset")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset")]
+        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.test.css.mycss.css")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.test.js.myjavascript.js")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.test.js.myjavascript.mini.js")]
         [InlineData("http://localhost:8080/server/appa/api/1/testrestapia", "webexpress.webcore.test.www.api._1.testrestapia")]
         [InlineData("http://localhost:8080/server/appa/api/2/TestRestApiB", "webexpress.webcore.test.www.api._2.testrestapib")]
         [InlineData("http://localhost:8080/server/appa/api/3/testrestapic", "webexpress.webcore.test.www.api._3.testrestapic")]

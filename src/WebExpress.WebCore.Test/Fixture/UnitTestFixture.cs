@@ -216,8 +216,9 @@ namespace WebExpress.WebCore.Test.Fixture
         public static string GetEmbeddedResource(string fileName)
         {
             var assembly = typeof(UnitTestFixture).Assembly;
-            var resourceName = assembly.GetManifestResourceNames()
-                                   .FirstOrDefault(name => name.EndsWith(fileName, StringComparison.OrdinalIgnoreCase));
+            var resources = assembly.GetManifestResourceNames();
+            var resourceName = resources
+                .FirstOrDefault(name => name.Replace('\\', '/').EndsWith(fileName.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase));
 
             using var stream = assembly.GetManifestResourceStream(resourceName);
             using var memoryStream = new MemoryStream();

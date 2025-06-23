@@ -1,0 +1,14 @@
+﻿/* This CSS file styles the "Hello World" text */
+
+/* Style for the body */
+body {
+    background-color: #f0f0f0; /* Light grey background for the entire page */
+    font-family: Arial, sans-serif; /* Set font to Arial */
+}
+
+/* Style for the heading */
+h1 {
+    color: #333; /* Dark grey color for the text */
+    text-align: center; /* Center the text */
+    margin-top: 20%; /* Add space at the top */
+}
