@@ -23,21 +23,12 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<IsPackable>true</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Remove="Internationalization\de" />
-		<None Remove="Internationalization\en" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="Internationalization\de" />
 		<EmbeddedResource Include="Internationalization\en" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Setting\" />
-		<Folder Include="WebEndpoint\Model\" />
 	</ItemGroup>
 
 	<ItemGroup>

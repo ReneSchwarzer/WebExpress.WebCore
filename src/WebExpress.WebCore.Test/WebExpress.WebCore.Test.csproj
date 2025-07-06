@@ -7,29 +7,8 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Remove="Assets\css\mycss.css" />
-		<None Remove="Assets\js\myjavascript.js" />
-		<None Remove="Assets\js\myjavascript.mini.js" />
-		<None Remove="Internationalization\de" />
-		<None Remove="Internationalization\en" />
-		<None Remove="test\contentTypeMultipartFormData1.post" />
-		<None Remove="test\contentTypeMultipartFormData2.post" />
-		<None Remove="test\contentTypeMultipartFormData3.post" />
-		<None Remove="test\contentTypeMultipartFormData4.post" />
-		<None Remove="test\contentTypeMultipartFormData_Umlaut.post" />
-		<None Remove="test\contentTypeTextPlain.post" />
-		<None Remove="test\contentTypeTextPlain_Umlaut.post" />
-		<None Remove="test\contentTypeXwwwFormUrlencoded.post" />
-		<None Remove="test\contentTypeXwwwFormUrlencoded_umlaut.post" />
-		<None Remove="test\general.get" />
-		<None Remove="test\less.get" />
-		<None Remove="test\massive.get" />
-		<None Remove="test\param.get" />
-		<None Remove="test\param_umlaut.get" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="Internationalization\de" />
@@ -62,9 +41,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
 		<PackageReference Include="xunit" Version="2.9.3" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
