@@ -30,5 +30,15 @@ namespace WebExpress.WebCore.WebHtml
         {
             Add(nodes);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="nodes">The content of the html element.</param>
+        public HtmlElementTextContentUl(IEnumerable<IHtmlNode> nodes)
+            : this()
+        {
+            Add(nodes);
+        }
     }
 }

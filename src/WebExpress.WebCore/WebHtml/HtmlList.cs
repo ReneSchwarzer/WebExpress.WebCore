@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.WebHtml
         /// </summary>
         /// <param name="elements">The elements to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        protected HtmlList Add(params IHtmlNode[] elements)
+        public HtmlList Add(params IHtmlNode[] elements)
         {
             _elements.AddRange(elements);
 

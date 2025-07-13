@@ -115,7 +115,7 @@ namespace WebExpress.WebCore.WebHtml
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name of the HTML element.</param>
-        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag. Default is true.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a self closing tag. Default is true.</param>
         public HtmlElement(string name, bool closeTag = true)
         {
             ElementName = name;
@@ -413,19 +413,23 @@ namespace WebExpress.WebCore.WebHtml
 
             ToPreString(builder, deep);
 
-            if (_elements.Count == 1 && Elements.First() is HtmlText)
+            if (_elements.Count == 0)
             {
-                closeTag = true;
+                nl = false;
+            }
+            else if (ContainsOnlyTextNodes(_elements, out var text))
+            {
+                closeTag = CloseTag;
                 nl = false;
 
-                _elements.First().ToString(builder, 0);
+                builder.Append(text);
             }
-            else if (_elements.Count > 0)
+            else
             {
                 closeTag = true;
                 var count = builder.Length;
 
-                foreach (var v in Elements.Where(x => x != null))
+                foreach (var v in _elements.Where(x => x != null))
                 {
                     v.ToString(builder, deep + 1);
                 }
@@ -434,10 +438,6 @@ namespace WebExpress.WebCore.WebHtml
                 {
                     nl = false;
                 }
-            }
-            else if (_elements.Count == 0)
-            {
-                nl = false;
             }
 
             if (closeTag || CloseTag)
@@ -488,6 +488,48 @@ namespace WebExpress.WebCore.WebHtml
             builder.Append(ElementName);
             builder.Append('>');
         }
+
+        /// <summary>
+        /// Determines whether the collection of IHtmlNode instances (including nested HtmlElement children)
+        /// contains only HtmlText nodes. If so, combines their text content and returns it via an out parameter.
+        /// </summary>
+        /// <param name="elements">A collection of IHtmlNode instances to inspect.</param>
+        /// <param name="combinedText">The combined text content if all nodes are HtmlText; otherwise, null.</param>
+        /// <returns>
+        /// True if all nodes (and their descendants) are HtmlText; otherwise, false.
+        /// </returns>
+        public bool ContainsOnlyTextNodes(IEnumerable<IHtmlNode> elements, out string combinedText)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var node in elements)
+            {
+                switch (node)
+                {
+                    case HtmlText text:
+                        builder.Append(text.Value);
+                        break;
+                    case HtmlList list:
+                        if (!ContainsOnlyTextNodes(list.Elements, out var nestedListText))
+                        {
+                            combinedText = null;
+                            return false;
+                        }
+                        builder.Append(nestedListText);
+                        break;
+                    case HtmlElement element:
+                        combinedText = null;
+                        return false;
+                    default:
+                        combinedText = null;
+                        return false;
+                }
+            }
+
+            combinedText = builder.ToString();
+            return true;
+        }
+
 
         /// <summary>
         /// Sets the valueless user-defined attribute.
