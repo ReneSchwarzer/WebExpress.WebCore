@@ -1,5 +1,6 @@
 ﻿using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -17,6 +18,11 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the page context.
         /// </summary>
         IPageContext PageContext { get; }
+
+        /// <summary>
+        /// The uri of the request.
+        /// </summary>
+        public IUri Uri => Request?.Uri;
 
         /// <summary>
         /// Returns the request.
