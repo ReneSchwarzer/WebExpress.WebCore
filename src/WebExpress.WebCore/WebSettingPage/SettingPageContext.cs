@@ -10,11 +10,6 @@ namespace WebExpress.WebCore.WebSettingPage
     public class SettingPageContext : PageContext, ISettingPageContext
     {
         /// <summary>
-        /// Returns the icon.
-        /// </summary>
-        public IIcon Icon { get; internal set; }
-
-        /// <summary>
         /// Returns the setting category context to which the setting page belongs.
         /// </summary>
         public ISettingCategoryContext SettingCategory => SettingGroup?.SettingCategory;

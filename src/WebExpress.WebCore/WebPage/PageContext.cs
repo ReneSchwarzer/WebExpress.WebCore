@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -45,6 +46,11 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the page title.
         /// </summary>
         public string PageTitle { get; internal set; }
+
+        /// <summary>
+        /// Returns the page icon.
+        /// </summary>
+        public IIcon PageIcon { get; internal set; }
 
         /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.

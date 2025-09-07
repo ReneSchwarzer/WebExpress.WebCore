@@ -10,6 +10,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -297,6 +298,7 @@ namespace WebExpress.WebCore.WebPage
             {
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
+                var icon = default(IIcon);
                 var title = pageType.Name;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
@@ -331,7 +333,12 @@ namespace WebExpress.WebCore.WebPage
                 foreach (var customAttribute in pageType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(TitleAttribute))
+                    if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
+                    {
+                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        icon ??= Activator.CreateInstance(type) as IIcon;
+                    }
+                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
                     {
                         title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
@@ -362,6 +369,7 @@ namespace WebExpress.WebCore.WebPage
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         PageTitle = title,
+                        PageIcon = icon,
                         Route = routePath,
                         Scopes = scopes,
                         Cache = cache,

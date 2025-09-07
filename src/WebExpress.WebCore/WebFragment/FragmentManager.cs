@@ -415,6 +415,28 @@ namespace WebExpress.WebCore.WebFragment
         }
 
         /// <summary>
+        /// Returns all fragments that belong to a given page.
+        /// </summary>
+        /// <typeparam name="TFragment">The fragment type.</typeparam>
+        /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
+        /// <param name="pageContext">The page context.</param>
+        /// <returns>An enumeration of the filtered fragments.</returns>
+        public IEnumerable<TFragment> GetFragments<TFragment, TSection>(IPageContext pageContext)
+            where TFragment : IFragmentBase
+            where TSection : ISection
+        {
+            var applicationContext = pageContext?.ApplicationContext;
+            var scopes = pageContext?.Scopes ?? [typeof(IScope)];
+
+            var effectiveScopes = (scopes?.Any() == true) ? scopes : [typeof(IScope)];
+
+            foreach (var item in _dictionary.GetFragmentItems(applicationContext, typeof(TFragment), typeof(TSection), effectiveScopes))
+            {
+                yield return item.CreateInstance<TFragment>(pageContext);
+            }
+        }
+
+        /// <summary>
         /// Returns all fragment contexts that belong to a given application.
         /// </summary>
         /// <param name="applicationContext">The application context.</param>

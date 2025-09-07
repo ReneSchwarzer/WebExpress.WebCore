@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -13,6 +14,11 @@ namespace WebExpress.WebCore.WebPage
         /// Returns the page title.
         /// </summary>
         string PageTitle { get; }
+
+        /// <summary>
+        /// Returns the page icon.
+        /// </summary>
+        IIcon PageIcon { get; }
 
         /// <summary>
         /// Returns the scope names that provides the page. The scope name

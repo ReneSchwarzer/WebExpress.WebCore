@@ -537,12 +537,12 @@ namespace WebExpress.WebCore.WebSettingPage
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes),
-                        PageTitle = title,
+                        PageTitle = title, 
+                        PageIcon = icon,
                         Scopes = scopes,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         Section = section,
-                        Hide = hide,
-                        Icon = icon
+                        Hide = hide
                     };
 
                     // create meta information of the setting page
