@@ -188,8 +188,13 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="uri">The URI resource to search for.</param>
         /// <returns>The endpoint context if found, otherwise null.</returns>
-        public IEndpointContext GetEndpoint(UriEndpoint uri)
+        public IEndpointContext GetEndpoint(IUri uri)
         {
+            if (uri == null || uri.Empty)
+            {
+                return null;
+            }
+
             var variables = new Dictionary<string, string>();
             var result = SearchNode
             (
@@ -198,6 +203,7 @@ namespace WebExpress.WebCore.WebSitemap
                 new Queue<IUriPathSegment>(),
                 new SearchContext()
             );
+
             return result?.EndpointContext;
         }
 
@@ -374,7 +380,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="outPathSegments">The path segments.</param>
         /// <param name="searchContext">The search context.</param>
         /// <returns>The search result with the found resource</returns>
-        private SearchResult SearchNode
+        private static SearchResult SearchNode
         (
             SitemapNode node,
             Queue<string> inPathSegments,

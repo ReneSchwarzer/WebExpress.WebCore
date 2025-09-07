@@ -293,26 +293,6 @@ namespace WebExpress.WebCore.WebAsset
         }
 
         /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        private void Log()
-        {
-            //foreach (var resourcenItem in GetResorceItems(pluginContext))
-            //{
-            //    output.Add
-            //    (
-            //        string.Empty.PadRight(deep) +
-            //        I18N.Translate
-            //        (
-            //            "webexpress.webcore:resourcemanager.resource",
-            //            resourcenItem?.ResourceContext?.EndpointId,
-            //            string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
-            //        )
-            //    );
-            //}
-        }
-
-        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()

@@ -42,13 +42,10 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
-        private EndpointManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
+        private EndpointManager(IHttpServerContext httpServerContext)
         {
-            //_componentHub = componentHub;
-
             _httpServerContext = httpServerContext;
 
             _httpServerContext.Log.Debug
@@ -271,9 +268,8 @@ namespace WebExpress.WebCore.WebEndpoint
                     constructorArgs.Add(arg.Value);
                 }
 
-                // instantiate the attribute using Reflection
-                var attributeInstance = Activator.CreateInstance(attributeType, constructorArgs.ToArray()) as Attribute;
-                if (attributeInstance != null)
+                // instantiate the attribute using reflection
+                if (Activator.CreateInstance(attributeType, [.. constructorArgs]) is Attribute attributeInstance)
                 {
                     attributeInstances.Add(attributeInstance);
                 }
