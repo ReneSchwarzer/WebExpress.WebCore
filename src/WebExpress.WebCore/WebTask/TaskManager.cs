@@ -102,8 +102,10 @@ namespace WebExpress.WebCore.WebTask
         /// <param name="id">The id of the task.</param>
         /// <param name="handler">The event handler.</param>
         /// <param name="args">The event argument.</param>
+        /// <typeparam name="TTask">The type of the task.</typeparam>-
         /// <returns>The task or null.</returns>
-        public ITask CreateTask<T>(string id, EventHandler<TaskEventArgs> handler, params object[] args) where T : Task
+        public ITask CreateTask<TTask>(string id, EventHandler<TaskEventArgs> handler, params object[] args)
+            where TTask : Task
         {
             var key = id?.ToLower();
 
@@ -112,7 +114,7 @@ namespace WebExpress.WebCore.WebTask
                 return value;
             }
 
-            var task = ComponentActivator.CreateInstance<T>(_httpServerContext, _componentHub, [id, args]);
+            var task = ComponentActivator.CreateInstance<TTask>(_httpServerContext, _componentHub, [id, args]);
             _dictionary.Add(key, task);
 
             task.Process += handler;

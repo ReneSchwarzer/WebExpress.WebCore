@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         public void Run()
         {
-            System.Threading.Tasks.Task.Factory.StartNew((Action)(() =>
+            System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 State = TaskState.Run;
 
@@ -101,9 +101,12 @@ namespace WebExpress.WebCore.WebTask
 
                 OnFinish();
 
-                WebEx.ComponentHub.TaskManager.RemoveTask(this);
+                System.Threading.Tasks.Task.Delay(30000).ContinueWith(_ =>
+                {
+                    WebEx.ComponentHub.TaskManager.RemoveTask(this);
+                });
 
-            }), TokenSource.Token);
+            }, TokenSource.Token);
         }
 
         /// <summary>
