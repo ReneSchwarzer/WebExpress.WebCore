@@ -1,4 +1,4 @@
-![WebExpress](https://raw.githubusercontent.com/ReneSchwarzer/WebExpress/main/assets/banner.png)
+![WebExpress](https://raw.githubusercontent.com/webexpress-framework/WebExpress/main/assets/banner.png)
 
 # Tutorials
 Welcome to the `WebExpress` Tutorials! Here, you'll find step-by-step guides and helpful resources to get the most out 
@@ -7,10 +7,10 @@ our tutorials offer something for everyone.
 
 # Getting Started
 Begin with our basic tutorial:
-- [HelloWorld](https://github.com/ReneSchwarzer/WebExpress.Tutorial.HelloWorld#readme)
-- [WebUI](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebUI#readme)
-- [WebApp](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebApp#readme)
-- [WebIndex](https://github.com/ReneSchwarzer/WebExpress.Tutorial.WebIndex#readme)
+- [HelloWorld](https://github.com/webexpress-framework/WebExpress.Tutorial.HelloWorld#readme)
+- [WebUI](https://github.com/webexpress-framework/WebExpress.Tutorial.WebUI#readme)
+- [WebApp](https://github.com/webexpress-framework/WebExpress.Tutorial.WebApp#readme)
+- [WebIndex](https://github.com/webexpress-framework/WebExpress.Tutorial.WebIndex#readme)
 
 This tutorial will guide you through the initial steps of creating and running your first `WebExpress` application.
 
