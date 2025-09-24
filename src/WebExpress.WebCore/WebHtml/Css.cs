@@ -19,7 +19,8 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Joins the specified CSS classes into a single string, starting with a required first class, ensuring no duplicates and ignoring null or whitespace entries.
+        /// Joins the specified CSS classes into a single string, starting with a required first 
+        /// class, ensuring no duplicates and ignoring null or whitespace entries.
         /// </summary>
         /// <param name="first">The first CSS class, which is required.</param>
         /// <param name="items">Additional CSS classes to join.</param>
@@ -30,7 +31,8 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Joins the specified CSS classes into a single string, starting with a required first class, ensuring no duplicates and ignoring null or whitespace entries.
+        /// Joins the specified CSS classes into a single string, starting with a required first 
+        /// class, ensuring no duplicates and ignoring null or whitespace entries.
         /// </summary>
         /// <param name="first">The first CSS class, which is required.</param>
         /// <param name="items">Additional CSS classes to join.</param>

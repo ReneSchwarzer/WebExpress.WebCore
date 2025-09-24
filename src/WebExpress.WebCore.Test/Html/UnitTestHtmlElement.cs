@@ -3,7 +3,7 @@
 namespace WebExpress.WebCore.Test.Html
 {
     /// <summary>
-    /// Unit tests for the HtmlElementFieldLabel class.
+    /// Unit tests for the HtmlElement class.
     /// </summary>
     [Collection("NonParallelTests")]
     public class UnitTestHtmlElement
@@ -25,6 +25,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             var res = html.Find(x => x is HtmlElementTextSemanticsSpan).FirstOrDefault();
 
+            // validation
             Assert.Equal(@"<span></span>", res.Trim());
         }
 
@@ -49,6 +50,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             var res = html.Find(x => x is HtmlElementTextSemanticsSpan).FirstOrDefault();
 
+            // validation
             Assert.Equal(@"<span></span>", res.Trim());
         }
 
@@ -64,7 +66,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.AddClass("test-class");
 
-            // assertion
+            // validation
             Assert.Contains("class=\"test-class\"", div.ToString());
         }
 
@@ -81,7 +83,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.RemoveClass("test-class");
 
-            // assertion
+            // validation
             Assert.DoesNotContain("class=\"test-class\"", div.ToString());
         }
 
@@ -97,7 +99,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.AddStyle("color:red;");
 
-            // assertion
+            // validation
             Assert.Contains("style=\"color:red;\"", div.ToString());
         }
 
@@ -114,7 +116,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.RemoveStyle("color");
 
-            // assertion
+            // validation
             Assert.DoesNotContain("style=\"color:red;\"", div.ToString());
         }
 
@@ -131,7 +133,7 @@ namespace WebExpress.WebCore.Test.Html
             div.AddClass("class1");
             div.AddClass("class2");
 
-            // assertion
+            // validation
             Assert.Contains("class=\"class1 class2\"", div.ToString());
         }
 
@@ -149,7 +151,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.RemoveClass("class1");
 
-            // assertion
+            // validation
             Assert.DoesNotContain("class1", div.ToString());
             Assert.Contains("class2", div.ToString());
         }
@@ -167,7 +169,7 @@ namespace WebExpress.WebCore.Test.Html
             div.AddStyle("color:red;");
             div.AddStyle("background:blue;");
 
-            // assertion
+            // validation
             Assert.Contains("color:red;", div.ToString());
             Assert.Contains("background:blue;", div.ToString());
         }
@@ -186,7 +188,7 @@ namespace WebExpress.WebCore.Test.Html
             // test execution
             div.RemoveStyle("color:red;");
 
-            // assertion
+            // validation
             Assert.DoesNotContain("color:red;", div.ToString());
             Assert.Contains("background:blue;", div.ToString());
         }
@@ -200,7 +202,7 @@ namespace WebExpress.WebCore.Test.Html
             // preconditions
             var div = new HtmlElementTextContentDiv();
 
-            // assertion
+            // validation
             Assert.Equal("<div></div>", div.ToString().Trim());
         }
 
@@ -216,7 +218,7 @@ namespace WebExpress.WebCore.Test.Html
                 new HtmlElementTextSemanticsI()
             );
 
-            // assertion
+            // validation
             Assert.Contains("<b></b>", div.ToString());
             Assert.Contains("<i></i>", div.ToString());
         }
