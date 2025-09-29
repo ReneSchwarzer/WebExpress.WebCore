@@ -24,6 +24,7 @@
 		<IsPackable>true</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Configurations>Debug;Release;DebugLocal</Configurations>
+		<DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
 	</PropertyGroup>
 
 	<ItemGroup>
