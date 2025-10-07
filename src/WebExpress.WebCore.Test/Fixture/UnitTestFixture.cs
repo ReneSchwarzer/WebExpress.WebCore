@@ -39,7 +39,7 @@ namespace WebExpress.WebCore.Test.Fixture
             (
                 new RouteEndpoint("server"),
                 [],
-                "",
+                Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()),
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
@@ -52,8 +52,9 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <summary>
         /// Create a component hub.
         /// </summary>
+        /// <param name="httpServerContext">The server context. If null, a mock context will be created.</param>
         /// <returns>The component hub.</returns>
-        public static ComponentHub CreateComponentHubMock()
+        public static ComponentHub CreateComponentHubMock(IHttpServerContext httpServerContext = null)
         {
             var ctorComponentHub = typeof(ComponentHub).GetConstructor
             (
@@ -63,7 +64,10 @@ namespace WebExpress.WebCore.Test.Fixture
                 null
             );
 
-            var componentHub = (ComponentHub)ctorComponentHub.Invoke([CreateHttpServerContextMock()]);
+            var componentHub = (ComponentHub)ctorComponentHub.Invoke
+            ([
+                httpServerContext ?? CreateHttpServerContextMock()
+            ]);
 
             // set static field in the webex class
             var type = typeof(WebEx);
