@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebIdentity;
+using WebExpress.WebCore.WebInclude;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPackage;
@@ -40,6 +41,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly EndpointManager _endpointManager;
         private readonly AssetManager _assetManager;
         private readonly ResourceManager _resourceManager;
+        private readonly IncludeManager _includeManager;
         private readonly PageManager _pageManager;
         private readonly SettingPageManager _settingPageManager;
         private readonly RestApiManager _restApiManager;
@@ -78,6 +80,7 @@ namespace WebExpress.WebCore.WebComponent
                 _fragmentManager,
                 _assetManager,
                 _resourceManager,
+                _includeManager,
                 _pageManager,
                 _settingPageManager,
                 _restApiManager,
@@ -150,6 +153,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
         public IResourceManager ResourceManager => _resourceManager;
+
+        /// <summary>
+        /// Returns the include manager.
+        /// </summary>
+        /// <returns>The instance of the include manager.</returns>
+        public IIncludeManager IncludeManager => _includeManager;
 
         /// <summary>
         /// Returns the page manager.
@@ -231,6 +240,7 @@ namespace WebExpress.WebCore.WebComponent
             _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
             _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager;
             _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
+            _includeManager = CreateInstance(typeof(IncludeManager)) as IncludeManager;
             _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
             _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager;
             _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
@@ -521,7 +531,7 @@ namespace WebExpress.WebCore.WebComponent
                 output.Add
                 (
                    string.Empty.PadRight(2) +
-                   _internationalizationManager.Translate("webexpress.webcore:componentmanager.name", manager.GetType()?.Name.ToLower())
+                   _internationalizationManager.Translate("webexpress.webcore:componentmanager.name", manager?.GetType()?.Name.ToLower())
                 );
             }
 

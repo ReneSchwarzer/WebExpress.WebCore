@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// The type of the scope. Must be a class that implements the <see cref="IScope"/> interface.
     /// </typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ScopeAttribute<TScope> : Attribute, IPageAttribute, ISettingPageAttribute
+    public class ScopeAttribute<TScope> : Attribute, IPageAttribute, ISettingPageAttribute, IIncludeAttribute
         where TScope : class, IScope
     {
         /// <summary>

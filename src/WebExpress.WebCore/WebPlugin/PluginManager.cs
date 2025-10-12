@@ -169,6 +169,10 @@ namespace WebExpress.WebCore.WebPlugin
                 // system plugins without plugin class (e.g. webexpress.webui)
                 if (assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
                 {
+                    var attributeData = assembly.CustomAttributes
+                        .FirstOrDefault(a => a.AttributeType == typeof(SystemPluginAttribute));
+                    var dependency = attributeData.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    var dependencies = dependency != null ? new List<string>([dependency]) : [];
                     var id = new ComponentId(assembly.GetName().Name.ToLower());
                     var pluginContext = new PluginContext()
                     {
@@ -180,24 +184,43 @@ namespace WebExpress.WebCore.WebPlugin
                         Version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                     };
 
+                    var hasUnfulfilledDependencies = HasUnfulfilledDependencies(id, dependencies.Select(x => new ComponentId(x)));
+
                     if (!_dictionary.ContainsKey(id))
                     {
-                        _dictionary.Add(id, new PluginItem()
+                        if (hasUnfulfilledDependencies)
                         {
-                            PluginLoadContext = loadContext,
-                            PluginClass = assembly.ExportedTypes.FirstOrDefault() ?? typeof(IPlugin),
-                            PluginContext = pluginContext,
-                            Plugin = null,
-                            Dependencies = null,
-                            ApplicationTypes = [typeof(IApplication)]
-                        });
+                            _unfulfilledDependencies.Add(id, new PluginItem()
+                            {
+                                PluginLoadContext = loadContext,
+                                PluginClass = assembly.ExportedTypes.FirstOrDefault() ?? typeof(IPlugin),
+                                PluginContext = pluginContext,
+                                Plugin = null,
+                                Dependencies = dependencies,
+                                ApplicationTypes = [typeof(IApplication)]
+                            });
+                        }
+                        else if (!_dictionary.ContainsKey(id))
+                        {
+                            _dictionary.Add(id, new PluginItem()
+                            {
+                                PluginLoadContext = loadContext,
+                                PluginClass = assembly.ExportedTypes.FirstOrDefault() ?? typeof(IPlugin),
+                                PluginContext = pluginContext,
+                                Plugin = null,
+                                Dependencies = dependencies,
+                                ApplicationTypes = [typeof(IApplication)]
+                            });
 
-                        _httpServerContext.Log.Debug
-                        (
-                            I18N.Translate("webexpress.webcore:pluginmanager.created", id)
-                        );
+                            _httpServerContext.Log.Debug
+                            (
+                                I18N.Translate("webexpress.webcore:pluginmanager.created", id)
+                            );
 
-                        OnAddPlugin(pluginContext);
+                            OnAddPlugin(pluginContext);
+
+                            CheckUnfulfilledDependencies();
+                        }
                     }
                     else
                     {
