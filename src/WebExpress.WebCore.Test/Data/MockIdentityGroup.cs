@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Data
         /// <summary>
         /// Returns the roles associated with the group.
         /// </summary>
-        public IEnumerable<string> Roles => _roles;
+        public IEnumerable<string> Policies => _roles;
 
         /// <summary>
         /// Initializes a new instance of the class with the specified id and name.

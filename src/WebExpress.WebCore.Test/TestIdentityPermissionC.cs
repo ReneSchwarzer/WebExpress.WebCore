@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test
     /// </summary>
     [Name("Delte")]
     [Description("Permissions to delete.")]
-    [Role<TestIdentityRoleA>()]
+    [Policy<TestIdentityPolicyA>()]
     public sealed class TestIdentityPermissionC : IIdentityPermission
     {
         /// <summary>

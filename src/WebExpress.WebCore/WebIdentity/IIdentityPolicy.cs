@@ -3,9 +3,9 @@
 namespace WebExpress.WebCore.WebIdentity
 {
     /// <summary>
-    /// Interface that defines an identity role.
+    /// Interface that defines an identity policy.
     /// </summary>
-    public interface IIdentityRole : IComponent
+    public interface IIdentityPolicy : IComponent
     {
     }
 }

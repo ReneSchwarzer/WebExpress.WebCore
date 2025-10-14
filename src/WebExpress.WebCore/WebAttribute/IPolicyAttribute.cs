@@ -1,9 +1,9 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
-    /// Interface of a role assignment attribute.
+    /// Interface of a policy assignment attribute.
     /// </summary>
-    public interface IRoleAttribute
+    public interface IPolicyAttribute
     {
     }
 }

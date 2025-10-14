@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test
     /// </summary>
     [Name("Write")]
     [Description("Permissions to write.")]
-    [Role<TestIdentityRoleA>()]
+    [Policy<TestIdentityPolicyA>()]
     public sealed class TestIdentityPermissionB : IIdentityPermission
     {
         /// <summary>

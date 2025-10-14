@@ -38,12 +38,12 @@ namespace WebExpress.WebCore.Test.Data
         private static IEnumerable<MockIdentityGroup> CreateTestGroups()
         {
             var group1 = new MockIdentityGroup(id: Guid.NewGuid(), name: "Admins");
-            group1.Assign(["webexpress.webcore.test.testidentityrolea", "webexpress.webcore.test.testidentityroleb"]);
+            group1.Assign(["webexpress.webcore.test.testidentitypolicya", "webexpress.webcore.test.testidentitypolicyb"]);
 
             yield return group1;
 
             var group2 = new MockIdentityGroup(id: Guid.NewGuid(), name: "Users");
-            group2.Assign(["webexpress.webcore.test.testidentityroleb"]);
+            group2.Assign(["webexpress.webcore.test.testidentitypolicyb"]);
 
             yield return group2;
 

@@ -162,8 +162,8 @@ fragmentmanager.fragment=Fragment: '{0}' für die Anwendung '{1}'.
 identitymanager.initialization=Der Identitymanager wurde initialisiert.
 identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
 identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der Anwendung '{1}' registriert.
-identitymanager.registerrole=Die Rolle '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
-identitymanager.duplicaterole=Die Rolle '{0}' wurde bereits in der Anwendung '{1}' registriert.
+identitymanager.registerpolicy=Die Policy '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
+identitymanager.duplicatepolicy=Die Policy '{0}' wurde bereits in der Anwendung '{1}' registriert.
 
 thememanager.initialization=Der Thememanager wurde initialisiert.
 thememanager.addtheme=Das Theme '{0}' wurde in der Anwendung '{1}' registiert.

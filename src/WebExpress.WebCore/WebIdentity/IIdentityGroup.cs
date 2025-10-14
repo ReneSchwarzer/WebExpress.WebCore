@@ -8,8 +8,8 @@ namespace WebExpress.WebCore.WebIdentity
     public interface IIdentityGroup
     {
         /// <summary>
-        /// Returns the roles associated with the group.
+        /// Returns the policies associated with the group.
         /// </summary>
-        IEnumerable<string> Roles { get; }
+        IEnumerable<string> Policies { get; }
     }
 }

@@ -18,9 +18,9 @@ namespace WebExpress.WebCore.WebIdentity
         public IEnumerable<IIdentityPermissionContext> Permissions { get; }
 
         /// <summary>
-        /// Returns all roles.
+        /// Returns all policies.
         /// </summary>
-        public IEnumerable<IIdentityRoleContext> Roles { get; }
+        public IEnumerable<IIdentityPolicyContext> Policies { get; }
 
         /// <summary>
         /// Returns all identities.
@@ -93,23 +93,23 @@ namespace WebExpress.WebCore.WebIdentity
         bool CheckAccess(IApplicationContext applicationContext, IIdentityGroup group, Type permission);
 
         /// <summary>
-        /// Checks if the specified identity role has the given permission.
+        /// Checks if the specified identity policy has the given permission.
         /// </summary>
-        /// <typeparam name="TIdentityRole">The type of the identity role.</typeparam>
+        /// <typeparam name="TIdentityPolicy">The type of the identity policy.</typeparam>
         /// <typeparam name="TIdentityPermission">The type of the identity permission.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        bool CheckAccess<TIdentityRole, TIdentityPermission>(IApplicationContext applicationContext)
-            where TIdentityRole : IIdentityRole
+        /// <returns>True if the identity policy has the permission, false otherwise.</returns>
+        bool CheckAccess<TIdentityPolicy, TIdentityPermission>(IApplicationContext applicationContext)
+            where TIdentityPolicy : IIdentityPolicy
             where TIdentityPermission : IIdentityPermission;
 
         /// <summary>
-        /// Checks if the specified identity role has the given permission.
+        /// Checks if the specified identity policy has the given permission.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="role">The identity role to check.</param>
+        /// <param name="policy">The identity policy to check.</param>
         /// <param name="permission">The permission to check for.</param>
-        /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        bool CheckAccess(IApplicationContext applicationContext, Type role, Type permission);
+        /// <returns>True if the identity policy has the permission, false otherwise.</returns>
+        bool CheckAccess(IApplicationContext applicationContext, Type policy, Type permission);
     }
 }
