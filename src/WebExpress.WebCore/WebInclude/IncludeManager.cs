@@ -215,6 +215,15 @@ namespace WebExpress.WebCore.WebInclude
                 foreach (var includeItem in value.Values.SelectMany(x => x.Values))
                 {
                     OnRemoveInclude(includeItem.IncludeContext);
+
+                    _httpServerContext?.Log.Debug(
+                            I18N.Translate(
+                                "webexpress.webcore:includemanager.removeinclude",
+                                includeItem.IncludeId,
+                                includeItem.ApplicationContext.ApplicationId
+                            )
+                        );
+
                     includeItem.Dispose();
                 }
 

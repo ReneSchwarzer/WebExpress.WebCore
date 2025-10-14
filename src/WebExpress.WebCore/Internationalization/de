@@ -165,6 +165,10 @@ identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der 
 identitymanager.registerpolicy=Die Policy '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
 identitymanager.duplicatepolicy=Die Policy '{0}' wurde bereits in der Anwendung '{1}' registriert.
 
+includemanager.initialization=Der Includemanager wurde initialisiert.
+includemanager.addinclude=Die Client-Ressource '{0}' wurde in der Anwendung '{1}' registiert.
+includemanager.removeinclude=Die Client-Ressource '{0}' wurde aus der Anwendung '{1}' entfernt.
+
 thememanager.initialization=Der Thememanager wurde initialisiert.
 thememanager.addtheme=Das Theme '{0}' wurde in der Anwendung '{1}' registiert.
 thememanager.titel=Designvorlagen:
