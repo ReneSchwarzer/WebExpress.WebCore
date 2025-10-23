@@ -39,5 +39,10 @@ namespace WebExpress.WebCore.WebStatusPage
         /// Returns the status icon.
         /// </summary>
         IRoute StatusIcon { get; }
+
+        /// <summary>
+        /// Returns the description of the current status.
+        /// </summary>
+        string StatusDescription { get; }
     }
 }

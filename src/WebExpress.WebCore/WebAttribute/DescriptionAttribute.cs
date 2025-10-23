@@ -7,7 +7,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// Implements <see cref="System.Attribute"/>, <see cref="IPluginAttribute"/>, and <see cref="IApplicationAttribute"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class DescriptionAttribute : Attribute, IPluginAttribute, IApplicationAttribute, ISettingCategoryAttribute, ISettingGroupAttribute, IThemeAttribute
+    public class DescriptionAttribute : Attribute, IPluginAttribute, IApplicationAttribute, ISettingCategoryAttribute, ISettingGroupAttribute, IThemeAttribute, IStatusPageAttribute
     {
         /// <summary>
         /// Initializes a new instance of the class.

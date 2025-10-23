@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebSession.Model;
@@ -73,6 +75,61 @@ namespace WebExpress.WebCore.WebSession
             }
 
             return session;
+        }
+
+        /// <summary>
+        /// Cleans up expired sessions from the session manager based on the specified session timeout.
+        /// </summary>
+        /// <remarks>
+        /// This method iterates through the sessions and removes those that have been inactive
+        /// for longer than the configured session timeout. It logs the removal of each expired session.
+        /// </remarks>
+        /// <param name="applicationContext">
+        /// The application context containing configuration settings, including the session timeout duration.
+        /// </param>
+        /// <param name="timeoutMinutes">
+        /// The explicit session timeout in minutes; if non-positive, the configured timeout is used. If 
+        /// the effective timeout is non-positive, cleanup is skipped.
+        /// </param>
+        /// <returns>The current instance of the session manager, allowing for method chaining.</returns>
+        public ISessionManager CleanUp(IApplicationContext applicationContext, int timeoutMinutes = 60 * 24 * 365)
+        {
+            // validate input
+            ArgumentNullException.ThrowIfNull(applicationContext);
+
+            // read timeout; non-positive values disable cleanup
+            if (timeoutMinutes <= 0)
+            {
+                return this;
+            }
+
+            var now = DateTime.Now;
+
+            // collect expired ids under lock to avoid concurrent modifications during enumeration
+            IEnumerable<Guid> expiredIds;
+            lock (_dictionary)
+            {
+                expiredIds = _dictionary.Values
+                    .Where(s => (now - s.Updated).TotalMinutes > timeoutMinutes)
+                    .Select(s => s.Id);
+
+                // remove expired sessions under the same lock
+                foreach (var id in expiredIds)
+                {
+                    _dictionary.Remove(id);
+                }
+            }
+
+            // log removals outside the lock
+            foreach (var id in expiredIds)
+            {
+                _httpServerContext.Log.Info
+                (
+                    I18N.Translate("webexpress.webcore:sessionmanager.cleanup.removed", id)
+                );
+            }
+
+            return this;
         }
 
         /// <summary>

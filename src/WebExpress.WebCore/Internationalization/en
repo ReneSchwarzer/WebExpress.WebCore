@@ -123,6 +123,7 @@ sitemapmanager.preorder={0} => {1}
 sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
 
 sessionmanager.initialization=The session manager has been initialized.
+sessionmanager.cleanup.removed=The session with the id '{0}' has been removed.
 
 settingpagemanager.initialization=The setting page manager has been initialized.
 settingpagemanager.register.category=The setting category '{0}' has been registered in the application '{1}'.

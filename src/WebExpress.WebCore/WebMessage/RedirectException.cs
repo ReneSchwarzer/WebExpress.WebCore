@@ -1,7 +1,7 @@
 ﻿using System;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.WebPage
+namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
     /// Represents an exception that is thrown to redirect a web page.

@@ -123,6 +123,7 @@ sitemapmanager.preorder={0} => {1}
 sitemapmanager.merge.error=Die beiden Sitemaps '{0}' und '{1}' konnten nicht gemerdged werden.
 
 sessionmanager.initialization=Der Sessionmanager wurde initialisiert.
+sessionmanager.cleanup.removed=Die Sitzung mit der Id '{0}' wurde entfernt.
 
 settingpagemanager.initialization=Der Settingpagemanager wurde initialisiert.
 settingpagemanager.register.category=Die Einstellungskategorie '{0}' wurde der Anwendung '{1}' zugewiesen und im Settingpagemanager registriert.

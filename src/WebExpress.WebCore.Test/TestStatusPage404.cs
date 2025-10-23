@@ -39,12 +39,5 @@ namespace WebExpress.WebCore.Test
                 throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }
         }
-
-        /// <summary>
-        /// Release of unmanaged resources reserved during use.
-        /// </summary>
-        public void Dispose()
-        {
-        }
     }
 }
