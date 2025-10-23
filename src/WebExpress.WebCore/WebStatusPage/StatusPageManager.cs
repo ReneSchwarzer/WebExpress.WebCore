@@ -506,7 +506,7 @@ namespace WebExpress.WebCore.WebStatusPage
             {
                 list.Add
                 (
-                    I18N.Translate("webexpress.webcore:statuspagemanager.statuspage", statusPage.StatusCode)
+                    I18N.Translate("webexpress.webcore:statuspagemanager.addstatuspage", statusPage.StatusCode, statusPage.ApplicationContext?.ApplicationId)
                 );
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
@@ -267,6 +268,10 @@ namespace WebExpress.WebCore.WebApplication
         public void Boot(IPluginContext pluginContext)
         {
             if (pluginContext == null)
+            {
+                return;
+            }
+            else if (pluginContext.Assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
             {
                 return;
             }

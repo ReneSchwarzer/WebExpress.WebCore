@@ -111,7 +111,7 @@ statuspagemanager.initialization=Der Statuspagemanager wurde initialisiert.
 statuspagemanager.register=Der Status '{0}' wurde registriert und der Statusseite '{1}' zugewiesen.
 statuspagemanager.duplicat=Der Status '{0}' wurde bereits registriert. Die Statusseite '{1}' wird daher nicht verwendet.
 statuspagemanager.statuscodeless=Ein Statuscode wurde der Ressource '{1}' für die Anwendung '{0}' nicht zugewiesen.
-statuspagemanager.statuspage=Statuscode: '{0}'
+statuspagemanager.addstatuspage=Statuscode: '{0}' für Anwendung '{1}'
 
 sitemapmanager.titel=Sitemap:
 sitemapmanager.initialization=Der Sitemap-Manager wurde initialisiert.

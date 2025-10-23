@@ -8,9 +8,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
 		<RepositoryUrl>https://github.com/webexpress-framework/WebExpress.git</RepositoryUrl>
-		<Authors>Rene_Schwarzer@hotmail.de</Authors>
+		<Authors>webexpress-framework@outlook.com</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Company>Rene_Schwarzer@hotmail.de</Company>
+		<Company>webexpress-framework@outlook.com</Company>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Description>Core library of the WebExpress web server.</Description>
