@@ -227,16 +227,13 @@ namespace WebExpress.WebCore.WebRestApi
             }
 
             var value = _request.GetParameter(parameter)?.Value;
-            if (int.TryParse(value, out var number))
+            if (int.TryParse(value, out var number) && (number < min || number > max))
             {
-                if (number < min || number > max)
-                {
-                    _result.Add(
-                        message ?? I18N.Translate(_request, "webexpress.webcore:validation.out_of_range", parameter, min.ToString(), max.ToString()),
-                        parameter,
-                        "OUT_OF_RANGE"
-                    );
-                }
+                _result.Add(
+                    message ?? I18N.Translate(_request, "webexpress.webcore:validation.out_of_range", parameter, min.ToString(), max.ToString()),
+                    parameter,
+                    "OUT_OF_RANGE"
+                );
             }
 
             return this;

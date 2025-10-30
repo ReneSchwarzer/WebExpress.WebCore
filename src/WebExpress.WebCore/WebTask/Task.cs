@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WebExpress.WebCore.WebTask
 {
@@ -101,10 +102,9 @@ namespace WebExpress.WebCore.WebTask
 
                 OnFinish();
 
-                System.Threading.Tasks.Task.Delay(30000).ContinueWith(_ =>
-                {
-                    WebEx.ComponentHub.TaskManager.RemoveTask(this);
-                });
+                var cts = new CancellationTokenSource();
+                _ = ScheduleRemovalAsync(cts.Token);
+
 
             }, TokenSource.Token);
         }
@@ -128,5 +128,35 @@ namespace WebExpress.WebCore.WebTask
         {
             Cancel();
         }
+
+        /// <summary>
+        /// Schedules the removal of the current task after a delay.
+        /// </summary>
+        /// <param name="token">
+        /// A <see cref="CancellationToken"/> that can be used to cancel the scheduled removal.
+        /// </param>
+        /// <returns>
+        /// True if the task was successfully removed after the delay; otherwise, 
+        /// false if the operation was canceled.
+        /// </returns>
+        public async Task<bool> ScheduleRemovalAsync(CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
+            {
+                return false;
+            }
+
+            try
+            {
+                await System.Threading.Tasks.Task.Delay(30000, token);
+                WebEx.ComponentHub.TaskManager.RemoveTask(this);
+                return true;
+            }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
+        }
+
     }
 }

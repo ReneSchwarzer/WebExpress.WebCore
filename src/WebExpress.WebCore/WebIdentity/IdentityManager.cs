@@ -122,7 +122,7 @@ namespace WebExpress.WebCore.WebIdentity
             // permissions
             foreach (var permissionType in assembly.GetTypes().Where
                 (
-                    x => x.IsClass == true &&
+                    x => x.IsClass &&
                     x.IsSealed &&
                     x.IsPublic &&
                     (
@@ -132,20 +132,20 @@ namespace WebExpress.WebCore.WebIdentity
             {
                 var id = new ComponentId(permissionType.FullName);
                 var policyTypes = new List<Type>();
-
-                foreach (var customAttribute in permissionType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPolicyAttribute))))
-                {
-                    if
+                var matchingAttributes = permissionType.CustomAttributes
+                    .Where
                     (
-                        customAttribute.AttributeType.Name == typeof(PolicyAttribute<>).Name &&
-                        customAttribute.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                        x => x.AttributeType.GetInterfaces().Contains(typeof(IPolicyAttribute)) &&
+                        x.AttributeType.Name == typeof(PolicyAttribute<>).Name &&
+                        x.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace
+                    );
+
+                foreach (var customAttribute in matchingAttributes)
+                {
+                    var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    if (type != null && !policyTypes.Contains(type))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        if (type != null && !policyTypes.Contains(type))
-                        {
-                            policyTypes.Add(type);
-                        }
+                        policyTypes.Add(type);
                     }
                 }
 
@@ -195,7 +195,7 @@ namespace WebExpress.WebCore.WebIdentity
             // policies
             foreach (var policyType in assembly.GetTypes().Where
                 (
-                    x => x.IsClass == true &&
+                    x => x.IsClass &&
                     x.IsSealed &&
                     x.IsPublic &&
                     (
@@ -205,17 +205,20 @@ namespace WebExpress.WebCore.WebIdentity
             {
                 var id = new ComponentId(policyType.FullName);
                 var permissionTypes = new List<Type>();
+                var matchingAttributes = policyType.CustomAttributes
+                    .Where
+                    (
+                        x => x.AttributeType.GetInterfaces().Contains(typeof(IPermissionAttribute)) &&
+                        x.AttributeType.Name == typeof(PermissionAttribute<>).Name &&
+                        x.AttributeType.Namespace == typeof(PermissionAttribute<>).Namespace
+                    );
 
-                foreach (var customAttribute in policyType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPermissionAttribute))))
+                foreach (var customAttribute in matchingAttributes)
                 {
-                    if (customAttribute.AttributeType.Name == typeof(PermissionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(PermissionAttribute<>).Namespace)
+                    var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    if (type != null && !permissionTypes.Contains(type))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        if (type != null && !permissionTypes.Contains(type))
-                        {
-                            permissionTypes.Add(type);
-                        }
+                        permissionTypes.Add(type);
                     }
                 }
 
@@ -434,23 +437,15 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Checks if the specified identity has the given permission.
+        /// Checks whether the given identity has the specified permission by evaluating all associated groups.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="identity">The identity to check.</param>
         /// <param name="permission">The permission to check for.</param>
-        /// <returns>True if the identity has the permission, false otherwise.</returns>
+        /// <returns>True if any group grants the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentity identity, Type permission)
         {
-            foreach (var group in identity?.Groups ?? [])
-            {
-                if (CheckAccess(applicationContext, group, permission))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (identity?.Groups ?? []).Any(group => CheckAccess(applicationContext, group, permission));
         }
 
         /// <summary>
@@ -474,15 +469,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>True if the identity group has the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentityGroup group, Type permission)
         {
-            foreach (var policy in group?.Policies ?? [])
-            {
-                if (CheckAccess(applicationContext, policy, permission))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (group?.Policies ?? []).Any(policy => CheckAccess(applicationContext, policy, permission));
         }
 
         /// <summary>
@@ -519,29 +506,29 @@ namespace WebExpress.WebCore.WebIdentity
         private bool CheckAccess(IApplicationContext applicationContext, string policyName, Type permissionType)
         {
             // policies to permissions
-            var policies = _policyDictionary.Values.SelectMany(x => x)
+            var policies = _policyDictionary.Values
+                .SelectMany(x => x)
                 .Where(x => x.Key == applicationContext)
                 .SelectMany(entry => entry.Value);
 
-            foreach (var policy in policies.Where(x => x.PolicyClass.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase)))
+            if (policies.Any(policy =>
+                policy.PolicyClass.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase) &&
+                policy.Permissions.Contains(permissionType)))
             {
-                if (policy.Permissions.Contains(permissionType))
-                {
-                    return true;
-                }
+                return true;
             }
 
             // permissions to policies
-            var permissions = _permissionDictionary.Values.SelectMany(x => x)
+            var permissions = _permissionDictionary.Values
+                .SelectMany(x => x)
                 .Where(x => x.Key == applicationContext)
                 .SelectMany(entry => entry.Value);
 
-            foreach (var permission in permissions.Where(x => x.PermissionClass == permissionType))
+            if (permissions.Any(permission =>
+                permission.PermissionClass == permissionType &&
+                permission.Policies.Any(x => x.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase))))
             {
-                if (permission.Policies.Any(x => x.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

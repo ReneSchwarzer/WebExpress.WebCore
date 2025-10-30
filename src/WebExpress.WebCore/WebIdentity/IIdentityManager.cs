@@ -65,12 +65,12 @@ namespace WebExpress.WebCore.WebIdentity
             where TIdentityPermission : IIdentityPermission;
 
         /// <summary>
-        /// Checks if the specified identity has the given permission.
+        /// Checks whether the given identity has the specified permission by evaluating all associated groups.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="identity">The identity to check.</param>
         /// <param name="permission">The permission to check for.</param>
-        /// <returns>True if the identity has the permission, false otherwise.</returns>
+        /// <returns>True if any group grants the permission, false otherwise.</returns>
         bool CheckAccess(IApplicationContext applicationContext, IIdentity identity, Type permission);
 
         /// <summary>

@@ -106,8 +106,9 @@ namespace WebExpress.WebCore.WebHtml
         public bool Inline { get; set; }
 
         /// <summary>
-        /// Determines whether the element needs an end tag.
-        /// e.g.: true = <div></div> false = <br/>
+        /// Determines whether the element requires a closing tag.
+        /// Examples: true → &lt;div&gt;&lt;/div&gt;, false → &lt;br/&gt;
+        /// This affects rendering behavior in ToString and ToPostString.
         /// </summary>
         public bool CloseTag { get; protected set; }
 
@@ -416,12 +417,12 @@ namespace WebExpress.WebCore.WebHtml
             if (_elements.Count == 0)
             {
                 nl = false;
+                closeTag = CloseTag;
             }
             else if (ContainsOnlyTextNodes(_elements, out var text))
             {
-                closeTag = CloseTag;
                 nl = false;
-
+                closeTag = true;
                 builder.Append(text);
             }
             else
@@ -440,7 +441,7 @@ namespace WebExpress.WebCore.WebHtml
                 }
             }
 
-            if (closeTag || CloseTag)
+            if (closeTag)
             {
                 ToPostString(builder, deep, nl);
             }

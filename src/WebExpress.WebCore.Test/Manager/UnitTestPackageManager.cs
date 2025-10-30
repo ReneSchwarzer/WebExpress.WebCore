@@ -236,8 +236,8 @@ namespace WebExpress.WebCore.Test.Manager
 
                 // validation
                 Assert.NotNull(result);
-                Assert.Equal("dummy", result.Id);
-                Assert.Equal("DummyTitle", result.Metadata.Title);
+                Assert.Equal("dummy", result?.Id);
+                Assert.Equal("DummyTitle", result?.Metadata.Title);
             }
             finally
             {
