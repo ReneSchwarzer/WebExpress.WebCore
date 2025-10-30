@@ -136,7 +136,10 @@ namespace WebExpress.WebCore.WebIdentity
                 foreach (var customAttribute in permissionType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPolicyAttribute))))
                 {
-                    if (customAttribute.AttributeType.Name == typeof(PolicyAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    if
+                    (
+                        customAttribute.AttributeType.Name == typeof(PolicyAttribute<>).Name &&
+                        customAttribute.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
                     {
                         var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         if (type != null && !policyTypes.Contains(type))
@@ -492,7 +495,8 @@ namespace WebExpress.WebCore.WebIdentity
         public bool CheckAccess<R, P>(IApplicationContext applicationContext) where R : IIdentityPolicy where P : IIdentityPermission
         {
             return CheckAccess(applicationContext, typeof(R), typeof(P));
-        }
+        }
+
         /// <summary>
         /// Checks if the specified identity policy has the given permission.
         /// </summary>

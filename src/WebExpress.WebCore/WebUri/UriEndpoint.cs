@@ -154,7 +154,10 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="uri">The uri.</param>
         public UriEndpoint(string uri)
         {
-            if (string.IsNullOrWhiteSpace(uri) || uri == "/") return;
+            if (string.IsNullOrWhiteSpace(uri) || uri == "/")
+            {
+                return;
+            }
 
             if (Enum.GetNames<UriScheme>().Where(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)).Any())
             {
@@ -461,6 +464,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Sets the fragment component of the URI.
         /// </summary>
+        /// <param name="fragment">The fragment to set (e.g., "section1").</param>
         /// <returns>A new IUri instance with the updated fragment. The original URI remains unchanged.</returns>
         public IUri SetFragment(string fragment)
         {

@@ -12,12 +12,12 @@ namespace WebExpress.WebCore.WebInclude
     internal sealed class IncludeContext : IIncludeContext
     {
         /// <summary>
-        /// Retruns or sets the identifier of the included component.
+        /// Returns or sets the identifier of the included component.
         /// </summary>
         public ComponentId IncludeId { get; set; }
 
         /// <summary>
-        /// Retruns or sets the context for the plugin, providing access to shared resources and services.
+        /// Returns or sets the context for the plugin, providing access to shared resources and services.
         /// </summary>
         public IPluginContext PluginContext { get; set; }
 
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebInclude
         public IEnumerable<IncludeFile> Files { get; set; } = [];
 
         /// <summary>
-        /// Retruns or sets the collection of scopes associated with the current context.
+        /// Returns or sets the collection of scopes associated with the current context.
         /// </summary>
         /// <remarks>
         /// The collection can be empty if no scopes are defined. Callers can set this property

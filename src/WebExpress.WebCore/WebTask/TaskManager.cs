@@ -102,7 +102,7 @@ namespace WebExpress.WebCore.WebTask
         /// <param name="id">The id of the task.</param>
         /// <param name="handler">The event handler.</param>
         /// <param name="args">The event argument.</param>
-        /// <typeparam name="TTask">The type of the task.</typeparam>-
+        /// <typeparam name="TTask">The type of the task.</typeparam>
         /// <returns>The task or null.</returns>
         public ITask CreateTask<TTask>(string id, EventHandler<TaskEventArgs> handler, params object[] args)
             where TTask : Task

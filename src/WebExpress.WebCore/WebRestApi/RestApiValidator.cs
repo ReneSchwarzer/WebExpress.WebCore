@@ -65,7 +65,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Require(string parameter, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (string.IsNullOrWhiteSpace(value))
@@ -98,7 +101,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator MaxLength(string parameter, int max, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) && value.Length > max)
@@ -132,7 +138,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator MinLength(string parameter, int min, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
 
@@ -176,7 +185,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Regex(string parameter, string pattern, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) && !System.Text.RegularExpressions.Regex.IsMatch(value, pattern))
@@ -209,7 +221,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Range(string parameter, int min, int max, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (int.TryParse(value, out var number))
@@ -244,7 +259,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator IsInt(string parameter, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!int.TryParse(value, out _))
@@ -276,7 +294,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Email(string parameter, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) && !System.Text.RegularExpressions.Regex.IsMatch(value, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
@@ -308,7 +329,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator EqualTo(string parameter, string expected, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.Equals(value, expected, StringComparison.OrdinalIgnoreCase))
@@ -340,7 +364,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator NotEqualTo(string parameter, string notExpected, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (string.Equals(value, notExpected, StringComparison.OrdinalIgnoreCase))
@@ -372,7 +399,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator StartsWith(string parameter, string prefix, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) && !value.StartsWith(prefix))
@@ -403,7 +433,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator In(string parameter, params string[] allowedValues)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) &&
@@ -435,7 +468,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Contains(string parameter, string text, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (string.IsNullOrWhiteSpace(value) || !value.Contains(text))
@@ -467,7 +503,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator EndsWith(string parameter, string suffix, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!string.IsNullOrWhiteSpace(value) && !value.EndsWith(suffix))
@@ -503,7 +542,10 @@ namespace WebExpress.WebCore.WebRestApi
         public RestApiValidator MatchesEnum<T>(string parameter, string message = null)
             where T : struct, Enum
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!Enum.TryParse<T>(value, true, out _))
@@ -534,7 +576,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator IsDate(string parameter, string message = null)
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             var value = _request.GetParameter(parameter)?.Value;
             if (!DateTime.TryParse(value, out _))
@@ -559,8 +604,8 @@ namespace WebExpress.WebCore.WebRestApi
         /// validation result.
         /// </remarks>
         /// <param name="condition">
-        /// A function that evaluates the request and returns true" if the 
-        /// condition is met; otherwise,false.
+        /// A function that evaluates the request and returns true if the 
+        /// condition is met; otherwise, false.
         /// </param>
         /// <param name="message">
         /// The error message to associate with the validation failure if 
@@ -577,7 +622,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// <returns>The current instance, allowing for method chaining.</returns>
         public RestApiValidator Custom(Func<Request, bool> condition, string message, string parameter = null, string code = "CUSTOM")
         {
-            if (!_currentCondition) return this;
+            if (!_currentCondition)
+            {
+                return this;
+            }
 
             if (!condition(_request))
             {

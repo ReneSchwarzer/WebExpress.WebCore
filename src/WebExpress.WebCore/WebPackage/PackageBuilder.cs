@@ -110,12 +110,10 @@ namespace WebExpress.WebCore.WebPackage
             {
                 try
                 {
-                    foreach (var licFilePath in Directory.GetFiles(rootDirectory, "*.lic", SearchOption.AllDirectories))
+                    foreach (var licFilePath in Directory.GetFiles(rootDirectory, "*.lic", SearchOption.AllDirectories)
+                        .Where(x => !string.IsNullOrWhiteSpace(x) && File.Exists(x)))
                     {
-                        if (!string.IsNullOrWhiteSpace(licFilePath) && File.Exists(licFilePath))
-                        {
-                            LicensesToZip(archive, licFilePath);
-                        }
+                        LicensesToZip(archive, licFilePath);
                     }
                 }
                 catch (Exception)
@@ -262,29 +260,26 @@ namespace WebExpress.WebCore.WebPackage
                         continue;
                     }
 
-                    foreach (var fileName in files)
+                    foreach (var fileName in files.Where(x => !string.IsNullOrWhiteSpace(x) && File.Exists(x)))
                     {
-                        if (!string.IsNullOrWhiteSpace(fileName) && File.Exists(fileName))
+                        // compute relative path robustly
+                        string relativePath;
+                        try
                         {
-                            // compute relative path robustly
-                            string relativePath;
-                            try
-                            {
-                                relativePath = Path.GetRelativePath(dir, fileName);
-                            }
-                            catch
-                            {
-                                // fallback to file name if relative path fails
-                                relativePath = Path.GetFileName(fileName);
-                            }
-
-                            var entryPathRaw = $"{zipBinarys}/{safePluginName}/{safeTarget}/{relativePath}";
-                            var entryPath = SanitizeEntryPath(entryPathRaw);
-
-                            AddFileToZip(archive, entryPath, fileName);
-
-                            Console.WriteLine($"*** PackageBuilder: Copy the output file '{relativePath}' to {safePluginName}.");
+                            relativePath = Path.GetRelativePath(dir, fileName);
                         }
+                        catch
+                        {
+                            // fallback to file name if relative path fails
+                            relativePath = Path.GetFileName(fileName);
+                        }
+
+                        var entryPathRaw = $"{zipBinarys}/{safePluginName}/{safeTarget}/{relativePath}";
+                        var entryPath = SanitizeEntryPath(entryPathRaw);
+
+                        AddFileToZip(archive, entryPath, fileName);
+
+                        Console.WriteLine($"*** PackageBuilder: Copy the output file '{relativePath}' to {safePluginName}.");
                     }
                 }
             }

@@ -285,7 +285,7 @@
                 ContentType.Jpeg => "*.jpeg",
                 ContentType.Jpg => "*.jpg",
                 ContentType.Ico => "*.ico",
-                ContentType.WebP => ".webp",
+                ContentType.WebP => "*.webp",
                 ContentType.Mp3 => "*.mp3",
                 ContentType.Mp4 => "*.mp4",
                 _ => "*.*",

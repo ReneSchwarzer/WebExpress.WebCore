@@ -12,12 +12,12 @@ namespace WebExpress.WebCore.WebInclude
     public interface IIncludeContext : IContext
     {
         /// <summary>
-        /// Retruns the identifier of the included component.
+        /// Returns the identifier of the included component.
         /// </summary>
         ComponentId IncludeId { get; }
 
         /// <summary>
-        /// Retruns the context for the plugin, providing access to shared resources and services.
+        /// Returns the context for the plugin, providing access to shared resources and services.
         /// </summary>
         IPluginContext PluginContext { get; }
 
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebInclude
         IEnumerable<IncludeFile> Files { get; }
 
         /// <summary>
-        /// Retruns the collection of scopes associated with the current context.
+        /// Returns the collection of scopes associated with the current context.
         /// </summary>
         /// <remarks>
         /// The collection can be empty if no scopes are defined. Callers can set this property

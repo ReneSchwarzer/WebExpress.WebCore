@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         /// <remarks>
         /// This method appends the specified errors to the existing collection. If 
-        /// the array isempty, no changes are made.
+        /// the array is empty, no changes are made.
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
         public void Add(params RestApiError[] errors)
@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         /// <remarks>
         /// This method appends the specified errors to the existing collection. If 
-        /// the array isempty, no changes are made.
+        /// the array is empty, no changes are made.
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
         public void AddRange(IEnumerable<RestApiError> errors)

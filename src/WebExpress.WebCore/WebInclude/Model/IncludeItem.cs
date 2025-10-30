@@ -14,12 +14,12 @@ namespace WebExpress.WebCore.WebInclude.Model
         private readonly IComponentHub _componentHub;
 
         /// <summary>
-        /// Retruns or sets the identifier of the included component.
+        /// Returns or sets the identifier of the included component.
         /// </summary>
         public ComponentId IncludeId { get; set; }
 
         /// <summary>
-        /// Retruns or sets the context for the plugin, providing access to shared resources and services.
+        /// Returns or sets the context for the plugin, providing access to shared resources and services.
         /// </summary>
         public IPluginContext PluginContext { get; set; }
 
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.WebInclude.Model
         public bool Cache { get; set; }
 
         /// <summary>
-        /// Retruns or sets the collection of scopes associated with the current context.
+        /// Returns or sets the collection of scopes associated with the current context.
         /// </summary>
         /// <remarks>
         /// The collection can be empty if no scopes are defined. Callers can set this property
@@ -69,9 +69,10 @@ namespace WebExpress.WebCore.WebInclude.Model
         /// <summary>
         /// Initializes a new instance of the class with the specified component hub.
         /// </summary>
-        /// <param name="componentHub"
-        /// >The component hub used to manage and interact with components. This parameter cannot 
-        /// be null.</param>
+        /// <param name="componentHub">
+        /// The component hub used to manage and interact with components. This parameter cannot 
+        /// be null.
+        /// </param>
         public IncludeItem(IComponentHub componentHub)
         {
             _componentHub = componentHub;
