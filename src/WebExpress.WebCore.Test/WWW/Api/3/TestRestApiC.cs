@@ -1,6 +1,8 @@
 ﻿using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebRestApi;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.Test.WWW.Api._3
 {
@@ -35,45 +37,52 @@ namespace WebExpress.WebCore.Test.WWW.Api._3
         /// Creates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public override void CreateData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public override Response CreateData(Request request)
         {
-
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Gets data.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns>The data.</returns>
-        public override object GetData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public override Response GetData(Request request)
         {
-            return null;
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Updates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public override void UpdateData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public override Response UpdateData(Request request)
         {
             // test the request
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
+
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Deletes data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public override void DeleteData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public override Response DeleteData(Request request)
         {
             // test the request
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
+
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>

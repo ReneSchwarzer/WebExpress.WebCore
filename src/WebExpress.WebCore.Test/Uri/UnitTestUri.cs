@@ -187,5 +187,27 @@ namespace WebExpress.WebCore.Test.Uri
             Assert.Equal(uri, resourceUri.ToString());
             Assert.Equal(expected, resourceUri.BasePath.ToString());
         }
+
+        /// <summary>
+        /// Test the setfragment method.
+        /// </summary>
+        [Theory]
+        [InlineData("http://user@example.com/x", null, "http://user@example.com/x")]
+        [InlineData("http://user@example.com/x", "", "http://user@example.com/x")]
+        [InlineData("http://user@example.com/x?a=1&b=2", "myfragment", "http://user@example.com/x?a=1&b=2#myfragment")]
+        [InlineData("http://user@example.com/a/b/c", "myfragment", "http://user@example.com/a/b/c#myfragment")]
+        public void SetFragment(string uri, string fragment, string expected)
+        {
+            // preconditions
+            var resourceUri = (IUri)new UriEndpoint(uri)
+            {
+            };
+
+            // test execution
+            resourceUri = resourceUri.SetFragment(fragment);
+
+            // validation
+            Assert.Equal(expected, resourceUri.ToString());
+        }
     }
 }

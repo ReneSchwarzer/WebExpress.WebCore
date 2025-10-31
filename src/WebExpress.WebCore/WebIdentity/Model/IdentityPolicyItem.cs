@@ -7,9 +7,9 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebIdentity.Model
 {
     /// <summary>
-    /// Represents an item in the identity role.
+    /// Represents an item in the identity policy.
     /// </summary>
-    public class IdentityRoleItem
+    public class IdentityPolicyItem
     {
         private readonly IComponentHub _componentHub;
 
@@ -24,24 +24,24 @@ namespace WebExpress.WebCore.WebIdentity.Model
         public IApplicationContext ApplicationContext { get; private set; }
 
         /// <summary>
-        /// Returns or sets the role context.
+        /// Returns or sets the policy context.
         /// </summary>
-        public IIdentityRoleContext RoleContext { get; private set; }
+        public IIdentityPolicyContext PolicyContext { get; private set; }
 
         /// <summary>
-        /// Returns the permissions associated with the role.
+        /// Returns the permissions associated with the policy.
         /// </summary>
         public IEnumerable<Type> Permissions { get; private set; }
 
         /// <summary>
-        /// Returns or sets the role class.
+        /// Returns or sets the policy class.
         /// </summary>
-        public Type RoleClass { get; private set; }
+        public Type PolicyClass { get; private set; }
 
         /// <summary>
-        /// Returns the role instance.
+        /// Returns the policy instance.
         /// </summary>
-        public IIdentityRole Instance { get; }
+        public IIdentityPolicy Instance { get; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -50,18 +50,18 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         /// <param name="pluginContext">The associated plugin context.</param>
         /// <param name="applicationContext">The corresponding application context.</param>
-        /// <param name="permissionClass">The role class.</param>
-        /// <param name="roleContext">The role context.</param>
-        /// <param name="permissions">The permissions associated with the role.</param>
-        public IdentityRoleItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, Type permissionClass, IIdentityRoleContext roleContext, IEnumerable<Type> permissions)
+        /// <param name="permissionClass">The policy class.</param>
+        /// <param name="policyContext">The policy context.</param>
+        /// <param name="permissions">The permissions associated with the policy.</param>
+        public IdentityPolicyItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, Type permissionClass, IIdentityPolicyContext policyContext, IEnumerable<Type> permissions)
         {
             _componentHub = componentHub;
             PluginContext = pluginContext;
             ApplicationContext = applicationContext;
             Permissions = permissions;
-            RoleClass = permissionClass;
-            RoleContext = roleContext;
-            Instance = ComponentActivator.CreateInstance<IIdentityRole>(httpServerContext, _componentHub, RoleClass, RoleContext);
+            PolicyClass = permissionClass;
+            PolicyContext = policyContext;
+            Instance = ComponentActivator.CreateInstance<IIdentityPolicy>(httpServerContext, _componentHub, PolicyClass, PolicyContext);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// <returns>The event element in its string representation.</returns>
         public override string ToString()
         {
-            return $"Role: '{RoleClass.FullName.ToLower()}'";
+            return $"Policy: '{PolicyClass.FullName.ToLower()}'";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// </summary>
     /// <typeparam name="TIcon">The type of the icon, which must implement the <see cref="IIcon"/> interface.</typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class WebIconAttribute<TIcon> : Attribute, ISettingPageAttribute, ISettingCategoryAttribute, ISettingGroupAttribute
+    public class WebIconAttribute<TIcon> : Attribute, ISettingPageAttribute, IPageAttribute, ISettingCategoryAttribute, ISettingGroupAttribute
         where TIcon : IIcon
     {
         /// <summary>

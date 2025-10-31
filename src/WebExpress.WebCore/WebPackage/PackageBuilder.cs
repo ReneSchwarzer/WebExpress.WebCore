@@ -2,6 +2,8 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 using WebExpress.WebCore.WebPackage.Model;
 
@@ -26,49 +28,70 @@ namespace WebExpress.WebCore.WebPackage
             Console.WriteLine($"*** PackageBuilder: targets '{targets}'.");
             Console.WriteLine($"*** PackageBuilder: outputDirectory '{outputDirectory}'.");
 
+            // validate input paths
+            if (string.IsNullOrWhiteSpace(specFile))
+            {
+                throw new ArgumentException("specFile must not be null or empty.", nameof(specFile));
+            }
+
+            if (!File.Exists(specFile))
+            {
+                throw new FileNotFoundException("The specified spec file does not exist.", specFile);
+            }
+
             var rootDirectory = Path.GetDirectoryName(specFile);
+
+            // secure XML deserialization by prohibiting DTD processing
             using var fileStream = File.OpenRead(specFile);
             var serializer = new XmlSerializer(typeof(PackageItemSpec));
-            var package = (PackageItemSpec)serializer.Deserialize(fileStream);
-            var zipFileType = package.Id.Equals("WebExpress") ? "zip" : "wxp";
+            using var xmlReader = XmlReader.Create(fileStream, new XmlReaderSettings
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null
+            });
+
+            var package = (PackageItemSpec)serializer.Deserialize(xmlReader) ??
+                throw new InvalidOperationException("Failed to deserialize the spec file.");
+            var isCorePackage = string.Equals(package.Id, "WebExpress", StringComparison.Ordinal);
+            var zipFileType = isCorePackage ? "zip" : "wxp";
 
             Console.WriteLine($"*** PackageBuilder: Creates a webex package '{package.Id}' in directory '{outputDirectory}'.");
+
+            if (string.IsNullOrWhiteSpace(outputDirectory))
+            {
+                throw new ArgumentException("outputDirectory must not be null or empty.", nameof(outputDirectory));
+            }
 
             if (!Directory.Exists(outputDirectory))
             {
                 Directory.CreateDirectory(outputDirectory);
             }
 
-            using var zipFileStream = new FileStream(Path.Combine(outputDirectory, $"{package.Id}.{package.Version}.{zipFileType}"), FileMode.Create);
+            // sanitize output archive file name components
+            var safeId = SanitizeFileNameComponent(package.Id);
+            var safeVersion = SanitizeFileNameComponent(package.Version);
+            var archiveFilePath = Path.Combine(outputDirectory, $"{safeId}.{safeVersion}.{zipFileType}");
+
+            using var zipFileStream = new FileStream(archiveFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
             using var archive = new ZipArchive(zipFileStream, ZipArchiveMode.Create, true);
 
             // find readme
             if (!string.IsNullOrWhiteSpace(package.Readme))
             {
                 var file = Find(rootDirectory, Path.GetFileName(package.Readme));
-
-                if (File.Exists(file))
+                if (!string.IsNullOrWhiteSpace(file) && File.Exists(file))
                 {
-                    ReadmeToZip
-                    (
-                        archive,
-                        File.ReadAllBytes(file)
-                    );
+                    ReadmeToZip(archive, file);
                 }
             }
 
-            // privacypolicy.md
+            // privacy policy
             if (!string.IsNullOrWhiteSpace(package.PrivacyPolicy))
             {
                 var file = Find(rootDirectory, Path.GetFileName(package.PrivacyPolicy));
-
-                if (File.Exists(file))
+                if (!string.IsNullOrWhiteSpace(file) && File.Exists(file))
                 {
-                    PrivacyPolicyToZip
-                    (
-                        archive,
-                        File.ReadAllBytes(file)
-                    );
+                    PrivacyPolicyToZip(archive, file);
                 }
             }
 
@@ -76,33 +99,30 @@ namespace WebExpress.WebCore.WebPackage
             if (!string.IsNullOrWhiteSpace(package.Icon))
             {
                 var file = Find(rootDirectory, Path.GetFileName(package.Icon));
-
-                if (File.Exists(file))
+                if (!string.IsNullOrWhiteSpace(file) && File.Exists(file))
                 {
-                    IconToZip
-                    (
-                        archive,
-                        Path.GetFileName(package.Icon),
-                        File.ReadAllBytes(file)
-                    );
+                    IconToZip(archive, file);
                 }
             }
 
-            // find licenses 
-            foreach (var file in Directory.GetFiles(Path.GetDirectoryName(specFile), "*.lic", SearchOption.AllDirectories))
+            // find licenses
+            if (!string.IsNullOrWhiteSpace(rootDirectory) && Directory.Exists(rootDirectory))
             {
-                if (File.Exists(file))
+                try
                 {
-                    LicensesToZip
-                    (
-                        archive,
-                        Path.GetFileName(file),
-                        File.ReadAllBytes(file)
-                    );
+                    foreach (var licFilePath in Directory.GetFiles(rootDirectory, "*.lic", SearchOption.AllDirectories)
+                        .Where(x => !string.IsNullOrWhiteSpace(x) && File.Exists(x)))
+                    {
+                        LicensesToZip(archive, licFilePath);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignore errors while enumerating license files
                 }
             }
 
-            if (!package.Id.Equals("WebExpress"))
+            if (!isCorePackage)
             {
                 SpecToZip(archive, package);
             }
@@ -115,13 +135,11 @@ namespace WebExpress.WebCore.WebPackage
         /// Create the readme file.
         /// </summary>
         /// <param name="archive">The zip archive.</param>
-        /// <param name="readme">The readme content.</param>
-        private static void ReadmeToZip(ZipArchive archive, byte[] readme)
+        /// <param name="filePath">The readme file path.</param>
+        private static void ReadmeToZip(ZipArchive archive, string filePath)
         {
-            var zipArchiveEntry = archive.CreateEntry("readme.md", CompressionLevel.Fastest);
-            using var zipStream = zipArchiveEntry.Open();
-            zipStream.Write(readme, 0, readme.Length);
-
+            // always use fixed entry name and stream file contents
+            AddFileToZip(archive, "readme.md", filePath);
             Console.WriteLine($"*** PackageBuilder: Create the readme file.");
         }
 
@@ -129,13 +147,11 @@ namespace WebExpress.WebCore.WebPackage
         /// Create the privacy policy file.
         /// </summary>
         /// <param name="archive">The zip archive.</param>
-        /// <param name="readme">The privacy policy content.</param>
-        private static void PrivacyPolicyToZip(ZipArchive archive, byte[] readme)
+        /// <param name="filePath">The privacy policy file path.</param>
+        private static void PrivacyPolicyToZip(ZipArchive archive, string filePath)
         {
-            var zipArchiveEntry = archive.CreateEntry("privacypolicy.md", CompressionLevel.Fastest);
-            using var zipStream = zipArchiveEntry.Open();
-            zipStream.Write(readme, 0, readme.Length);
-
+            // always use fixed entry name and stream file contents
+            AddFileToZip(archive, "privacypolicy.md", filePath);
             Console.WriteLine($"*** PackageBuilder: Create the privacy policy file.");
         }
 
@@ -143,14 +159,13 @@ namespace WebExpress.WebCore.WebPackage
         /// Create the icon file.
         /// </summary>
         /// <param name="archive">The zip archive.</param>
-        /// <param name="fileName">The icon file name.</param>
-        /// <param name="icon">The icon content.</param>
-        private static void IconToZip(ZipArchive archive, string fileName, byte[] icon)
+        /// <param name="filePath">The icon file path.</param>
+        private static void IconToZip(ZipArchive archive, string filePath)
         {
-            var zipArchiveEntry = archive.CreateEntry($"icon{Path.GetExtension(fileName)}", CompressionLevel.Fastest);
-            using var zipStream = zipArchiveEntry.Open();
-            zipStream.Write(icon, 0, icon.Length);
-
+            // build entry name with original extension
+            var ext = Path.GetExtension(filePath);
+            var entryName = $"icon{ext}";
+            AddFileToZip(archive, entryName, filePath);
             Console.WriteLine($"*** PackageBuilder: Create the icon file.");
         }
 
@@ -158,14 +173,13 @@ namespace WebExpress.WebCore.WebPackage
         /// Create the licenses file.
         /// </summary>
         /// <param name="archive">The zip archive.</param>
-        /// <param name="fileName">The licenses file name.</param>
-        /// <param name="icon">The licenses content.</param>
-        private static void LicensesToZip(ZipArchive archive, string fileName, byte[] icon)
+        /// <param name="filePath">The licenses file path.</param>
+        private static void LicensesToZip(ZipArchive archive, string filePath)
         {
-            var zipArchiveEntry = archive.CreateEntry($"licenses/{Path.GetFileNameWithoutExtension(fileName)}.txt", CompressionLevel.Fastest);
-            using var zipStream = zipArchiveEntry.Open();
-            zipStream.Write(icon, 0, icon.Length);
-
+            // convert license file to a normalized .txt entry name while keeping contents as-is
+            var name = Path.GetFileNameWithoutExtension(filePath);
+            var entryName = $"licenses/{name}.txt";
+            AddFileToZip(archive, entryName, filePath);
             Console.WriteLine($"*** PackageBuilder: Create the licenses file.");
         }
 
@@ -176,24 +190,30 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private static void SpecToZip(ZipArchive archive, PackageItemSpec package)
         {
-            var zipBinarys = package.Id.Equals("WebExpress") ? "bin" : "lib";
-            var zipArchiveEntry = archive.CreateEntry($"{package.Id}.spec", CompressionLevel.Fastest);
+            var zipBinarys = string.Equals(package?.Id, "WebExpress", StringComparison.Ordinal) ? "bin" : "lib";
+            var specEntryName = $"{SanitizeFileNameComponent(package?.Id)}.spec";
+            var sanitizedEntryName = SanitizeEntryPath(specEntryName);
+
+            var zipArchiveEntry = archive.CreateEntry(sanitizedEntryName, CompressionLevel.Fastest);
             var serializer = new XmlSerializer(typeof(PackageItemSpec));
             using var zipStream = zipArchiveEntry.Open();
 
+            // safely derive icon name if present
+            var iconName = !string.IsNullOrWhiteSpace(package?.Icon) ? $"icon{Path.GetExtension(package.Icon)}" : null;
+
             var newPackage = new PackageItemSpec()
             {
-                Id = package.Id,
-                Version = package.Version,
-                Title = package.Title,
-                Authors = package.Authors,
-                License = package.License,
-                LicenseUrl = package.LicenseUrl,
-                Icon = $"icon{Path.GetExtension(package.Icon)}",
-                Readme = $"readme.md",
-                Description = package.Description,
-                Tags = package.Tags,
-                Plugins = package.Plugins?.Select(x => $"{zipBinarys}/{Path.GetFileName(x)}").ToArray(),
+                Id = package?.Id,
+                Version = package?.Version,
+                Title = package?.Title,
+                Authors = package?.Authors,
+                License = package?.License,
+                LicenseUrl = package?.LicenseUrl,
+                Icon = iconName,
+                Readme = "readme.md",
+                Description = package?.Description,
+                Tags = package?.Tags,
+                Plugins = package?.Plugins?.Select(x => $"{zipBinarys}/{SanitizeFileNameComponent(Path.GetFileName(x))}").ToArray(),
             };
 
             serializer.Serialize(zipStream, newPackage);
@@ -211,27 +231,55 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="targets">The target frameworks. Semicolon separated list of target framework moniker (TFM).</param>
         private static void ProjectToZip(ZipArchive archive, PackageItemSpec package, string path, string config, string targets)
         {
-            var zipBinarys = package.Id.Equals("WebExpress") ? "bin" : "lib";
+            var zipBinarys = string.Equals(package?.Id, "WebExpress", StringComparison.Ordinal) ? "bin" : "lib";
 
             foreach (var plugin in package?.Plugins ?? Enumerable.Empty<string>())
             {
                 var pluginName = Path.GetFileName(plugin);
+                var safePluginName = SanitizeFileNameComponent(pluginName);
+
                 foreach (var target in targets?.Split(';', StringSplitOptions.RemoveEmptyEntries) ?? Enumerable.Empty<string>())
                 {
-                    var dir = Path.Combine(path, plugin, "bin", config, target);
+                    var safeTarget = SanitizeFileNameComponent(target);
+                    var dir = Path.Combine(path ?? string.Empty, plugin, "bin", config ?? string.Empty, target);
 
-                    foreach (var fileName in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                    if (!Directory.Exists(dir))
                     {
-                        if (!string.IsNullOrWhiteSpace(fileName) && File.Exists(fileName))
-                        {
-                            var item = fileName.Replace(dir, "");
-                            var fileData = File.ReadAllBytes(fileName);
-                            var zipArchiveEntry = archive.CreateEntry($"{zipBinarys}/{pluginName}/{target}{item}", CompressionLevel.Fastest);
-                            using var zipStream = zipArchiveEntry.Open();
-                            zipStream.Write(fileData, 0, fileData.Length);
+                        // skip missing output directories
+                        continue;
+                    }
 
-                            Console.WriteLine($"*** PackageBuilder: Copy the output file '{item}' to {pluginName}.");
+                    string[] files = [];
+                    try
+                    {
+                        files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    }
+                    catch (Exception)
+                    {
+                        // ignore errors while enumerating plugin output files
+                        continue;
+                    }
+
+                    foreach (var fileName in files.Where(x => !string.IsNullOrWhiteSpace(x) && File.Exists(x)))
+                    {
+                        // compute relative path robustly
+                        string relativePath;
+                        try
+                        {
+                            relativePath = Path.GetRelativePath(dir, fileName);
                         }
+                        catch
+                        {
+                            // fallback to file name if relative path fails
+                            relativePath = Path.GetFileName(fileName);
+                        }
+
+                        var entryPathRaw = $"{zipBinarys}/{safePluginName}/{safeTarget}/{relativePath}";
+                        var entryPath = SanitizeEntryPath(entryPathRaw);
+
+                        AddFileToZip(archive, entryPath, fileName);
+
+                        Console.WriteLine($"*** PackageBuilder: Copy the output file '{relativePath}' to {safePluginName}.");
                     }
                 }
             }
@@ -245,7 +293,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="path">The root path.</param>
         private static void ArtifactsToZip(ZipArchive archive, PackageItemSpec package, string path)
         {
-            var zipBinarys = package.Id.Equals("WebExpress") ? "bin" : "lib";
+            var zipBinarys = string.Equals(package?.Id, "WebExpress", StringComparison.Ordinal) ? "bin" : "lib";
 
             foreach (var item in package?.Artifacts ?? Enumerable.Empty<string>())
             {
@@ -253,10 +301,9 @@ namespace WebExpress.WebCore.WebPackage
 
                 if (!string.IsNullOrWhiteSpace(fileName) && File.Exists(fileName))
                 {
-                    var fileData = File.ReadAllBytes(fileName);
-                    var zipArchiveEntry = archive.CreateEntry($"{zipBinarys}/{item}", CompressionLevel.Fastest);
-                    using var zipStream = zipArchiveEntry.Open();
-                    zipStream.Write(fileData, 0, fileData.Length);
+                    // preserve relative subpaths in artifacts while ensuring safe zip paths
+                    var entryPath = SanitizeEntryPath($"{zipBinarys}/{item}");
+                    AddFileToZip(archive, entryPath, fileName);
 
                     Console.WriteLine($"*** PackageBuilder: Create the artifact file '{fileName}'.");
                 }
@@ -264,28 +311,135 @@ namespace WebExpress.WebCore.WebPackage
         }
 
         /// <summary>
-        /// Find a file
+        /// Find a file by walking up the directory tree and searching recursively at each level.
         /// </summary>
-        /// <param name="path">The path.</param>
-        /// <param name="fileName">The file name.</param>
-        /// <returns>The file name, if found or null.</returns>
+        /// <param name="path">The starting path.</param>
+        /// <param name="fileName">The file name or trailing path to match.</param>
+        /// <returns>The file name, if found; otherwise null.</returns>
         private static string Find(string path, string fileName)
         {
-            try
+            // validate input
+            if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(fileName))
             {
-                foreach (var f in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
-                        .Where(x => x.Replace('\\', '/').EndsWith(fileName.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase)))
+                return null;
+            }
+
+            var normalizedTail = fileName.Replace('\\', '/');
+
+            // walk upwards until root
+            while (!string.IsNullOrEmpty(path))
+            {
+                try
                 {
-                    return f;
+                    var matches = Directory
+                        .GetFiles(path, "*.*", SearchOption.AllDirectories)
+                        .Select(x => x.Replace('\\', '/'))
+                        .Where(x => x.EndsWith(normalizedTail, StringComparison.OrdinalIgnoreCase));
+
+                    foreach (var f in matches)
+                    {
+                        return f;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignore errors while enumerating and continue with parent
                 }
 
-                path = Directory.GetParent(path)?.FullName;
-            }
-            catch
-            {
+                try
+                {
+                    path = Directory.GetParent(path)?.FullName;
+                }
+                catch
+                {
+                    path = null;
+                }
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Adds a file to the zip archive using a sanitized entry path and streams the file contents.
+        /// </summary>
+        /// <param name="archive">The zip archive.</param>
+        /// <param name="entryPath">The entry path inside the zip archive.</param>
+        /// <param name="sourceFilePath">The source file path to read.</param>
+        private static void AddFileToZip(ZipArchive archive, string entryPath, string sourceFilePath)
+        {
+            // sanitize entry path to prevent zip-slip
+            var safeEntry = SanitizeEntryPath(entryPath);
+            var zipArchiveEntry = archive.CreateEntry(safeEntry, CompressionLevel.Fastest);
+
+            using var zipStream = zipArchiveEntry.Open();
+            using var fs = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            fs.CopyTo(zipStream);
+        }
+
+        /// <summary>
+        /// Sanitizes a filename component by removing invalid characters and path separators.
+        /// </summary>
+        /// <param name="name">The filename component.</param>
+        /// <returns>A sanitized filename component safe for file and zip entry names.</returns>
+        private static string SanitizeFileNameComponent(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return string.Empty;
+            }
+
+            var invalid = Path.GetInvalidFileNameChars();
+            var sb = new StringBuilder(name.Length);
+
+            foreach (var ch in name)
+            {
+                var isInvalid = Array.IndexOf(invalid, ch) >= 0 || ch == '/' || ch == '\\' || ch == ':';
+                if (isInvalid)
+                {
+                    // replace invalid characters with underscore
+                    sb.Append('_');
+                }
+                else
+                {
+                    sb.Append(ch);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Sanitizes a ZIP entry path by normalizing separators and removing dangerous segments like "..".
+        /// </summary>
+        /// <param name="entryPath">The raw entry path.</param>
+        /// <returns>A sanitized entry path safe for inclusion in a zip archive.</returns>
+        private static string SanitizeEntryPath(string entryPath)
+        {
+            if (string.IsNullOrWhiteSpace(entryPath))
+            {
+                return string.Empty;
+            }
+
+            // normalize to forward slashes
+            var path = entryPath.Replace('\\', '/');
+
+            // remove drive letters and leading slashes
+            if (path.Length >= 2 && char.IsLetter(path[0]) && path[1] == ':')
+            {
+                path = path[2..];
+            }
+
+            path = path.TrimStart('/');
+
+            // split and filter segments
+            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            var safeSegments = segments
+                .Where(s => s != "." && s != "..")
+                .Select(SanitizeFileNameComponent)
+                .Where(s => !string.IsNullOrWhiteSpace(s));
+
+            // join back with forward slashes
+            return string.Join("/", safeSegments);
         }
     }
 }

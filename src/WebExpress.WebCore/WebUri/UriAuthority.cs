@@ -78,13 +78,13 @@ namespace WebExpress.WebCore.WebUri
             var userinfo = string.Join(":", new string[] { User, Password }.Where(x => !string.IsNullOrWhiteSpace(x)));
 #pragma warning restore 618
 
-            var adress = string.Join(":", new string[]
+            var address = string.Join(":", new string[]
             {
                 Host,
                 Port != defaultPort ? Port?.ToString() : ""
             }.Where(x => !string.IsNullOrWhiteSpace(x)));
 
-            return "//" + string.Join("@", new string[] { userinfo, adress }.Where(x => !string.IsNullOrWhiteSpace(x)));
+            return "//" + string.Join("@", new string[] { userinfo, address }.Where(x => !string.IsNullOrWhiteSpace(x)));
         }
     }
 }

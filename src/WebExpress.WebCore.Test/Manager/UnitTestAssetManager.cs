@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             // test execution
-            Assert.Equal(9, componentHub.AssetManager.Assets.Count());
+            Assert.Equal(12, componentHub.AssetManager.Assets.Count());
         }
 
         /// <summary>
@@ -47,15 +47,16 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the asset.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "css.mycss.css")]
-        [InlineData(typeof(TestApplicationA), "js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationA), "js.myjavascript.mini.js")]
-        [InlineData(typeof(TestApplicationB), "css.mycss.css")]
-        [InlineData(typeof(TestApplicationB), "js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationB), "js.myjavascript.mini.js")]
-        [InlineData(typeof(TestApplicationC), "css.mycss.css")]
-        [InlineData(typeof(TestApplicationC), "js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationC), "js.myjavascript.mini.js")]
+        [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.css.mycss.css")]
+        [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.css.my-css.css")]
+        [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.js.myjavascript.js")]
+        [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.js.myjavascript.mini.js")]
+        [InlineData(typeof(TestApplicationB), "webexpress.webcore.test.css.mycss.css")]
+        [InlineData(typeof(TestApplicationB), "webexpress.webcore.test.js.myjavascript.js")]
+        [InlineData(typeof(TestApplicationB), "webexpress.webcore.test.js.myjavascript.mini.js")]
+        [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.css.mycss.css")]
+        [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.js.myjavascript.js")]
+        [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.js.myjavascript.mini.js")]
         public void Id(Type applicationType, string id)
         {
             // preconditions
@@ -71,49 +72,43 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the uri property of the asset.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), "/server/appa/assets/css.mycss.css")]
-        [InlineData(typeof(TestApplicationA), "/server/appa/assets/js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationA), "/server/appa/assets/js.myjavascript.mini.js")]
-        [InlineData(typeof(TestApplicationB), "/server/appb/assets/css.mycss.css")]
-        [InlineData(typeof(TestApplicationB), "/server/appb/assets/js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationB), "/server/appb/assets/js.myjavascript.mini.js")]
-        [InlineData(typeof(TestApplicationC), "/server/assets/css.mycss.css")]
-        [InlineData(typeof(TestApplicationC), "/server/assets/js.myjavascript.js")]
-        [InlineData(typeof(TestApplicationC), "/server/assets/js.myjavascript.mini.js")]
-        public void Uri(Type applicationType, string uri)
+        [InlineData(typeof(TestApplicationA), "/server/appa/assets/css/mycss.css")]
+        [InlineData(typeof(TestApplicationA), "/server/appa/assets/css/my-css.css")]
+        [InlineData(typeof(TestApplicationA), "/server/appa/assets/js/myjavascript.js")]
+        [InlineData(typeof(TestApplicationA), "/server/appa/assets/js/myjavascript.mini.js")]
+        [InlineData(typeof(TestApplicationB), "/server/appb/assets/css/mycss.css")]
+        [InlineData(typeof(TestApplicationB), "/server/appb/assets/js/myjavascript.js")]
+        [InlineData(typeof(TestApplicationB), "/server/appb/assets/js/myjavascript.mini.js")]
+        [InlineData(typeof(TestApplicationC), "/server/assets/css/mycss.css")]
+        [InlineData(typeof(TestApplicationC), "/server/assets/js/myjavascript.js")]
+        [InlineData(typeof(TestApplicationC), "/server/assets/js/myjavascript.mini.js")]
+        public void Uri(Type applicationType, string route)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
-            var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId.ToString() == Path.GetFileName(uri));
+            var asset = componentHub.AssetManager.GetAssets(application)?
+                .FirstOrDefault(x => x.Route.ToString() == route);
 
             // test execution
-            Assert.Equal(uri, asset?.Route.ToString());
+            Assert.Equal(route, asset?.Route.ToString());
         }
 
         /// <summary>
         /// Test the request of the asset.
         /// </summary>
         [Theory]
-        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        [InlineData("http://localhost:8080/server/appa/assets/css.mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/appa/assets/js.myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        [InlineData("http://localhost:8080/server/appb/assets/css/mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/appb/assets/js/myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/appb/assets/js/myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        [InlineData("http://localhost:8080/server/appb/assets/css.mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/appb/assets/js.myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/appb/assets/js.myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        [InlineData("http://localhost:8080/server/assets/css/mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/assets/js/myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/assets/js/myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        [InlineData("http://localhost:8080/server/assets/css.mycss.css", "webexpress.webcore.asset", "css.mycss.css")]
-        [InlineData("http://localhost:8080/server/assets/js.myjavascript.js", "webexpress.webcore.asset", "js.myjavascript.js")]
-        [InlineData("http://localhost:8080/server/assets/js.myjavascript.mini.js", "webexpress.webcore.asset", "js.myjavascript.mini.js")]
-        public void Request(string uri, string id, string resource)
+        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "css/mycss.css")]
+        [InlineData("http://localhost:8080/server/appa/assets/css/my-css.css", "css/my-css.css")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "js/myjavascript.js")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.mini.js", "js/myjavascript.mini.js")]
+        [InlineData("http://localhost:8080/server/appb/assets/css/mycss.css", "css/mycss.css")]
+        [InlineData("http://localhost:8080/server/appb/assets/js/myjavascript.js", "js/myjavascript.js")]
+        [InlineData("http://localhost:8080/server/appb/assets/js/myjavascript.mini.js", "js/myjavascript.mini.js")]
+        [InlineData("http://localhost:8080/server/assets/css/mycss.css", "css/mycss.css")]
+        [InlineData("http://localhost:8080/server/assets/js/myjavascript.js", "js/myjavascript.js")]
+        [InlineData("http://localhost:8080/server/assets/js/myjavascript.mini.js", "js/myjavascript.mini.js")]
+        public void Request(string uri, string resource)
         {
             // preconditions
             var embeddedResource = UnitTestFixture.GetEmbeddedResource(resource);
@@ -130,9 +125,11 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            var response = componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
+            var response = componentHub
+                .EndpointManager
+                .HandleRequest(UnitTestFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
 
-            Assert.Equal(id, searchResult?.EndpointContext?.EndpointId.ToString());
+            Assert.Equal($"webexpress.webcore.test.{resource.Replace('/', '.')}", searchResult?.EndpointContext?.EndpointId.ToString());
             Assert.IsNotType<ResponseNotFound>(response);
             Assert.Equal(embeddedResource, Encoding.UTF8.GetString(response.Content as byte[]));
         }

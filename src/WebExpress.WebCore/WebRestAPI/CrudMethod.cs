@@ -23,6 +23,11 @@ namespace WebExpress.WebCore.WebRestApi
         PATCH = RequestMethod.PATCH,
 
         /// <summary>
+        /// Represents the HTTP PATCH method.
+        /// </summary>
+        PUT = RequestMethod.PUT,
+
+        /// <summary>
         /// Represents the HTTP DELETE method.
         /// </summary>
         DELETE = RequestMethod.DELETE

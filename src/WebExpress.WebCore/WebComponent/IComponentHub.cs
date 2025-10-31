@@ -7,6 +7,7 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebEvent;
 using WebExpress.WebCore.WebFragment;
 using WebExpress.WebCore.WebIdentity;
+using WebExpress.WebCore.WebInclude;
 using WebExpress.WebCore.WebJob;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPackage;
@@ -102,6 +103,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
         IResourceManager ResourceManager { get; }
+
+        /// <summary>
+        /// Returns the include manager.
+        /// </summary>
+        /// <returns>The instance of the include manager.</returns>
+        IIncludeManager IncludeManager { get; }
 
         /// <summary>
         /// Returns the page manager.

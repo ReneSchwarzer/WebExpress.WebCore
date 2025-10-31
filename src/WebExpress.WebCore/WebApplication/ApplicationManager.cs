@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
@@ -129,8 +130,8 @@ namespace WebExpress.WebCore.WebApplication
                     Description = description,
                     AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
-                    Icon = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath, icon),
-                    ContextPath = RouteEndpoint.Combine(_httpServerContext.ContextPath, contextPath)
+                    Icon = RouteEndpoint.Combine(_httpServerContext.Route, contextPath, icon),
+                    Route = RouteEndpoint.Combine(_httpServerContext.Route, contextPath)
                 };
 
                 // create application
@@ -267,6 +268,10 @@ namespace WebExpress.WebCore.WebApplication
         public void Boot(IPluginContext pluginContext)
         {
             if (pluginContext == null)
+            {
+                return;
+            }
+            else if (pluginContext.Assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
             {
                 return;
             }

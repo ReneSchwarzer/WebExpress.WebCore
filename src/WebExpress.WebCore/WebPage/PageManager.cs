@@ -10,7 +10,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -130,10 +130,7 @@ namespace WebExpress.WebCore.WebPage
                     // execute the cached delegate
                     del.DynamicInvoke(renderContext, visualTreeInstance);
 
-                    return new ResponseOK()
-                    {
-                        Content = visualTreeInstance.Render(visualTreeContext)
-                    };
+                    return visualTreeInstance.GetResponse(visualTreeContext);
                 }
             };
 
@@ -301,6 +298,7 @@ namespace WebExpress.WebCore.WebPage
             {
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
+                var icon = default(IIcon);
                 var title = pageType.Name;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
@@ -335,7 +333,12 @@ namespace WebExpress.WebCore.WebPage
                 foreach (var customAttribute in pageType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
                 {
-                    if (customAttribute.AttributeType == typeof(TitleAttribute))
+                    if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
+                    {
+                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        icon ??= Activator.CreateInstance(type) as IIcon;
+                    }
+                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
                     {
                         title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
@@ -353,7 +356,7 @@ namespace WebExpress.WebCore.WebPage
                 // assign the page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.ContextPath.Concat
+                    var prefix = applicationContext.Route.Concat
                     (
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()
@@ -366,12 +369,13 @@ namespace WebExpress.WebCore.WebPage
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         PageTitle = title,
+                        PageIcon = icon,
                         Route = routePath,
                         Scopes = scopes,
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType)
+                        Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
                     var pageItem = new PageItem(_componentHub.EndpointManager)

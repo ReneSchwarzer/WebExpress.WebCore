@@ -17,24 +17,23 @@ namespace WebExpress.WebCore.WebHtml
         /// <summary>
         /// Returns or sets the script elements.
         /// </summary>
-        public List<string> Scripts { get; set; }
+        public List<string> Scripts { get; set; } = [];
 
         /// <summary>
         /// Returns or sets the text/javascript.
         /// </summary>
         public List<string> ScriptLinks
         {
-            get => (from x in ElementScriptLinks select x.Src).ToList();
+            get => [.. ElementScriptLinks.Select(x => x.Src)];
             set
             {
                 ElementScriptLinks.Clear();
-                ElementScriptLinks.AddRange(from x in value
-                                            select new HtmlElementScriptingScript()
-                                            {
-                                                Language = "javascript",
-                                                Src = x,
-                                                Type = "text/javascript"
-                                            });
+                ElementScriptLinks.AddRange(value.Select(x => new HtmlElementScriptingScript()
+                {
+                    Language = "javascript",
+                    Src = x,
+                    Type = "text/javascript"
+                }));
             }
         }
 

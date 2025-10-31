@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebIdentity
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly IdentityPermissionDictionary _permissionDictionary = [];
-        private readonly IdentityRoleDictionary _roleDictionary = [];
+        private readonly IdentityPolicyDictionary _policyDictionary = [];
 
         /// <summary>
         /// Returns all permissions.
@@ -36,12 +36,12 @@ namespace WebExpress.WebCore.WebIdentity
             .Select(x => x.PermissionContext);
 
         /// <summary>
-        /// Returns all roles.
+        /// Returns all policies.
         /// </summary>
-        public IEnumerable<IIdentityRoleContext> Roles => _roleDictionary.Values
+        public IEnumerable<IIdentityPolicyContext> Policies => _policyDictionary.Values
             .SelectMany(x => x.Values)
             .SelectMany(x => x)
-            .Select(x => x.RoleContext);
+            .Select(x => x.PolicyContext);
 
         /// <summary>
         /// Returns all identities.
@@ -111,7 +111,7 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Registers roles and ientities for a given plugin and application context.
+        /// Registers policies and ientities for a given plugin and application context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContexts">The application context (optional).</param>
@@ -122,7 +122,7 @@ namespace WebExpress.WebCore.WebIdentity
             // permissions
             foreach (var permissionType in assembly.GetTypes().Where
                 (
-                    x => x.IsClass == true &&
+                    x => x.IsClass &&
                     x.IsSealed &&
                     x.IsPublic &&
                     (
@@ -131,18 +131,21 @@ namespace WebExpress.WebCore.WebIdentity
                 ))
             {
                 var id = new ComponentId(permissionType.FullName);
-                var roleTypes = new List<Type>();
+                var policyTypes = new List<Type>();
+                var matchingAttributes = permissionType.CustomAttributes
+                    .Where
+                    (
+                        x => x.AttributeType.GetInterfaces().Contains(typeof(IPolicyAttribute)) &&
+                        x.AttributeType.Name == typeof(PolicyAttribute<>).Name &&
+                        x.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace
+                    );
 
-                foreach (var customAttribute in permissionType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IRoleAttribute))))
+                foreach (var customAttribute in matchingAttributes)
                 {
-                    if (customAttribute.AttributeType.Name == typeof(RoleAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(RoleAttribute<>).Namespace)
+                    var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    if (type != null && !policyTypes.Contains(type))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        if (type != null && !roleTypes.Contains(type))
-                        {
-                            roleTypes.Add(type);
-                        }
+                        policyTypes.Add(type);
                     }
                 }
 
@@ -161,7 +164,7 @@ namespace WebExpress.WebCore.WebIdentity
                     (
                         pluginContext,
                         applicationContext,
-                        new IdentityPermissionItem(_componentHub, _httpServerContext, pluginContext, applicationContext, permissionType, permissionContext, roleTypes)
+                        new IdentityPermissionItem(_componentHub, _httpServerContext, pluginContext, applicationContext, permissionType, permissionContext, policyTypes)
                     ))
                     {
                         _httpServerContext.Log.Debug
@@ -189,55 +192,58 @@ namespace WebExpress.WebCore.WebIdentity
                 }
             }
 
-            // roles
-            foreach (var roleType in assembly.GetTypes().Where
+            // policies
+            foreach (var policyType in assembly.GetTypes().Where
                 (
-                    x => x.IsClass == true &&
+                    x => x.IsClass &&
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IIdentityRole).Name) != null
+                        x.GetInterface(typeof(IIdentityPolicy).Name) != null
                     )
                 ))
             {
-                var id = new ComponentId(roleType.FullName);
+                var id = new ComponentId(policyType.FullName);
                 var permissionTypes = new List<Type>();
+                var matchingAttributes = policyType.CustomAttributes
+                    .Where
+                    (
+                        x => x.AttributeType.GetInterfaces().Contains(typeof(IPermissionAttribute)) &&
+                        x.AttributeType.Name == typeof(PermissionAttribute<>).Name &&
+                        x.AttributeType.Namespace == typeof(PermissionAttribute<>).Namespace
+                    );
 
-                foreach (var customAttribute in roleType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPermissionAttribute))))
+                foreach (var customAttribute in matchingAttributes)
                 {
-                    if (customAttribute.AttributeType.Name == typeof(PermissionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(PermissionAttribute<>).Namespace)
+                    var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    if (type != null && !permissionTypes.Contains(type))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        if (type != null && !permissionTypes.Contains(type))
-                        {
-                            permissionTypes.Add(type);
-                        }
+                        permissionTypes.Add(type);
                     }
                 }
 
                 // assign the event to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var roleContext = new IdentityRoleContext()
+                    var policyContext = new IdentityPolicyContext()
                     {
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
-                        RoleId = id
+                        PolicyId = id
                     };
 
-                    if (_roleDictionary.AddRoleItem
+                    if (_policyDictionary.AddPolicyItem
                     (
                         pluginContext,
                         applicationContext,
-                        new IdentityRoleItem(_componentHub, _httpServerContext, pluginContext, applicationContext, roleType, roleContext, permissionTypes)
+                        new IdentityPolicyItem(_componentHub, _httpServerContext, pluginContext, applicationContext, policyType, policyContext, permissionTypes)
                     ))
                     {
                         _httpServerContext.Log.Debug
                         (
                             I18N.Translate
                             (
-                                "webexpress.webcore:identitymanager.registerrole",
+                                "webexpress.webcore:identitymanager.registerpolicy",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -249,7 +255,7 @@ namespace WebExpress.WebCore.WebIdentity
                         (
                             I18N.Translate
                             (
-                                "webexpress.webcore:identitymanager.duplicaterole",
+                                "webexpress.webcore:identitymanager.duplicatepolicy",
                                 id,
                                 applicationContext.ApplicationId
                             )
@@ -260,7 +266,7 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Removes all roles and permissions of an plugin.
+        /// Removes all policies and permissions of an plugin.
         /// </summary>
         /// <param name="pluginContext">The context of the plugin that contains the identities to remove.</param>
         internal void Remove(IPluginContext pluginContext)
@@ -277,21 +283,21 @@ namespace WebExpress.WebCore.WebIdentity
                 _permissionDictionary.Remove(pluginContext);
             }
 
-            // roles
-            if (_roleDictionary.TryGetValue(pluginContext, out var roleValue))
+            // policies
+            if (_policyDictionary.TryGetValue(pluginContext, out var policyValue))
             {
-                foreach (var permissionItem in roleValue
+                foreach (var permissionItem in policyValue
                     .SelectMany(x => x.Value))
                 {
                     permissionItem.Dispose();
                 }
 
-                _roleDictionary.Remove(pluginContext);
+                _policyDictionary.Remove(pluginContext);
             }
         }
 
         /// <summary>
-        /// Removes all roles and permissions of an application.
+        /// Removes all policies and permissions of an application.
         /// </summary>
         /// <param name="applicationContext">The context of the application that contains the identities to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
@@ -315,14 +321,14 @@ namespace WebExpress.WebCore.WebIdentity
                 pluginDict.Remove(applicationContext);
             }
 
-            // roles
-            foreach (var pluginDict in _roleDictionary.Values)
+            // policies
+            foreach (var pluginDict in _policyDictionary.Values)
             {
                 foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
                 {
-                    foreach (var roleItem in appDict)
+                    foreach (var policyItem in appDict)
                     {
-                        roleItem.Dispose();
+                        policyItem.Dispose();
                     }
                 }
 
@@ -431,23 +437,15 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Checks if the specified identity has the given permission.
+        /// Checks whether the given identity has the specified permission by evaluating all associated groups.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="identity">The identity to check.</param>
         /// <param name="permission">The permission to check for.</param>
-        /// <returns>True if the identity has the permission, false otherwise.</returns>
+        /// <returns>True if any group grants the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentity identity, Type permission)
         {
-            foreach (var group in identity?.Groups ?? [])
-            {
-                if (CheckAccess(applicationContext, group, permission))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (identity?.Groups ?? []).Any(group => CheckAccess(applicationContext, group, permission));
         }
 
         /// <summary>
@@ -471,73 +469,66 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>True if the identity group has the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentityGroup group, Type permission)
         {
-            foreach (var role in group?.Roles ?? [])
-            {
-                if (CheckAccess(applicationContext, role, permission))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (group?.Policies ?? []).Any(policy => CheckAccess(applicationContext, policy, permission));
         }
 
         /// <summary>
-        /// Checks if the specified identity role has the given permission.
+        /// Checks if the specified identity policy has the given permission.
         /// </summary>
-        /// <typeparam name="R">The type of the identity role.</typeparam>
+        /// <typeparam name="R">The type of the identity policy.</typeparam>
         /// <typeparam name="P">The type of the identity permission.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        public bool CheckAccess<R, P>(IApplicationContext applicationContext) where R : IIdentityRole where P : IIdentityPermission
+        /// <returns>True if the identity policy has the permission, false otherwise.</returns>
+        public bool CheckAccess<R, P>(IApplicationContext applicationContext) where R : IIdentityPolicy where P : IIdentityPermission
         {
             return CheckAccess(applicationContext, typeof(R), typeof(P));
-        }
-        /// <summary>
-        /// Checks if the specified identity role has the given permission.
-        /// </summary>
-        /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="roleType">The identity role to check.</param>
-        /// <param name="permissionType">The permission to check for.</param>
-        /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        public bool CheckAccess(IApplicationContext applicationContext, Type roleType, Type permissionType)
-        {
-            return CheckAccess(applicationContext, roleType.FullName.ToLower(), permissionType);
         }
 
         /// <summary>
-        /// Checks if the specified identity role has the given permission.
+        /// Checks if the specified identity policy has the given permission.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <param name="roleName">The identity role to check.</param>
+        /// <param name="policyType">The identity policy to check.</param>
         /// <param name="permissionType">The permission to check for.</param>
-        /// <returns>True if the identity role has the permission, false otherwise.</returns>
-        private bool CheckAccess(IApplicationContext applicationContext, string roleName, Type permissionType)
+        /// <returns>True if the identity policy has the permission, false otherwise.</returns>
+        public bool CheckAccess(IApplicationContext applicationContext, Type policyType, Type permissionType)
         {
-            // roles to permissions
-            var roles = _roleDictionary.Values.SelectMany(x => x)
+            return CheckAccess(applicationContext, policyType.FullName.ToLower(), permissionType);
+        }
+
+        /// <summary>
+        /// Checks if the specified identity policy has the given permission.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="policyName">The identity policy to check.</param>
+        /// <param name="permissionType">The permission to check for.</param>
+        /// <returns>True if the identity policy has the permission, false otherwise.</returns>
+        private bool CheckAccess(IApplicationContext applicationContext, string policyName, Type permissionType)
+        {
+            // policies to permissions
+            var policies = _policyDictionary.Values
+                .SelectMany(x => x)
                 .Where(x => x.Key == applicationContext)
                 .SelectMany(entry => entry.Value);
 
-            foreach (var role in roles.Where(x => x.RoleClass.FullName.Equals(roleName, StringComparison.CurrentCultureIgnoreCase)))
+            if (policies.Any(policy =>
+                policy.PolicyClass.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase) &&
+                policy.Permissions.Contains(permissionType)))
             {
-                if (role.Permissions.Contains(permissionType))
-                {
-                    return true;
-                }
+                return true;
             }
 
-            // permissions to roles
-            var permissions = _permissionDictionary.Values.SelectMany(x => x)
+            // permissions to policies
+            var permissions = _permissionDictionary.Values
+                .SelectMany(x => x)
                 .Where(x => x.Key == applicationContext)
                 .SelectMany(entry => entry.Value);
 
-            foreach (var permission in permissions.Where(x => x.PermissionClass == permissionType))
+            if (permissions.Any(permission =>
+                permission.PermissionClass == permissionType &&
+                permission.Policies.Any(x => x.FullName.Equals(policyName, StringComparison.CurrentCultureIgnoreCase))))
             {
-                if (permission.Roles.Any(x => x.FullName.Equals(roleName, StringComparison.CurrentCultureIgnoreCase)))
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

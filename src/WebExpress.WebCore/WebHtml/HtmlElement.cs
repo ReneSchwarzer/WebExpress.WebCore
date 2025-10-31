@@ -8,25 +8,25 @@ namespace WebExpress.WebCore.WebHtml
     /// <summary>
     /// The basis of all html elements (see RfC 1866).
     /// </summary>
-    public class HtmlElement : IHtmlNode
+    public class HtmlElement : IHtmlElement
     {
         private readonly List<IHtmlNode> _elements = [];
         private readonly List<IHtmlAttribute> _attributes = [];
 
         /// <summary>
-        /// Returns or sets the name. des Attributes
+        /// Returns or sets the name of the element.
         /// </summary>
         protected string ElementName { get; set; }
 
         /// <summary>
         /// Returns or sets the attributes.
         /// </summary>
-        protected IEnumerable<IHtmlAttribute> Attributes => _attributes;
+        public IEnumerable<IHtmlAttribute> Attributes => _attributes;
 
         /// <summary>
         /// Returns the elements.
         /// </summary>
-        protected IEnumerable<IHtmlNode> Elements => _elements;
+        public IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
         /// Returns or sets the id.
@@ -83,6 +83,15 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Returns or sets the theme.
+        /// </summary>
+        public string DataTheme
+        {
+            get => GetAttribute("data-bs-theme");
+            set => SetAttribute("data-bs-theme", value);
+        }
+
+        /// <summary>
         /// Returns or sets the on click attribute.
         /// </summary>
         public string OnClick
@@ -97,8 +106,9 @@ namespace WebExpress.WebCore.WebHtml
         public bool Inline { get; set; }
 
         /// <summary>
-        /// Determines whether the element needs an end tag.
-        /// e.g.: true = <div></div> false = <br/>
+        /// Determines whether the element requires a closing tag.
+        /// Examples: true → &lt;div&gt;&lt;/div&gt;, false → &lt;br/&gt;
+        /// This affects rendering behavior in ToString and ToPostString.
         /// </summary>
         public bool CloseTag { get; protected set; }
 
@@ -106,15 +116,12 @@ namespace WebExpress.WebCore.WebHtml
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="name">The name of the HTML element.</param>
-        /// <param name="closeTag">A boolean value indicating whether the element requires a closing tag. Default is true.</param>
+        /// <param name="closeTag">A boolean value indicating whether the element requires a self closing tag. Default is true.</param>
         public HtmlElement(string name, bool closeTag = true)
         {
-
             ElementName = name;
-
             CloseTag = closeTag;
-
-        }
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -146,43 +153,111 @@ namespace WebExpress.WebCore.WebHtml
         /// Adds one or more elements to the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void Add(params IHtmlNode[] elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement Add(params IHtmlNode[] elements)
         {
             _elements.AddRange(elements);
+
+            return this;
         }
 
         /// <summary>
         /// Adds one or more elements to the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void Add(IEnumerable<IHtmlNode> elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement Add(IEnumerable<IHtmlNode> elements)
         {
             _elements.AddRange(elements);
+
+            return this;
         }
 
         /// <summary>
         /// Adds one or more elements to the beginning of the html element.
         /// </summary>
         /// <param name="elements">The elements to add.</param>
-        public void AddFirst(params IHtmlNode[] elements)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement AddFirst(params IHtmlNode[] elements)
         {
             _elements.InsertRange(0, elements);
-        }
+
+            return this;
+        }
+
         /// <summary>
         /// Adds one or more attributes to the html element.
         /// </summary>
         /// <param name="attributes">The attributes to add.</param>
-        public void Add(params IHtmlAttribute[] attributes)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement Add(params IHtmlAttribute[] attributes)
         {
             _attributes.AddRange(attributes);
+
+            return this;
         }
 
         /// <summary>
-        /// Clear all elements frrom the html element.
+        /// Adds one or more CSS class names to the current HTML element.
         /// </summary>
-        public void Clear()
+        /// <param name="classes">An array of CSS class names to add. Each class name must be a non-empty string.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement AddClass(params string[] classes)
+        {
+            Class = Css.Concatenate(Class, classes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the specified CSS class or classes from the current HTML element.
+        /// </summary>
+        /// <param name="classes">An array of class names to remove. Each class name must be a non-empty string.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement RemoveClass(params string[] classes)
+        {
+            Class = Css.Remove(Class, classes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Adds one or more CSS class names to the current HTML element.
+        /// </summary>
+        /// <remarks>If a specified class name already exists on the element, it will not be added
+        /// again.</remarks>
+        /// <param name="styles">An array of CSS class names to add. Each class name must be a valid CSS identifier.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement AddStyle(params string[] styles)
+        {
+            Style = Css.Concatenate(Style, styles);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Removes the specified CSS styles from the current HTML element.
+        /// </summary>
+        /// <remarks>If a specified style does not exist on the element, it will be ignored. This method
+        /// is chainable, enabling multiple operations to be performed on the same element in a fluent manner.</remarks>
+        /// <param name="styles">An array of CSS style names to remove. Each style name should correspond to a valid CSS property.</param>
+        /// <returns>The current instance, allowing for method chaining.</returns>
+        public IHtmlElement RemoveStyle(params string[] styles)
+        {
+            Style = Css.Remove(Style, styles);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Clear all elements from the html element.
+        /// </summary>
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement Clear()
         {
             _elements.Clear();
+
+            return this;
         }
 
         /// <summary>
@@ -192,7 +267,8 @@ namespace WebExpress.WebCore.WebHtml
         protected void Clear(Func<IHtmlNode, bool> predicate)
         {
             _elements.RemoveAll(new Predicate<IHtmlNode>(predicate));
-        }
+        }
+
         /// <summary>
         /// Returns the value of an attribute.
         /// </summary>
@@ -252,11 +328,16 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Setzt den Wert eines Attributs
+        /// Sets an attribute without a value
         /// </summary>
         /// <param name="name">The attribute name.</param>
         protected void SetAttribute(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
             if (a == null)
@@ -333,19 +414,23 @@ namespace WebExpress.WebCore.WebHtml
 
             ToPreString(builder, deep);
 
-            if (_elements.Count == 1 && Elements.First() is HtmlText)
+            if (_elements.Count == 0)
             {
-                closeTag = true;
                 nl = false;
-
-                _elements.First().ToString(builder, 0);
+                closeTag = CloseTag;
             }
-            else if (_elements.Count > 0)
+            else if (ContainsOnlyTextNodes(_elements, out var text))
+            {
+                nl = false;
+                closeTag = true;
+                builder.Append(text);
+            }
+            else
             {
                 closeTag = true;
                 var count = builder.Length;
 
-                foreach (var v in Elements.Where(x => x != null))
+                foreach (var v in _elements.Where(x => x != null))
                 {
                     v.ToString(builder, deep + 1);
                 }
@@ -355,12 +440,8 @@ namespace WebExpress.WebCore.WebHtml
                     nl = false;
                 }
             }
-            else if (_elements.Count == 0)
-            {
-                nl = false;
-            }
 
-            if (closeTag || CloseTag)
+            if (closeTag)
             {
                 ToPostString(builder, deep, nl);
             }
@@ -410,13 +491,70 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Determines whether the collection of IHtmlNode instances (including nested HtmlElement children)
+        /// contains only HtmlText nodes. If so, combines their text content and returns it via an out parameter.
+        /// </summary>
+        /// <param name="elements">A collection of IHtmlNode instances to inspect.</param>
+        /// <param name="combinedText">The combined text content if all nodes are HtmlText; otherwise, null.</param>
+        /// <returns>
+        /// True if all nodes (and their descendants) are HtmlText; otherwise, false.
+        /// </returns>
+        public bool ContainsOnlyTextNodes(IEnumerable<IHtmlNode> elements, out string combinedText)
+        {
+            var builder = new StringBuilder();
+
+            foreach (var node in elements)
+            {
+                switch (node)
+                {
+                    case HtmlText text:
+                        builder.Append(text.Value);
+                        break;
+                    case HtmlList list:
+                        if (!ContainsOnlyTextNodes(list.Elements, out var nestedListText))
+                        {
+                            combinedText = null;
+                            return false;
+                        }
+                        builder.Append(nestedListText);
+                        break;
+                    case HtmlElement element:
+                        combinedText = null;
+                        return false;
+                    default:
+                        combinedText = null;
+                        return false;
+                }
+            }
+
+            combinedText = builder.ToString();
+            return true;
+        }
+
+
+        /// <summary>
+        /// Sets the valueless user-defined attribute.
+        /// </summary>
+        /// <param name="name">The attribute name.</param>
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement AddUserAttribute(string name)
+        {
+            SetAttribute(name);
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the value of an user-defined attribute.
         /// </summary>
         /// <param name="name">The attribute name.</param>
         /// <param name="value">The value of the attribute.</param>
-        public void AddUserAttribute(string name, string value)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement AddUserAttribute(string name, string value)
         {
             SetAttribute(name, value);
+
+            return this;
         }
 
         /// <summary>
@@ -443,9 +581,12 @@ namespace WebExpress.WebCore.WebHtml
         /// Removes an user-defined attribute.
         /// </summary>
         /// <param name="name">The attribute name.</param>
-        protected void RemoveUserAttribute(string name)
+        /// <returns>The current instance for method chaining.</returns>
+        public IHtmlElement RemoveUserAttribute(string name)
         {
             RemoveAttribute(name);
+
+            return this;
         }
 
         /// <summary>

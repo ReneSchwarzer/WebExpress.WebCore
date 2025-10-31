@@ -4,15 +4,15 @@ using WebExpress.WebCore.WebIdentity;
 namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
-    /// Connects roles with permissions.
+    /// Connects policies with permissions.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class RoleAttribute<T> : Attribute, IRoleAttribute where T : class, IIdentityRole
+    public class PolicyAttribute<T> : Attribute, IPolicyAttribute where T : class, IIdentityPolicy
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public RoleAttribute()
+        public PolicyAttribute()
         {
 
         }

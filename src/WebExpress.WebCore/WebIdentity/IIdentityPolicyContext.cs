@@ -5,14 +5,14 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebIdentity
 {
     /// <summary>
-    /// Defines the context for a role, providing access to various related contexts and properties.
+    /// Defines the context for a policy, providing access to various related contexts and properties.
     /// </summary>
-    public interface IIdentityRoleContext : IContext
+    public interface IIdentityPolicyContext : IContext
     {
         /// <summary>
-        /// Returns the role id.
+        /// Returns the policy id.
         /// </summary>
-        IComponentId RoleId { get; }
+        IComponentId PolicyId { get; }
 
         /// <summary>
         /// Returns the associated plugin context.

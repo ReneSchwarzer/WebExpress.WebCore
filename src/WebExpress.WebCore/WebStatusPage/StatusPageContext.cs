@@ -41,12 +41,17 @@ namespace WebExpress.WebCore.WebStatusPage
         public IRoute StatusIcon { get; internal set; }
 
         /// <summary>
+        /// Returns the description of the current status.
+        /// </summary>
+        public string StatusDescription { get; internal set; }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"StatusPage: {StatusPageId.ToString()}";
+            return $"StatusPage: {StatusPageId}";
         }
     }
 }

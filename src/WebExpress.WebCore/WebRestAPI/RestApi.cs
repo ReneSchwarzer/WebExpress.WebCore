@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebRestApi
 {
@@ -25,36 +26,39 @@ namespace WebExpress.WebCore.WebRestApi
         /// Creates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public virtual void CreateData(Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public virtual Response CreateData(Request request)
         {
-
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Gets data.
         /// </summary>
-        /// <returns>The data.</returns>
-        public virtual object GetData(Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public virtual Response GetData(Request request)
         {
-            return null;
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Updates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public virtual void UpdateData(Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public virtual Response UpdateData(Request request)
         {
-
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Deletes data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public virtual void DeleteData(Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public virtual Response DeleteData(Request request)
         {
-
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>

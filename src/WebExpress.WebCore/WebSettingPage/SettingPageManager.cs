@@ -455,9 +455,15 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         segment = settingPageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
                     }
-                    else if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(SettingGroupAttribute<>))
+                    else if
+                    (
+                        customAttribute.AttributeType.IsGenericType &&
+                        customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(SettingGroupAttribute<>)
+                    )
                     {
-                        group = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        group = customAttribute.AttributeType
+                            .GenericTypeArguments
+                            .FirstOrDefault();
                     }
                     else if (customAttribute.AttributeType == typeof(SettingSectionAttribute))
                     {
@@ -480,9 +486,15 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+                    else if
+                    (
+                        customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name &&
+                        customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace
+                    )
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        var condition = customAttribute.AttributeType
+                            .GenericTypeArguments
+                            .FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
                     }
                 }
@@ -499,16 +511,27 @@ namespace WebExpress.WebCore.WebSettingPage
                     );
                 }
 
-                foreach (var customAttribute in settingPageType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISettingPageAttribute))))
+                foreach (var customAttribute in settingPageType.CustomAttributes.Where
+                (
+                    x => x.AttributeType
+                        .GetInterfaces()
+                        .Contains(typeof(ISettingPageAttribute))
+                ))
                 {
                     if (customAttribute.AttributeType == typeof(TitleAttribute))
                     {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        title = customAttribute.ConstructorArguments
+                            .FirstOrDefault().Value?.ToString();
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
+                    else if
+                    (
+                        customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name &&
+                        customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace
+                    )
                     {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                        scopes.Add(customAttribute.AttributeType
+                            .GenericTypeArguments
+                            .FirstOrDefault());
                     }
                 }
 
@@ -520,13 +543,20 @@ namespace WebExpress.WebCore.WebSettingPage
                 // assign the setting page to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.ContextPath.Concat
+                    var prefix = applicationContext.Route.Concat
                     (
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()
                             : ""
                     );
-                    var routePath = EndpointManager.CreateEndpointRoute(settingPageType, prefix, segment);
+
+                    var routePath = EndpointManager.CreateEndpointRoute
+                    (
+                        settingPageType,
+                        prefix,
+                        segment
+                    );
+
                     var settingPageContext = new SettingPageContext()
                     {
                         EndpointId = new ComponentId(id),
@@ -536,13 +566,17 @@ namespace WebExpress.WebCore.WebSettingPage
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType),
+                        Attributes = EndpointManager.GetAttributeInstances(attributes),
                         PageTitle = title,
+                        PageIcon = icon,
                         Scopes = scopes,
-                        SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
+                        SettingGroup = _groupDictionary.GetSettingGroup
+                        (
+                            applicationContext,
+                            group
+                        ),
                         Section = section,
-                        Hide = hide,
-                        Icon = icon
+                        Hide = hide
                     };
 
                     // create meta information of the setting page
@@ -553,6 +587,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         ApplicationContext = applicationContext,
                         SettingPageContext = settingPageContext,
                         SettingPageClass = settingPageType,
+                        SettingGroup = settingPageContext.SettingGroup,
                         SettingGroupType = group?.GetType(),
                         IncludeSubPaths = includeSubPaths,
                         Attributes = attributes.Select(x => x.AttributeType)
@@ -652,7 +687,8 @@ namespace WebExpress.WebCore.WebSettingPage
         }
 
         /// <summary>
-        /// Returns an enumeration of setting page contexts for the specified application context, category, and group.
+        /// Returns an enumeration of setting page contexts for the specified 
+        /// application context, category, and group.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="groupContext">The group for which to retrieve setting pages.</param>

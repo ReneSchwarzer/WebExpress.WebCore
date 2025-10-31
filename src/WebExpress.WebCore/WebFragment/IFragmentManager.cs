@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
@@ -89,6 +91,17 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="scopes">The scopes where the fragment is embedded.</param>
         /// <returns>An enumeration of the filtered fragments.</returns>
         public IEnumerable<TFragment> GetFragments<TFragment, TSection>(IApplicationContext applicationContext, IEnumerable<Type> scopes)
+            where TFragment : IFragmentBase
+            where TSection : ISection;
+
+        /// <summary>
+        /// Returns all fragments that belong to a given page.
+        /// </summary>
+        /// <typeparam name="TFragment">The fragment type.</typeparam>
+        /// <typeparam name="TSection">The section where the fragment is embedded.</typeparam>
+        /// <param name="pageContext">The page context.</param>
+        /// <returns>An enumeration of the filtered fragments.</returns>
+        IEnumerable<TFragment> GetFragments<TFragment, TSection>(IPageContext pageContext)
             where TFragment : IFragmentBase
             where TSection : ISection;
 

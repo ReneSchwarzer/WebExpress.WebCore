@@ -20,7 +20,8 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebPackage
 {
     /// <summary>
-    /// The package manager manages packages with WebExpress extensions. The packages must be in WebExpressPackage format (*.wxp).
+    /// The package manager manages packages with WebExpress extensions. The packages 
+    /// must be in WebExpressPackage format (*.wxp).
     /// </summary>
     public sealed class PackageManager : IPackageManager, ISystemComponent
     {
@@ -47,6 +48,11 @@ namespace WebExpress.WebCore.WebPackage
         /// Returns the catalog of installed packages.
         /// </summary>
         public PackageCatalog Catalog { get; } = new PackageCatalog();
+
+        /// <summary>
+        /// Synchronization object for scanning and mutating catalog.
+        /// </summary>
+        private readonly Lock _scanLock = new();
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -132,101 +138,156 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         public void Scan()
         {
-            _httpServerContext.Log.Debug
-            (
-                I18N.Translate
-                (
-                    "webexpress.webcore:packagemanager.scan",
-                    _httpServerContext.PackagePath
-                )
-            );
-
-            // determine all WebExpress packages from the file system
-            var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
-
-            // all packages that are not yet installed
-            var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x != null).Select(x => x.File)).ToList();
-
-            // all packages that are already installed
-            //var existingPackages = Catalog.Packages.Select(x => x.File);
-
-            // all packages that are no longer available
-            var removePackages = Catalog.Packages.Where(x => x != null).Select(x => x.File).Except(packageFiles).ToList();
-
-            foreach (var package in newPackages)
+            lock (_scanLock)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
-
-                ExtractPackage(packagesFromFile);
-                RegisterPackage(packagesFromFile);
-                BootPackage(packagesFromFile);
-
-                Catalog.Packages.Add(packagesFromFile);
-
                 _httpServerContext.Log.Debug
                 (
                     I18N.Translate
                     (
-                        "webexpress.webcore:packagemanager.add",
-                        package
+                        "webexpress.webcore:packagemanager.scan",
+                        _httpServerContext.PackagePath
                     )
                 );
-            }
 
-            foreach (var package in removePackages)
-            {
-                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                // determine all WebExpress packages from the file system
+                var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
 
-                Catalog.Packages.Add(packagesFromFile);
+                // all packages that are not yet installed
+                var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x != null).Select(x => x.File)).ToList();
 
-                _httpServerContext.Log.Debug
-                (
-                    I18N.Translate
+                // all packages that are no longer available
+                var removePackages = Catalog.Packages.Where(x => x != null).Select(x => x.File).Except(packageFiles).ToList();
+
+                // determine changed packages by comparing spec version and relevant metadata
+                var changedPackages = new List<string>();
+                foreach (var existing in Catalog.Packages.Where(x => x != null))
+                {
+                    var fullPath = Path.Combine(_httpServerContext.PackagePath, existing.File);
+                    if (!File.Exists(fullPath))
+                    {
+                        continue;
+                    }
+
+                    var fromFile = LoadPackage(fullPath);
+                    if (fromFile == null)
+                    {
+                        continue;
+                    }
+
+                    if (HasPackageChanged(existing, fromFile))
+                    {
+                        changedPackages.Add(existing.File);
+                    }
+                }
+
+                foreach (var package in newPackages)
+                {
+                    var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    if (packagesFromFile == null)
+                    {
+                        continue;
+                    }
+
+                    packagesFromFile.State = PackageCatalogeItemState.Active;
+
+                    ExtractPackage(packagesFromFile);
+                    RegisterPackage(packagesFromFile);
+                    BootPackage(packagesFromFile);
+
+                    Catalog.Packages.Add(packagesFromFile);
+
+                    // raise event for added package
+                    OnAddPackage(packagesFromFile);
+
+                    _httpServerContext.Log.Debug
                     (
-                        "webexpress.webcore:packagemanager.remove",
-                        package
-                    )
-                );
-            }
+                        I18N.Translate
+                        (
+                            "webexpress.webcore:packagemanager.add",
+                            package
+                        )
+                    );
+                }
 
-            // 2. alle WebExpress-Pakete aus dem Filesystem ermitteln 
+                foreach (var package in changedPackages)
+                {
+                    var existing = Catalog.Packages.FirstOrDefault(x => x != null && x.File == package);
+                    if (existing == null)
+                    {
+                        continue;
+                    }
 
+                    var fromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    if (fromFile == null)
+                    {
+                        continue;
+                    }
 
-            // 2. Installiere Pakete ermitteln
-            var packagesFromCatalog = Catalog.Packages;
+                    // respect disabled state; only update metadata without activating
+                    if (existing.State == PackageCatalogeItemState.Disable)
+                    {
+                        existing.Metadata = fromFile.Metadata;
+                        _httpServerContext.Log.Debug($"package '{package}' metadata updated while disabled");
+                    }
+                    else
+                    {
+                        // deactivate and unload old plugin instances
+                        DeactivateAndUnregisterPackage(existing);
+                        // cleanup extracted content
+                        RemoveExtractedDirectory(existing);
 
+                        // update metadata and identification
+                        existing.Id = fromFile.Id;
+                        existing.Metadata = fromFile.Metadata;
+                        existing.State = PackageCatalogeItemState.Active;
 
+                        // extract, register and boot new content
+                        ExtractPackage(existing);
+                        RegisterPackage(existing);
+                        BootPackage(existing);
 
-            // 2 . DLL extrahieren
-            //webExpressPackages.ForEach(x => x.Files);
+                        _httpServerContext.Log.Debug($"package '{package}' updated and reloaded");
+                    }
+                }
 
+                foreach (var package in removePackages)
+                {
+                    var existing = Catalog.Packages.FirstOrDefault(x => x != null && x.File == package);
+                    if (existing == null)
+                    {
+                        continue;
+                    }
 
-            //foreach ()
-            //{
-            //    if (!Packages.ContainsKey(packagefile))
-            //    {
-            //        var package = Package.Open(packagefile);
-            //        Console.WriteLine("Nuspec File: " + package.FileName);
-            //        Console.WriteLine("Nuspec Id: " + package.Id);
-            //        Console.WriteLine("Nuspec Version: " + package.Version);
-            //        Console.WriteLine("Nuspec Autoren: " + package.Authors);
-            //        Console.WriteLine("Nuspec License: " + package.License);
-            //        Console.WriteLine("Nuspec LicenseUrl: " + package.LicenseUrl);
-            //        Console.WriteLine("Nuspec Description: " + package.Description);
-            //        Console.WriteLine("Nuspec Repository: " + package.Repository);
-            //        Console.WriteLine("Nuspec Abhängigkeiten: " + string.Join(",", package.Dependencies.Select(x => x.Id)));
+                    // deactivate and unload all plugins related to the package
+                    DeactivateAndUnregisterPackage(existing);
 
-            //        Packages.Add(packagefile, package);
-            //    }
-            //}
+                    // cleanup extracted directory
+                    RemoveExtractedDirectory(existing);
 
-            if (newPackages.Count != 0 || removePackages.Count != 0)
-            {
-                // build sitemap
-                _componentHub.SitemapManager.Refresh();
+                    // raise event before removing from catalog
+                    OnRemovePackage(existing);
 
-                // save the catalog
-                SaveCatalog();
+                    // remove package from catalog
+                    Catalog.Packages.Remove(existing);
+
+                    _httpServerContext.Log.Debug
+                    (
+                        I18N.Translate
+                        (
+                            "webexpress.webcore:packagemanager.remove",
+                            package
+                        )
+                    );
+                }
+
+                if (newPackages.Count != 0 || removePackages.Count != 0 || changedPackages.Count != 0)
+                {
+                    // build sitemap
+                    _componentHub.SitemapManager.Refresh();
+
+                    // save the catalog
+                    SaveCatalog();
+                }
             }
         }
 
@@ -244,29 +305,18 @@ namespace WebExpress.WebCore.WebPackage
                     using var zip = ZipFile.Open(file, ZipArchiveMode.Read);
 
                     var specEntry = zip.Entries.Where(x => Path.GetExtension(x.FullName) == ".spec").FirstOrDefault();
+                    if (specEntry == null)
+                    {
+                        _httpServerContext.Log.Warning($"package spec was not found in '{file}'");
+                        return null;
+                    }
+
                     var serializer = new XmlSerializer(typeof(PackageItemSpec));
-                    var spec = (PackageItemSpec)serializer.Deserialize(specEntry.Open());
-                    //        var files = new List<Tuple<string, byte[]>>();
-
-                    //        foreach (ZipArchiveEntry entry in zip.Entries.Where(x => Path.GetDirectoryName(x.FullName).StartsWith("lib")))
-                    //        {
-                    //            Console.WriteLine("Lib: " + entry?.FullName);
-
-                    //            using var stream = entry?.Open();
-                    //            using MemoryStream ms = new MemoryStream();
-                    //            stream.CopyTo(ms);
-                    //            files.Add(new Tuple<string, byte[]>(entry?.FullName, ms.ToArray()));
-                    //        }
-
-                    //        foreach (ZipArchiveEntry entry in zip.Entries.Where(x => Path.GetDirectoryName(x.FullName).StartsWith("runtimes")))
-                    //        {
-                    //            Console.WriteLine("Runtimes: " + entry?.FullName);
-
-                    //            using var stream = entry?.Open();
-                    //            using MemoryStream ms = new MemoryStream();
-                    //            stream.CopyTo(ms);
-                    //            files.Add(new Tuple<string, byte[]>(entry?.FullName, ms.ToArray()));
-                    //        }
+                    PackageItemSpec spec;
+                    using (var stream = specEntry.Open())
+                    {
+                        spec = (PackageItemSpec)serializer.Deserialize(stream);
+                    }
 
                     return new PackageCatalogItem()
                     {
@@ -365,38 +415,38 @@ namespace WebExpress.WebCore.WebPackage
             {
                 using var zip = ZipFile.Open(packageFile, ZipArchiveMode.Read);
 
-                var specEntry = zip.Entries.Where(x => Path.GetExtension(x.FullName) == ".spec").FirstOrDefault();
                 var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
 
                 if (!Directory.Exists(extractedPath))
                 {
                     Directory.CreateDirectory(extractedPath);
-                    // deleting an existing directory
-                    //Directory.Delete(extractedPath, true);
                 }
 
-                foreach (var entry in zip.Entries.Where(x => Path.GetDirectoryName(x.FullName).StartsWith("lib")))
+                foreach (var entry in zip.Entries.Where(x => Path.GetDirectoryName(x.FullName).StartsWith("lib", StringComparison.OrdinalIgnoreCase)))
                 {
-                    var entryFileName = Path.Combine(extractedPath, entry?.FullName);
-
-                    if (entryFileName.EndsWith('/'))
+                    // directory entries in the zip have an empty Name
+                    if (string.IsNullOrEmpty(entry.Name))
                     {
-                        if (!Directory.Exists(entryFileName))
+                        var dirPath = Path.Combine(extractedPath, entry.FullName);
+                        if (!Directory.Exists(dirPath))
                         {
-                            Directory.CreateDirectory(entryFileName);
+                            Directory.CreateDirectory(dirPath);
                         }
+
+                        continue;
                     }
-                    else
-                    {
-                        if (!Directory.Exists(Path.GetDirectoryName(entryFileName)))
-                        {
-                            Directory.CreateDirectory(Path.GetDirectoryName(entryFileName));
-                        }
 
-                        if (!File.Exists(entryFileName))
-                        {
-                            entry.ExtractToFile(entryFileName);
-                        }
+                    var targetFilePath = Path.Combine(extractedPath, entry.FullName);
+                    var targetDir = Path.GetDirectoryName(targetFilePath);
+
+                    if (!Directory.Exists(targetDir))
+                    {
+                        Directory.CreateDirectory(targetDir);
+                    }
+
+                    if (!File.Exists(targetFilePath))
+                    {
+                        entry.ExtractToFile(targetFilePath);
                     }
                 }
             }
@@ -409,7 +459,7 @@ namespace WebExpress.WebCore.WebPackage
         private void RegisterPackage(PackageCatalogItem package)
         {
             // load plugins
-            foreach (var plugin in package?.Metadata.PluginSources ?? [])
+            foreach (var plugin in package?.Metadata?.PluginSources ?? [])
             {
                 var pluginContexts = _pluginManager.Register(GetTargetPath(package, plugin));
 
@@ -427,7 +477,8 @@ namespace WebExpress.WebCore.WebPackage
         }
 
         /// <summary>
-        /// Determines the target directory where the plug-ins of the package are located for the current target platform
+        /// Determines the target directory where the plug-ins of the package are located 
+        /// for the current target platform.
         /// </summary>
         /// <param name="package">The package.</param>
         /// <param name="plugin">The plugin.</param>
@@ -498,6 +549,94 @@ namespace WebExpress.WebCore.WebPackage
             }
 
             _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+        }
+
+        /// <summary>
+        /// Checks if a package has changed by comparing spec-relevant metadata.
+        /// </summary>
+        /// <param name="existing">The existing catalog item.</param>
+        /// <param name="fromFile">The catalog item loaded from file.</param>
+        /// <returns>True if changed; otherwise false.</returns>
+        private static bool HasPackageChanged(PackageCatalogItem existing, PackageCatalogItem fromFile)
+        {
+            if (existing == null || fromFile == null)
+            {
+                return false;
+            }
+
+            // if no metadata was present, treat as no change and let metadata be assigned on next run
+            if (existing.Metadata == null || fromFile.Metadata == null)
+            {
+                return false;
+            }
+
+            if (!string.Equals(existing.Metadata.Version, fromFile.Metadata.Version, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // compare plugin sources sequence-insensitively
+            var a = (existing.Metadata.PluginSources ?? []).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToArray();
+            var b = (fromFile.Metadata.PluginSources ?? []).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToArray();
+
+            if (a.Length != b.Length)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (!string.Equals(a[i], b[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gracefully deactivates a package, shutting down and removing its plugins and 
+        /// clearing the plugin list.
+        /// </summary>
+        /// <param name="package">The package.</param>
+        private void DeactivateAndUnregisterPackage(PackageCatalogItem package)
+        {
+            if (package == null)
+            {
+                return;
+            }
+
+            // shut down components associated to each plugin and remove the plugin
+            foreach (var pluginContext in package.Plugins.ToList())
+            {
+                _componentHub.ShutDownComponent(pluginContext);
+                _pluginManager.Remove(pluginContext);
+            }
+
+            package.Plugins.Clear();
+            package.State = PackageCatalogeItemState.Available;
+        }
+
+        /// <summary>
+        /// Removes the extracted directory for a package if it exists.
+        /// </summary>
+        /// <param name="package">The package.</param>
+        private void RemoveExtractedDirectory(PackageCatalogItem package)
+        {
+            var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+            try
+            {
+                if (Directory.Exists(extractedPath))
+                {
+                    Directory.Delete(extractedPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // keep running even if cleanup fails
+                _httpServerContext.Log.Exception(ex);
+            }
         }
 
         /// <summary>

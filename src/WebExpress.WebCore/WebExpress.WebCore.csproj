@@ -3,19 +3,19 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<Title>WebExpress.WebCore</Title>
-		<Version>0.0.8.0</Version>
-		<AssemblyVersion>0.0.8.0</AssemblyVersion>
+		<Version>0.0.9.0</Version>
+		<AssemblyVersion>0.0.9.0</AssemblyVersion>
 		<TargetFramework>net9.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
-		<RepositoryUrl>https://github.com/ReneSchwarzer/WebExpress.git</RepositoryUrl>
-		<Authors>Rene_Schwarzer@hotmail.de</Authors>
+		<RepositoryUrl>https://github.com/webexpress-framework/WebExpress.git</RepositoryUrl>
+		<Authors>webexpress-framework@outlook.com</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Company>Rene_Schwarzer@hotmail.de</Company>
+		<Company>webexpress-framework@outlook.com</Company>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Description>Core library of the WebExpress web server.</Description>
-		<PackageVersion>0.0.8-alpha</PackageVersion>
-		<PackageProjectUrl>https://github.com/ReneSchwarzer/WebExpress</PackageProjectUrl>
+		<PackageVersion>0.0.9-alpha</PackageVersion>
+		<PackageProjectUrl>https://github.com/webexpress-framework/WebExpress</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryType>git</RepositoryType>
@@ -23,21 +23,13 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<IsPackable>true</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
+		<DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Remove="Internationalization\de" />
-		<None Remove="Internationalization\en" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="Internationalization\de" />
 		<EmbeddedResource Include="Internationalization\en" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Setting\" />
-		<Folder Include="WebEndpoint\Model\" />
 	</ItemGroup>
 
 	<ItemGroup>

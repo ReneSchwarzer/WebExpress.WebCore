@@ -5,14 +5,14 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebIdentity
 {
     /// <summary>
-    /// Defines the context for a role, providing access to various related contexts and properties.
+    /// Defines the context for a policy, providing access to various related contexts and properties.
     /// </summary>
-    public class IdentityRoleContext : IIdentityRoleContext
+    public class IdentityPolicyContext : IIdentityPolicyContext
     {
         /// <summary>
-        /// Returns the role id.
+        /// Returns the policy id.
         /// </summary>
-        public IComponentId RoleId { get; internal set; }
+        public IComponentId PolicyId { get; internal set; }
 
         /// <summary>
         /// Returns the associated plugin context.
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"Role: {RoleId}";
+            return $"Policy: {PolicyId}";
         }
     }
 }

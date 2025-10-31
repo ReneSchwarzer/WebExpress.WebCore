@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.WebIcon;
-using WebExpress.WebCore.WebPage;
+﻿using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebSettingPage
 {
@@ -9,11 +8,6 @@ namespace WebExpress.WebCore.WebSettingPage
     /// </summary>
     public class SettingPageContext : PageContext, ISettingPageContext
     {
-        /// <summary>
-        /// Returns the icon.
-        /// </summary>
-        public IIcon Icon { get; internal set; }
-
         /// <summary>
         /// Returns the setting category context to which the setting page belongs.
         /// </summary>

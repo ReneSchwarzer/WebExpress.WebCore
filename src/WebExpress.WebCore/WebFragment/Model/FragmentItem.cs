@@ -81,11 +81,21 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// <summary>
         /// Create the instance of the component.
         /// </summary>
-        public TFragment CreateInstance<TFragment>() where TFragment : IFragmentBase
+        /// <param name="pageContext">The page context.</param>
+        public TFragment CreateInstance<TFragment>(IPageContext pageContext = null) 
+            where TFragment : IFragmentBase
         {
             var instance = _instance;
 
-            instance ??= ComponentActivator.CreateInstance<IFragmentBase, IFragmentContext>(FragmentClass, FragmentContext, _httpServerContext, _componentHub, FragmentContext);
+            instance ??= ComponentActivator.CreateInstance<IFragmentBase, IFragmentContext>
+            (
+                FragmentClass, 
+                FragmentContext, 
+                _httpServerContext, 
+                _componentHub, 
+                FragmentContext, 
+                pageContext
+            );
 
             if (Cache)
             {
@@ -150,7 +160,8 @@ namespace WebExpress.WebCore.WebFragment.Model
         public bool CheckConditions(Request request)
         {
             return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(request));
-        }
+        }
+
         /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.
         /// </summary>

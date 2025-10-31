@@ -111,7 +111,7 @@ statuspagemanager.initialization=The status page manager has been initialized.
 statuspagemanager.register=The status '{0}' has been registered and assigned to the status page '{1}'.
 statuspagemanager.duplicat=The status '{0}' has already been registered. Therefore, the status page '{1}' is not used.
 statuspagemanager.statuscodeless=A status code has not been assigned to the  resource '{1}' for the application '{0}'.
-statuspagemanager.resource=Status code: '{0}'
+statuspagemanager.addstatuspage=Status code: '{0}' for application '{1}'.
 
 sitemapmanager.titel=Sitemap:
 sitemapmanager.initialization=The sitemap manager has been initialized.
@@ -123,6 +123,7 @@ sitemapmanager.preorder={0} => {1}
 sitemapmanager.merge.error=The two sitemaps '{0}' and '{1}' could not be merged.
 
 sessionmanager.initialization=The session manager has been initialized.
+sessionmanager.cleanup.removed=The session with the id '{0}' has been removed.
 
 settingpagemanager.initialization=The setting page manager has been initialized.
 settingpagemanager.register.category=The setting category '{0}' has been registered in the application '{1}'.
@@ -162,8 +163,12 @@ fragmentmanager.fragment=Fragment: '{0}' for application '{1}'.
 identitymanager.initialization=The identity manager has been initialized.
 identitymanager.registerpermission=The permission '{0}' has been assigned to the application '{1}' and registered in the identity manager.
 identitymanager.duplicatepermission=The permission '{0}' has already been registered in the application '{1}'.
-identitymanager.registerrole=The role '{0}' has been assigned to the application '{1}' and registered in the identity manager.
-identitymanager.duplicaterole=The role '{0}' has already been registered in the application '{1}'.
+identitymanager.registerpolicy=The policy '{0}' has been assigned to the application '{1}' and registered in the identity manager.
+identitymanager.duplicatepolicy=The policy '{0}' has already been registered in the application '{1}'.
+
+includemanager.initialization=The include manager has been initialized.
+includemanager.addinclude=The client resource '{0}' has been registered in the application '{1}'.
+includemanager.removeinclude=The client resource '{0}' has been removed from the application '{1}'.
 
 thememanager.initialization=The theme manager has been initialized.
 thememanager.addtheme=The theme '{0}' has been registered in the application '{1}'.
@@ -172,3 +177,20 @@ thememanager.theme=Theme: '{0}' for application '{1}'.
 
 resource.variable.duplicate=Variable '{0}' already exists!
 resource.file={0}: File '{1}' has been loaded.
+
+validation.required={0} is required.
+validation.too_long= {0} must not exceed {1} characters.
+validation.too_short={0} must be at least {1} characters.
+validation.regex_mismatch={0} is invalid.
+validation.out_of_range={0} must be between {1} and {2}.
+validation.not_integer={0} must be a valid integer.
+validation.invalid_email={0} must be a valid email address.
+validation.mismatch={0} must equal '{1}'.
+validation.must_differ={0} must not be '{1}'.
+validation.prefix_mismatch={0} must start with '{1}'.
+validation.invalid_choice={0} must be one of: {1}.
+validation.missing_fragment={0} must contain '{1}'.
+validation.suffix_mismatch={0} must end with '{1}'.
+validation.invalid_enum={0} must be a valid {1} value.
+validation.invalid_date={0} must be a valid date.
+ 

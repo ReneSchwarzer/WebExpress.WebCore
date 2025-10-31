@@ -15,6 +15,11 @@ namespace WebExpress.WebCore.Test
     public sealed class TestFragmentD : IFragment<TestRenderContext, TestVisualTree>
     {
         /// <summary>
+        /// Returns or sets the id.
+        /// </summary>
+        public string Id => string.Empty;
+
+        /// <summary>
         /// Initialization of the fragment. Here, for example, managed resources can be loaded. 
         /// </summary>
         /// <param name="componentHub">The component hub.</param>

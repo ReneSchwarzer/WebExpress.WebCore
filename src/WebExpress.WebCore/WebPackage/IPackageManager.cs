@@ -5,7 +5,8 @@ using WebExpress.WebCore.WebPackage.Model;
 namespace WebExpress.WebCore.WebPackage
 {
     /// <summary>
-    /// The package manager manages packages with WebExpress extensions. The packages must be in WebExpressPackage format (*.wxp).
+    /// The package manager manages packages with WebExpress extensions. The packages must 
+    /// be in WebExpressPackage format (*.wxp).
     /// </summary>
     public interface IPackageManager : IComponentManager
     {

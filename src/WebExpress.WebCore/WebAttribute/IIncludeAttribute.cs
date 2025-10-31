@@ -1,9 +1,9 @@
 ﻿namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
-    /// Interface of a role assignment attribute.
+    /// Identifies a class as a include component.
     /// </summary>
-    public interface IRoleAttribute
+    public interface IIncludeAttribute
     {
     }
 }

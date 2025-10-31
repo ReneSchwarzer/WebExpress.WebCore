@@ -50,6 +50,6 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Returns the attributes associated with the page.
         /// </summary>
-        IEnumerable<Type> Attributes { get; }
+        IEnumerable<Attribute> Attributes { get; }
     }
 }

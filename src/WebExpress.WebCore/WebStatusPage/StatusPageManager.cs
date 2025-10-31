@@ -13,6 +13,7 @@ using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebScope;
 using WebExpress.WebCore.WebStatusPage.Model;
 
 namespace WebExpress.WebCore.WebStatusPage
@@ -117,6 +118,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 var statusResponse = typeof(ResponseInternalServerError);
                 var icon = string.Empty;
                 var title = resource.Name;
+                var description = string.Empty;
                 var defaultItem = false;
 
                 foreach (var customAttribute in resource.CustomAttributes
@@ -133,6 +135,10 @@ namespace WebExpress.WebCore.WebStatusPage
                     else if (customAttribute.AttributeType == typeof(IconAttribute))
                     {
                         icon = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType == typeof(DescriptionAttribute))
+                    {
+                        description = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(DefaultAttribute))
                     {
@@ -156,7 +162,7 @@ namespace WebExpress.WebCore.WebStatusPage
                         );
                     }
 
-                    var stausIcon = !string.IsNullOrEmpty(icon) ? RouteEndpoint.Combine(applicationContext.ContextPath, icon) : null;
+                    var stausIcon = !string.IsNullOrEmpty(icon) ? RouteEndpoint.Combine(applicationContext.Route, icon) : null;
                     var statusCode = statusResponse.GetCustomAttribute<StatusCodeAttribute>().StatusCode;
                     var statusPageContext = new StatusPageContext()
                     {
@@ -165,7 +171,8 @@ namespace WebExpress.WebCore.WebStatusPage
                         ApplicationContext = applicationContext,
                         StatusCode = statusCode,
                         StatusTitle = title,
-                        StatusIcon = stausIcon
+                        StatusIcon = stausIcon,
+                        StatusDescription = description
                     };
 
                     if (_dictionary.AddStatusPageItem(pluginContext, applicationContext, statusCode, new StatusPageItem()
@@ -214,7 +221,8 @@ namespace WebExpress.WebCore.WebStatusPage
                                 ApplicationContext = applicationContext,
                                 StatusCode = statusCode,
                                 StatusTitle = title,
-                                StatusIcon = stausIcon
+                                StatusIcon = stausIcon,
+                                StatusDescription = description
                             },
                             StatusPageClass = resource,
                             StatusResponse = statusResponse,
@@ -296,7 +304,11 @@ namespace WebExpress.WebCore.WebStatusPage
                 new StatusMessage(message)
             );
             var pageType = pageInstance.GetType();
-            var pageContext = new PageContext();
+            var pageContext = new PageContext()
+            {
+                ApplicationContext = applicationContext,
+                Scopes = [typeof(IScopeStatusPage)]
+            };
             var renderContext = new RenderContext(pageInstance as IEndpoint, pageContext, request);
             var visualTreeContext = new VisualTreeContext(renderContext);
 
@@ -494,7 +506,7 @@ namespace WebExpress.WebCore.WebStatusPage
             {
                 list.Add
                 (
-                    I18N.Translate("webexpress.webcore:statuspagemanager.statuspage", statusPage.StatusCode)
+                    I18N.Translate("webexpress.webcore:statuspagemanager.addstatuspage", statusPage.StatusCode, statusPage.ApplicationContext?.ApplicationId)
                 );
             }
 

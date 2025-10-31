@@ -37,13 +37,12 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             return new HttpServerContext
             (
-                new RouteEndpoint("localhost"),
+                new RouteEndpoint("server"),
                 [],
-                "",
+                Path.Combine(Environment.CurrentDirectory, Guid.NewGuid().ToString()),
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
                 Environment.CurrentDirectory,
-                new RouteEndpoint("/server"),
                 CultureInfo.GetCultureInfo("en"),
                 new Log() { LogMode = LogMode.Off },
                 null
@@ -53,8 +52,9 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <summary>
         /// Create a component hub.
         /// </summary>
+        /// <param name="httpServerContext">The server context. If null, a mock context will be created.</param>
         /// <returns>The component hub.</returns>
-        public static ComponentHub CreateComponentHubMock()
+        public static ComponentHub CreateComponentHubMock(IHttpServerContext httpServerContext = null)
         {
             var ctorComponentHub = typeof(ComponentHub).GetConstructor
             (
@@ -64,7 +64,10 @@ namespace WebExpress.WebCore.Test.Fixture
                 null
             );
 
-            var componentHub = (ComponentHub)ctorComponentHub.Invoke([CreateHttpServerContextMock()]);
+            var componentHub = (ComponentHub)ctorComponentHub.Invoke
+            ([
+                httpServerContext ?? CreateHttpServerContextMock()
+            ]);
 
             // set static field in the webex class
             var type = typeof(WebEx);
@@ -121,7 +124,7 @@ namespace WebExpress.WebCore.Test.Fixture
             var firstLine = content.Split('\n').FirstOrDefault();
             var lines = content.Split(_separator, StringSplitOptions.None);
             var filteredLines = lines.Skip(1).TakeWhile(line => !string.IsNullOrWhiteSpace(line));
-            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault()) + filteredLines.LastOrDefault().Length + 4 : 0;
+            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault() ?? "") + filteredLines.LastOrDefault()?.Length ?? 0 + 4 : 0;
             var innerContent = pos < content.Length ? content[pos..] : "";
             var contentBytes = Encoding.UTF8.GetBytes(innerContent);
 
@@ -217,8 +220,9 @@ namespace WebExpress.WebCore.Test.Fixture
         public static string GetEmbeddedResource(string fileName)
         {
             var assembly = typeof(UnitTestFixture).Assembly;
-            var resourceName = assembly.GetManifestResourceNames()
-                                   .FirstOrDefault(name => name.EndsWith(fileName, StringComparison.OrdinalIgnoreCase));
+            var resources = assembly.GetManifestResourceNames();
+            var resourceName = resources
+                .FirstOrDefault(name => name.Replace('\\', '/').EndsWith(fileName.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase));
 
             using var stream = assembly.GetManifestResourceStream(resourceName);
             using var memoryStream = new MemoryStream();

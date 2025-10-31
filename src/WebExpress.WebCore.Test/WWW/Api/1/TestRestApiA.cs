@@ -1,5 +1,7 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebRestApi;
+using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.Test.WWW.Api._1
 {
@@ -27,45 +29,52 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         /// Creates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void CreateData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public Response CreateData(Request request)
         {
-
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Gets data.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <returns>The data.</returns>
-        public object GetData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public Response GetData(Request request)
         {
-            return null;
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Updates data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void UpdateData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public Response UpdateData(Request request)
         {
             // test the request
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
+
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>
         /// Deletes data.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void DeleteData(WebMessage.Request request)
+        /// <returns>The response containing the result of the operation.</returns>
+        public Response DeleteData(Request request)
         {
             // test the request
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
+
+            return new ResponseBadRequest(new StatusMessage("Not implemented."));
         }
 
         /// <summary>

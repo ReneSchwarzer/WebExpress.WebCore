@@ -48,11 +48,6 @@ namespace WebExpress.WebCore
         public string ConfigPath { get; protected set; }
 
         /// <summary>
-        /// Returns the basic context path.
-        /// </summary>
-        public IRoute ContextPath { get; protected set; }
-
-        /// <summary>
         /// Returns the culture.
         /// </summary>
         public CultureInfo Culture { get; protected set; }
@@ -76,7 +71,6 @@ namespace WebExpress.WebCore
         /// <param name="assetBaseFolder">The asset home directory.</param>
         /// <param name="dataBaseFolder">The data home directory.</param>
         /// <param name="configBaseFolder">The configuration directory.</param>
-        /// <param name="contextPath">The basic context path.</param>
         /// <param name="culture">The culture.</param>
         /// <param name="log">The log.</param>
         /// <param name="host">The host.</param>
@@ -88,7 +82,6 @@ namespace WebExpress.WebCore
             string assetBaseFolder,
             string dataBaseFolder,
             string configBaseFolder,
-            IRoute contextPath,
             CultureInfo culture,
             ILog log,
             IHost host
@@ -103,7 +96,6 @@ namespace WebExpress.WebCore
             AssetPath = assetBaseFolder;
             DataPath = dataBaseFolder;
             ConfigPath = configBaseFolder;
-            ContextPath = contextPath;
             Culture = culture;
             Log = log;
             Host = host;

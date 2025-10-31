@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.Test.Manager
 
             // test execution
             Assert.Equal(9, componentHub.IdentityManager.Permissions.Count());
-            Assert.Equal(6, componentHub.IdentityManager.Roles.Count());
+            Assert.Equal(6, componentHub.IdentityManager.Policies.Count());
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.Test.Manager
             identityManager.Remove(plugin);
 
             Assert.Empty(componentHub.IdentityManager.Permissions);
-            Assert.Empty(componentHub.IdentityManager.Roles);
+            Assert.Empty(componentHub.IdentityManager.Policies);
         }
 
         /// <summary>
@@ -115,13 +115,13 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the CheckAccess function of the identity manager.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleA), typeof(TestIdentityPermissionA), true)]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleA), typeof(TestIdentityPermissionB), true)]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleA), typeof(TestIdentityPermissionC), true)]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleB), typeof(TestIdentityPermissionA), true)]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleB), typeof(TestIdentityPermissionB), true)]
-        [InlineData(typeof(TestApplicationA), typeof(TestIdentityRoleB), typeof(TestIdentityPermissionC), false)]
-        public void CheckAccessRole(Type application, Type role, Type permission, bool expected)
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyA), typeof(TestIdentityPermissionA), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyA), typeof(TestIdentityPermissionB), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyA), typeof(TestIdentityPermissionC), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyB), typeof(TestIdentityPermissionA), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyB), typeof(TestIdentityPermissionB), true)]
+        [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyB), typeof(TestIdentityPermissionC), false)]
+        public void CheckAccess(Type application, Type policy, Type permission, bool expected)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.Test.Manager
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
 
             // test execution
-            var access = identityManager.CheckAccess(applicationContext, role, permission);
+            var access = identityManager.CheckAccess(applicationContext, policy, permission);
 
             Assert.Equal(expected, access);
         }

@@ -42,13 +42,10 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="componentHub">The component hub.</param>
         /// <param name="httpServerContext">The reference to the context of the host.</param>
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used via Reflection.")]
-        private EndpointManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
+        private EndpointManager(IHttpServerContext httpServerContext)
         {
-            //_componentHub = componentHub;
-
             _httpServerContext = httpServerContext;
 
             _httpServerContext.Log.Debug
@@ -248,6 +245,37 @@ namespace WebExpress.WebCore.WebEndpoint
                 .Concat(classSegment);
 
             return uri;
+        }
+
+        /// <summary>
+        /// Creates instances of attributes from a collection of <see cref="CustomAttributeData"/> objects.
+        /// </summary>
+        /// <param name="customAttributesData">A collection of objects representing the metadata of attributes.</param>
+        /// <returns>An enumerable of instances created from the provided metadata. If
+        /// no attributes are instantiated, an empty collection is returned.</returns>
+        public static IEnumerable<Attribute> GetAttributeInstances(IEnumerable<CustomAttributeData> customAttributesData)
+        {
+            List<Attribute> attributeInstances = [];
+
+            foreach (var attrData in customAttributesData)
+            {
+                var attributeType = attrData.AttributeType;
+                var constructorArgs = new List<object>();
+
+                // extract constructor arguments
+                foreach (var arg in attrData.ConstructorArguments)
+                {
+                    constructorArgs.Add(arg.Value);
+                }
+
+                // instantiate the attribute using reflection
+                if (Activator.CreateInstance(attributeType, [.. constructorArgs]) is Attribute attributeInstance)
+                {
+                    attributeInstances.Add(attributeInstance);
+                }
+            }
+
+            return attributeInstances;
         }
     }
 }

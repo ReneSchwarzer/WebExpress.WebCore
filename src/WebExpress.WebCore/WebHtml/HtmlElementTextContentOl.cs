@@ -36,6 +36,16 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="nodes">The content of the html element.</param>
+        public HtmlElementTextContentOl(IEnumerable<HtmlElementTextContentLi> nodes)
+            : this()
+        {
+            Add(nodes);
+        }
+
+        /// <summary>
         /// Convert to a string using a StringBuilder.
         /// </summary>
         /// <param name="builder">The string builder.</param>

@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -47,6 +48,11 @@ namespace WebExpress.WebCore.WebPage
         public string PageTitle { get; internal set; }
 
         /// <summary>
+        /// Returns the page icon.
+        /// </summary>
+        public IIcon PageIcon { get; internal set; }
+
+        /// <summary>
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
@@ -59,7 +65,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the attributes associated with the page.
         /// </summary>
-        public IEnumerable<Type> Attributes { get; internal set; }
+        public IEnumerable<Attribute> Attributes { get; internal set; }
 
         /// <summary>
         /// Returns the context path.

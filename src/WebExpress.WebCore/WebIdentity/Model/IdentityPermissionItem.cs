@@ -24,9 +24,9 @@ namespace WebExpress.WebCore.WebIdentity.Model
         public IApplicationContext ApplicationContext { get; private set; }
 
         /// <summary>
-        /// Returns the roles associated with the permission.
+        /// Returns the policies associated with the permission.
         /// </summary>
-        public IEnumerable<Type> Roles { get; private set; }
+        public IEnumerable<Type> Policies { get; private set; }
 
         /// <summary>
         /// Returns or sets the permission context.
@@ -52,13 +52,13 @@ namespace WebExpress.WebCore.WebIdentity.Model
         /// <param name="applicationContext">The corresponding application context.</param>
         /// <param name="permissionClass">The permission class.</param>
         /// <param name="permissionContext">The permission context.</param>
-        /// <param name="roles">The roles associated with the permission.</param>
-        public IdentityPermissionItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, Type permissionClass, IIdentityPermissionContext permissionContext, IEnumerable<Type> roles)
+        /// <param name="policies">The policies associated with the permission.</param>
+        public IdentityPermissionItem(IComponentHub componentHub, IHttpServerContext httpServerContext, IPluginContext pluginContext, IApplicationContext applicationContext, Type permissionClass, IIdentityPermissionContext permissionContext, IEnumerable<Type> policies)
         {
             _componentHub = componentHub;
             PluginContext = pluginContext;
             ApplicationContext = applicationContext;
-            Roles = roles;
+            Policies = policies;
             PermissionClass = permissionClass;
             PermissionContext = permissionContext;
             Instance = ComponentActivator.CreateInstance<IIdentityPermission>(httpServerContext, _componentHub, PermissionClass, PermissionContext);

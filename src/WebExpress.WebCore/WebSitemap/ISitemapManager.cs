@@ -64,6 +64,6 @@ namespace WebExpress.WebCore.WebSitemap
         /// </summary>
         /// <param name="uri">The URI resource to search for.</param>
         /// <returns>The endpoint context if found, otherwise null.</returns>
-        IEndpointContext GetEndpoint(UriEndpoint uri);
+        IEndpointContext GetEndpoint(IUri uri);
     }
 }

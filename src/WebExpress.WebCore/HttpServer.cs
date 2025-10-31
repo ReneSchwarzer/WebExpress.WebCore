@@ -17,10 +17,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
 
@@ -85,7 +85,6 @@ namespace WebExpress.WebCore
                 context.AssetPath,
                 context.DataPath,
                 context.ConfigPath,
-                context.ContextPath,
                 context.Culture,
                 context.Log,
                 this
@@ -301,7 +300,7 @@ namespace WebExpress.WebCore
                         // Resource not found
                         response = CreateStatusPage<ResponseNotFound>
                         (
-                            string.Empty,
+                            "Resource not found",
                             request,
                             searchResult
                         );
@@ -311,12 +310,25 @@ namespace WebExpress.WebCore
                 {
                     if (ex.Permanet)
                     {
-                        response = new ResponseRedirectPermanentlyMoved(ex.Url);
+                        response = new ResponseMovedPermanently(ex.Uri);
                     }
                     else
                     {
-                        response = new ResponseRedirectTemporarilyMoved(ex.Url);
+                        response = new ResponseMovedTemporarily(ex.Uri);
                     }
+                }
+                catch (BadRequestException ex)
+                {
+                    var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
+                            $"<h5>Source</h5>{ex.Source}<br/><br/>" +
+                            $"<h5>StackTrace</h5>{ex.StackTrace.Replace("\n", "<br/>\n")}";
+
+                    response = CreateStatusPage<ResponseBadRequest>
+                    (
+                        message,
+                        request,
+                        searchResult
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -338,7 +350,7 @@ namespace WebExpress.WebCore
             else
             {
                 // Resource not found
-                response = CreateStatusPage<ResponseNotFound>(string.Empty, request);
+                response = CreateStatusPage<ResponseNotFound>("Resource not found", request);
             }
 
             stopwatch.Stop();
@@ -438,14 +450,31 @@ namespace WebExpress.WebCore
         private static Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
         {
             var response = new T() as Response;
+            var statusPageManager = WebEx.ComponentHub.StatusPageManager;
+            var applicationManager = WebEx.ComponentHub.ApplicationManager;
+            var route = new RouteEndpoint([.. request.Uri.PathSegments])?.ToString();
+            var applicationContext = applicationManager.Applications
+                   .Where(x => route.StartsWith(x.Route.ToString()))
+                   .FirstOrDefault();
 
             if (searchResult != null)
             {
-                return WebEx.ComponentHub.StatusPageManager.CreateStatusResponse
+                return statusPageManager.CreateStatusResponse
                 (
                     message,
                     response.Status,
                     searchResult?.EndpointContext?.ApplicationContext,
+                    request
+                );
+            }
+
+            if (applicationContext != null)
+            {
+                return statusPageManager.CreateStatusResponse
+                (
+                    message,
+                    response.Status,
+                    applicationContext,
                     request
                 );
             }

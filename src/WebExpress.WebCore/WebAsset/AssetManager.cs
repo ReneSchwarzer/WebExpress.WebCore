@@ -21,7 +21,6 @@ namespace WebExpress.WebCore.WebAsset
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly AssetItemDictionary _itemDictionary = new();
-        private readonly AssetEndpointDictionary _endpointDictionary = [];
 
         /// <summary>
         /// An event that fires when an asset is added.
@@ -55,19 +54,21 @@ namespace WebExpress.WebCore.WebAsset
 
             var endpointtRegistration = new EndpointRegistration()
             {
-                EndpointResolver = (type, applicationContext) => _endpointDictionary
-                    .Where(x => x.Key == applicationContext)
-                    .Select(x => x.Value)
-                    .Where(x => x.Item2.GetType() == type)
-                    .Select(x => x.Item1),
-                EndpointsResolver = () => _endpointDictionary
-                    .Select(x => x.Value)
-                    .Select(x => x.Item1),
+                EndpointResolver = (type, applicationContext) => [],
+                EndpointsResolver = () => Assets,
                 HandleRequest = (request, endpointContext) =>
                 {
                     var assetContext = endpointContext as IAssetContext;
                     var asset = _itemDictionary.All
-                        .FirstOrDefault(x => request.Uri.ToString().ToLower().Replace('/', '.').EndsWith(x.AssetContext.EndpointId.ToString()));
+                        .FirstOrDefault
+                        (
+                            x =>
+                            request.Uri
+                                .ToString()
+                                .ToLower()
+                                .Replace("/", ".")
+                                .EndsWith(x.AssetContext.Route.ToString().Replace("/", "."))
+                        );
 
                     if (asset != null)
                     {
@@ -137,26 +138,25 @@ namespace WebExpress.WebCore.WebAsset
             {
                 if (resource.StartsWith(assemblName + ".Assets.", StringComparison.OrdinalIgnoreCase))
                 {
-                    var id = resource[(assemblName.Length + 8)..];
+                    var id = resource[(assemblName.Length + 8)..]?.Replace('\\', '/');
 
                     // assign the asset to existing applications
                     foreach (var applicationContext in applicationContexts)
                     {
-                        var prefix = applicationContext.ContextPath
-                            .Concat(new UriPathSegmentConstant("assets"))
-                            .Concat
-                            (
-                                applicationContext.PluginContext != pluginContext
-                                    ? pluginContext.PluginName.ToLower()
-                                    : ""
-                            );
+                        var pluginPath = applicationContext.PluginContext != pluginContext
+                            ? pluginContext.PluginId.ToString()
+                            : null;
+
+                        var prefix = applicationContext.Route
+                            .Concat(pluginPath)
+                            .Concat(new UriPathSegmentConstant("assets"));
 
                         var assetContext = new AssetContext()
                         {
-                            EndpointId = new ComponentId(id),
+                            EndpointId = new ComponentId($"{pluginContext.PluginId}.{id.Replace('/', '.')}"),
                             PluginContext = pluginContext,
                             ApplicationContext = applicationContext,
-                            Route = prefix.Concat(new UriPathSegmentConstant($"{id}")),
+                            Route = prefix.Concat(id),
                             IncludeSubPaths = false
                         };
 
@@ -280,26 +280,6 @@ namespace WebExpress.WebCore.WebAsset
         private void OnAddApplication(object sender, IApplicationContext e)
         {
             Register(e);
-
-            var assembly = typeof(AssetManager).Assembly;
-            var assemblyName = assembly.GetName().Name.ToLower();
-
-            var context = new AssetContext()
-            {
-                ApplicationContext = e,
-                PluginContext = new PluginContext()
-                {
-                    PluginId = new ComponentId(assemblyName),
-                    Assembly = assembly
-                },
-                EndpointId = new ComponentId(assemblyName + ".asset"),
-                IncludeSubPaths = true,
-                Route = RouteEndpoint.Combine(e.ContextPath, "assets")
-            };
-
-            var asset = ComponentActivator.CreateInstance<IAsset, IAssetContext>(typeof(Asset), context, _httpServerContext, _componentHub);
-
-            _endpointDictionary.TryAdd(e, (context, asset));
         }
 
         /// <summary>
@@ -310,28 +290,6 @@ namespace WebExpress.WebCore.WebAsset
         private void OnRemoveApplication(object sender, IApplicationContext e)
         {
             Remove(e);
-
-            _endpointDictionary.Remove(e);
-        }
-
-        /// <summary>
-        /// Information about the component is collected and prepared for output in the log.
-        /// </summary>
-        private void Log()
-        {
-            //foreach (var resourcenItem in GetResorceItems(pluginContext))
-            //{
-            //    output.Add
-            //    (
-            //        string.Empty.PadRight(deep) +
-            //        I18N.Translate
-            //        (
-            //            "webexpress.webcore:resourcemanager.resource",
-            //            resourcenItem?.ResourceContext?.EndpointId,
-            //            string.Join(",", resourcenItem.ResourceContext?.ApplicationContext?.ApplicationId)
-            //        )
-            //    );
-            //}
         }
 
         /// <summary>

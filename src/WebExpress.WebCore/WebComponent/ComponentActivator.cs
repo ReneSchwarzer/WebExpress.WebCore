@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebStatusPage;
 
 namespace WebExpress.WebCore.WebComponent
@@ -261,6 +262,10 @@ namespace WebExpress.WebCore.WebComponent
                                 (
                                     parameter.ParameterType == typeof(IApplicationContext) &&
                                     x.GetType().GetInterfaces().Any(x => x == typeof(IApplicationContext))
+                                ) ||
+                                (
+                                    parameter.ParameterType == typeof(IPageContext) &&
+                                    x.GetType().GetInterfaces().Any(x => x == typeof(IPageContext))
                                 )
                             )
                             .FirstOrDefault() ?? null

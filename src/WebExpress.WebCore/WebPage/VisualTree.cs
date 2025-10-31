@@ -2,6 +2,7 @@
 using System.Linq;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebPage
 {
@@ -127,6 +128,19 @@ namespace WebExpress.WebCore.WebPage
             html.Head.ScriptLinks = HeaderScriptLinks?.Where(x => x != null).Select(x => x.ToString());
 
             return html;
+        }
+
+        /// <summary>
+        /// Retrieves a response based on the provided visual tree context.
+        /// </summary>
+        /// <param name="context">The visual tree context used to generate the response. Cannot be null.</param>
+        /// <returns>A <see cref="Response"/> object representing the result of the operation.</returns>
+        public Response GetResponse(IVisualTreeContext context)
+        {
+            return new ResponseOK()
+            {
+                Content = Render(context)
+            };
         }
     }
 }

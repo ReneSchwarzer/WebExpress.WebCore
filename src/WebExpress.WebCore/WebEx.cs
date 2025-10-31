@@ -25,6 +25,32 @@ namespace WebExpress.WebCore
         private HttpServer _httpServer;
 
         /// <summary>
+        /// Occurs when the initialization process is completed.
+        /// </summary>
+        /// <remarks>
+        /// Subscribe to this event to perform actions after the initialization is
+        /// finished.
+        /// </remarks>
+        public event EventHandler Initialization;
+
+        /// <summary>
+        /// Occurs when the start action is triggered.
+        /// </summary>
+        /// <remarks>
+        /// Subscribe to this event to perform actions when the start process begins.
+        /// </remarks>
+        public event EventHandler Start;
+
+        /// <summary>
+        /// Occurs when the application is about to exit.
+        /// </summary>
+        /// <remarks>
+        /// This event is raised just before the application shuts down.  It provides an
+        /// opportunity to perform any necessary cleanup operations.
+        /// </remarks>
+        public event EventHandler Exit;
+
+        /// <summary>
         /// Returns or sets the name of the web server.
         /// </summary>
         public string Name { get; set; } = "WebExpress";
@@ -116,16 +142,16 @@ namespace WebExpress.WebCore
             }
 
             // initialization of the web server
-            Initialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
+            OnInitialization(ArgumentParser.Current.GetValidArguments(args), Path.Combine(Path.Combine(Environment.CurrentDirectory, "config"), argumentDict["config"]));
 
             // start the manager
             (_componentHub as ComponentHub).Execute();
 
             // starting the web server
-            Start();
+            OnStart();
 
             // finish
-            Exit();
+            OnExit();
 
             return 0;
         }
@@ -137,7 +163,7 @@ namespace WebExpress.WebCore
         /// <param name="e">The event argument.</param>
         private void OnCancel(object sender, ConsoleCancelEventArgs e)
         {
-            Exit();
+            OnExit();
         }
 
         /// <summary>
@@ -145,7 +171,7 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="args">The valid arguments.</param>
         /// <param name="configFile">The configuration file.</param>
-        private void Initialization(string args, string configFile)
+        private void OnInitialization(string args, string configFile)
         {
             // Config laden
             using var reader = new FileStream(configFile, FileMode.Open);
@@ -189,7 +215,6 @@ namespace WebExpress.WebCore
                 Path.GetFullPath(assetBase),
                 Path.GetFullPath(dataBase),
                 Path.GetDirectoryName(configFile),
-                new RouteEndpoint(config.ContextPath),
                 culture,
                 log,
                 null
@@ -242,24 +267,30 @@ namespace WebExpress.WebCore
             }
 
             Console.CancelKeyPress += OnCancel;
+
+            Initialization?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// Start the web server.
+        /// Initiates the HTTP server and raises the start event.
         /// </summary>
-        private void Start()
+        private void OnStart()
         {
             _httpServer.Start();
+
+            Start?.Invoke(this, EventArgs.Empty);
 
             Thread.CurrentThread.Join();
         }
 
         /// <summary>
-        /// Quits the application.
+        /// Performs cleanup operations when the application is exiting.
         /// </summary>
-        private void Exit()
+        private void OnExit()
         {
             _httpServer.Stop();
+
+            Exit?.Invoke(this, EventArgs.Empty);
 
             // end of program log
             _httpServer.HttpServerContext.Log.Seperator('=');

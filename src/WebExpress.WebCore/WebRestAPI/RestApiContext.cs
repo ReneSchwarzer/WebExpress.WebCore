@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Returns the attributes associated with the page.
         /// </summary>
-        public IEnumerable<Type> Attributes { get; internal set; }
+        public IEnumerable<Attribute> Attributes { get; internal set; }
 
         /// <summary>
         /// Returns the context path.
