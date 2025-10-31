@@ -333,7 +333,8 @@ namespace WebExpress.WebCore.WebPackage
                 {
                     var matches = Directory
                         .GetFiles(path, "*.*", SearchOption.AllDirectories)
-                        .Where(x => x.Replace('\\', '/').EndsWith(normalizedTail, StringComparison.OrdinalIgnoreCase));
+                        .Select(x => x.Replace('\\', '/'))
+                        .Where(x => x.EndsWith(normalizedTail, StringComparison.OrdinalIgnoreCase));
 
                     foreach (var f in matches)
                     {

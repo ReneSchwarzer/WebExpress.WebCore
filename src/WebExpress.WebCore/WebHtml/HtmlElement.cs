@@ -250,7 +250,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Clear all elements frrom the html element.
+        /// Clear all elements from the html element.
         /// </summary>
         /// <returns>The current instance for method chaining.</returns>
         public IHtmlElement Clear()

@@ -71,7 +71,7 @@ namespace WebExpress.WebCore.WebHtml
         IHtmlElement Add(params IHtmlAttribute[] attributes);
 
         /// <summary>
-        /// Clear all elements frrom the html element.
+        /// Clear all elements from the html element.
         /// </summary>
         /// <returns>The current instance for method chaining.</returns>
         IHtmlElement Clear();
