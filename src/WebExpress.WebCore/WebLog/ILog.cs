@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// The default instance of the logger.
         /// </summary>
-        public static Log Current { get; }
+        public static ILog Current { get; }
 
         /// <summary>
         /// Set file name time patterns.
