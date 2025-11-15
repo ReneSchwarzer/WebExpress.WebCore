@@ -5,7 +5,7 @@
 		<Title>WebExpress.WebCore</Title>
 		<Version>0.0.10.0</Version>
 		<AssemblyVersion>0.0.10.0</AssemblyVersion>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
 		<RepositoryUrl>https://github.com/webexpress-framework/WebExpress.git</RepositoryUrl>
 		<Authors>webexpress-framework@outlook.com</Authors>
