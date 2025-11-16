@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), "/asseta")]
         [InlineData(typeof(TestApplicationB), "/assetb")]
-        [InlineData(typeof(TestApplicationC), "/")]
+        [InlineData(typeof(TestApplicationC), "*/")]
         public void AssetPath(Type applicationType, string assetPath)
         {
             // preconditions
@@ -146,7 +146,7 @@ namespace WebExpress.WebCore.Test.Manager
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
-            Assert.Equal(assetPath, application.AssetPath);
+            AssertExtensions.EqualWithPlaceholders(assetPath, application.AssetPath);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Theory]
         [InlineData(typeof(TestApplicationA), "/dataa")]
         [InlineData(typeof(TestApplicationB), "/datab")]
-        [InlineData(typeof(TestApplicationC), "/")]
+        [InlineData(typeof(TestApplicationC), "*/")]
         public void DataPath(Type applicationType, string dataPath)
         {
             // preconditions
@@ -163,7 +163,7 @@ namespace WebExpress.WebCore.Test.Manager
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
             // test execution
-            Assert.Equal(dataPath, application.DataPath);
+            AssertExtensions.EqualWithPlaceholders(dataPath, application.DataPath);
         }
 
         /// <summary>

@@ -88,8 +88,8 @@ namespace WebExpress.WebCore.WebApplication
                 var icon = string.Empty;
                 var description = string.Empty;
                 var contextPath = string.Empty;
-                var assetPath = "/";
-                var dataPath = "/";
+                var assetPath = "./";
+                var dataPath = "./";
 
                 // determining attributes
                 foreach (var customAttribute in type.CustomAttributes

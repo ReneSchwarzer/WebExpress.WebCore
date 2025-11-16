@@ -66,6 +66,11 @@ namespace WebExpress.WebCore
         public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
+        /// Returns or sets the path to the favicon image used by the application.
+        /// </summary>
+        public static string Favicon { get; set; } = "webexpress.webui/assets/img/rocket.png";
+
+        /// <summary>
         /// Running the application.
         /// </summary>
         /// <param name="args">Call arguments.</param>

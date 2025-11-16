@@ -37,6 +37,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             themeManager.Remove(plugin);
 
+            // validation
             Assert.Empty(componentHub.ThemeManager.Themes);
         }
 
@@ -72,6 +73,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
+            // validation
             if (id == null)
             {
                 Assert.Empty(themes);
@@ -100,6 +102,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
+            // validation
             if (name == null)
             {
                 Assert.Empty(themes);
@@ -128,6 +131,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.Description);
         }
@@ -151,6 +155,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.Image?.ToString());
         }
@@ -174,6 +179,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.ThemeMode);
         }
@@ -197,6 +203,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.ThemeStyle?.ToString());
         }
