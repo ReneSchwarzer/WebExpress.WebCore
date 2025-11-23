@@ -1,6 +1,6 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.Test.Manager

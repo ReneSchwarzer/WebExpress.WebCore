@@ -7,7 +7,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// Returns the side map.
         /// </summary>
         public IEnumerable<IEndpointContext> SiteMap => _root.GetPreOrder()
-            .Where(x => x != null)
+            .Where(x => x is not null)
             .Select(x => x.EndpointContext);
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // endpoints
-            var resources = _componentHub.EndpointManager.Endpoints
-                .Where(x => x.Route != null)
+            var endpoints = _componentHub.EndpointManager.Endpoints
+                .Where(x => x.Route is not null)
                 .Select(x => new
                 {
                     EndpointContext = x,
@@ -89,7 +89,7 @@ namespace WebExpress.WebCore.WebSitemap
                 })
                 .OrderBy(x => x.PathSegments.Count());
 
-            foreach (var item in resources)
+            foreach (var item in endpoints)
             {
                 MergeSitemap(newSiteMapNode, CreateSiteMap
                 (
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.WebSitemap
                 searchContext
             );
 
-            if (result != null && result.EndpointContext != null)
+            if (result is not null && result.EndpointContext is not null)
             {
                 if (!result.EndpointContext.Conditions.Any() || result.EndpointContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request)))
                 {
@@ -190,7 +190,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>The endpoint context if found, otherwise null.</returns>
         public IEndpointContext GetEndpoint(IUri uri)
         {
-            if (uri == null || uri.Empty)
+            if (uri is null || uri.Empty)
             {
                 return null;
             }
@@ -229,7 +229,7 @@ namespace WebExpress.WebCore.WebSitemap
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, applicationContext, root);
 
-            if (next != null)
+            if (next is not null)
             {
                 root.Children.Add(next);
             }
@@ -255,7 +255,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
-            if (pathSegment == null)
+            if (pathSegment is null)
             {
                 return null;
             }
@@ -296,7 +296,7 @@ namespace WebExpress.WebCore.WebSitemap
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, endpointContext, root);
 
-            if (next != null)
+            if (next is not null)
             {
                 root.Children.Add(next);
             }
@@ -326,7 +326,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
-            if (pathSegment == null)
+            if (pathSegment is null)
             {
                 return null;
             }
@@ -393,17 +393,20 @@ namespace WebExpress.WebCore.WebSitemap
 
             if (IsMatched(node, pathSegment))
             {
-                var copy = node.PathSegment.Copy();
-                if (copy is UriPathSegmentVariable variable)
+
+                if (node.PathSegment is IUriPathSegmentVariable variable)
                 {
-                    variable.Value = pathSegment;
+                    var copy = variable.Copy(pathSegment);
+                    outPathSegments.Enqueue(copy);
+                }
+                else
+                {
+                    outPathSegments.Enqueue(node.PathSegment.Copy());
                 }
 
                 var type = node.EndpointContext?.GetType();
 
-                outPathSegments.Enqueue(copy);
-
-                if (nextPathSegment == null)
+                if (nextPathSegment is null)
                 {
                     return new SearchResult()
                     {
@@ -424,8 +427,8 @@ namespace WebExpress.WebCore.WebSitemap
                 else if
                 (
                     node.IsLeaf
-                    && nextPathSegment != null
-                    && node.EndpointContext != null
+                    && nextPathSegment is not null
+                    && node.EndpointContext is not null
                     && node.EndpointContext.IncludeSubPaths
                 )
                 {
@@ -464,7 +467,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>True if the path element matched, false otherwise.</returns>
         private static bool IsMatched(SitemapNode node, string pathSegement)
         {
-            if (node == null || string.IsNullOrWhiteSpace(pathSegement))
+            if (node is null || string.IsNullOrWhiteSpace(pathSegement))
             {
                 return false;
             }

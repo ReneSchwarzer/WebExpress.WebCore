@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebResource
         public override Response Process(Request request)
         {
             var response = new ResponseOK();
-            response.Header.ContentLength = Data != null ? Data.Length : 0;
+            response.Header.ContentLength = Data is not null ? Data.Length : 0;
             response.Header.ContentType = "binary/octet-stream";
 
             response.Content = Data;

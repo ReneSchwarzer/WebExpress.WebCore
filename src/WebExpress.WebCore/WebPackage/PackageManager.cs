@@ -153,14 +153,14 @@ namespace WebExpress.WebCore.WebPackage
                 var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
 
                 // all packages that are not yet installed
-                var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x != null).Select(x => x.File)).ToList();
+                var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x is not null).Select(x => x.File)).ToList();
 
                 // all packages that are no longer available
-                var removePackages = Catalog.Packages.Where(x => x != null).Select(x => x.File).Except(packageFiles).ToList();
+                var removePackages = Catalog.Packages.Where(x => x is not null).Select(x => x.File).Except(packageFiles).ToList();
 
                 // determine changed packages by comparing spec version and relevant metadata
                 var changedPackages = new List<string>();
-                foreach (var existing in Catalog.Packages.Where(x => x != null))
+                foreach (var existing in Catalog.Packages.Where(x => x is not null))
                 {
                     var fullPath = Path.Combine(_httpServerContext.PackagePath, existing.File);
                     if (!File.Exists(fullPath))
@@ -169,7 +169,7 @@ namespace WebExpress.WebCore.WebPackage
                     }
 
                     var fromFile = LoadPackage(fullPath);
-                    if (fromFile == null)
+                    if (fromFile is null)
                     {
                         continue;
                     }
@@ -183,7 +183,7 @@ namespace WebExpress.WebCore.WebPackage
                 foreach (var package in newPackages)
                 {
                     var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
-                    if (packagesFromFile == null)
+                    if (packagesFromFile is null)
                     {
                         continue;
                     }
@@ -211,14 +211,14 @@ namespace WebExpress.WebCore.WebPackage
 
                 foreach (var package in changedPackages)
                 {
-                    var existing = Catalog.Packages.FirstOrDefault(x => x != null && x.File == package);
-                    if (existing == null)
+                    var existing = Catalog.Packages.FirstOrDefault(x => x is not null && x.File == package);
+                    if (existing is null)
                     {
                         continue;
                     }
 
                     var fromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
-                    if (fromFile == null)
+                    if (fromFile is null)
                     {
                         continue;
                     }
@@ -252,8 +252,8 @@ namespace WebExpress.WebCore.WebPackage
 
                 foreach (var package in removePackages)
                 {
-                    var existing = Catalog.Packages.FirstOrDefault(x => x != null && x.File == package);
-                    if (existing == null)
+                    var existing = Catalog.Packages.FirstOrDefault(x => x is not null && x.File == package);
+                    if (existing is null)
                     {
                         continue;
                     }
@@ -305,7 +305,7 @@ namespace WebExpress.WebCore.WebPackage
                     using var zip = ZipFile.Open(file, ZipArchiveMode.Read);
 
                     var specEntry = zip.Entries.Where(x => Path.GetExtension(x.FullName) == ".spec").FirstOrDefault();
-                    if (specEntry == null)
+                    if (specEntry is null)
                     {
                         _httpServerContext.Log.Warning($"package spec was not found in '{file}'");
                         return null;
@@ -559,13 +559,13 @@ namespace WebExpress.WebCore.WebPackage
         /// <returns>True if changed; otherwise false.</returns>
         private static bool HasPackageChanged(PackageCatalogItem existing, PackageCatalogItem fromFile)
         {
-            if (existing == null || fromFile == null)
+            if (existing is null || fromFile is null)
             {
                 return false;
             }
 
             // if no metadata was present, treat as no change and let metadata be assigned on next run
-            if (existing.Metadata == null || fromFile.Metadata == null)
+            if (existing.Metadata is null || fromFile.Metadata is null)
             {
                 return false;
             }
@@ -602,7 +602,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void DeactivateAndUnregisterPackage(PackageCatalogItem package)
         {
-            if (package == null)
+            if (package is null)
             {
                 return;
             }

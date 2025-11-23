@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebUri
 {
@@ -46,11 +48,6 @@ namespace WebExpress.WebCore.WebUri
         /// References a position within a resource (e.g. #Anchor).
         /// </summary>
         string Fragment { get; }
-
-        /// <summary>
-        /// Returns the display string of the Uri
-        /// </summary>
-        string Display { get; }
 
         /// <summary>
         /// Determines if the uri is empty.
@@ -124,5 +121,27 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <returns>A new IUri instance with the updated fragment. The original URI remains unchanged.</returns>
         IUri SetFragment(string fragment);
+
+        /// <summary>
+        /// Returns a string that represents the display text for the current instance.
+        /// </summary>
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        string GetDisplayText(IRenderContext renderContext);
+
+        /// <summary>
+        /// Returns an icon that visually represents the parameter within the given render context.
+        /// </summary>
+        /// <param name="renderContext">
+        /// The rendering context that provides information required to determine the appropriate icon.
+        /// </param>
+        /// <returns>
+        /// An icon associated with the current instance. The value may be <c>null</c> or empty 
+        /// if no icon is available.
+        /// </returns>
+        IIcon GetIcon(IRenderContext renderContext);
     }
 }

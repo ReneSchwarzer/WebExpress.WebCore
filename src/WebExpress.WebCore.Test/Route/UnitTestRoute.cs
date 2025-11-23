@@ -43,7 +43,9 @@ namespace WebExpress.WebCore.Test.Route
             var route = new RouteEndpoint(baseRoute);
 
             // test execution
-            var concat = route.Concat(segment != null ? [.. segment?.Split('/').Select(x => new UriPathSegmentConstant(x))] : null);
+            var concat = route.Concat(segment is not null
+                ? [.. segment?.Split('/').Select(x => new UriPathSegmentConstant(x))]
+                : null);
 
             Assert.Equal(expected, concat.ToString());
             Assert.Equal(count, concat.PathSegments.Count());

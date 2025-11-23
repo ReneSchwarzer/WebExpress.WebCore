@@ -137,7 +137,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <param name="pluginContext">The context of the plugin containing the key-value pairs to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }

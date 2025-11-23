@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = responseType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = typeof(T).GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -149,7 +149,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -191,7 +191,7 @@ namespace WebExpress.WebCore.WebComponent
             var componentType = typeof(T);
             var constructors = componentType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebComponent
                         properties.Where(x => x.PropertyType == parameter.ParameterType)
                             .FirstOrDefault()?
                             .GetValue(componentHub) ??
-                        advancedParameters.Where(x => x != null)
+                        advancedParameters.Where(x => x is not null)
                             .Where(x => x.GetType() == parameter.ParameterType)
                             .FirstOrDefault() ?? null
                     ).ToArray();
@@ -238,7 +238,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -297,7 +297,7 @@ namespace WebExpress.WebCore.WebComponent
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {

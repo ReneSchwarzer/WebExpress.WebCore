@@ -1,4 +1,5 @@
 ﻿using System;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
@@ -6,8 +7,12 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to define a double segment in a URI path.
     /// </summary>
+    /// <typeparam name="TParameter">
+    /// The type of parameter to associate with the segment key.
+    /// </typeparam>
     [AttributeUsage(AttributeTargets.Class)]
-    public class SegmentDoubleAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
+    public class SegmentDoubleAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
+        where TParameter : IParameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -36,7 +41,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableDouble(VariableName, Display);
+            return new UriPathSegmentVariableDouble<TParameter>(VariableName, Display);
         }
     }
 }

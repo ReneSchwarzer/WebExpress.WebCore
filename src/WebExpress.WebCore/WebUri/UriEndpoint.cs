@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
@@ -65,30 +68,6 @@ namespace WebExpress.WebCore.WebUri
         public string Fragment { get; set; }
 
         /// <summary>
-        /// Returns the display string of the Uri
-        /// </summary>
-        public virtual string Display
-        {
-            get
-            {
-                if (PathSegments.LastOrDefault() is IUriPathSegment last)
-                {
-                    return last?.Display;
-                }
-
-                return null;
-            }
-
-            set
-            {
-                if (PathSegments.LastOrDefault() is IUriPathSegment last)
-                {
-                    last.Display = value;
-                }
-            }
-        }
-
-        /// <summary>
         /// Determines if the uri is empty.
         /// </summary>
         public bool Empty => !PathSegments.Any();
@@ -101,7 +80,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Checks if it is a relative uri.
         /// </summary>
-        public bool IsRelative => Authority == null;
+        public bool IsRelative => Authority is null;
 
         /// <summary>
         /// Retrieves a collection of variables represented as key-value pairs.
@@ -244,7 +223,9 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="segments">The path segments.</param>
         /// <param name="extendedSegments">Other segments.</param>
         public UriEndpoint(IUri uri, IEnumerable<IUriPathSegment> segments, IEnumerable<IUriPathSegment> extendedSegments)
-            : this(uri.Scheme, uri.Authority, uri.Fragment, uri.Query, extendedSegments != null ? segments.Union(extendedSegments) : segments)
+            : this(uri.Scheme, uri.Authority, uri.Fragment, uri.Query, extendedSegments is not null
+                  ? segments.Union(extendedSegments)
+                  : segments)
         {
         }
 
@@ -389,7 +370,7 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <param name="parameters">The parameters that fill in the variable parts of the uri.</param>
         /// <returns>A new endpoint uri with the populated parameters.</returns>
-        public IUri SetParameters(params WebMessage.Parameter[] parameters)
+        public IUri SetParameters(params Parameter[] parameters)
         {
             var pathSegments = PathSegments.AsEnumerable();
 
@@ -478,6 +459,48 @@ namespace WebExpress.WebCore.WebUri
         public static implicit operator string(UriEndpoint uri)
         {
             return uri?.ToString();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the display text for the current instance.
+        /// </summary>
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
+        {
+            var last = PathSegments.LastOrDefault();
+
+            if (last is IUriPathSegmentVariable variable)
+            {
+                return variable.GetDisplayText(renderContext);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns an icon that visually represents the parameter within the given render context.
+        /// </summary>
+        /// <param name="renderContext">
+        /// The rendering context that provides information required to determine the appropriate icon.
+        /// </param>
+        /// <returns>
+        /// An icon associated with the current instance. The value may be <c>null</c> or empty 
+        /// if no icon is available.
+        /// </returns>
+        public virtual IIcon GetIcon(IRenderContext renderContext)
+        {
+            var last = PathSegments.LastOrDefault();
+
+            if (last is IUriPathSegmentVariable variable)
+            {
+                return variable.GetIcon(renderContext);
+            }
+
+            return null;
         }
 
         /// <summary>

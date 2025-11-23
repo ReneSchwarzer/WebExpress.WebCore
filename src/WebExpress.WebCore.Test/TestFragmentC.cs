@@ -26,13 +26,13 @@ namespace WebExpress.WebCore.Test
         public TestFragmentC(IComponentHub componentHub, IFragmentContext fragmentContext)
         {
             // test the injection
-            if (componentHub == null)
+            if (componentHub is null)
             {
                 throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (fragmentContext == null)
+            if (fragmentContext is null)
             {
                 throw new ArgumentNullException(nameof(fragmentContext), "Parameter cannot be null or empty.");
             }

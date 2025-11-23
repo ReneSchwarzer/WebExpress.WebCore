@@ -17,17 +17,17 @@ namespace WebExpress.WebCore.Test
             : base(id, args)
         {
             // test the injection
-            if (componentHub == null)
+            if (componentHub is null)
             {
                 throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
             }
 
-            if (id == null)
+            if (id is null)
             {
                 throw new ArgumentNullException(nameof(id), "Parameter cannot be null or empty.");
             }
 
-            if (args == null)
+            if (args is null)
             {
                 throw new ArgumentNullException(nameof(args), "Parameter cannot be null or empty.");
             }

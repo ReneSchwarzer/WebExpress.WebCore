@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);
 
-            if (id == null)
+            if (id is null)
             {
                 Assert.Empty(eventHandlers);
                 return;
@@ -96,7 +96,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);
 
-            if (id == null)
+            if (id is null)
             {
                 Assert.Empty(eventHandlers);
                 return;

@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebResource
 
                 Data = GetData(file, assembly, resources.ToList());
 
-                if (Data == null)
+                if (Data is null)
                 {
                     return new ResponseNotFound();
                 }
@@ -137,7 +137,7 @@ namespace WebExpress.WebCore.WebResource
         private static byte[] GetData(string file, Assembly assembly, IEnumerable<string> resources)
         {
             var item = resources.Where(x => x.Equals(file, System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-            if (item == null)
+            if (item is null)
             {
                 return null;
             }

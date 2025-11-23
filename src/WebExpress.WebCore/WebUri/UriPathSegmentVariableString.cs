@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// Variable path segment.
+    /// String variable path segment.
     /// </summary>
-    public class UriPathSegmentVariableString : UriPathSegmentVariable
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    public class UriPathSegmentVariableString<TParameter> : UriPathSegmentVariable<TParameter>
+        where TParameter : IParameter
     {
         /// <summary>
         /// Initializes a new instance of the class.
@@ -17,23 +20,6 @@ namespace WebExpress.WebCore.WebUri
         {
             VariableName = name;
             Value = name;
-            Display = name;
-            Expression = "^[^\"]*$";
-            Tag = tag;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableString(string name, string display, object tag = null)
-            : base(name, tag)
-        {
-            VariableName = name;
-            Value = name;
-            Display = display;
             Expression = "^[^\"]*$";
             Tag = tag;
         }
@@ -42,8 +28,8 @@ namespace WebExpress.WebCore.WebUri
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
-        public UriPathSegmentVariableString(UriPathSegmentVariableString segment)
-            : base(segment.VariableName, segment.Display, segment.Tag)
+        public UriPathSegmentVariableString(UriPathSegmentVariableString<TParameter> segment)
+            : base(segment.VariableName, segment.Tag)
         {
             Expression = segment.Expression;
         }
@@ -64,7 +50,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableString(this) { Value = Value };
+            return new UriPathSegmentVariableString<TParameter>(this) { Value = Value };
         }
 
         /// <summary>

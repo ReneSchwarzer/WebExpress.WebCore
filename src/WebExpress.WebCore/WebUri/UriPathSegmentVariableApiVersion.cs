@@ -1,0 +1,102 @@
+using System;
+using System.Collections.Generic;
+using WebExpress.WebCore.WebParameter;
+
+namespace WebExpress.WebCore.WebUri
+{
+    /// <summary>
+    /// A variable path segment for the api version (e.g., /api/1/...).
+    /// </summary>
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    internal class UriPathSegmentVariableApiVersion<TParameter> : UriPathSegmentVariable<TParameter>
+        where TParameter : IParameter
+    {
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        public UriPathSegmentVariableApiVersion(string name, string value)
+            : base(name)
+        {
+            VariableName = name;
+            Value = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="segment">The path segment to copy.</param>
+        public UriPathSegmentVariableApiVersion(UriPathSegmentVariableApiVersion<TParameter> segment)
+            : base(segment.VariableName, segment.Tag)
+        {
+        }
+
+        /// <summary>
+        /// Returns the variable.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The variable value pair.</returns>
+        public override IDictionary<string, string> GetVariable(string value)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        /// <summary>
+        /// Checks whether the node matches the path element.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>True if the path element matched, false otherwise.</returns>
+        public override bool IsMatched(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+            else if (value.Equals(Value))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Make a deep copy.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        public override IUriPathSegment Copy()
+        {
+            return new UriPathSegmentVariableApiVersion<TParameter>(this) { Value = Value };
+        }
+
+        /// <summary>
+        /// Compare the object.
+        /// </summary>
+        /// <param name="obj">The comparison object.</param>
+        /// <returns>true if equals, false otherwise</returns>
+        public override bool Equals(IUriPathSegment obj)
+        {
+            if (obj is null)
+            {
+                return false;
+            }
+            else if (obj is UriPathSegmentVariable<TParameter> segment)
+            {
+                return VariableName.Equals(segment.VariableName, StringComparison.OrdinalIgnoreCase)
+                    && Value.Equals(segment.Value);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Converts the segment to a string.
+        /// </summary>
+        /// <returns>A string that represents the current segment.</returns>
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+    }
+}

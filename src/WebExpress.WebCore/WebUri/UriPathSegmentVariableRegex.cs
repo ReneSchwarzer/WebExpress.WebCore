@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
     /// Variable path segment.
     /// </summary>
-    public class UriPathSegmentVariableRegex : UriPathSegmentVariable
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    public class UriPathSegmentVariableRegex<TParameter> : UriPathSegmentVariable<TParameter>
+        where TParameter : IParameter
     {
         /// <summary>
         /// Initializes a new instance of the class.
@@ -18,24 +21,6 @@ namespace WebExpress.WebCore.WebUri
         {
             VariableName = name;
             Value = name;
-            Display = name;
-            Expression = regex;
-            Tag = tag;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="regex">The regular expression.</param>
-        /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableRegex(string name, string regex, string display, object tag = null)
-            : base(name, tag)
-        {
-            VariableName = name;
-            Value = name;
-            Display = display;
             Expression = regex;
             Tag = tag;
         }
@@ -44,8 +29,8 @@ namespace WebExpress.WebCore.WebUri
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
-        public UriPathSegmentVariableRegex(UriPathSegmentVariableRegex segment)
-            : base(segment.VariableName, segment.Display, segment.Tag)
+        public UriPathSegmentVariableRegex(UriPathSegmentVariableRegex<TParameter> segment)
+            : base(segment.VariableName, segment.Tag)
         {
             Expression = segment.Expression;
         }
@@ -66,7 +51,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableRegex(this) { Value = Value };
+            return new UriPathSegmentVariableRegex<TParameter>(this) { Value = Value };
         }
 
         /// <summary>

@@ -126,7 +126,7 @@ namespace WebExpress.WebCore.WebIdentity
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IIdentityPermission).Name) != null
+                        x.GetInterface(typeof(IIdentityPermission).Name) is not null
                     )
                 ))
             {
@@ -143,7 +143,7 @@ namespace WebExpress.WebCore.WebIdentity
                 foreach (var customAttribute in matchingAttributes)
                 {
                     var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    if (type != null && !policyTypes.Contains(type))
+                    if (type is not null && !policyTypes.Contains(type))
                     {
                         policyTypes.Add(type);
                     }
@@ -199,7 +199,7 @@ namespace WebExpress.WebCore.WebIdentity
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IIdentityPolicy).Name) != null
+                        x.GetInterface(typeof(IIdentityPolicy).Name) is not null
                     )
                 ))
             {
@@ -216,7 +216,7 @@ namespace WebExpress.WebCore.WebIdentity
                 foreach (var customAttribute in matchingAttributes)
                 {
                     var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    if (type != null && !permissionTypes.Contains(type))
+                    if (type is not null && !permissionTypes.Contains(type))
                     {
                         permissionTypes.Add(type);
                     }
@@ -302,7 +302,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="applicationContext">The context of the application that contains the identities to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }

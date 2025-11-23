@@ -19,14 +19,14 @@ namespace WebExpress.WebCore.WebInclude.Model
         /// <returns>True if the item was successfully added; otherwise, false if an item with the same key already exists in the collection.</returns>
         public bool AddIncludeItem(IPluginContext pluginContext, IApplicationContext applicationContext, IncludeItem includeItem)
         {
-            if (pluginContext == null || applicationContext == null || includeItem == null)
+            if (pluginContext is null || applicationContext is null || includeItem is null)
             {
                 return false;
             }
 
             if (!TryGetValue(pluginContext, out var appDict))
             {
-                appDict = new Dictionary<IApplicationContext, Dictionary<string, IncludeItem>>();
+                appDict = [];
                 Add(pluginContext, appDict);
             }
 

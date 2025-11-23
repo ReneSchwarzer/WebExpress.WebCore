@@ -108,7 +108,7 @@ namespace WebExpress.WebCore.WebApplication.Model
         /// <returns>The contexts of the applications as an enumeration.</returns>
         public IEnumerable<IApplicationContext> GetApplications(Type application)
         {
-            if (application == null) return [];
+            if (application is null) return [];
 
             var items = _dict.Values.SelectMany(x => x.Values)
                 .Where(x => x.ApplicationClass.Equals(application) || application.IsAssignableFrom(x.ApplicationClass))

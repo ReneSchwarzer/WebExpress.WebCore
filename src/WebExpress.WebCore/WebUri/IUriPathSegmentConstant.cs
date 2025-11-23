@@ -5,6 +5,5 @@ namespace WebExpress.WebCore.WebUri
     /// </summary>
     public interface IUriPathSegmentConstant : IUriPathSegment
     {
-
     }
 }

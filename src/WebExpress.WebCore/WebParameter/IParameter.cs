@@ -1,38 +1,27 @@
-using WebExpress.WebCore.WebIcon;
+﻿using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
 
-namespace WebExpress.WebCore.WebUri
+namespace WebExpress.WebCore.WebParameter
 {
     /// <summary>
-    /// The path segment of a uri.
+    /// Represents a parameter with a key, value, and scope.
     /// </summary>
-    public interface IUriPathSegmentVariable : IUriPathSegment
+    public interface IParameter
     {
         /// <summary>
-        /// Returns or sets the value.
+        /// Returns the key of the parameter.
         /// </summary>
-        new string Value { get; set; }
+        string Key { get; }
 
         /// <summary>
-        /// Returns the variable name.
+        /// Returns or sets the scope of the parameter.
         /// </summary>
-        string VariableName { get; }
+        ParameterScope Scope { get; internal set; }
 
         /// <summary>
-        /// Returns the regex expression.
+        /// Returns the value of the parameter.
         /// </summary>
-        string Expression { get; }
-
-        /// <summary>
-        /// Creates a deep copy of the current path segment and assigns the specified value.
-        /// </summary>
-        /// <param name="value">
-        /// The string value to assign to the copied segment.
-        /// </param>
-        /// <returns>
-        /// A new instance representing the copied segment with the assigned value.
-        /// </returns>
-        IUriPathSegment Copy(string value);
+        string Value { get; internal set; }
 
         /// <summary>
         /// Returns a string that represents the display text for the current instance.

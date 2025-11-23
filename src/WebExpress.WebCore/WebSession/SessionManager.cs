@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.WebSession
 
             }
 
-            if (sessionCookie != null && _dictionary.TryGetValue(guid, out Session value))
+            if (sessionCookie is not null && _dictionary.TryGetValue(guid, out Session value))
             {
                 session = value;
                 session.Updated = DateTime.Now;

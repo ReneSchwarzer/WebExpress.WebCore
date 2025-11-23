@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>An enumeration of endpoint contexts.</returns>
         public IEnumerable<IEndpointContext> GetEndpoints(Type endpointType, IApplicationContext applicationContext = null)
         {
-            if (endpointType == null)
+            if (endpointType is null)
             {
                 return [];
             }
@@ -186,14 +186,14 @@ namespace WebExpress.WebCore.WebEndpoint
                 var typeName = $"{s.FullNamespace}.Index";
                 var segmentInfoType = classType.Assembly.GetType(typeName, throwOnError: false, ignoreCase: true);
 
-                if (segmentInfoType != null)
+                if (segmentInfoType is not null)
                 {
                     var segAttrType = segmentInfoType.CustomAttributes
                         .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                         .Select(x => x.AttributeType)
                         .FirstOrDefault();
 
-                    var segInstance = segAttrType != null
+                    var segInstance = segAttrType is not null
                         ? segmentInfoType.GetCustomAttribute(segAttrType, false) as ISegmentAttribute
                         : null;
                     var nameAttr = segmentInfoType.CustomAttributes
@@ -207,7 +207,7 @@ namespace WebExpress.WebCore.WebEndpoint
                     segmentResult = segInstance?.ToPathSegment();
                     name = nameAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     description = descAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                    icon = iconAttr != null
+                    icon = iconAttr is not null
                         ? Activator.CreateInstance(iconAttr.AttributeType.GenericTypeArguments.FirstOrDefault()) as IIcon
                         : null;
                 }

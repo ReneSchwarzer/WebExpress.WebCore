@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint

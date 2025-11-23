@@ -1,6 +1,6 @@
 using System;
-using System.Globalization;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebUri
 {
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>True if the objects are equal, false otherwise.</returns>
         public virtual bool Equals(IUriPathSegment obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -87,13 +87,16 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Returns the display text for the specified culture.
+        /// Returns a string that represents the display text for the current instance.
         /// </summary>
-        /// <param name="culture">The culture.</param>
-        /// <returns>The display text for the specified culture.</returns>
-        public virtual string GetDisplay(CultureInfo culture)
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
         {
-            return I18N.Translate(culture, Display);
+            return I18N.Translate(renderContext, Display);
         }
 
         /// <summary>

@@ -1,39 +1,25 @@
 using System.Collections.Generic;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// Variable path segment.
+    /// Int variable path segment.
     /// </summary>
-    public class UriPathSegmentVariableInt : UriPathSegmentVariable
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    public class UriPathSegmentVariableInt<TParameter> : UriPathSegmentVariable<TParameter>
+        where TParameter : IParameter
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The path text.</param>
+        /// <param name="name">The name.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentVariableInt(string name, object tag = null)
             : base(name, tag)
         {
             VariableName = name;
             Value = name;
-            Display = name;
-            Expression = @"^[+-]*\d$";
-            Tag = tag;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableInt(string name, string display, object tag = null)
-            : base(name, tag)
-        {
-            VariableName = name;
-            Value = name;
-            Display = display;
             Expression = @"^[+-]*\d$";
             Tag = tag;
         }
@@ -42,8 +28,8 @@ namespace WebExpress.WebCore.WebUri
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
-        public UriPathSegmentVariableInt(UriPathSegmentVariableInt segment)
-            : base(segment.VariableName, segment.Display, segment.Tag)
+        public UriPathSegmentVariableInt(UriPathSegmentVariableInt<TParameter> segment)
+            : base(segment.VariableName, segment.Tag)
         {
             Expression = segment.Expression;
         }
@@ -64,7 +50,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableInt(this) { Value = Value };
+            return new UriPathSegmentVariableInt<TParameter>(this) { Value = Value };
         }
 
         /// <summary>

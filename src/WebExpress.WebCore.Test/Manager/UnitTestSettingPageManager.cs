@@ -336,7 +336,9 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
-            var firstPage = firstPageType != null ? componentHub.SettingPageManager.GetSettingPages(firstPageType, application).FirstOrDefault() : null;
+            var firstPage = firstPageType is not null
+                ? componentHub.SettingPageManager.GetSettingPages(firstPageType, application).FirstOrDefault()
+                : null;
             var settingPage = componentHub.SettingPageManager.GetFirstSettingPage(application, settingCategory);
 
             // test execution

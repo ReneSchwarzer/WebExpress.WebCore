@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="code">The java script code.</param>
         public virtual void AddScript(string key, string code)
         {
-            if (key == null) return;
+            if (key is null) return;
 
             var k = key.ToLower();
             var dict = Scripts;
@@ -124,8 +124,8 @@ namespace WebExpress.WebCore.WebPage
             html.Body.Add(Content);
             html.Body.Scripts = [.. Scripts.Values];
 
-            html.Head.CssLinks = CssLinks.Where(x => x != null).Select(x => x.ToString());
-            html.Head.ScriptLinks = HeaderScriptLinks?.Where(x => x != null).Select(x => x.ToString());
+            html.Head.CssLinks = CssLinks.Where(x => x is not null).Select(x => x.ToString());
+            html.Head.ScriptLinks = HeaderScriptLinks?.Where(x => x is not null).Select(x => x.ToString());
 
             return html;
         }

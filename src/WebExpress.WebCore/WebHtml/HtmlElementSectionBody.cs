@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebHtml
         {
             ToPreString(builder, deep);
 
-            foreach (var v in Elements.Where(x => x != null))
+            foreach (var v in Elements.Where(x => x is not null))
             {
                 v.ToString(builder, deep + 1);
             }

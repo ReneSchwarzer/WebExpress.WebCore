@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         public TestRestApiA(IRestApiContext restApiContext)
         {
             // test the injection
-            if (restApiContext == null)
+            if (restApiContext is null)
             {
                 throw new ArgumentNullException(nameof(restApiContext), "Parameter cannot be null or empty.");
             }
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         public Response UpdateData(Request request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         public Response DeleteData(Request request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }

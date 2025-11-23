@@ -1,4 +1,5 @@
 ﻿using System;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
@@ -6,8 +7,12 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to define an integer segment in a URI path.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class SegmentIntAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
+    /// <typeparam name="TParameter">
+    /// The type of parameter to associate with the segment key.
+    /// </typeparam>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public class SegmentIntAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
+        where TParameter : IParameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -36,7 +41,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableInt(VariableName, Display);
+            return new UriPathSegmentVariableInt<TParameter>(VariableName, Display);
         }
     }
 }

@@ -75,49 +75,48 @@ namespace WebExpress.WebCore.Test.Manager
             // preconditions
             UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            if (cultureName == null && !param.Any())
+            if (cultureName is null && param.Length == 0)
             {
                 // test execution
                 var result = I18N.Translate(key);
 
                 Assert.Equal(excepted, result);
             }
-            if (cultureName == null && param.Any())
+            if (cultureName is null && param.Length != 0)
             {
                 // test execution
                 var result = I18N.Translate(key, param);
 
                 Assert.Equal(excepted, result);
             }
-            if (cultureName != null && pluginID == null && !param.Any())
+            if (cultureName is not null && pluginID is null && param.Length == 0)
             {
                 // test execution
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key);
 
                 Assert.Equal(excepted, result);
             }
-            if (cultureName != null && pluginID == null && param.Any())
+            if (cultureName is not null && pluginID is null && param.Length != 0)
             {
                 // test execution
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key, param);
 
                 Assert.Equal(excepted, result);
             }
-            if (cultureName != null && pluginID != null && !param.Any())
+            if (cultureName is not null && pluginID is not null && param.Length == 0)
             {
                 // test execution
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key);
 
                 Assert.Equal(excepted, result);
             }
-            if (cultureName != null && pluginID != null && param.Any())
+            if (cultureName is not null && pluginID is not null && param.Length != 0)
             {
                 // test execution
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key, param);
 
                 Assert.Equal(excepted, result);
             }
-
         }
 
         /// <summary>

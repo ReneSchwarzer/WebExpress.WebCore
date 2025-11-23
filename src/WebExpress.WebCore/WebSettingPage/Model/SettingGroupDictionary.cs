@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <returns>An enumerable collection of setting groups contexts that were removed.</returns>
         public IEnumerable<ISettingGroupContext> Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 yield break;
             }

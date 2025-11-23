@@ -1,4 +1,4 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿namespace WebExpress.WebCore.WebParameter
 {
     /// <summary>
     /// Defines the scopes of the parameter.

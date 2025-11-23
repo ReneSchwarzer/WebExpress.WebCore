@@ -1,4 +1,6 @@
-﻿using WebExpress.WebCore.WebEndpoint;
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.WWW;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.Test.Uri
@@ -24,14 +26,15 @@ namespace WebExpress.WebCore.Test.Uri
         public void UriAbsolute(UriScheme scheme, string authority, string user, string port, string path, string query, string fragment, string expected)
         {
             // preconditions
-            var uriUser = user != null ? user + "@" : "";
-            var uriPort = port != null ? ":" + port : null;
-            var uriQuery = query != null ? "?" + query : "";
-            var uriFragment = fragment != null ? "#" + fragment : null;
+            var uriUser = user is not null ? user + "@" : "";
+            var uriPort = port is not null ? ":" + port : null;
+            var uriQuery = query is not null ? "?" + query : "";
+            var uriFragment = fragment is not null ? "#" + fragment : null;
 
             // test execution
             var uri = new UriEndpoint($"{scheme}://{uriUser}{authority}{uriPort}{path}{uriQuery}{uriFragment}");
 
+            // validation
             Assert.Equal(expected, uri.ToString());
             Assert.Equal(scheme, uri.Scheme);
             Assert.Equal(authority, uri.Authority.Host);
@@ -61,12 +64,13 @@ namespace WebExpress.WebCore.Test.Uri
         public void UriRelative(string path, string query, string fragment, string expected)
         {
             // preconditions
-            var uriQuery = query != null ? "?" + query : "";
-            var uriFragment = fragment != null ? "#" + fragment : null;
+            var uriQuery = query is not null ? "?" + query : "";
+            var uriFragment = fragment is not null ? "#" + fragment : null;
 
             // test execution
             var uri = new UriEndpoint($"{path}{uriQuery}{uriFragment}");
 
+            // validation
             Assert.Equal(expected, uri.ToString());
             Assert.Equal(path, !string.IsNullOrWhiteSpace(path)
                 ? "/" + string.Join("/", uri.PathSegments.Skip(1))
@@ -91,6 +95,7 @@ namespace WebExpress.WebCore.Test.Uri
             // test execution
             var concat = uri.Concat(segment);
 
+            // validation
             Assert.Equal(expected, concat.ToString());
             Assert.Equal(count, concat.PathSegments.Count());
         }
@@ -113,6 +118,7 @@ namespace WebExpress.WebCore.Test.Uri
             // test execution
             var skip = uri.Skip(skipCount);
 
+            // validation
             Assert.Equal(expected, skip?.ToString());
         }
 
@@ -139,6 +145,7 @@ namespace WebExpress.WebCore.Test.Uri
             // test execution
             var take = uri.Take(takeCount);
 
+            // validation
             Assert.Equal(expected, take?.ToString());
         }
 
@@ -160,7 +167,7 @@ namespace WebExpress.WebCore.Test.Uri
                 [.. route.Split('/').Select
                 (
                     x => (IUriPathSegment)(x == "$guid"
-                        ? new UriPathSegmentVariableGuid("guid") { Value = random }
+                        ? new UriPathSegmentVariableGuid<TestParameterA>("guid") { Value = random }
                         : new UriPathSegmentConstant(x))
                 )]
             );
@@ -168,6 +175,7 @@ namespace WebExpress.WebCore.Test.Uri
             // test execution
             var resourceUri = new UriEndpoint(uriEndpoint, routeEndpoint.PathSegments);
 
+            // validation
             Assert.Equal(expected.Replace("$guid", random), resourceUri?.ToString());
         }
 
@@ -179,17 +187,19 @@ namespace WebExpress.WebCore.Test.Uri
         [InlineData("http://user@example.com/a/b/c/x/y/z", "http://user@example.com/a/b/c", "http://user@example.com/a/b/c")]
         public void BasePath(string uri, string baseUri, string expected)
         {
+            // test execution
             var resourceUri = new UriEndpoint(uri)
             {
                 BasePath = new UriEndpoint(baseUri)
             };
 
+            // validation
             Assert.Equal(uri, resourceUri.ToString());
             Assert.Equal(expected, resourceUri.BasePath.ToString());
         }
 
         /// <summary>
-        /// Test the setfragment method.
+        /// Test the SetFragment method.
         /// </summary>
         [Theory]
         [InlineData("http://user@example.com/x", null, "http://user@example.com/x")]
@@ -208,6 +218,36 @@ namespace WebExpress.WebCore.Test.Uri
 
             // validation
             Assert.Equal(expected, resourceUri.ToString());
+        }
+
+        /// <summary>
+        /// Test the GetDisplayText method.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(WWW.Index), null)]
+        [InlineData(typeof(TestApplicationA), typeof(About), null)]
+        [InlineData(typeof(TestApplicationA), typeof(Contact), null)]
+        [InlineData(typeof(TestApplicationB), typeof(WWW.Index), null)]
+        [InlineData(typeof(TestApplicationB), typeof(About), null)]
+        [InlineData(typeof(TestApplicationB), typeof(Contact), null)]
+        [InlineData(typeof(TestApplicationC), typeof(WWW.Index), null)]
+        [InlineData(typeof(TestApplicationC), typeof(About), null)]
+        [InlineData(typeof(TestApplicationC), typeof(Contact), null)]
+        public void GetDisplayText(Type applicationType, Type resourceType, string expected)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            componentHub.SitemapManager.Refresh();
+            var page = componentHub.PageManager.GetPages(resourceType, application)?.FirstOrDefault();
+            var endpoint = componentHub.SitemapManager.GetEndpoint(page.Route.ToUri());
+            var renderContext = UnitTestFixture.CrerateRenderContextMock(application);
+
+            // test execution
+            var display = endpoint.Route.ToUri().GetDisplayText(renderContext);
+
+            // validation
+            Assert.Equal(expected, display);
         }
     }
 }

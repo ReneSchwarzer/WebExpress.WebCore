@@ -21,6 +21,7 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebUri;
 
@@ -98,7 +99,7 @@ namespace WebExpress.WebCore
         /// </summary>
         public void Start()
         {
-            if (HttpServerContext != null && HttpServerContext.Log != null)
+            if (HttpServerContext is not null && HttpServerContext.Log is not null)
             {
                 HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
@@ -260,7 +261,7 @@ namespace WebExpress.WebCore
                 HttpServerContext = HttpServerContext
             });
 
-            if (searchResult != null)
+            if (searchResult is not null)
             {
                 var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
                 request.Uri = resourceUri;
@@ -270,7 +271,7 @@ namespace WebExpress.WebCore
                     // execute resource
                     request.AddParameter(searchResult.Uri.Parameters.Select(x => new Parameter(x.Key, x.Value, ParameterScope.Url)));
 
-                    if (searchResult.EndpointContext != null)
+                    if (searchResult.EndpointContext is not null)
                     {
                         response = WebEx.ComponentHub.EndpointManager.HandleRequest(request, searchResult.EndpointContext);
 
@@ -288,7 +289,7 @@ namespace WebExpress.WebCore
                         (
                             !response.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
                             !request.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
-                            request.Session != null
+                            request.Session is not null
                         )
                         {
                             var cookie = new Cookie("session", request.Session.Id.ToString()) { Expires = DateTime.MaxValue };
@@ -384,7 +385,7 @@ namespace WebExpress.WebCore
                 responseFeature.ReasonPhrase = response.Reason;
                 responseFeature.Headers.KeepAlive = "true";
 
-                if (response.Header.Location != null)
+                if (response.Header.Location is not null)
                 {
                     responseFeature.Headers.Location = response.Header.Location;
                 }
@@ -457,7 +458,7 @@ namespace WebExpress.WebCore
                    .Where(x => route.StartsWith(x.Route.ToString()))
                    .FirstOrDefault();
 
-            if (searchResult != null)
+            if (searchResult is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (
@@ -468,7 +469,7 @@ namespace WebExpress.WebCore
                 );
             }
 
-            if (applicationContext != null)
+            if (applicationContext is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (

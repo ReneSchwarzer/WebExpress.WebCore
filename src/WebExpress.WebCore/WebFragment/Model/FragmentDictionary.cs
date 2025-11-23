@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         {
             var type = fragmentItem.FragmentClass;
 
-            if (type.GetInterface(typeof(IFragment<,>).Name) == null)
+            if (type.GetInterface(typeof(IFragment<,>).Name) is null)
             {
                 return false;
             }

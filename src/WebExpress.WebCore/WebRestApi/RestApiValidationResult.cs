@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <param name="errors">An array of error objects to add.</param>
         public void AddRange(IEnumerable<RestApiError> errors)
         {
-            if (errors != null)
+            if (errors is not null)
             {
                 _errors.AddRange(errors);
             }

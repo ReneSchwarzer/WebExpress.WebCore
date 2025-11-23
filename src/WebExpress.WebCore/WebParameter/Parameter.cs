@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebPage;
 
-namespace WebExpress.WebCore.WebMessage
+namespace WebExpress.WebCore.WebParameter
 {
     /// <summary>
     /// Represents a parameter with a key, value, and scope.
     /// </summary>
-    public class Parameter
+    public class Parameter : IParameter
     {
-        /// <summary>
-        /// Returns or sets the scope of the parameter.
-        /// </summary>
-        public ParameterScope Scope { get; private set; }
-
         /// <summary>
         /// Returns the key of the parameter.
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
+        /// Returns or sets the scope of the parameter.
+        /// </summary>
+        public ParameterScope Scope { get; set; }
+
+        /// <summary>
         /// Returns the value of the parameter.
         /// </summary>
-        public string Value { get; internal set; }
+        public string Value { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -96,6 +98,34 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
+        /// Returns a string that represents the display text for the current instance.
+        /// </summary>
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
+        {
+            return Value;
+        }
+
+        /// <summary>
+        /// Returns an icon that visually represents the parameter within the given render context.
+        /// </summary>
+        /// <param name="renderContext">
+        /// The rendering context that provides information required to determine the appropriate icon.
+        /// </param>
+        /// <returns>
+        /// An icon associated with the current instance. The value may be <c>null</c> or empty 
+        /// if no icon is available.
+        /// </returns>
+        public virtual IIcon GetIcon(IRenderContext renderContext)
+        {
+            return null;
+        }
+
+        /// <summary>
         /// Creates a parameter list.
         /// </summary>
         /// <param name="param">The elements of the parameter list.</param>
@@ -110,7 +140,19 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <typeparam name="TParameter">The type.</typeparam>
         /// <returns>The key.</returns>
-        public static string GetKey<TParameter>() where TParameter : Parameter
+        public static TParameter GetParameter<TParameter>()
+            where TParameter : IParameter
+        {
+            return Activator.CreateInstance<TParameter>();
+        }
+
+        /// <summary>
+        /// Returns the key.
+        /// </summary>
+        /// <typeparam name="TParameter">The type.</typeparam>
+        /// <returns>The key.</returns>
+        public static string GetKey<TParameter>()
+            where TParameter : IParameter
         {
             return Activator.CreateInstance<TParameter>()?.Key;
         }

@@ -11,7 +11,7 @@
 
         //    Assert.True
         //    (
-        //       param != null && param == "1"
+        //       param is not null && param == "1"
         //    );
         //}
 
@@ -26,9 +26,9 @@
 
         //    Assert.True
         //    (
-        //       a != null && a == "ä" &&
-        //       b != null && b == "ö ü" &&
-        //       s != null && s == "1"
+        //       a is not null && a == "ä" &&
+        //       b is not null && b == "ö ü" &&
+        //       s is not null && s == "1"
         //    );
         //}
 

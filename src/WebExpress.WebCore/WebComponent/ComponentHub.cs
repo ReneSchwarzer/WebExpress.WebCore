@@ -277,7 +277,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <returns>The instance of the create and initialized component.</returns>
         private IComponentManager CreateInstance(Type componentType)
         {
-            if (componentType == null)
+            if (componentType is null)
             {
                 return null;
             }
@@ -353,7 +353,9 @@ namespace WebExpress.WebCore.WebComponent
             _dictionary.Add(pluginContext, []);
             var componentItems = _dictionary[pluginContext];
 
-            foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) != null))
+            foreach (var type in assembly
+                .GetExportedTypes()
+                .Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) is not null))
             {
                 var id = type.FullName?.ToLower();
 
@@ -466,7 +468,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }

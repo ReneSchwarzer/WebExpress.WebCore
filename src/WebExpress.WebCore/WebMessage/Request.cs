@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSession.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -20,6 +21,8 @@ namespace WebExpress.WebCore.WebMessage
     /// </summary>
     public class Request
     {
+        private readonly ParameterDictionary _param = [];
+
         /// <summary>
         /// The context of the web server.
         /// </summary>
@@ -34,11 +37,6 @@ namespace WebExpress.WebCore.WebMessage
         /// Returns the uri.
         /// </summary>
         public UriEndpoint Uri { get; internal set; }
-
-        /// <summary>
-        /// Returns the parameters.
-        /// </summary>
-        private ParameterDictionary Param { get; } = [];
 
         /// <summary>
         /// Returns the session.
@@ -384,14 +382,14 @@ namespace WebExpress.WebCore.WebMessage
                                 last = new Parameter(match.Groups[1].ToString().Trim(), match.Groups[2].ToString().Trim(), ParameterScope.Parameter);
                                 AddParameter(last);
                             }
-                            else if (last != null)
+                            else if (last is not null)
                             {
                                 last.Value += "\r\n" + v;
 
                             }
                         }
 
-                        if (last != null)
+                        if (last is not null)
                         {
                             last.Value = last.Value.TrimEnd();
                         }
@@ -432,7 +430,7 @@ namespace WebExpress.WebCore.WebMessage
             Session = WebEx.ComponentHub?.SessionManager?.GetSession(this);
 
             var property = Session?.GetProperty<SessionPropertyParameter>();
-            if (property != null && property.Params != null)
+            if (property is not null && property.Params is not null)
             {
                 foreach (var param in property.Params)
                 {
@@ -461,9 +459,9 @@ namespace WebExpress.WebCore.WebMessage
         {
             var key = param.Key.ToLower();
 
-            if (!Param.TryAdd(key, param))
+            if (!_param.TryAdd(key, param))
             {
-                Param[key] = param;
+                _param[key] = param;
             }
         }
 
@@ -472,11 +470,11 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <param name="name">The name of the parameter.</param>
         /// <returns>The value.</returns>
-        public Parameter GetParameter(string name)
+        public IParameter GetParameter(string name)
         {
             if (!string.IsNullOrWhiteSpace(name) && HasParameter(name))
             {
-                return Param[name.ToLower()];
+                return _param[name.ToLower()];
             }
 
             return null;
@@ -485,15 +483,22 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns a parameter by name.
         /// </summary>
-        /// <typeparam name="T">The parameter.</typeparam>
+        /// <typeparam name="TParameter">The parameter.</typeparam>
         /// <returns>The value.</returns>
-        public Parameter GetParameter<T>() where T : Parameter
+        public IParameter GetParameter<TParameter>()
+            where TParameter : IParameter
         {
-            var name = Parameter.GetKey<T>();
+            var parameter = Parameter.GetParameter<TParameter>();
 
-            if (!string.IsNullOrWhiteSpace(name) && HasParameter(name))
+            if (parameter is not null
+                && !string.IsNullOrWhiteSpace(parameter.Key)
+                && HasParameter(parameter.Key))
             {
-                return Param[name.ToLower()];
+                var p = _param[parameter.Key.ToLower()];
+                parameter.Value = p.Value;
+                parameter.Scope = p.Scope;
+
+                return parameter;
             }
 
             return null;
@@ -506,12 +511,12 @@ namespace WebExpress.WebCore.WebMessage
         /// <returns>True if parameters are present, false otherwise.</returns>
         public bool HasParameter(string name)
         {
-            if (name == null)
+            if (name is null)
             {
                 return false;
             }
 
-            return Param.ContainsKey(name.ToLower());
+            return _param.ContainsKey(name.ToLower());
         }
     }
 }

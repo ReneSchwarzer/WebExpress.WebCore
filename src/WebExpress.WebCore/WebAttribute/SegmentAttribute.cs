@@ -15,19 +15,12 @@ namespace WebExpress.WebCore.WebAttribute
         private string Segment { get; set; }
 
         /// <summary>
-        /// Returns or sets the display string.
-        /// </summary>
-        private string Display { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The segment of the uri path.</param>
-        /// <param name="display">The display string.</param>
-        public SegmentAttribute(string segment, string display = null)
+        public SegmentAttribute(string segment)
         {
             Segment = segment;
-            Display = display;
         }
 
         /// <summary>
@@ -36,7 +29,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentConstant(Segment, Display) { };
+            return new UriPathSegmentConstant(Segment) { };
         }
     }
 }

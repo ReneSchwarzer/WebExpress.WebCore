@@ -3,7 +3,7 @@ using WebExpress.WebCore.Test.WWW.Api._1;
 using WebExpress.WebCore.Test.WWW.Api._2;
 using WebExpress.WebCore.Test.WWW.Api._3;
 using WebExpress.WebCore.WebComponent;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebRestApi;
 
 namespace WebExpress.WebCore.Test.Manager
@@ -91,6 +91,37 @@ namespace WebExpress.WebCore.Test.Manager
 
             // test execution
             Assert.Equal(path, api?.Route.ToString());
+        }
+
+        /// <summary>
+        /// Test the version from path property of the rest api.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "1")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "2")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "3")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "1")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "2")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "3")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "1")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "2")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "3")]
+        public void Version(Type applicationType, Type resourceType, string expected)
+        {
+            // preconditions
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
+            var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
+            componentHub.SitemapManager.Refresh();
+            var uri = componentHub.SitemapManager.GetUri(resourceType, application);
+
+            // test execution
+            var version = uri.Parameters
+                .Where(x => x.Key == "_apiversion")
+                .FirstOrDefault();
+
+            // test execution
+            Assert.Equal(expected, version.Value);
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace WebExpress.WebCore.Test.Manager
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
             // validation
-            if (id == null)
+            if (id is null)
             {
                 Assert.Empty(themes);
                 return;
@@ -103,7 +103,7 @@ namespace WebExpress.WebCore.Test.Manager
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
             // validation
-            if (name == null)
+            if (name is null)
             {
                 Assert.Empty(themes);
                 return;

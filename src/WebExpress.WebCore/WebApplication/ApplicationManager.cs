@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebApplication
                     x => x.IsClass &&
                     x.IsSealed &&
                     x.IsPublic &&
-                    x.GetInterface(typeof(IApplication).Name) != null
+                    x.GetInterface(typeof(IApplication).Name) is not null
                 ))
             {
                 var id = type.FullName?.ToLower();
@@ -176,7 +176,7 @@ namespace WebExpress.WebCore.WebApplication
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -267,11 +267,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <param name="pluginContext">The context of the plugin that contains the applications.</param>
         public void Boot(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
-            else if (pluginContext.Assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
+            else if (pluginContext.Assembly.GetCustomAttribute<SystemPluginAttribute>() is not null)
             {
                 return;
             }

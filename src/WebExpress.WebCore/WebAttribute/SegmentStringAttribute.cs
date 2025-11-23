@@ -1,5 +1,5 @@
 ﻿using System;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
@@ -7,9 +7,12 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to define a segment string in a URI path.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    /// <typeparam name="TParameter">
+    /// The type of parameter to associate with the segment key.
+    /// </typeparam>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SegmentStringAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : Parameter
+        where TParameter : IParameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -37,7 +40,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableString(VariableName, Display);
+            return new UriPathSegmentVariableString<TParameter>(VariableName, Display);
         }
     }
 }

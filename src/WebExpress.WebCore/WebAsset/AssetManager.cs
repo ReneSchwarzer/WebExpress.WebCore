@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.WebAsset
                                 .EndsWith(x.AssetContext.Route.ToString().Replace("/", "."))
                         );
 
-                    if (asset != null)
+                    if (asset is not null)
                     {
                         return asset.Instance.Process(request);
                     }

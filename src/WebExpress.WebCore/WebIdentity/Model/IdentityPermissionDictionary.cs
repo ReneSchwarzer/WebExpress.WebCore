@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.WebIdentity.Model
                     var permissionList = appContextDict[applicationContext];
 
                     var itemToRemove = permissionList.FirstOrDefault(x => x.PermissionClass == type);
-                    if (itemToRemove != null)
+                    if (itemToRemove is not null)
                     {
                         permissionList.Remove(itemToRemove);
 

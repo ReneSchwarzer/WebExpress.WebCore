@@ -1,4 +1,4 @@
-﻿namespace WebExpress.WebCore.WebMessage
+﻿namespace WebExpress.WebCore.WebParameter
 {
     /// <summary>
     /// Represents a file parameter with content type and data.

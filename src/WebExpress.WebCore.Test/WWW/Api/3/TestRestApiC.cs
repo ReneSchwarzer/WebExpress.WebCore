@@ -21,13 +21,13 @@ namespace WebExpress.WebCore.Test.WWW.Api._3
             : base(restApiContext)
         {
             // test the injection
-            if (componentHub == null)
+            if (componentHub is null)
             {
                 throw new ArgumentNullException(nameof(componentHub), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (restApiContext == null)
+            if (restApiContext is null)
             {
                 throw new ArgumentNullException(nameof(restApiContext), "Parameter cannot be null or empty.");
             }
@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._3
         public override Response UpdateData(Request request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }
@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._3
         public override Response DeleteData(Request request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }

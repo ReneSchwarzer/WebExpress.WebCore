@@ -18,8 +18,9 @@ namespace WebExpress.WebCore.Test.Manager
         /// <summary>
         /// Test the refresh function of the sitemap manager.
         /// </summary>
-        [Fact]
-        public void Refresh()
+        [Theory]
+        [InlineData(103)]
+        public void Refresh(int expected)
         {
             // preconditions
             var componentManager = UnitTestFixture.CreateAndRegisterComponentHubMock();
@@ -27,7 +28,8 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             componentManager.SitemapManager.Refresh();
 
-            Assert.Equal(97, componentManager.SitemapManager.SiteMap.Count());
+            // validation
+            Assert.Equal(expected, componentManager.SitemapManager.SiteMap.Count());
         }
 
         /// <summary>
@@ -80,6 +82,7 @@ namespace WebExpress.WebCore.Test.Manager
 
             componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock(), searchResult?.EndpointContext);
 
+            // validation
             Assert.Equal(id, searchResult?.EndpointContext?.EndpointId.ToString());
         }
 
@@ -118,6 +121,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var uri = componentHub.SitemapManager.GetUri(resourceType, application, [param.HasValue ? new TestParameterA(param.Value) : null]);
 
+            // validation
             Assert.Equal(expected, uri?.ToString());
         }
 
@@ -163,7 +167,8 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var endpoint = componentHub.SitemapManager.GetEndpoint(new UriEndpoint(uri));
 
-            Assert.Equal(expected, endpoint?.EndpointId?.ToString());
+            // validation
+            AssertExtensions.EqualWithPlaceholders(expected, endpoint?.EndpointId?.ToString());
         }
 
         /// <summary>

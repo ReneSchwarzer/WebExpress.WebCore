@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             var fragment = componentHub.FragmentManager.GetFragments(application, fragmentType);
 
-            if (id == null)
+            if (id is null)
             {
                 Assert.Empty(fragment);
                 return;

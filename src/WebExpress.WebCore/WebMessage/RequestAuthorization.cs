@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <returns></returns>
         public static RequestAuthorization Parse(string str)
         {
-            if (str == null)
+            if (str is null)
             {
                 return null;
             }

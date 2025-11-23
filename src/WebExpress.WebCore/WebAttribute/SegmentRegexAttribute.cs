@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebAttribute
@@ -8,9 +7,12 @@ namespace WebExpress.WebCore.WebAttribute
     /// <summary>
     /// Attribute to define a regex segment in a URI path.
     /// </summary>
+    /// <typeparam name="TParameter">
+    /// The type of parameter to associate with the segment key.
+    /// </typeparam>
     [AttributeUsage(AttributeTargets.Class)]
     public class SegmentRegexAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : Parameter
+        where TParameter : IParameter
     {
         /// <summary>
         /// Returns or sets the name of the variable.
@@ -20,7 +22,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <summary>
         /// Reurns or sets the string representation of the expression.
         /// </summary>
-        private string Expression{ get; set; }
+        private string Expression { get; set; }
 
         /// <summary>
         /// Returns or sets the display string.
@@ -45,7 +47,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableRegex(VariableName, Expression, Display);
+            return new UriPathSegmentVariableRegex<TParameter>(VariableName, Expression, Display);
         }
     }
 }

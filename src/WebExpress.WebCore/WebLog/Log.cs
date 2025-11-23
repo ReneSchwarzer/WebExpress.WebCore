@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Checks if the log has been opened for writing.
         /// </summary>
-        public bool IsOpen => _workerThread != null;
+        public bool IsOpen => _workerThread is not null;
 
         /// <summary>
         /// Returns the log mode.
@@ -398,7 +398,9 @@ namespace WebExpress.WebCore.WebLog
             lock (_queue)
             {
                 Add(LogLevel.Exception, ex?.Message.Trim(), $"{className}.{instance}", line, file);
-                Add(LogLevel.Exception, ex?.StackTrace != null ? ex?.StackTrace.Trim() : ex?.Message.Trim(), $"{className}.{instance}", line, file);
+                Add(LogLevel.Exception, ex?.StackTrace is not null
+                    ? ex?.StackTrace.Trim()
+                    : ex?.Message.Trim(), $"{className}.{instance}", line, file);
 
                 ExceptionCount++;
                 ErrorCount++;

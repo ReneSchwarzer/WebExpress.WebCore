@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -153,7 +153,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>A new IRoute instance representing the route after concatenation.</returns>
         public virtual IRoute Concat(params IUriPathSegment[] segments)
         {
-            if (segments == null || segments.Length == 0)
+            if (segments is null || segments.Length == 0)
             {
                 return this;
             }
@@ -161,7 +161,7 @@ namespace WebExpress.WebCore.WebEndpoint
             var copy = new RouteEndpoint((IRoute)this);
             copy.PathSegments = copy.PathSegments
                 .Select(x => x.Copy())
-                .Concat(segments.Where(x => x != null).Where(x => !x.IsEmpty));
+                .Concat(segments.Where(x => x is not null).Where(x => !x.IsEmpty));
 
             return copy;
         }

@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebPlugin
                 try
                 {
                     var assembly = Assembly.LoadFrom(assemblyFile);
-                    if (assembly != null)
+                    if (assembly is not null)
                     {
                         assemblies.Add(assembly);
                         _httpServerContext.Log.Debug
@@ -94,7 +94,9 @@ namespace WebExpress.WebCore.WebPlugin
             }
 
             // register plugin
-            foreach (var assembly in assemblies.OrderBy(x => x.GetCustomAttribute<SystemPluginAttribute>() != null ? 0 : 1))
+            foreach (var assembly in assemblies.OrderBy(x => x.GetCustomAttribute<SystemPluginAttribute>() is not null
+                ? 0
+                : 1))
             {
                 Register(assembly);
             }
@@ -123,7 +125,7 @@ namespace WebExpress.WebCore.WebPlugin
             {
                 var assembly = loadContext.LoadFromAssemblyName(AssemblyName.GetAssemblyName(pluginFile));
 
-                if (assembly != null)
+                if (assembly is not null)
                 {
                     assemblies.Add(assembly);
                     _httpServerContext.Log.Debug
@@ -167,12 +169,14 @@ namespace WebExpress.WebCore.WebPlugin
             try
             {
                 // system plugins without plugin class (e.g. webexpress.webui)
-                if (assembly.GetCustomAttribute<SystemPluginAttribute>() != null)
+                if (assembly.GetCustomAttribute<SystemPluginAttribute>() is not null)
                 {
                     var attributeData = assembly.CustomAttributes
                         .FirstOrDefault(a => a.AttributeType == typeof(SystemPluginAttribute));
                     var dependency = attributeData.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                    var dependencies = dependency != null ? new List<string>([dependency]) : [];
+                    var dependencies = dependency is not null
+                        ? new List<string>([dependency])
+                        : [];
                     var id = new ComponentId(assembly.GetName().Name.ToLower());
                     var pluginContext = new PluginContext()
                     {
@@ -236,7 +240,7 @@ namespace WebExpress.WebCore.WebPlugin
                 foreach (var type in assembly
                     .GetExportedTypes()
                     .Where(x => x.IsClass && x.IsSealed)
-                    .Where(x => x.GetInterface(typeof(IPlugin).Name) != null))
+                    .Where(x => x.GetInterface(typeof(IPlugin).Name) is not null))
                 {
                     var id = new ComponentId(type.Namespace);
                     var name = type.Assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
@@ -364,7 +368,7 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="pluginContext">The context of the plugin that contains the elemets to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -457,7 +461,7 @@ namespace WebExpress.WebCore.WebPlugin
             return _dictionary.Values
                 .Where
                 (
-                    x => x.PluginContext != null &&
+                    x => x.PluginContext is not null &&
                     x.PluginContext.PluginId.ToString().Equals(pluginId)
                 )
                 .Select(x => x.PluginContext)
@@ -474,7 +478,7 @@ namespace WebExpress.WebCore.WebPlugin
             return _dictionary.Values
                 .Where
                 (
-                    x => x.PluginContext != null &&
+                    x => x.PluginContext is not null &&
                     x.PluginClass.Equals(plugin)
                 )
                 .Select(x => x.PluginContext)
@@ -489,7 +493,7 @@ namespace WebExpress.WebCore.WebPlugin
         public IEnumerable<IPluginContext> GetPlugins(IApplicationContext applicationContext)
         {
             return _dictionary.Values
-                .Where(x => x.ApplicationTypes != null)
+                .Where(x => x.ApplicationTypes is not null)
                 .Where(x => x.ApplicationTypes.Select(x => _componentHub.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
                 .Where(x => x.ApplicationId == applicationContext.ApplicationId)
@@ -506,7 +510,7 @@ namespace WebExpress.WebCore.WebPlugin
         {
             var pluginItem = GetPluginItem(pluginContext);
 
-            if (pluginItem == null)
+            if (pluginItem is null)
             {
                 return [];
             }
@@ -514,7 +518,7 @@ namespace WebExpress.WebCore.WebPlugin
             return pluginItem.ApplicationTypes?
                 .Select(x => _componentHub.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
-                .Where(x => x != null) ?? [];
+                .Where(x => x is not null) ?? [];
         }
 
 
@@ -527,7 +531,7 @@ namespace WebExpress.WebCore.WebPlugin
         {
             var pluginId = pluginContext?.PluginId;
 
-            if (pluginId == null || !_dictionary.TryGetValue(pluginId, out PluginItem value))
+            if (pluginId is null || !_dictionary.TryGetValue(pluginId, out PluginItem value))
             {
                 _httpServerContext.Log.Warning
                 (
@@ -553,12 +557,12 @@ namespace WebExpress.WebCore.WebPlugin
             var pluginItem = GetPluginItem(pluginContext);
             var token = pluginItem?.CancellationTokenSource.Token;
 
-            if (pluginItem == null)
+            if (pluginItem is null)
             {
                 return;
             }
 
-            if (pluginItem.Plugin == null)
+            if (pluginItem.Plugin is null)
             {
                 return;
             }
@@ -663,7 +667,7 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
-                        .GetCustomAttribute<SystemPluginAttribute>() != null
+                        .GetCustomAttribute<SystemPluginAttribute>() is not null
                 )
                 .Select(x => string.Empty.PadRight(2) + I18N.Translate
                 (
@@ -676,7 +680,7 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where
                 (
                     x => x.Value.PluginClass.Assembly
-                        .GetCustomAttribute<SystemPluginAttribute>() == null
+                        .GetCustomAttribute<SystemPluginAttribute>() is null
                 )
                 .Select(x => string.Empty.PadRight(2) + I18N.Translate
                 (

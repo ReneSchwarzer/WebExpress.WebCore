@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <returns>The response.</returns>
         public Response Process(Request request)
         {
-            if (_data == null)
+            if (_data is null)
             {
                 return new ResponseNotFound();
             }
@@ -139,7 +139,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <returns>The data.</returns>
         private byte[] GetData(Assembly assembly)
         {
-            if (assembly == null || _embeddedResource == null)
+            if (assembly is null || _embeddedResource is null)
             {
                 return [];
             }

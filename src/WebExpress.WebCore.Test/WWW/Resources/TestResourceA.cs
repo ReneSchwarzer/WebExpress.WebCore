@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Test.WWW.Resources
         public TestResourceA(IResourceContext resourceContext)
         {
             // test the injection
-            if (resourceContext == null)
+            if (resourceContext is null)
             {
                 throw new ArgumentNullException(nameof(resourceContext), "Parameter cannot be null or empty.");
             }
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.Test.WWW.Resources
         public Response Process(Request request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }

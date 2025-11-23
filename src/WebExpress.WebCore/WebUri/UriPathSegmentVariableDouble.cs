@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
     /// Variable path segment.
     /// </summary>
-    public class UriPathSegmentVariableDouble : UriPathSegmentVariable
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    public class UriPathSegmentVariableDouble<TParameter> : UriPathSegmentVariable<TParameter>
+        where TParameter : IParameter
     {
         /// <summary>
         /// Initializes a new instance of the class.
@@ -17,23 +20,6 @@ namespace WebExpress.WebCore.WebUri
         {
             VariableName = name;
             Value = name;
-            Display = name;
-            Expression = @"^[+-]?(\d*,\d+|\d+(,\d*)?)( +[eE][+-]?\d+)?$";
-            Tag = tag;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableDouble(string name, string display, object tag = null)
-            : base(name, tag)
-        {
-            VariableName = name;
-            Value = name;
-            Display = display;
             Expression = @"^[+-]?(\d*,\d+|\d+(,\d*)?)( +[eE][+-]?\d+)?$";
             Tag = tag;
         }
@@ -42,8 +28,8 @@ namespace WebExpress.WebCore.WebUri
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
-        public UriPathSegmentVariableDouble(UriPathSegmentVariableDouble segment)
-            : base(segment.VariableName, segment.Display, segment.Tag)
+        public UriPathSegmentVariableDouble(UriPathSegmentVariableDouble<TParameter> segment)
+            : base(segment.VariableName, segment.Tag)
         {
             Expression = segment.Expression;
         }
@@ -64,7 +50,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableDouble(this) { Value = Value };
+            return new UriPathSegmentVariableDouble<TParameter>(this) { Value = Value };
         }
 
         /// <summary>

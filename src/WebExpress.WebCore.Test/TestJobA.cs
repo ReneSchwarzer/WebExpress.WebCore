@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.Test
         private TestJobA(IJobContext jobContext)
         {
             // test the injection
-            if (jobContext == null)
+            if (jobContext is null)
             {
                 throw new ArgumentNullException(nameof(jobContext), "Parameter cannot be null or empty.");
             }

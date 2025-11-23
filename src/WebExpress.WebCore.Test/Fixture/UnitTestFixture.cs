@@ -113,6 +113,25 @@ namespace WebExpress.WebCore.Test.Fixture
         }
 
         /// <summary>
+        /// Create a fake request.
+        /// </summary>
+        /// <param name="uri">The URI of the request.</param>
+        /// <returns>A fake request for testing.</returns>
+        public static Request CrerateRequestMock(IUri uri)
+        {
+            var context = CreateHttpContextMock();
+
+            var request = context.Request;
+
+            if (uri is not null)
+            {
+                request.Uri = uri as UriEndpoint;
+            }
+
+            return request;
+        }
+
+        /// <summary>
         /// Create a fake http context.
         /// </summary>
         /// <param name="content">The content.</param>

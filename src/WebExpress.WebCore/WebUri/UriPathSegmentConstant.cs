@@ -1,6 +1,5 @@
 using System;
-using System.Globalization;
-using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebUri
 {
@@ -20,11 +19,6 @@ namespace WebExpress.WebCore.WebUri
         public string Value { get; set; }
 
         /// <summary>
-        /// Returns or sets the display text.
-        /// </summary>
-        public string Display { get; set; }
-
-        /// <summary>
         /// Returns or sets the tag.
         /// </summary>
         public object Tag { get; set; }
@@ -40,20 +34,8 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="value">The name.</param>
         /// <param name="tag">The tag or null</param>
         public UriPathSegmentConstant(string value, object tag = null)
-            : this(value, null, tag)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="value">The name.</param>
-        /// <param name="display">The display text.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentConstant(string value, string display, object tag = null)
-        {
-            Value = value ?? string.Empty;
-            Display = display;
+            Value = value;
             Tag = tag;
         }
 
@@ -79,7 +61,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public virtual IUriPathSegment Copy()
         {
-            return new UriPathSegmentConstant(Value, Display, Tag);
+            return new UriPathSegmentConstant(Value, Tag);
         }
 
         /// <summary>
@@ -89,7 +71,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>true if equals, false otherwise</returns>
         public virtual bool Equals(IUriPathSegment obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -102,12 +84,16 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Returns or sets the display text.
+        /// Returns a string that represents the display text for the current instance.
         /// </summary>
-        /// <param name="culture">The culture.</param>
-        public virtual string GetDisplay(CultureInfo culture)
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
         {
-            return I18N.Translate(culture, Display);
+            return null;
         }
 
         /// <summary>
