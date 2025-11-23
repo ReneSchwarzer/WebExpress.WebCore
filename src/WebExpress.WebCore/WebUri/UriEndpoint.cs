@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        public IEnumerable<UriQuery> Query { get; } = [];
+        public IEnumerable<UriQuery> Query { get; private set; } = [];
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
@@ -244,6 +244,21 @@ namespace WebExpress.WebCore.WebUri
             PathSegments = PathSegments.Concat(segments?.Where(x => x is not UriPathSegmentRoot).Select(x => x.Copy()) ?? []);
             Query = query.Select(x => new UriQuery(x.Key, x.Value));
             Fragment = fragment;
+        }
+
+        /// <summary>
+        /// Appends one or more query parameters to the current URI and returns a new instance with 
+        /// the updated query
+        /// string.
+        /// </summary>
+        /// <param name="query">An array of objects representing the query parameters to add. Each 
+        /// parameter must not be null.</param>
+        /// <returns>The current instance for method chaining.</returns>
+        public virtual IUri Add(params UriQuery[] query)
+        {
+            Query = Query.Concat(query.Where(x => x is not null));
+
+            return this;
         }
 
         /// <summary>

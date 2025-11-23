@@ -70,6 +70,18 @@ namespace WebExpress.WebCore.WebUri
         IDictionary<string, string> Parameters { get; }
 
         /// <summary>
+        /// Appends one or more query parameters to the current URI and returns a new instance with 
+        /// the updated query
+        /// string.
+        /// </summary>
+        /// <param name="query">An array of objects representing the query parameters to add. Each 
+        /// parameter must not be null.</param>
+        /// <returns>
+        /// An uri instance containing the original URI with the specified query parameters appended.
+        /// </returns>
+        IUri Add(params UriQuery[] query);
+
+        /// <summary>
         /// Concatenates the given path segment to the current URI and returns a new instance of IUri with the updated path.
         /// </summary>
         /// <param name="segment">The path segment to be concatenated with the existing URI.</param>
