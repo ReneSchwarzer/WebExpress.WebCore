@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -62,7 +64,7 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// <summary>
         /// Returns the crud methods.
         /// </summary>
-        public IEnumerable<CrudMethod> Methods { get; internal set; }
+        public IEnumerable<RequestMethod> Methods { get; internal set; }
 
         /// <summary>
         /// Returns the version number of the rest api.
@@ -73,6 +75,31 @@ namespace WebExpress.WebCore.WebRestApi.Model
         /// Returns whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
+
+        /// <summary>
+        /// Returns the reflection information for the associated get method.
+        /// </summary>
+        public MethodInfo GetMethod { get; internal set; }
+
+        /// <summary>
+        /// Returns the reflection information for the associated post method.
+        /// </summary>
+        public MethodInfo PostMethod { get; internal set; }
+
+        /// <summary>
+        /// Returns the reflection information for the associated patch method.
+        /// </summary>
+        public MethodInfo PatchMethod { get; internal set; }
+
+        /// <summary>
+        /// Returns the reflection information for the associated put method.
+        /// </summary>
+        public MethodInfo PutMethod { get; internal set; }
+
+        /// <summary>
+        /// Returns the reflection information for the associated delete method.
+        /// </summary>
+        public MethodInfo DeleteMethod { get; internal set; }
 
         /// <summary>
         /// Returns the attributes associated with the page.

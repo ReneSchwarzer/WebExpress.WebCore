@@ -3,6 +3,7 @@ using WebExpress.WebCore.Test.WWW.Api._1;
 using WebExpress.WebCore.Test.WWW.Api._2;
 using WebExpress.WebCore.Test.WWW.Api._3;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebRestApi;
 
@@ -128,11 +129,10 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the context path property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), CrudMethod.POST)]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), CrudMethod.GET)]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), CrudMethod.GET)]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), CrudMethod.GET)]
-        public void Method(Type applicationType, Type resourceType, CrudMethod method)
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), RequestMethod.POST)]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), RequestMethod.GET)]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), RequestMethod.GET)]
+        public void Method(Type applicationType, Type resourceType, RequestMethod method)
         {
             // preconditions
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();

@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebUri;
 
@@ -32,7 +33,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Returns the crud methods.
         /// </summary>
-        public IEnumerable<CrudMethod> Methods { get; internal set; } = [];
+        public IEnumerable<RequestMethod> Methods { get; internal set; } = [];
 
         /// <summary>
         /// Returns the endpoint id.

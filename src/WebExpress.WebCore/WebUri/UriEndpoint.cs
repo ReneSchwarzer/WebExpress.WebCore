@@ -9,11 +9,13 @@ using WebExpress.WebCore.WebParameter;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// An Uri represents a complete, fully qualified Uniform Resource Identifier (URI) that uniquely 
-    /// identifies a endpoint (see RFC 3986).
-    /// This interface encapsulates all components of a typical URI, such as the scheme (e.g., "http", "https"),
-    /// the authority (e.g., "example.com"), path segments, query parameters, and fragment. It provides the external
-    /// address used for resource identification and linking (e.g., "http://example.com/users/123").
+    /// An Uri represents a complete, fully qualified Uniform Resource 
+    /// Identifier (URI) that uniquely identifies a endpoint (see RFC 3986).
+    /// This interface encapsulates all components of a typical URI, such as 
+    /// the scheme (e.g., "http", "https"), the authority (e.g., "example.com"), 
+    /// path segments, query parameters, and fragment. It provides the external
+    /// address used for resource identification and linking 
+    /// (e.g., "http://example.com/users/123").
     /// </summary>
     public partial class UriEndpoint : IUri
     {
@@ -383,9 +385,13 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Creates a new endpoint uri and fills it with the given parameters.
         /// </summary>
-        /// <param name="parameters">The parameters that fill in the variable parts of the uri.</param>
-        /// <returns>A new endpoint uri with the populated parameters.</returns>
-        public IUri SetParameters(params Parameter[] parameters)
+        /// <param name="parameters">
+        /// The parameters that fill in the variable parts of the uri.
+        /// </param>
+        /// <returns>
+        /// A new endpoint uri with the populated parameters.
+        /// </returns>
+        public virtual IUri SetParameters(params Parameter[] parameters)
         {
             var pathSegments = PathSegments.AsEnumerable();
 

@@ -8,8 +8,6 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
-    [Method(CrudMethod.POST)]
-    [Method(CrudMethod.GET)]
     public sealed class TestRestApiA : IRestApi
     {
         /// <summary>
@@ -40,6 +38,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response containing the result of the operation.</returns>
+        [Method(RequestMethod.GET)]
         public Response GetData(Request request)
         {
             return new ResponseBadRequest(new StatusMessage("Not implemented."));
@@ -50,6 +49,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response containing the result of the operation.</returns>
+        [Method(RequestMethod.POST)]
         public Response UpdateData(Request request)
         {
             // test the request

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using WebExpress.WebCore.Internationalization;
@@ -55,11 +56,10 @@ namespace WebExpress.WebCore.WebRestApi
                 // return a stable snapshot to avoid enumeration during concurrent modifications
                 lock (_guard)
                 {
-                    return _dictionary.Values
+                    return [.. _dictionary.Values
                         .SelectMany(x => x.Values)
                         .SelectMany(x => x.Values)
-                        .Select(x => x.RestApiContext)
-                        .ToList();
+                        .Select(x => x.RestApiContext)];
                 }
             }
         }
@@ -90,7 +90,12 @@ namespace WebExpress.WebCore.WebRestApi
                 {
                     // get rest api context and create or obtain instance
                     var restApiContext = endpointContext as IRestApiContext;
-                    var restApi = CreateApiInstance(restApiContext) as IRestApi;
+                    var restApiItem = _dictionary.Values
+                        .SelectMany(x => x.Values)
+                        .SelectMany(x => x.Values)
+                        .FirstOrDefault(x => x.RestApiContext.Equals(restApiContext));
+
+                    var restApi = CreateApiInstance(restApiItem);
 
                     // if no resource found, return bad request
                     if (restApiContext is null || restApi is null)
@@ -102,20 +107,50 @@ namespace WebExpress.WebCore.WebRestApi
                     }
 
                     // execute according to allowed methods
-                    if (restApiContext.Methods.Any(x => x.Equals((CrudMethod)request.Method)))
+                    if (restApiContext.Methods.Any(x => x.Equals((RequestMethod)request.Method)))
                     {
                         switch (request.Method)
                         {
                             case RequestMethod.POST:
-                                return restApi.CreateData(request) ?? new ResponseOK();
+                                if (restApiItem.GetMethod is not null)
+                                {
+                                    return (Response)(restApiItem.PostMethod
+                                        .Invoke(restApi, [request])
+                                        ?? new ResponseOK());
+                                }
+                                break;
                             case RequestMethod.GET:
-                                return restApi.GetData(request) ?? new ResponseOK();
+                                if (restApiItem.GetMethod is not null)
+                                {
+                                    return (Response)(restApiItem.GetMethod
+                                        .Invoke(restApi, [request])
+                                        ?? new ResponseOK());
+                                }
+                                break;
                             case RequestMethod.PATCH:
-                                return restApi.UpdateData(request) ?? new ResponseOK();
+                                if (restApiItem.GetMethod is not null)
+                                {
+                                    return (Response)(restApiItem.PatchMethod
+                                        .Invoke(restApi, [request])
+                                        ?? new ResponseOK());
+                                }
+                                break;
                             case RequestMethod.PUT:
-                                return restApi.UpdateData(request) ?? new ResponseOK();
+                                if (restApiItem.GetMethod is not null)
+                                {
+                                    return (Response)(restApiItem.PutMethod
+                                        .Invoke(restApi, [request])
+                                        ?? new ResponseOK());
+                                }
+                                break;
                             case RequestMethod.DELETE:
-                                return restApi.DeleteData(request) ?? new ResponseOK();
+                                if (restApiItem.GetMethod is not null)
+                                {
+                                    return (Response)(restApiItem.DeleteMethod
+                                        .Invoke(restApi, [request])
+                                        ?? new ResponseOK());
+                                }
+                                break;
                             default:
                                 return new ResponseBadRequest()
                                 {
@@ -151,13 +186,12 @@ namespace WebExpress.WebCore.WebRestApi
                 if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
                 {
                     // return snapshot list
-                    return pluginResources
+                    return [.. pluginResources
                         .SelectMany(x => x.Value)
-                        .Select(x => x.Value.RestApiContext)
-                        .ToList();
+                        .Select(x => x.Value.RestApiContext)];
                 }
 
-                return Enumerable.Empty<IRestApiContext>();
+                return [];
             }
         }
 
@@ -180,12 +214,11 @@ namespace WebExpress.WebCore.WebRestApi
         {
             lock (_guard)
             {
-                return _dictionary.Values
+                return [.. _dictionary.Values
                     .SelectMany(x => x.Values)
                     .SelectMany(x => x.Values)
                     .Where(x => x.RestApiClass.Equals(restApiType))
-                    .Select(x => x.RestApiContext)
-                    .ToList();
+                    .Select(x => x.RestApiContext)];
             }
         }
 
@@ -199,13 +232,12 @@ namespace WebExpress.WebCore.WebRestApi
         {
             lock (_guard)
             {
-                return _dictionary.Values
+                return [.. _dictionary.Values
                     .SelectMany(x => x.Values)
                     .SelectMany(x => x.Values)
                     .Where(x => x.RestApiClass.Equals(restApiType))
                     .Where(x => x.RestApiContext.ApplicationContext.Equals(applicationContext))
-                    .Select(x => x.RestApiContext)
-                    .ToList();
+                    .Select(x => x.RestApiContext)];
             }
         }
 
@@ -219,13 +251,12 @@ namespace WebExpress.WebCore.WebRestApi
         {
             lock (_guard)
             {
-                return _dictionary.Values
+                return [.. _dictionary.Values
                      .SelectMany(x => x.Values)
                      .SelectMany(x => x.Values)
                      .Where(x => x.RestApiClass.Equals(typeof(T)))
                      .Where(x => x.RestApiContext.ApplicationContext.Equals(applicationContext))
-                     .Select(x => x.RestApiContext)
-                     .ToList();
+                     .Select(x => x.RestApiContext)];
             }
         }
 
@@ -273,50 +304,38 @@ namespace WebExpress.WebCore.WebRestApi
         /// Creates a new rest api resource and returns it. If a rest api resource already exists (through caching), the existing instance is returned.
         /// Thread-safe: cached instance creation and assignment is protected.
         /// </summary>
-        /// <param name="apiContext">The context used for rest api resource creation.</param>
+        /// <param name="apiItem">The item used for rest api resource creation.</param>
         /// <returns>The created or cached rest api resource.</returns>
-        private IRestApi CreateApiInstance(IRestApiContext apiContext)
+        private IRestApi CreateApiInstance(RestApiItem apiItem)
         {
-            if (apiContext is null)
+            if (apiItem is null)
             {
                 return null;
             }
 
-            RestApiItem resourceItem = null;
-
             // locate resourceItem inside lock to get a consistent view
             lock (_guard)
             {
-                resourceItem = _dictionary.Values
-                    .SelectMany(x => x.Values)
-                    .SelectMany(x => x.Values)
-                    .FirstOrDefault(x => x.RestApiContext.Equals(apiContext));
-
-                if (resourceItem is null)
-                {
-                    return null;
-                }
-
                 // if instance already cached, return immediately
-                if (resourceItem.Instance is not null)
+                if (apiItem.Instance is not null)
                 {
-                    return resourceItem.Instance as IRestApi;
+                    return apiItem.Instance;
                 }
 
                 // if caching is enabled, create and assign the instance under lock to avoid double-creation
-                if (resourceItem.Cache)
+                if (apiItem.Cache)
                 {
                     // create instance while holding the lock to ensure only one creation and assignment occurs
                     var instanceCached = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>
                     (
-                        resourceItem.RestApiClass,
-                        apiContext,
+                        apiItem.RestApiClass,
+                        apiItem.RestApiContext,
                         _httpServerContext,
                         _componentHub,
-                        apiContext.ApplicationContext
+                        apiItem.ApplicationContext
                     );
 
-                    resourceItem.Instance = instanceCached;
+                    apiItem.Instance = instanceCached;
                     return instanceCached;
                 }
             }
@@ -324,11 +343,11 @@ namespace WebExpress.WebCore.WebRestApi
             // if not caching, create instance outside lock (no shared state to modify)
             var instanceNoCache = ComponentActivator.CreateInstance<IRestApi, IRestApiContext>
             (
-                resourceItem.RestApiClass,
-                apiContext,
+                apiItem.RestApiClass,
+                apiItem.RestApiContext,
                 _httpServerContext,
                 _componentHub,
-                apiContext.ApplicationContext
+                apiItem.ApplicationContext
             );
 
             return instanceNoCache;
@@ -392,13 +411,53 @@ namespace WebExpress.WebCore.WebRestApi
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
-                var methods = new List<CrudMethod>();
                 var match = ApiVersionRegex().Match(id);
                 var versionSegment = match.Success ? match.Groups[0].Value.Replace(".", "") : "";
                 var version = match.Success && uint.TryParse(match.Groups[1].Value, out var result) ? result : 1u;
                 var attributes = restApiType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
+                var getMethod = restApiType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.GetCustomAttributes(typeof(MethodAttribute), false)
+                    .Cast<MethodAttribute>()
+                    .Any(attr => attr.RequestMethod == RequestMethod.GET))
+                    .FirstOrDefault();
+                var postMethod = restApiType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.GetCustomAttributes(typeof(MethodAttribute), false)
+                    .Cast<MethodAttribute>()
+                    .Any(attr => attr.RequestMethod == RequestMethod.POST))
+                    .FirstOrDefault();
+                var patchMethod = restApiType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.GetCustomAttributes(typeof(MethodAttribute), false)
+                    .Cast<MethodAttribute>()
+                    .Any(attr => attr.RequestMethod == RequestMethod.PATCH))
+                    .FirstOrDefault();
+                var putMethod = restApiType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.GetCustomAttributes(typeof(MethodAttribute), false)
+                    .Cast<MethodAttribute>()
+                    .Any(attr => attr.RequestMethod == RequestMethod.PUT))
+                    .FirstOrDefault();
+                var deleteMethod = restApiType
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(m => m.GetCustomAttributes(typeof(MethodAttribute), false)
+                    .Cast<MethodAttribute>()
+                    .Any(attr => attr.RequestMethod == RequestMethod.DELETE))
+                    .FirstOrDefault();
+
+                var methods = new[]
+                {
+                    (getMethod,    RequestMethod.GET),
+                    (postMethod,   RequestMethod.POST),
+                    (patchMethod,  RequestMethod.PATCH),
+                    (putMethod,    RequestMethod.PUT),
+                    (deleteMethod, RequestMethod.DELETE)
+                }
+                    .Where(x => x.Item1 is not null)
+                    .Select(x => x.Item2);
 
                 foreach (var customAttribute in restApiType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
@@ -420,12 +479,6 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
-                    }
-                    else if (customAttribute.AttributeType.Name == typeof(MethodAttribute).Name
-                        && customAttribute.AttributeType.Namespace == typeof(MethodAttribute).Namespace)
-                    {
-                        var method = (CrudMethod)customAttribute.ConstructorArguments.FirstOrDefault().Value;
-                        methods.Add(method);
                     }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
@@ -478,7 +531,12 @@ namespace WebExpress.WebCore.WebRestApi
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
-                        Attributes = attributes.Select(x => x.AttributeType)
+                        Attributes = attributes.Select(x => x.AttributeType),
+                        GetMethod = getMethod,
+                        PostMethod = postMethod,
+                        PatchMethod = patchMethod,
+                        PutMethod = putMethod,
+                        DeleteMethod = deleteMethod
                     };
 
                     // add mutation protected by lock to avoid concurrent modifications

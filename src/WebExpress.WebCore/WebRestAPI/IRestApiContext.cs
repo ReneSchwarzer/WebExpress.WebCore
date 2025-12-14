@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebRestApi
 {
@@ -11,7 +12,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <summary>
         /// Returns the crud methods.
         /// </summary>
-        IEnumerable<CrudMethod> Methods { get; }
+        IEnumerable<RequestMethod> Methods { get; }
 
         /// <summary>
         /// Returns the version number of the rest api.

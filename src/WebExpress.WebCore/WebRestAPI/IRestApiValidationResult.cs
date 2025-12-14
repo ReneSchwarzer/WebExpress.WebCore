@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace WebExpress.WebCore.WebRestApi
 {
@@ -11,20 +10,18 @@ namespace WebExpress.WebCore.WebRestApi
     /// during the processing of a REST API request. It includes methods to add individual 
     /// or multiple errors, and properties to check the overall validity of the result.
     /// </remarks>
-    public class RestApiValidationResult : IRestApiValidationResult
+    public interface IRestApiValidationResult
     {
-        private readonly List<RestApiError> _errors = [];
-
         /// <summary>
         /// Returns a read-only collection of errors encountered during the API operation.
         /// </summary>
-        public IEnumerable<RestApiError> Errors => _errors.AsReadOnly();
+        IEnumerable<RestApiError> Errors { get; }
 
         /// <summary>
         /// Returns a value indicating whether the current state is valid.
         /// </summary>
         /// <remarks>The state is considered valid if there are no errors present.</remarks>
-        public bool IsValid => _errors.Count == 0;
+        bool IsValid { get; }
 
         /// <summary>
         /// Adds a new error to the collection with the specified message, field, and code.
@@ -46,12 +43,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// This parameter is optional and can be null.
         /// </param>
         /// <returns>The current instance for method chaining.</returns>
-        public IRestApiValidationResult Add(string message, string field = null, string code = null)
-        {
-            _errors.Add(new RestApiError(message, code, field));
-
-            return this;
-        }
+        IRestApiValidationResult Add(string message, string field = null, string code = null);
 
         /// <summary>
         /// Adds one or more <see cref="RestApiError"/> instances to the collection.
@@ -62,12 +54,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public IRestApiValidationResult Add(params RestApiError[] errors)
-        {
-            _errors.AddRange(errors);
-
-            return this;
-        }
+        IRestApiValidationResult Add(params RestApiError[] errors);
 
         /// <summary>
         /// Adds one or more <see cref="RestApiError"/> instances to the collection.
@@ -78,24 +65,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public IRestApiValidationResult AddRange(IEnumerable<RestApiError> errors)
-        {
-            if (errors is not null)
-            {
-                _errors.AddRange(errors);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// Returns a string representation of the current object, summarizing all errors.
-        /// </summary>
-        /// <returns>A semicolon-separated string of error descriptions.</returns>
-        public override string ToString()
-        {
-            return string.Join("; ", _errors.Select(e => e.ToString()));
-        }
+        IRestApiValidationResult AddRange(IEnumerable<RestApiError> errors);
 
         /// <summary>
         /// Converts the collection of errors to a JSON-formatted string.
@@ -110,14 +80,6 @@ namespace WebExpress.WebCore.WebRestApi
         /// the collection is empty, the method returns an empty JSON array 
         /// (<c>[]</c>).
         /// </returns>
-        public virtual string ToJson()
-        {
-            return System.Text.Json.JsonSerializer.Serialize(_errors.Select(e => new
-            {
-                code = e.Code,
-                message = e.Message,
-                field = e.Field
-            }));
-        }
+        string ToJson();
     }
 }
