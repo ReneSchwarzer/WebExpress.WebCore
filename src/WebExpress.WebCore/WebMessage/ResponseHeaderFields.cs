@@ -55,10 +55,16 @@ namespace WebExpress.WebCore.WebMessage
         public CookieCollection Cookies { get; } = [];
 
         /// <summary>
+        /// Returns or sets the Upgrade header (for protocol upgrade responses, e.g. "websocket").
+        /// </summary>
+        public string Upgrade { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseHeaderFields()
         {
+            // set defaults
             CustomHeader = new Dictionary<string, string>();
             WWWAuthenticate = false;
             ContentLength = -1;
@@ -117,6 +123,12 @@ namespace WebExpress.WebCore.WebMessage
             if (!string.IsNullOrWhiteSpace(Location))
             {
                 sb.AppendLine("Location: " + Location);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Upgrade))
+            {
+                sb.AppendLine("Upgrade: " + Upgrade);
+                sb.AppendLine("Connection: Upgrade");
             }
 
             foreach (var c in CustomHeader)

@@ -250,6 +250,14 @@ namespace WebExpress.WebCore.WebInclude
                     {
                         OnRemoveInclude(includeItem.IncludeContext);
                         includeItem.Dispose();
+
+                        _httpServerContext?.Log.Debug(
+                            I18N.Translate(
+                                "webexpress.webcore:includemanager.removeinclude",
+                                includeItem.IncludeId,
+                                includeItem.ApplicationContext.ApplicationId
+                            )
+                        );
                     }
                 }
 

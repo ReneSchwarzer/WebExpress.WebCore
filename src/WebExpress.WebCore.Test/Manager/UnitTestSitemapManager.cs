@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the refresh function of the sitemap manager.
         /// </summary>
         [Theory]
-        [InlineData(103)]
+        [InlineData(106)]
         public void Refresh(int expected)
         {
             // preconditions

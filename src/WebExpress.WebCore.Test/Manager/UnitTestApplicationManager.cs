@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.Test.Manager
     /// Test the application manager.
     /// </summary>
     [Collection("NonParallelTests")]
-    public class UnitTestApplication
+    public class UnitTestApplicationManager
     {
         /// <summary>
         /// Test the register function of the application manager.
@@ -24,6 +24,7 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             pluginManager.Register();
 
+            // validation
             Assert.Equal(3, componentHub.ApplicationManager.Applications.Count());
             Assert.Equal("webexpress.webcore.test.testapplicationa", componentHub.ApplicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault()?.ApplicationId);
             Assert.Equal("webexpress.webcore.test.testapplicationb", componentHub.ApplicationManager.GetApplications(typeof(TestApplicationB)).FirstOrDefault()?.ApplicationId);
@@ -44,11 +45,12 @@ namespace WebExpress.WebCore.Test.Manager
             // test execution
             applicationManager.Remove(plugin);
 
-            Assert.Empty(componentHub.ApplicationManager.Applications);
+            // validation
+            Assert.Empty(applicationManager.Applications);
         }
 
         /// <summary>
-        /// Test the name property of the application.
+        /// Test the id property of the application.
         /// </summary>
         [Theory]
         [InlineData(typeof(TestApplicationA), "webexpress.webcore.test.testapplicationa")]

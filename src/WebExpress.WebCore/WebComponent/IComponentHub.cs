@@ -18,6 +18,7 @@ using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
+using WebExpress.WebCore.WebSocket;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
 using WebExpress.WebCore.WebTheme;
@@ -163,6 +164,12 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         ISessionManager SessionManager { get; }
+
+        /// <summary>
+        /// Returns the socket manager.
+        /// </summary>
+        /// <returns>The instance of the socket manager.</returns>
+        ISocketManager SocketManager { get; }
 
         /// <summary>
         /// Returns the theme manager.

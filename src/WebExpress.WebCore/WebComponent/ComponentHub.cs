@@ -20,6 +20,7 @@ using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
+using WebExpress.WebCore.WebSocket;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
 using WebExpress.WebCore.WebTheme;
@@ -53,6 +54,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly JobManager _jobManager;
         private readonly TaskManager _taskManager;
         private readonly IdentityManager _identityManager;
+        private readonly SocketManager _socketManager;
         private readonly ThemeManager _themeManager;
         private int _lastCounter = 0;
 
@@ -91,6 +93,7 @@ namespace WebExpress.WebCore.WebComponent
                 _identityManager,
                 _sessionManager,
                 _taskManager,
+                _socketManager,
                 _themeManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
@@ -215,6 +218,12 @@ namespace WebExpress.WebCore.WebComponent
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
+        /// Returns the socket manager.
+        /// </summary>
+        /// <returns>The instance of the socket manager.</returns>
+        public ISocketManager SocketManager  => _socketManager;
+
+        /// <summary>
         /// Returns the theme manager.
         /// </summary>
         /// <returns>The instance of the theme manager.</returns>
@@ -250,6 +259,7 @@ namespace WebExpress.WebCore.WebComponent
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
             _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
+            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager;
             _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());

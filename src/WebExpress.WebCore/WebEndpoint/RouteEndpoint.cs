@@ -89,6 +89,19 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(IEnumerable<IUriPathSegment> segments)
+        {
+            if (segments.Any())
+            {
+                PathSegments = PathSegments
+                    .Concat(segments.Where(x => !x.IsEmpty).Select(x => x.Copy()));
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
         /// <param name="route">The base route.</param>
         /// <param name="segments">The path segments.</param>
         public RouteEndpoint(IRoute route, params string[] segments)

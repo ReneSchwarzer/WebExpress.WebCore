@@ -170,6 +170,10 @@ includemanager.initialization=The include manager has been initialized.
 includemanager.addinclude=The client resource '{0}' has been registered in the application '{1}'.
 includemanager.removeinclude=The client resource '{0}' has been removed from the application '{1}'.
 
+socketmanager.initialization=The WebSocket manager has been initialized.
+socketmanager.addsocket=The WebSocket '{0}' has been registered in the application '{1}'.
+socketmanager.removesocket=The WebSocket '{0}' has been removed from the application '{1}'.
+
 thememanager.initialization=The theme manager has been initialized.
 thememanager.addtheme=The theme '{0}' has been registered in the application '{1}'.
 thememanager.titel=Themes:
