@@ -17,7 +17,8 @@ using WebExpress.WebCore.WebStatusPage;
 namespace WebExpress.WebCore.WebResource
 {
     /// <summary>
-    /// The resource manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
+    /// The resource manager manages WebExpress elements, which can be called with a 
+    /// URI (Uniform Resource Identifier).
     /// </summary>
     public sealed class ResourceManager : IResourceManager, ISystemComponent
     {

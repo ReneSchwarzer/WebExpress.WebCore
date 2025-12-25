@@ -383,7 +383,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="identity">The identity.</param>
         /// <param name="password">The password.</param>
         /// <returns>True if successful, false otherwise.</returns>
-        public bool Login(Request request, IIdentity identity, SecureString password)
+        public bool Login(IRequest request, IIdentity identity, SecureString password)
         {
             if (identity?.PasswordHash == ComputeHash(password))
             {
@@ -405,7 +405,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// Logout an identity.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void Logout(Request request)
+        public void Logout(IRequest request)
         {
             var session = _componentHub.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
@@ -416,7 +416,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// </summary>
         /// <param name="request">The request to get the current identity for.</param>
         /// <returns>The current signed-in identity.</returns>
-        public IIdentity GetCurrentIdentity(Request request)
+        public IIdentity GetCurrentIdentity(IRequest request)
         {
             var session = _componentHub.SessionManager.GetSession(request);
             var authentification = session.GetProperty<SessionPropertyAuthentification>();

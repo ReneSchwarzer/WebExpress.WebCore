@@ -1,6 +1,6 @@
 using System;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents an error that occurs when a WebSocket handshake request

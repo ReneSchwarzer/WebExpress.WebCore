@@ -3,7 +3,7 @@ using WebExpress.WebCore.Test.WWW;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebUri;
 
-namespace WebExpress.WebCore.Test.Uri
+namespace WebExpress.WebCore.Test.WebUri
 {
     /// <summary>
     /// Tests an uri.

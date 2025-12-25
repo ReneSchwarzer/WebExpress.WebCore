@@ -1,8 +1,8 @@
 using System;
-using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -34,10 +34,9 @@ namespace WebExpress.WebCore.WebSocket
         /// Invoked when the websocket connection is closed or is about to be closed.
         /// Implementers should perform cleanup and release resources.
         /// </summary>
-        /// <param name="closeStatus">Optional close status.</param>
-        /// <param name="closeDescription">Optional close description.</param>
+        /// <param name="closeInfo">Information about the socket closure.</param>
         /// <returns>An asynchronous task.</returns>
-        Task OnDisconnectedAsync(WebSocketCloseStatus closeStatus, string closeDescription);
+        Task OnDisconnectedAsync(SocketCloseInfo closeInfo);
 
         /// <summary>
         /// Invoked when an unhandled exception occurs during websocket processing.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents a WebSocket message containing UTF-8 text payload.
@@ -12,6 +12,12 @@ namespace WebExpress.WebCore.WebSocket
     /// </summary>
     public class SocketMessageText : ISocketMessage
     {
+        private static readonly JsonSerializerOptions _serializeOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+
         /// <summary>
         /// Application-defined message type used for routing.
         /// </summary>
@@ -37,16 +43,26 @@ namespace WebExpress.WebCore.WebSocket
         /// </summary>
         public string ConnectionId { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the identifier of the sender associated with this message.
+        /// </summary>
         public string Sender { get; init; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the collection of target identifiers associated with this instance.
+        /// </summary>
         public IEnumerable<string> Targets { get; init; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the date and time, in Coordinated Universal Time (UTC), 
+        /// when the object was created or last updated.
+        /// </summary>
         public DateTime Timestamp { get; init; } = DateTime.UtcNow;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns a collection of key-value pairs that provide additional metadata 
+        /// associated with the object.
+        /// </summary>
         public IDictionary<string, string> Meta { get; init; }
             = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -55,20 +71,12 @@ namespace WebExpress.WebCore.WebSocket
         /// </summary>
         public string Text { get; init; }
 
-        /// <inheritdoc />
-        [JsonIgnore]
-        public bool IsBinary => false;
-
-        private static readonly JsonSerializerOptions SerializeOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
-
-        /// <inheritdoc />
+        /// <summary>
+        /// Converts the current object to its JSON string representation.
+        /// </summary>
         public string ToJson()
         {
-            return JsonSerializer.Serialize(this, SerializeOptions);
+            return JsonSerializer.Serialize(this, _serializeOptions);
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="conditions">The collection of conditions to check.</param>
         /// <param name="request">The request to evaluate the conditions against.</param>
         /// <returns>True if all conditions are fulfilled; otherwise, false.</returns>
-        public static bool Check(this IEnumerable<ICondition> conditions, Request request)
+        public static bool Check(this IEnumerable<ICondition> conditions, IRequest request)
         {
             foreach (var condition in conditions)
             {

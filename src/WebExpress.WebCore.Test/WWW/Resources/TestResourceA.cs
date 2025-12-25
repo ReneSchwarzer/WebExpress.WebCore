@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test.WWW.Resources
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The processed response.</returns>
-        public Response Process(Request request)
+        public IResponse Process(IRequest request)
         {
             // test the request
             if (request is null)

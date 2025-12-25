@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents a WebSocket message containing binary payload.
@@ -12,7 +10,9 @@ namespace WebExpress.WebCore.WebSocket
     /// </summary>
     public class SocketMessageBinary : ISocketMessage
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the type identifier associated with the current instance.
+        /// </summary>
         public string Type { get; init; }
 
         /// <summary>
@@ -35,16 +35,26 @@ namespace WebExpress.WebCore.WebSocket
         /// </summary>
         public string ConnectionId { get; set; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the identifier of the sender associated with this message.
+        /// </summary>
         public string Sender { get; init; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the collection of target identifiers associated with this instance.
+        /// </summary>
         public IEnumerable<string> Targets { get; init; }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns the date and time when the object was created or last updated, 
+        /// in Coordinated Universal Time (UTC).
+        /// </summary>
         public DateTime Timestamp { get; init; } = DateTime.UtcNow;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Returns a collection of key-value pairs that provide additional 
+        /// metadata associated with the object.
+        /// </summary>
         public IDictionary<string, string> Meta { get; init; }
             = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -53,22 +63,6 @@ namespace WebExpress.WebCore.WebSocket
         /// Automatically Base64-encoded by System.Text.Json.
         /// </summary>
         public byte[] Data { get; init; }
-
-        /// <inheritdoc />
-        [JsonIgnore]
-        public bool IsBinary => Data?.Length > 0;
-
-        private static readonly JsonSerializerOptions SerializeOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
-
-        /// <inheritdoc />
-        public string ToJson()
-        {
-            return JsonSerializer.Serialize(this, SerializeOptions);
-        }
 
         /// <summary>
         /// Creates a new binary message with the specified routing type and payload.

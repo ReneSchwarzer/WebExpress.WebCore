@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
-    /// Base class for structured WebSocket messages exchanged between client and server.
-    /// Contains routing metadata common to all message types.
+    /// Base interface for structured WebSocket messages exchanged between client and 
+    /// server. Contains routing metadata common to all message types.
     /// </summary>
     public interface ISocketMessage
     {
@@ -55,20 +53,5 @@ namespace WebExpress.WebCore.WebSocket
         /// Arbitrary metadata as key/value pairs.
         /// </summary>
         IDictionary<string, string> Meta { get; }
-
-        /// <summary>
-        /// Indicates whether this message contains binary payload.
-        /// </summary>
-        [JsonIgnore]
-        abstract bool IsBinary { get; }
-
-        /// <summary>
-        /// Serializes the message to JSON.
-        /// </summary>
-        /// <returns> 
-        /// A JSON string containing the serialized form of the message, including 
-        /// routing metadata and payload fields. 
-        /// </returns>
-        string ToJson();
     }
 }

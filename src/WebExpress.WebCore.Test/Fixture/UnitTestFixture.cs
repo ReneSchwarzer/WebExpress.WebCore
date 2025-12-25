@@ -98,7 +98,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <param name="content">The content of the request.</param>
         /// <param name="uri">The URI of the request.</param>
         /// <returns>A fake request for testing.</returns>
-        public static Request CrerateRequestMock(string content = "", string uri = "")
+        public static IRequest CrerateRequestMock(string content = "", string uri = "")
         {
             var context = CreateHttpContextMock(content);
 
@@ -117,7 +117,7 @@ namespace WebExpress.WebCore.Test.Fixture
         /// </summary>
         /// <param name="uri">The URI of the request.</param>
         /// <returns>A fake request for testing.</returns>
-        public static Request CrerateRequestMock(IUri uri)
+        public static IRequest CrerateRequestMock(IUri uri)
         {
             var context = CreateHttpContextMock();
 

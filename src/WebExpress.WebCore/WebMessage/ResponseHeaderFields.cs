@@ -60,6 +60,17 @@ namespace WebExpress.WebCore.WebMessage
         public string Upgrade { get; set; }
 
         /// <summary>
+        /// Returns the connection. Keep-Alive or close.
+        /// </summary>
+        public string Connection { get; set; }
+
+        /// <summary>
+        /// Returns or sets the value of the Sec-WebSocket-Accept header used in 
+        /// the WebSocket handshake response.
+        /// </summary>
+        public string SecWebSocketAccept { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseHeaderFields()

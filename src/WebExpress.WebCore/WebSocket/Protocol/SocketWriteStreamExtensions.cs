@@ -2,7 +2,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Provides extension methods for writing <see cref="ISocketMessage"/> instances
@@ -23,20 +23,21 @@ namespace WebExpress.WebCore.WebSocket
             CancellationToken cancellationToken = default
         )
         {
-            if (message.IsBinary)
+            if (message is SocketMessageBinary)
             {
                 var binary = (message as SocketMessageBinary)?.Data ?? [];
                 await stream.WriteAsync(binary, cancellationToken);
             }
-            else
+            else if (message is SocketMessageText textMessage)
             {
-                var json = message.ToJson();
-                var bytes = Encoding.UTF8.GetBytes(json);
-                await stream.WriteAsync(bytes, cancellationToken);
-            }
+                {
+                    var json = textMessage.ToJson();
+                    var bytes = Encoding.UTF8.GetBytes(json);
+                    await stream.WriteAsync(bytes, cancellationToken);
+                }
 
-            await stream.CompleteAsync(cancellationToken);
+                await stream.CompleteAsync(cancellationToken);
+            }
         }
     }
-
 }

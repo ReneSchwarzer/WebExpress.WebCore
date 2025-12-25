@@ -6,6 +6,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket.Model
 {
@@ -34,7 +35,7 @@ namespace WebExpress.WebCore.WebSocket.Model
         /// </summary>
         public Type SocketClass { get; set; }
 
-                /// <summary>
+        /// <summary>
         /// Returns the collection of supported websocket subprotocols.
         /// implementations should return the subprotocol identifiers the endpoint can speak.
         /// </summary>
@@ -46,7 +47,7 @@ namespace WebExpress.WebCore.WebSocket.Model
         /// for JSON or human-readable content, or <see cref="WebSocketMessageType.Binary"/> 
         /// for binary payloads. 
         /// </summary>
-        public WebSocketMessageType MessageType { get; set; }  
+        public SocketMessageType MessageType { get; set; }
 
         /// <summary>
         /// Returns the maximum allowed message size in bytes, or null when the endpoint imposes no limit.
@@ -79,7 +80,7 @@ namespace WebExpress.WebCore.WebSocket.Model
         /// <summary>
         /// Returns or sets the instance of the socket endpoint, if the endpoint is cached, otherwise null.
         /// </summary>
-        public IEndpoint Instance { get; set; }
+        public ISocket Instance { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.

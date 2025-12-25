@@ -1,5 +1,5 @@
-﻿using System.Net.WebSockets;
-using WebExpress.WebCore.WebSocket;
+﻿using WebExpress.WebCore.WebSocket;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.Test
 {
@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.Test
         /// </param>
         public TestSocketA(ISocketContext socketContext, ISocketWriteStream stream)
         {
-            _socketContext = socketContext ?? throw new ArgumentNullException(nameof(stream), "Parameter cannot be null or empty.");
+            _socketContext = socketContext ?? throw new ArgumentNullException(nameof(socketContext), "Parameter cannot be null or empty.");
             _stream = stream ?? throw new ArgumentNullException(nameof(stream), "Parameter cannot be null or empty.");
         }
 
@@ -63,21 +63,16 @@ namespace WebExpress.WebCore.Test
         }
 
         /// <summary>
-        /// Handles logic to be executed when the WebSocket connection is closed.
+        /// Handles logic to be executed when a socket connection is disconnected.
         /// </summary>
-        /// <param name="closeStatus">
-        /// The status code indicating the reason for the WebSocket closure.
-        /// </param>
-        /// <param name="closeDescription">
-        /// A description providing additional details about the reason for closure. May be 
-        /// null or empty.
+        /// <param name="closeInfo">
+        /// Information about the reason and context for the socket disconnection.
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous operation.
         /// </returns>
-        public async Task OnDisconnectedAsync(WebSocketCloseStatus closeStatus, string closeDescription)
+        public async Task OnDisconnectedAsync(SocketCloseInfo closeInfo)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>

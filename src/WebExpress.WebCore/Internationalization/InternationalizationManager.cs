@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <param name="request">The request with the language to use.</param>
         /// <param name="key">The internationalization key.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public string Translate(Request request, string key)
+        public string Translate(IRequest request, string key)
         {
             return Translate(request.Culture, null, key);
         }
@@ -194,7 +194,7 @@ namespace WebExpress.WebCore.Internationalization
         /// <param name="key">The internationalization key.</param>
         /// <param name="args">The formatting arguments.</param>
         /// <returns>The value of the key in the current language.</returns>
-        public string Translate(Request request, string key, params object[] args)
+        public string Translate(IRequest request, string key, params object[] args)
         {
             return string.Format(Translate(request, key), args);
         }

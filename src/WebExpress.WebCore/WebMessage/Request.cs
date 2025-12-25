@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebMessage
     /// See RFC 2616, The Request class encapsulates and extends the 
     /// original request of the HttpListener call.
     /// </summary>
-    public class Request
+    public class Request : IRequest
     {
         private readonly ParameterDictionary _param = [];
 
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the uri.
         /// </summary>
-        public UriEndpoint Uri { get; internal set; }
+        public UriEndpoint Uri { get; set; }
 
         /// <summary>
         /// Returns the session.

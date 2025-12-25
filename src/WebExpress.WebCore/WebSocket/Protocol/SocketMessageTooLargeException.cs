@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents an error that occurs when an incoming WebSocket message

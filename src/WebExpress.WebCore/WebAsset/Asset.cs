@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        public Response Process(Request request)
+        public Response Process(IRequest request)
         {
             if (_data is null)
             {

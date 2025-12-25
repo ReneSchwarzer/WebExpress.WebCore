@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>True if the condition is fulfilled, false otherwise.</returns>
-        public bool Fulfillment(Request request)
+        public bool Fulfillment(IRequest request)
         {
             return false;
         }

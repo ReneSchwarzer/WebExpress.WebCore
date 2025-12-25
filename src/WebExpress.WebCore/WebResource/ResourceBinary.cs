@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        public override Response Process(Request request)
+        public override IResponse Process(IRequest request)
         {
             var response = new ResponseOK();
             response.Header.ContentLength = Data is not null ? Data.Length : 0;

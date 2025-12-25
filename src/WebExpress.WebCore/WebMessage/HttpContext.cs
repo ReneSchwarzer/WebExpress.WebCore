@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using System.Text;
+using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebMessage
 {
@@ -23,7 +24,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the request.
         /// </summary>
-        public Request Request { get; protected set; }
+        public IRequest Request { get; protected set; }
 
         /// <summary>
         /// Gets the ip address and port number of the server to which the request is made.
@@ -74,8 +75,39 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Encoding = requestFeature.Headers.ContentEncoding.Count != 0 ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
+            Encoding = requestFeature.Headers.ContentEncoding.Count != 0
+                ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding)
+                : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
+
+            // determine WebSocket upgrade
+            string upgradeHeader = requestFeature.Headers["Upgrade"];
+
+            if
+            (
+                !string.IsNullOrEmpty(upgradeHeader) &&
+                upgradeHeader.Equals("websocket", StringComparison.OrdinalIgnoreCase)
+            )
+            {
+                Request = new RequestWebSocket
+                (
+                    httpServerContext,
+                    null,
+                    null,
+                    header,
+                    RequestMethod.GET,
+                    requestFeature.Protocol,
+                    requestFeature.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)
+                        ? UriScheme.Https
+                        : UriScheme.Http,
+                    LocalEndPoint,
+                    RemoteEndPoint,
+                    requestFeature.Headers["Sec-WebSocket-Key"],
+                    requestFeature.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)
+                );
+
+                return;
+            }
 
             Request = new Request(contextFeatures, header, httpServerContext);
         }

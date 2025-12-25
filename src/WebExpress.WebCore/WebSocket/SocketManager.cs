@@ -2,11 +2,9 @@ using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
-using System.Net.WebSockets;
+using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Internationalization;
@@ -18,6 +16,7 @@ using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSocket.Model;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -26,6 +25,7 @@ namespace WebExpress.WebCore.WebSocket
     /// </summary>
     public class SocketManager : ISocketManager
     {
+        private const string _webSocketGuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly SocketDictionary _dictionary = new();
@@ -100,49 +100,138 @@ namespace WebExpress.WebCore.WebSocket
         public async Task HandleConnectionAsync(HttpContext httpContext, ISocketContext socketContext)
         {
             var connectionId = Guid.NewGuid().ToString();
-            var closeStatus = WebSocketCloseStatus.NormalClosure;
             var closeDescription = "closing";
-            var webSocket = await CreateWebSocket(httpContext, socketContext);
-            var instance = CreateSocketInstance(socketContext, webSocket) as ISocket;
+            var cancellationToken = CancellationToken.None;
 
-            // notify connected event on server side if available
+            var responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
+            var responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
+            var requestFeature = httpContext.Features.Get<IHttpRequestFeature>();
+
+            var headers = httpContext.Request.Header
+                .ToDictionary();
+
+            var connection = httpContext.Request.Header.Connection;
+            var upgrade = httpContext.Request.Header.Upgrade;
+            var key = httpContext.Request.Header.SecWebSocketKey;
+
+            // 1. perform handshake
+            var responseSender = new ResponseSender();
+            var response101 = new ResponseSwitchingProtocols
+            (
+                connection,
+                upgrade,
+                ComputeWebSocketAcceptKey(key)
+            );
+
+            await responseSender.SendAsync(httpContext, response101, true);
+
+            // 2. create native web socket connection using the raw body stream
+            var webSocket = new Socket(requestFeature.Body, cancellationToken);
+
+            // 3. create ISocket instance
+            var instance = await CreateSocketInstance(socketContext, webSocket);
+
+            // 4. notify user code
             try
             {
-                // if an ISocket implementation is registered for this endpoint,
-                // try to call OnConnectedAsync
                 await instance.OnConnectedAsync();
             }
             catch
             {
-                // ignore errors from optional OnConnected handling
+                // optional
             }
 
             try
             {
-                // receive loop: handle fragmented frames and large payloads
-                while (webSocket.State == WebSocketState.Open)
+                // 5. receive loop
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    var stream = new SocketReadStream(webSocket, socketContext, connectionId);
-                    var message = await stream.ReadMessageAsync(CancellationToken.None);
+                    var frame = await webSocket.ReadFrameAsync();
 
-                    // dispatch
-                    await DispatchMessage(instance, message);
+                    switch (frame.MessageType)
+                    {
+                        case SocketMessageType.Text:
+                            {
+                                var text = Encoding.UTF8.GetString(frame.Payload);
+                                var msg = new SocketMessageText
+                                {
+                                    Text = text,
+                                    SocketId = socketContext.EndpointId?.ToString(),
+                                    ConnectionId = connectionId
+                                };
+
+                                await DispatchMessage(instance, msg);
+                                break;
+                            }
+
+                        case SocketMessageType.Binary:
+                            {
+                                var msg = new SocketMessageBinary
+                                {
+                                    Data = frame.Payload,
+                                    SocketId = socketContext.EndpointId?.ToString(),
+                                    ConnectionId = connectionId
+                                };
+
+                                await DispatchMessage(instance, msg);
+                                break;
+                            }
+
+                        case SocketMessageType.Close:
+                            {
+                                if (frame is SocketFrameClose close)
+                                {
+                                    await webSocket.SendCloseAsync
+                                    (
+                                        close.Status,
+                                        close.Description
+                                    );
+                                    closeDescription = $"{close.Status}: {close.Description}";
+                                }
+                                else
+                                {
+                                    await webSocket.SendCloseAsync
+                                    (
+                                        SocketCloseStatus.NormalClosure,
+                                        "closing"
+                                    );
+                                    closeDescription = "normal closure";
+                                }
+                                return;
+                            }
+
+                        case SocketMessageType.Ping:
+                            await webSocket.SendPongAsync(frame.Payload);
+                            break;
+
+                        case SocketMessageType.Pong:
+                            break;
+
+                        case SocketMessageType.Continuation:
+                            // optional: handle fragmented messages
+                            break;
+                    }
                 }
+
             }
-            catch (WebSocketException ex)
+            catch (Exception ex)
             {
-                closeStatus = WebSocketCloseStatus.InternalServerError;
                 closeDescription = "transport error";
                 await instance.OnErrorAsync(ex);
             }
 
-            await instance.OnDisconnectedAsync(closeStatus, closeDescription);
+            var closeInfo = new SocketCloseInfo(SocketCloseStatus.NormalClosure, closeDescription);
+
+            // 6. disconnect
+            await instance.OnDisconnectedAsync(closeInfo);
         }
 
         /// <summary>
         /// Returns an enumeration of all socket contexts provided by a plugin.
         /// </summary>
-        /// <param name="pluginContext">A context of a plugin whose sockets are to be returned.</param>
+        /// <param name="pluginContext">
+        /// A context of a plugin whose sockets are to be returned.
+        /// </param>
         /// <returns>An enumeration of socket contexts.</returns>
         public IEnumerable<ISocketContext> GetSockets(IPluginContext pluginContext)
         {
@@ -170,7 +259,8 @@ namespace WebExpress.WebCore.WebSocket
         }
 
         /// <summary>
-        /// Returns an enumeration of socket contexts filtered by endpoint type and application context.
+        /// Returns an enumeration of socket contexts filtered by endpoint type 
+        /// and application context.
         /// </summary>
         /// <param name="socketType">The socket endpoint type.</param>
         /// <param name="applicationContext">The context of the application.</param>
@@ -181,7 +271,8 @@ namespace WebExpress.WebCore.WebSocket
         }
 
         /// <summary>
-        /// Returns an enumeration of socket contexts filtered by endpoint type and application context.
+        /// Returns an enumeration of socket contexts filtered by endpoint type and 
+        /// application context.
         /// </summary>
         /// <typeparam name="T">The socket endpoint type.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
@@ -214,12 +305,17 @@ namespace WebExpress.WebCore.WebSocket
         }
 
         /// <summary>
-        /// Creates a new socket endpoint instance and returns it. If an instance is cached it is returned.
+        /// Creates a new socket endpoint instance and returns it. 
+        /// If an instance is cached, the cached instance is returned.
         /// </summary>
         /// <param name="socketContext">The context used for socket creation.</param>
-        /// <param name="webSocket">The accepted websocket instance.</param>
-        /// <returns>The created or cached endpoint.</returns>
-        private async Task<IEndpoint> CreateSocketInstance(ISocketContext socketContext, System.Net.WebSockets.WebSocket webSocket)
+        /// <param name="webSocket">The accepted native WebSocket connection.</param>
+        /// <returns>The created or cached endpoint instance.</returns>
+        private async Task<ISocket> CreateSocketInstance
+        (
+            ISocketContext socketContext,
+            Socket webSocket
+        )
         {
             var resourceItem = _dictionary.GetSocketItem(socketContext);
 
@@ -227,14 +323,14 @@ namespace WebExpress.WebCore.WebSocket
             {
                 await using var stream = new SocketWriteStream(webSocket, socketContext.MessageType);
 
-                var instance = ComponentActivator.CreateInstance<IEndpoint, ISocketContext>
+                var instance = ComponentActivator.CreateInstance<ISocket, ISocketContext>
                 (
                     resourceItem.SocketClass,
                     socketContext,
                     _httpServerContext,
                     _componentHub,
                     socketContext.ApplicationContext,
-                    stream
+                    stream as ISocketWriteStream
                 );
 
                 if (resourceItem.Cache)
@@ -275,7 +371,7 @@ namespace WebExpress.WebCore.WebSocket
                     continue;
                 }
 
-                Register(pluginContext, new[] { applicationContext });
+                Register(pluginContext, [applicationContext]);
             }
         }
 
@@ -297,7 +393,7 @@ namespace WebExpress.WebCore.WebSocket
                 var conditions = new List<ICondition>();
                 var cache = false;
                 var subProtocols = new List<string>();
-                var messageType = WebSocketMessageType.Text;
+                var messageType = SocketMessageType.Text;
                 var maxMessageSize = ulong.MinValue;
                 var attributes = socketType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)));
@@ -325,7 +421,7 @@ namespace WebExpress.WebCore.WebSocket
                 {
                     if (customAttribute.AttributeType == typeof(MessageTypeAttribute))
                     {
-                        messageType = Enum.Parse<WebSocketMessageType>(customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString());
+                        messageType = Enum.Parse<SocketMessageType>(customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString());
                     }
                     else if (customAttribute.AttributeType == typeof(SubProtocolAttribute))
                     {
@@ -426,7 +522,9 @@ namespace WebExpress.WebCore.WebSocket
         /// <summary>
         /// Removes all sockets associated with the specified application context.
         /// </summary>
-        /// <param name="applicationContext">The context of the application that contains the sockets to remove.</param>
+        /// <param name="applicationContext">
+        /// The context of the application that contains the sockets to remove.
+        /// </param>
         internal void Remove(IApplicationContext applicationContext)
         {
             if (applicationContext is null)
@@ -510,155 +608,6 @@ namespace WebExpress.WebCore.WebSocket
         }
 
         /// <summary> 
-        /// Performs the server-side WebSocket upgrade handshake and creates a WebSocket instance. 
-        /// Validates the required handshake headers, negotiates an optional subprotocol, 
-        /// and delegates the protocol switch to the ASP.NET Core WebSocket feature. 
-        /// </summary> 
-        /// <param name="httpContext"> 
-        /// The current HTTP context containing the incoming WebSocket upgrade request. 
-        /// </param> 
-        /// <param name="socketContext"> 
-        /// Context information for the WebSocket endpoint, including supported subprotocols. 
-        /// </param> 
-        /// <returns> 
-        /// A <see cref="System.Net.WebSockets.WebSocket"/> instance representing the established WebSocket connection, 
-        /// or <c>null</c> if the handshake fails and an appropriate HTTP response is sent. 
-        /// </returns>
-        private static Task<System.Net.WebSockets.WebSocket> CreateWebSocket(HttpContext httpContext, ISocketContext socketContext)
-        {
-            // basic handshake pre-checks: Upgrade header, Connection header, Sec-WebSocket-Key and version
-            var request = httpContext.Request;
-            var wsFeature = httpContext.Features.Get<IHttpWebSocketFeature>();
-            var upgradeHeader = request.Header.Upgrade;
-            var connectionHeader = request.Header.Connection;
-            var secKey = request.Header.SecWebSocketKey;
-            var secVersion = request.Header.SecWebSocketVersion;
-            var secProtocol = request.Header.SecWebSocketProtocol;
-
-            if (string.IsNullOrWhiteSpace(upgradeHeader) || !upgradeHeader.Equals("websocket", StringComparison.OrdinalIgnoreCase)
-                || string.IsNullOrWhiteSpace(connectionHeader) || !connectionHeader.Split(',').Select(x => x.Trim()).Any(x => x.Equals("upgrade", StringComparison.OrdinalIgnoreCase))
-                || string.IsNullOrWhiteSpace(secKey)
-                || string.IsNullOrWhiteSpace(secVersion) || !secVersion.Split(',').Select(x => x.Trim()).Any(x => x.Equals("13")))
-            {
-                // missing or invalid websocket handshake headers
-                throw new SocketHandshakeException("Invalid WebSocket handshake headers");
-            }
-
-            // negotiate subprotocol: pick first supported subprotocol present in client's Sec-WebSocket-Protocol header
-            var negotiatedSubProtocol = "";
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(secProtocol) && socketContext is not null)
-                {
-                    var requestedProtocols = secProtocol.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(x => x.Trim());
-                    negotiatedSubProtocol = socketContext.SupportedSubProtocols
-                        .Intersect(requestedProtocols, StringComparer.OrdinalIgnoreCase)
-                        .FirstOrDefault();
-                }
-            }
-            catch
-            {
-                // ignore negotiation failures and continue without subprotocol
-                negotiatedSubProtocol = null;
-            }
-
-            // accept the websocket; ASP.NET Core will perform the 101 Switching Protocols handshake
-            var webSocketAcceptContext = new Microsoft.AspNetCore.Http.WebSocketAcceptContext()
-            {
-                SubProtocol = negotiatedSubProtocol
-            };
-
-            return wsFeature.AcceptAsync(webSocketAcceptContext);
-        }
-
-        /// <summary> 
-        /// Parses a received WebSocket frame into a <see cref="ISocketMessage"/> instance. 
-        /// Supports both text and binary frames, applies JSON deserialization when possible, 
-        /// and enriches the resulting message with connection and endpoint metadata. 
-        /// </summary> 
-        /// <param name="connectionId"> 
-        /// The unique identifier assigned to the current WebSocket connection. 
-        /// </param> 
-        /// <param name="socketContext"> 
-        /// Context information for the WebSocket endpoint, including application and endpoint metadata. 
-        /// </param> 
-        /// <param name="result"> 
-        /// The <see cref="WebSocketReceiveResult"/> describing the received frame. 
-        /// </param> 
-        /// <param name="stream"> 
-        /// The memory stream containing the accumulated payload of the WebSocket message. 
-        /// </param> 
-        /// <returns> 
-        /// A <see cref="ISocketMessage"/> representing the parsed and enriched message. 
-        /// </returns>
-        private static ISocketMessage ParseMessage
-        (
-            string connectionId,
-            ISocketContext socketContext,
-            WebSocketReceiveResult result,
-            MemoryStream stream
-        )
-        {
-            // produce SocketMessage from buffer
-            stream.Seek(0, SeekOrigin.Begin);
-
-            if (result.MessageType == WebSocketMessageType.Text)
-            {
-                // extract UTF‑8 text from the stream
-                var text = Encoding.UTF8.GetString(stream.ToArray());
-
-                ISocketMessage parsed = null;
-
-                try
-                {
-                    using var doc = JsonDocument.Parse(text);
-
-                    if (doc.RootElement.TryGetProperty("text", out _))
-                    {
-                        parsed = JsonSerializer.Deserialize<SocketMessageText>(text);
-                    }
-                    else if (doc.RootElement.TryGetProperty("data", out _))
-                    {
-                        parsed = JsonSerializer.Deserialize<SocketMessageBinary>(text);
-                    }
-                    else
-                    {
-                        // default
-                        parsed = JsonSerializer.Deserialize<SocketMessageText>(text);
-                    }
-                }
-                catch
-                {
-                    // JSON invalid → fallback to plain text message
-                    parsed = new SocketMessageText
-                    {
-                        Type = null,
-                        Text = text,
-                        ConnectionId = connectionId,
-                        ApplicationId = socketContext?.ApplicationContext?.ApplicationId,
-                        SocketId = socketContext?.EndpointId?.ToString()
-                    };
-                }
-
-                return parsed;
-            }
-            else // binary
-            {
-                var bytes = stream.ToArray();
-
-                return new SocketMessageBinary
-                {
-                    Type = null,
-                    Data = bytes,
-                    ConnectionId = connectionId,
-                    ApplicationId = socketContext?.ApplicationContext?.ApplicationId,
-                    SocketId = socketContext?.EndpointId?.ToString()
-                };
-            }
-        }
-
-        /// <summary> 
         /// Dispatches the parsed <see cref="ISocketMessage"/> to the socket handler implementation. 
         /// Invokes the receive callback and forwards any handler exceptions to the error callback. 
         /// </summary> 
@@ -671,8 +620,17 @@ namespace WebExpress.WebCore.WebSocket
         /// <returns> 
         /// A task that represents the asynchronous dispatch operation. 
         /// </returns>
+        /// <summary>
+        /// Dispatches a parsed <see cref="ISocketMessage"/> to the socket handler.
+        /// Invokes the receive callback and forwards any handler exceptions to the error callback.
+        /// </summary>
         private static async Task DispatchMessage(ISocket instance, ISocketMessage message)
         {
+            if (instance == null || message == null)
+            {
+                return;
+            }
+
             try
             {
                 await instance.OnReceiveAsync(message);
@@ -681,6 +639,19 @@ namespace WebExpress.WebCore.WebSocket
             {
                 await instance.OnErrorAsync(ex);
             }
+        }
+
+        /// <summary>
+        /// Computes the Sec-WebSocket-Accept header value from the client key.
+        /// </summary>
+        /// <param name="key">The Sec-WebSocket-Key from the client.</param>
+        /// <returns>The computed Sec-WebSocket-Accept value.</returns>
+        private static string ComputeWebSocketAcceptKey(string key)
+        {
+            var combined = key + _webSocketGuid;
+            var hash = SHA1.HashData(Encoding.UTF8.GetBytes(combined));
+
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>

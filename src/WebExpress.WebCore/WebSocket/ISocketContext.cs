@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebSocket
         /// for JSON or human-readable content, or <see cref="WebSocketMessageType.Binary"/> 
         /// for binary payloads. 
         /// </summary>
-        WebSocketMessageType MessageType { get; }  
+        SocketMessageType MessageType { get; }
 
         /// <summary>
         /// Returns the maximum allowed message size in bytes, or null when the endpoint imposes no limit.

@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebRestApi
     /// </summary>
     public class RestApiValidator
     {
-        private readonly Request _request;
+        private readonly IRequest _request;
         private readonly RestApiValidationResult _result = new();
         private bool _currentCondition = true;
 
@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// Initializes a new instance of the class with the specified request.
         /// </summary>
         /// <param name="request">The request to be validated.</param>
-        public RestApiValidator(Request request)
+        public RestApiValidator(IRequest request)
         {
             _request = request;
         }
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// met; otherwise, false.
         /// </param>
         /// <returns>The current instance, allowing for method chaining.</returns>
-        public RestApiValidator When(Func<Request, bool> condition)
+        public RestApiValidator When(Func<IRequest, bool> condition)
         {
             _currentCondition = condition(_request);
             return this;
@@ -617,7 +617,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// Defaults to "CUSTOM" if not specified.
         /// </param>
         /// <returns>The current instance, allowing for method chaining.</returns>
-        public RestApiValidator Custom(Func<Request, bool> condition, string message, string parameter = null, string code = "CUSTOM")
+        public RestApiValidator Custom(Func<IRequest, bool> condition, string message, string parameter = null, string code = "CUSTOM")
         {
             if (!_currentCondition)
             {

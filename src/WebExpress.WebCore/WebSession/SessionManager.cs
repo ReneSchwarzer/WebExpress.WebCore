@@ -38,11 +38,11 @@ namespace WebExpress.WebCore.WebSession
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The session.</returns>
-        public Session GetSession(Request request)
+        public Session GetSession(IRequest request)
         {
             var session = default(Session);
 
-            // Session ermitteln
+            // determine session
             var sessionCookie = request?.Header
                 .Cookies?.Where(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
@@ -78,20 +78,20 @@ namespace WebExpress.WebCore.WebSession
         }
 
         /// <summary>
-        /// Cleans up expired sessions from the session manager based on the specified session timeout.
+        /// Cleans up expired sessions from the session manager based on the specified 
+        /// session timeout.
         /// </summary>
-        /// <remarks>
-        /// This method iterates through the sessions and removes those that have been inactive
-        /// for longer than the configured session timeout. It logs the removal of each expired session.
-        /// </remarks>
         /// <param name="applicationContext">
-        /// The application context containing configuration settings, including the session timeout duration.
+        /// The application context containing configuration settings, including the session 
+        /// timeout duration.
         /// </param>
         /// <param name="timeoutMinutes">
-        /// The explicit session timeout in minutes; if non-positive, the configured timeout is used. If 
-        /// the effective timeout is non-positive, cleanup is skipped.
+        /// The explicit session timeout in minutes; if non-positive, the configured 
+        /// timeout is used. If the effective timeout is non-positive, cleanup is skipped.
         /// </param>
-        /// <returns>The current instance of the session manager, allowing for method chaining.</returns>
+        /// <returns>
+        /// The current instance of the session manager, allowing for method chaining.
+        /// </returns>
         public ISessionManager CleanUp(IApplicationContext applicationContext, int timeoutMinutes = 60 * 24 * 365)
         {
             // validate input

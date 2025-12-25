@@ -42,6 +42,6 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="applicationContext">The application context where the status pages are located or null for an undefined page (may be from another application) that matches the status code.</param>
         /// <param name="request">The request.</param>
         /// <returns>The response or null.</returns>
-        Response CreateStatusResponse(string message, int status, IApplicationContext applicationContext, Request request);
+        Response CreateStatusResponse(string message, int status, IApplicationContext applicationContext, IRequest request);
     }
 }

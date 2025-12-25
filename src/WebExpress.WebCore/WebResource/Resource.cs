@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        public abstract Response Process(Request request);
+        public abstract IResponse Process(IRequest request);
 
         /// <summary>
         /// Performs application-specific tasks related to sharing, returning, or resetting unmanaged resources.

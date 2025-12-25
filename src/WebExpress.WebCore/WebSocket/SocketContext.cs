@@ -6,6 +6,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -46,7 +47,7 @@ namespace WebExpress.WebCore.WebSocket
         /// for JSON or human-readable content, or <see cref="WebSocketMessageType.Binary"/> 
         /// for binary payloads. 
         /// </summary>
-        public WebSocketMessageType MessageType { get; set; }  
+        public SocketMessageType MessageType { get; set; }
 
         /// <summary>
         /// Maximum allowed message size in bytes, or null when no limit is imposed.

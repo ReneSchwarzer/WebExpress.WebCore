@@ -7,29 +7,23 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Buffers;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Net.WebSockets;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebHtml;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebSocket;
+using WebExpress.WebCore.WebSocket.Protocol;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
 
@@ -118,7 +112,10 @@ namespace WebExpress.WebCore
             }
 
             var logger = new LogFactory();
-            var transportOptions = new OptionsWrapper<SocketTransportOptions>(new SocketTransportOptions());
+            var transportOptions = new OptionsWrapper<SocketTransportOptions>
+            (
+                new SocketTransportOptions()
+            );
             var transport = new SocketTransportFactory(transportOptions, logger);
             var serviceCollection = new ServiceCollection();
 
@@ -128,10 +125,13 @@ namespace WebExpress.WebCore
                 x.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 x.AddProvider(logger);
             });
-            serviceCollection.AddHttpLogging(x =>
-            {
-                x.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
-            });
+            serviceCollection.AddHttpLogging
+            (
+                x =>
+                {
+                    x.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+                }
+            );
 
             var serverOptions = new OptionsWrapper<KestrelServerOptions>(new KestrelServerOptions()
             {
@@ -141,8 +141,12 @@ namespace WebExpress.WebCore
                 ApplicationServices = serviceCollection.BuildServiceProvider()
             });
 
-            serverOptions.Value.Limits.MaxConcurrentConnections = Config?.Limit?.ConnectionLimit > 0 ? Config?.Limit?.ConnectionLimit : serverOptions.Value.Limits.MaxConcurrentConnections;
-            serverOptions.Value.Limits.MaxRequestBodySize = Config?.Limit?.UploadLimit > 0 ? Config?.Limit?.UploadLimit : serverOptions.Value.Limits.MaxRequestBodySize;
+            serverOptions.Value.Limits.MaxConcurrentConnections = Config?.Limit?.ConnectionLimit > 0
+                ? Config?.Limit?.ConnectionLimit
+                : serverOptions.Value.Limits.MaxConcurrentConnections;
+            serverOptions.Value.Limits.MaxRequestBodySize = Config?.Limit?.UploadLimit > 0
+                ? Config?.Limit?.UploadLimit
+                : serverOptions.Value.Limits.MaxRequestBodySize;
 
             foreach (var endpoint in Config.Endpoints)
             {
@@ -152,7 +156,11 @@ namespace WebExpress.WebCore
             Kestrel = new KestrelServer(serverOptions, transport, logger);
             Kestrel.StartAsync(this, ServerTokenSource.Token);
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.start"), args: new object[] { ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString() });
+            HttpServerContext.Log.Info(message: I18N.Translate
+            (
+                "webexpress.webcore:httpserver.start"),
+                args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]
+            );
 
             Started?.Invoke(this, new EventArgs());
         }
@@ -172,7 +180,7 @@ namespace WebExpress.WebCore
                 var port = uri.Port;
                 var host = asterisk ? Dns.GetHostEntry(Dns.GetHostName()) : Dns.GetHostEntry(uri.Host);
                 var addressList = host.AddressList
-                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : Array.Empty<IPAddress>())
+                    .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
                 HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
@@ -248,11 +256,11 @@ namespace WebExpress.WebCore
         /// <param name="context">The context of the web request.</param>
         /// <param name="searchResult">The previously resolved search result for the request.</param>
         /// <returns>The response to be sent back to the caller.</returns>
-        private Response HandleClient(HttpContext context, SearchResult searchResult)
+        private IResponse HandleClient(HttpContext context, SearchResult searchResult)
         {
             var stopwatch = Stopwatch.StartNew();
             var request = context.Request;
-            var response = default(Response);
+            var response = default(IResponse);
 
             HttpServerContext.Log.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
             HttpServerContext.Log.Info(I18N.Translate
@@ -363,86 +371,13 @@ namespace WebExpress.WebCore
         }
 
         /// <summary>
-        /// Sends the response message.
-        /// </summary>
-        /// <param name="context">The context of the request.</param>
-        /// <param name="response">The reply message.</param>
-        /// <returns>Sending the message as a task, which is executed concurrently.</returns>
-        private async Task SendResponseAsync(HttpContext context, Response response)
-        {
-            try
-            {
-                var responseFeature = context.Features.Get<IHttpResponseFeature>();
-                var responseBodyFeature = context.Features.Get<IHttpResponseBodyFeature>();
-
-                responseFeature.StatusCode = response.Status;
-                responseFeature.ReasonPhrase = response.Reason;
-                responseFeature.Headers.KeepAlive = "true";
-
-                if (response.Header.Location != null)
-                {
-                    responseFeature.Headers.Location = response.Header.Location;
-                }
-
-                if (!string.IsNullOrWhiteSpace(response.Header.CacheControl))
-                {
-                    responseFeature.Headers.CacheControl = response.Header.CacheControl;
-                }
-
-                if (!string.IsNullOrWhiteSpace(response.Header.ContentType))
-                {
-                    responseFeature.Headers.ContentType = response.Header.ContentType;
-                }
-
-                if (response.Header.WWWAuthenticate)
-                {
-                    responseFeature.Headers.WWWAuthenticate = "Basic realm=\"Bereich\"";
-                }
-
-                if (response.Header.Cookies.Count != 0)
-                {
-                    responseFeature.Headers.SetCookie = string.Join(" ", response.Header.Cookies);
-                }
-
-                if (response?.Content is byte[] byteContent)
-                {
-                    responseFeature.Headers.ContentLength = byteContent.Length;
-                    await responseBodyFeature.Stream.WriteAsync(byteContent);
-                    await responseBodyFeature.Stream.FlushAsync();
-                }
-                else if (response?.Content is string strContent)
-                {
-                    var content = context.Encoding.GetBytes(strContent);
-
-                    responseFeature.Headers.ContentLength = content.Length;
-                    await responseBodyFeature.Stream.WriteAsync(content);
-                    await responseBodyFeature.Stream.FlushAsync();
-                }
-                else if (response?.Content is IHtmlNode htmlContent)
-                {
-                    var content = context.Encoding.GetBytes(htmlContent?.ToString());
-
-                    responseFeature.Headers.ContentLength = content.Length;
-                    await responseBodyFeature.Stream.WriteAsync(content);
-                    await responseBodyFeature.Stream.FlushAsync();
-                }
-
-                responseBodyFeature.Stream.Close();
-            }
-            catch (Exception ex)
-            {
-                HttpServerContext.Log.Error(context.RemoteEndPoint + ": " + ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Creates a status page.
         /// </summary>
         /// <param name="message">The error message.</param>
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private static Response CreateStatusPage<T>(string message, Request request, SearchResult searchResult = null) where T : Response, new()
+        private static Response CreateStatusPage<T>(string message, IRequest request, SearchResult searchResult = null) where T : Response, new()
         {
             var response = new T() as Response;
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
@@ -488,7 +423,9 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Create an HttpContext with a collection of HTTP features.
         /// </summary>
-        /// <param name="contextFeatures">A collection of HTTP features to use to create the HttpContext.</param>
+        /// <param name="contextFeatures">
+        /// A collection of HTTP features to use to create the HttpContext.
+        /// </param>
         /// <returns>The HttpContext created.</returns>
         public HttpContext CreateContext(IFeatureCollection contextFeatures)
         {
@@ -503,82 +440,35 @@ namespace WebExpress.WebCore
         }
 
         /// <summary>
-        /// Determines whether the incoming context represents a websocket upgrade request.
-        /// </summary>
-        /// <param name="httpContext">The incoming http context.</param>
-        /// <returns>True when the request is a websocket upgrade request, false otherwise.</returns>
-        private static bool IsWebSocketRequest(HttpContext httpContext)
-        {
-            var wsFeature = httpContext.Features.Get<IHttpWebSocketFeature>();
-            if (wsFeature != null)
-            {
-                return true;
-            }
-
-            try
-            {
-                var upgrade = httpContext.Request?.Header?.Upgrade;
-                if (!string.IsNullOrWhiteSpace(upgrade) && upgrade.Equals("websocket", StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            catch
-            {
-                // ignore
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Determines whether the provided searchResult represents a websocket endpoint by checking for IWebSocketContext.
-        /// </summary>
-        /// <param name="searchResult">The sitemap search result.</param>
-        /// <returns>True when the search result indicates a websocket endpoint.</returns>
-        private static bool IsWebSocketSearchResult(SearchResult searchResult)
-        {
-            if (searchResult == null)
-            {
-                return false;
-            }
-
-            // endpoint context is websocket context
-            if (searchResult.EndpointContext is ISocketContext)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Processes an http context asynchronously.
-        /// If the request is a websocket upgrade to a configured endpoint, handle websocket lifecycle instead of request/response.
+        /// If the request is a websocket upgrade to a configured endpoint, handle 
+        /// websocket lifecycle instead of request/response.
         /// Handles missing sitemap endpoints directly here.
         /// </summary>
         /// <param name="httpContext">The http context that the operation processes.</param>
         /// <returns>Provides an asynchronous operation that handles the http context.</returns>
         public async Task ProcessRequestAsync(HttpContext httpContext)
         {
+            var responseSender = new ResponseSender();
+
             if (httpContext is HttpExceptionContext exceptionContext)
             {
                 var message = "<html><head><title>404</title></head><body>" +
-                       $"<h4>Message</h4>{exceptionContext.Exception.Message}<br/><br/>" +
-                       $"<h5>Source</h5>{exceptionContext.Exception.Source}<br/><br/>" +
-                       $"<h5>StackTrace</h5>{exceptionContext.Exception.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
-                       $"<h5>InnerException</h5>{exceptionContext.Exception.InnerException?.ToString().Replace("\n", "<br/>\n")}" +
-                       "</body></html>";
+                    $"<h4>Message</h4>{exceptionContext.Exception.Message}<br/><br/>" +
+                    $"<h5>Source</h5>{exceptionContext.Exception.Source}<br/><br/>" +
+                    $"<h5>StackTrace</h5>{exceptionContext.Exception.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
+                    $"<h5>InnerException</h5>{exceptionContext.Exception.InnerException?.ToString().Replace("\n", "<br/>\n")}" +
+                    "</body></html>";
 
                 var response500 = CreateStatusPage<ResponseInternalServerError>(message, httpContext?.Request);
 
-                await SendResponseAsync(exceptionContext, response500);
+                await responseSender.SendAsync(exceptionContext, response500);
 
                 return;
             }
 
-            var culture = httpContext.Request.Culture;
-            var searchResult = WebEx.ComponentHub.SitemapManager.SearchResource(httpContext.Uri, new SearchContext()
+            var culture = httpContext?.Request.Culture;
+            var searchResult = WebEx.ComponentHub.SitemapManager.SearchResource(httpContext?.Uri, new SearchContext()
             {
                 Culture = culture,
                 HttpContext = httpContext,
@@ -587,23 +477,30 @@ namespace WebExpress.WebCore
 
             if (searchResult == null)
             {
-                var notFoundResponse = CreateStatusPage<ResponseNotFound>("Resource not found", httpContext.Request);
-                await SendResponseAsync(httpContext, notFoundResponse);
+                var notFoundResponse = CreateStatusPage<ResponseNotFound>
+                (
+                    "Resource not found",
+                    httpContext.Request
+                );
+
+                await responseSender.SendAsync(httpContext, notFoundResponse);
+
                 return;
             }
 
-            if (IsWebSocketSearchResult(searchResult) && IsWebSocketRequest(httpContext))
+            if (httpContext.Request is RequestWebSocket)
             {
                 // try to obtain websocket context and optional handler
                 var socketContext = searchResult.EndpointContext as ISocketContext;
 
                 await HandleWebSocketAsync(httpContext, socketContext);
+
                 return;
             }
 
             var response = HandleClient(httpContext, searchResult);
 
-            await SendResponseAsync(httpContext, response);
+            await responseSender.SendAsync(httpContext, response);
         }
 
         /// <summary>
@@ -620,13 +517,15 @@ namespace WebExpress.WebCore
         /// </param>
         public async Task HandleWebSocketAsync(HttpContext httpContext, ISocketContext socketContext)
         {
+            var responseSender = new ResponseSender();
             var socketManager = WebEx.ComponentHub.SocketManager;
 
             // validate that the request is a websocket upgrade
-            if (!IsWebSocketRequest(httpContext))
+            if (httpContext.Request is not RequestWebSocket)
             {
                 // websocket not requested by client; return 400 Bad Request
-                await SendResponseAsync(httpContext, new ResponseBadRequest(new StatusMessage("WebSocket upgrade required")));
+                await responseSender.SendAsync(httpContext, new ResponseBadRequest(new StatusMessage("WebSocket upgrade required")));
+
                 return;
             }
 
@@ -640,13 +539,13 @@ namespace WebExpress.WebCore
                 var response = new ResponseUpgradeRequired(new StatusMessage("Invalid WebSocket handshake headers"));
                 response.Header.Upgrade = "websocket";
 
-                await SendResponseAsync(httpContext, response);
+                await responseSender.SendAsync(httpContext, response);
             }
-            catch (SocketMessageTooLargeException ex) 
-            { 
+            catch (SocketMessageTooLargeException ex)
+            {
                 // the client sent a WebSocket message exceeding the configured maximum size -> respond with 413 
-                var response = new ResponsePayloadTooLarge(new StatusMessage($"WebSocket message exceeds the maximum allowed size of {ex.MaxSize} bytes.") );
-                await SendResponseAsync(httpContext, response); 
+                var response = new ResponsePayloadTooLarge(new StatusMessage($"WebSocket message exceeds the maximum allowed size of {ex.MaxSize} bytes."));
+                await responseSender.SendAsync(httpContext, response);
             }
             catch (SocketException ex)
             {
@@ -654,7 +553,7 @@ namespace WebExpress.WebCore
 
                 // return 500 when socket error 
                 var response = new ResponseInternalServerError(new StatusMessage("A transport-level socket error occurred during WebSocket communication."));
-                await SendResponseAsync(httpContext, response);
+                await responseSender.SendAsync(httpContext, response);
             }
             catch (Exception ex)
             {
@@ -663,7 +562,7 @@ namespace WebExpress.WebCore
 
                 // return 500 when handshake did not succeed and no websocket established
                 var response = new ResponseInternalServerError(new StatusMessage("An unexpected server error occurred during WebSocket processing."));
-                await SendResponseAsync(httpContext, response);
+                await responseSender.SendAsync(httpContext, response);
             }
         }
 

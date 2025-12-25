@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the request.
         /// </summary>
-        public Request Request { get; protected set; }
+        public IRequest Request { get; protected set; }
 
         /// <summary>
         /// The uri of the request.
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="endpoint">The endpoint associated with the rendering context.</param>
         /// <param name="pageContext">The page context.</param>
         /// <param name="request">The request associated with the rendering context.</param>
-        public RenderContext(IEndpoint endpoint, IPageContext pageContext, Request request)
+        public RenderContext(IEndpoint endpoint, IPageContext pageContext, IRequest request)
         {
             Endpoint = endpoint;
             PageContext = pageContext;

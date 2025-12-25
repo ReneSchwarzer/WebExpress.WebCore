@@ -27,6 +27,6 @@ namespace WebExpress.WebCore.WebPage
         /// <summary>
         /// Returns the request.
         /// </summary>
-        Request Request { get; }
+        IRequest Request { get; }
     }
 }

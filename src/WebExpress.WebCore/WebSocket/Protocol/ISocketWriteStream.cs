@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace WebExpress.WebCore.WebSocket
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents an asynchronous write-only stream abstraction for sending
@@ -16,7 +16,9 @@ namespace WebExpress.WebCore.WebSocket
         /// multiple times to send a message in fragments.
         /// </summary>
         /// <param name="buffer">The data buffer to write.</param>
-        /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the operation to complete.
+        /// </param>
         Task WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -24,7 +26,9 @@ namespace WebExpress.WebCore.WebSocket
         /// <c>endOfMessage</c> set to <c>true</c>.
         /// After calling this method, no further writes are allowed.
         /// </summary>
-        /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
+        /// <param name="cancellationToken">
+        /// A token to observe while waiting for the operation to complete.
+        /// </param>
         Task CompleteAsync(CancellationToken cancellationToken = default);
     }
 }
