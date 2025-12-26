@@ -97,19 +97,12 @@ namespace WebExpress.WebCore.WebSocket
         /// <returns> 
         /// A task that represents the asynchronous handling of the WebSocket connection. 
         /// </returns>
-        public async Task HandleConnectionAsync(HttpContext httpContext, ISocketContext socketContext)
+        public async Task HandleConnectionAsync(IHttpContext httpContext, ISocketContext socketContext)
         {
             var connectionId = Guid.NewGuid().ToString();
             var closeDescription = "closing";
             var cancellationToken = CancellationToken.None;
-
-            var responseFeature = httpContext.Features.Get<IHttpResponseFeature>();
-            var responseBodyFeature = httpContext.Features.Get<IHttpResponseBodyFeature>();
             var requestFeature = httpContext.Features.Get<IHttpRequestFeature>();
-
-            var headers = httpContext.Request.Header
-                .ToDictionary();
-
             var connection = httpContext.Request.Header.Connection;
             var upgrade = httpContext.Request.Header.Upgrade;
             var key = httpContext.Request.Header.SecWebSocketKey;
@@ -144,75 +137,7 @@ namespace WebExpress.WebCore.WebSocket
             try
             {
                 // 5. receive loop
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    var frame = await webSocket.ReadFrameAsync();
-
-                    switch (frame.MessageType)
-                    {
-                        case SocketMessageType.Text:
-                            {
-                                var text = Encoding.UTF8.GetString(frame.Payload);
-                                var msg = new SocketMessageText
-                                {
-                                    Text = text,
-                                    SocketId = socketContext.EndpointId?.ToString(),
-                                    ConnectionId = connectionId
-                                };
-
-                                await DispatchMessage(instance, msg);
-                                break;
-                            }
-
-                        case SocketMessageType.Binary:
-                            {
-                                var msg = new SocketMessageBinary
-                                {
-                                    Data = frame.Payload,
-                                    SocketId = socketContext.EndpointId?.ToString(),
-                                    ConnectionId = connectionId
-                                };
-
-                                await DispatchMessage(instance, msg);
-                                break;
-                            }
-
-                        case SocketMessageType.Close:
-                            {
-                                if (frame is SocketFrameClose close)
-                                {
-                                    await webSocket.SendCloseAsync
-                                    (
-                                        close.Status,
-                                        close.Description
-                                    );
-                                    closeDescription = $"{close.Status}: {close.Description}";
-                                }
-                                else
-                                {
-                                    await webSocket.SendCloseAsync
-                                    (
-                                        SocketCloseStatus.NormalClosure,
-                                        "closing"
-                                    );
-                                    closeDescription = "normal closure";
-                                }
-                                return;
-                            }
-
-                        case SocketMessageType.Ping:
-                            await webSocket.SendPongAsync(frame.Payload);
-                            break;
-
-                        case SocketMessageType.Pong:
-                            break;
-
-                        case SocketMessageType.Continuation:
-                            // optional: handle fragmented messages
-                            break;
-                    }
-                }
-
+                await webSocket.StartAsync();
             }
             catch (Exception ex)
             {
@@ -241,11 +166,12 @@ namespace WebExpress.WebCore.WebSocket
         /// <summary>
         /// Returns an enumeration of socket contexts filtered by endpoint type.
         /// </summary>
-        /// <typeparam name="T">The socket endpoint type.</typeparam>
+        /// <typeparam name="TSocket">The socket endpoint type.</typeparam>
         /// <returns>An enumeration of socket contexts.</returns>
-        public IEnumerable<ISocketContext> GetSockets<T>() where T : ISocket
+        public IEnumerable<ISocketContext> GetSockets<TSocket>()
+            where TSocket : ISocket
         {
-            return GetSockets(typeof(T));
+            return GetSockets(typeof(TSocket));
         }
 
         /// <summary>
@@ -274,12 +200,12 @@ namespace WebExpress.WebCore.WebSocket
         /// Returns an enumeration of socket contexts filtered by endpoint type and 
         /// application context.
         /// </summary>
-        /// <typeparam name="T">The socket endpoint type.</typeparam>
+        /// <typeparam name="TSocket">The socket endpoint type.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
         /// <returns>An enumeration of socket contexts.</returns>
-        public IEnumerable<ISocketContext> GetSockets<T>(IApplicationContext applicationContext) where T : ISocket
+        public IEnumerable<ISocketContext> GetSockets<TSocket>(IApplicationContext applicationContext) where TSocket : ISocket
         {
-            return _dictionary.GetSockets<T>(applicationContext);
+            return _dictionary.GetSockets<TSocket>(applicationContext);
         }
 
         /// <summary>

@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <param name="response">The reply message.</param>
         /// <param name="keepAlive">Indicates whether the connection should be kept alive after sending the response.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        public async Task SendAsync(HttpContext context, IResponse response, bool keepAlive = false)
+        public async Task SendAsync(IHttpContext context, IResponse response, bool keepAlive = false)
         {
             try
             {

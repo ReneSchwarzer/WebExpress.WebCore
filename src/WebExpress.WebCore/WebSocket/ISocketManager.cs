@@ -98,6 +98,6 @@ namespace WebExpress.WebCore.WebSocket
         /// <returns> 
         /// A task that represents the asynchronous handling of the WebSocket connection. 
         /// </returns>
-        Task HandleConnectionAsync(HttpContext httpContext, ISocketContext socketContext);
+        Task HandleConnectionAsync(IHttpContext httpContext, ISocketContext socketContext);
     }
 }

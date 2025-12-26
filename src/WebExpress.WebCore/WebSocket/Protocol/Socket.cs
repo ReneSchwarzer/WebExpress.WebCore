@@ -16,6 +16,11 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         private readonly CancellationToken _token;
 
         /// <summary>
+        /// Provides access to the underlying data stream.
+        /// </summary>
+        internal Stream Stream => _stream;
+
+        /// <summary>
         /// Occurs when a text message is received, allowing subscribers to handle the message asynchronously.
         /// </summary>
         public event Func<string, Task> OnTextMessage;
@@ -64,12 +69,16 @@ namespace WebExpress.WebCore.WebSocket.Protocol
                     case SocketMessageType.Text:
                         var text = Encoding.UTF8.GetString(frame.Payload);
                         if (OnTextMessage != null)
+                        {
                             await OnTextMessage(text);
+                        }
                         break;
 
                     case SocketMessageType.Binary:
                         if (OnBinaryMessage != null)
+                        {
                             await OnBinaryMessage(frame.Payload);
+                        }
                         break;
 
                     case SocketMessageType.Close:
@@ -83,7 +92,9 @@ namespace WebExpress.WebCore.WebSocket.Protocol
                         }
 
                         if (OnClose != null)
+                        {
                             await OnClose();
+                        }
 
                         return;
 
@@ -200,14 +211,14 @@ namespace WebExpress.WebCore.WebSocket.Protocol
             {
                 ms.WriteByte(126);
                 var len = BitConverter.GetBytes((ushort)payload.Length);
-                if (BitConverter.IsLittleEndian) Array.Reverse(len);
+                if (BitConverter.IsLittleEndian) { Array.Reverse(len); }
                 ms.Write(len);
             }
             else
             {
                 ms.WriteByte(127);
                 var len = BitConverter.GetBytes((ulong)payload.Length);
-                if (BitConverter.IsLittleEndian) Array.Reverse(len);
+                if (BitConverter.IsLittleEndian) { Array.Reverse(len); }
                 ms.Write(len);
             }
 
@@ -217,18 +228,6 @@ namespace WebExpress.WebCore.WebSocket.Protocol
             var buffer = ms.ToArray();
             await _stream.WriteAsync(buffer, 0, buffer.Length, _token);
             await _stream.FlushAsync(_token);
-        }
-
-        /// <summary>
-        /// Asynchronously reads the next frame from the underlying network stream.
-        /// </summary>
-        /// <returns>
-        /// A task that represents the asynchronous read operation. The task result 
-        /// contains the next <see cref="SocketFrame"/> read from the stream.
-        /// </returns>
-        public Task<SocketFrame> ReadFrameAsync()
-        {
-            return Task.Run(() => SocketFrameParser.ReadFrame(_stream), _token);
         }
     }
 }

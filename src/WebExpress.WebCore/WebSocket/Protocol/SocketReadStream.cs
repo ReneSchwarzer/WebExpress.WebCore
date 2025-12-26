@@ -32,6 +32,9 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// Initializes a new instance of the SocketReadStream class for reading data
         /// from a native WebExpress WebSocket connection.
         /// </summary>
+        /// <param name="socket">The WebExpress WebSocket wrapper.</param>
+        /// <param name="socketContext">The logical socket context.</param>
+        /// <param name="connectionId">The connection identifier.</param>
         public SocketReadStream(Socket socket, ISocketContext socketContext, string connectionId)
         {
             _socket = socket ?? throw new ArgumentNullException(nameof(socket));
@@ -43,25 +46,31 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// Reads a chunk of data from the underlying WebSocket transport.
         /// Supports fragmented messages by returning partial payload segments.
         /// </summary>
-        public async Task<SocketReceiveResult> ReadAsync(
+        /// <param name="buffer">The buffer receiving the data.</param>
+        /// <param name="cancellationToken">The cancellation token for the async read operation.</param>
+        /// <returns>A result indicating the bytes read and message boundaries.</returns>
+        public async Task<SocketReceiveResult> ReadAsync
+        (
             ArraySegment<byte> buffer,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            // Load a new frame if needed
+            // load a new frame if needed
             if (_currentFrame == null)
             {
-                _currentFrame = await _socket.ReadFrameAsync();
+                // uses the internal stream from the Socket class
+                _currentFrame = await Task.Run(() => SocketFrameParser.ReadFrame(_socket.Stream), cancellationToken);
                 _frameOffset = 0;
             }
 
             var payload = _currentFrame.Payload;
 
-            // Remaining bytes in this frame
+            // remaining bytes in this frame
             int remaining = payload.Length - _frameOffset;
 
             if (remaining <= 0)
             {
-                // End of message
+                // end of message
                 var messageType = _currentFrame.MessageType;
                 _currentFrame = null;
 
@@ -72,7 +81,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
                 );
             }
 
-            // Copy as much as fits into the buffer
+            // copy as much as fits into the buffer
             int toCopy = Math.Min(buffer.Count, remaining);
 
             Array.Copy(
@@ -104,6 +113,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// Marks the current message as fully consumed.
         /// For the native protocol, this is a no-op.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token (unused).</param>
         public Task CompleteAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
@@ -129,6 +139,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// <summary>
         /// Performs cleanup operations for the read stream.
         /// </summary>
+        /// <returns>A value task indicating the stream was disposed.</returns>
         public ValueTask DisposeAsync()
         {
             try
@@ -137,7 +148,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
             }
             catch
             {
-                // Socket already closed or broken – ignore
+                // socket already closed or broken – ignore
             }
 
             return ValueTask.CompletedTask;

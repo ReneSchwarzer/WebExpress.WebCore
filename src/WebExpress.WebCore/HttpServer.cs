@@ -32,7 +32,7 @@ namespace WebExpress.WebCore
     /// <summary>
     /// The web server for processing http requests (see RFC 2616). The web server uses Kestrel internally.
     /// </summary>
-    public class HttpServer : IHost, IHttpApplication<HttpContext>
+    public class HttpServer : IHost, IHttpApplication<IHttpContext>
     {
         /// <summary>
         /// Event is triggered after the web server is started.
@@ -256,7 +256,7 @@ namespace WebExpress.WebCore
         /// <param name="context">The context of the web request.</param>
         /// <param name="searchResult">The previously resolved search result for the request.</param>
         /// <returns>The response to be sent back to the caller.</returns>
-        private IResponse HandleClient(HttpContext context, SearchResult searchResult)
+        private IResponse HandleClient(IHttpContext context, SearchResult searchResult)
         {
             var stopwatch = Stopwatch.StartNew();
             var request = context.Request;
@@ -421,20 +421,30 @@ namespace WebExpress.WebCore
         }
 
         /// <summary>
-        /// Create an HttpContext with a collection of HTTP features.
+        /// Creates an appropriate IHttpContext instance (HttpContext or WebSocketContext) 
+        /// based on feature detection.
         /// </summary>
-        /// <param name="contextFeatures">
-        /// A collection of HTTP features to use to create the HttpContext.
-        /// </param>
-        /// <returns>The HttpContext created.</returns>
-        public HttpContext CreateContext(IFeatureCollection contextFeatures)
+        /// <param name="contextFeatures">The feature collection of the request.</param>
+        /// <returns>An IHttpContext instance for the request.</returns>
+        public IHttpContext CreateContext(IFeatureCollection contextFeatures)
         {
             try
             {
+                var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
+
+                // check if schema or upgrade header indicates websocket
+                if (IsWebSocketRequest(requestFeature))
+                {
+                    // use WebSocketContext for websocket connections
+                    return new HttpWebSocketContext(contextFeatures, HttpServerContext);
+                }
+
+                // use regular HttpContext for normal HTTP requests
                 return new HttpContext(contextFeatures, HttpServerContext);
             }
             catch (Exception ex)
             {
+                // fall back to HttpExceptionContext on error
                 return new HttpExceptionContext(ex, contextFeatures);
             }
         }
@@ -447,7 +457,7 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="httpContext">The http context that the operation processes.</param>
         /// <returns>Provides an asynchronous operation that handles the http context.</returns>
-        public async Task ProcessRequestAsync(HttpContext httpContext)
+        public async Task ProcessRequestAsync(IHttpContext httpContext)
         {
             var responseSender = new ResponseSender();
 
@@ -515,7 +525,7 @@ namespace WebExpress.WebCore
         /// Optional WebSocket endpoint context resolved from the sitemap. May be <c>null</c>
         /// if the endpoint does not define additional metadata.
         /// </param>
-        public async Task HandleWebSocketAsync(HttpContext httpContext, ISocketContext socketContext)
+        public async Task HandleWebSocketAsync(IHttpContext httpContext, ISocketContext socketContext)
         {
             var responseSender = new ResponseSender();
             var socketManager = WebEx.ComponentHub.SocketManager;
@@ -571,8 +581,31 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="context">The http context to discard.</param>
         /// <param name="exception">The exception that is thrown if processing did not complete successfully; otherwise null.</param>
-        public void DisposeContext(HttpContext context, Exception exception)
+        public void DisposeContext(IHttpContext context, Exception exception)
         {
+        }
+
+        /// <summary>
+        /// Checks whether the current request is a WebSocket connection.
+        /// </summary>
+        /// <param name="requestFeature">The HTTP request feature instance.</param>
+        /// <returns>True if it is a WebSocket connection; otherwise, false.</returns>
+        private bool IsWebSocketRequest(IHttpRequestFeature requestFeature)
+        {
+            // check scheme and "Upgrade" header for websocket protocol
+            if (requestFeature == null)
+            {
+                return false;
+            }
+
+            var upgradeHeader = requestFeature.Headers.Upgrade;
+            var scheme = requestFeature.Scheme;
+            var isWebSocket =
+                upgradeHeader.Contains("websocket", StringComparer.OrdinalIgnoreCase) ||
+                string.Equals(scheme, "ws", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(scheme, "wss", StringComparison.OrdinalIgnoreCase);
+
+            return isWebSocket;
         }
     }
 }

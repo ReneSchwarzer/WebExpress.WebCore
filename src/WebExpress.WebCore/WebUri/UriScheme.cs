@@ -38,7 +38,18 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The Mailto URI scheme.
         /// </summary>
-        Mailto
+        Mailto,
+
+        /// <summary>
+        /// Represents a web service or related functionality.
+        /// </summary>
+        Ws,
+
+        /// <summary>
+        /// Specifies the WebSocket Secure (WSS) protocol, which provides encrypted 
+        /// communication over WebSockets using TLS.
+        /// </summary>
+        Wss
     }
 
     /// <summary>
@@ -62,6 +73,8 @@ namespace WebExpress.WebCore.WebUri
                 UriScheme.Ldap => "ldap",
                 UriScheme.Ldaps => "ldaps",
                 UriScheme.Mailto => "mailto",
+                UriScheme.Ws => "ws",
+                UriScheme.Wss => "wss",
                 _ => "http"
             };
         }

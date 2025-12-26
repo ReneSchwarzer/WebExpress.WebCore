@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http.Features;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -105,43 +106,39 @@ namespace WebExpress.WebCore.WebMessage
         /// Initializes a new instance for a WebSocket request. 
         /// Use this after WebSocket handshake is established.
         /// </summary>
-        /// <param name="httpServerContext">The server context.</param>
-        /// <param name="uri">The endpoint URI.</param>
-        /// <param name="session">The session.</param>
-        /// <param name="header">Header fields.</param>
-        /// <param name="method">Method (typically GET at handshake).</param>
-        /// <param name="protocoll">HTTP version.</param>
-        /// <param name="scheme">The URI scheme (ws, wss).</param>
-        /// <param name="localEndPoint">The local endpoint.</param>
-        /// <param name="remoteEndPoint">The remote endpoint.</param>
-        /// <param name="traceId">Trace identifier.</param>
-        /// <param name="isSecureConnection">Whether the connection is secure.</param>
-        internal RequestWebSocket
-        (
-            IHttpServerContext httpServerContext,
-            UriEndpoint uri,
-            Session session,
-            RequestHeaderFields header,
-            RequestMethod method,
-            string protocoll,
-            UriScheme scheme,
-            EndPoint localEndPoint,
-            EndPoint remoteEndPoint,
-            string traceId,
-            bool isSecureConnection
-        )
+        /// <param name="contextFeatures">The feature collection from ASP.NET Core.</param>
+        /// <param name="header">The parsed header fields of the request.</param>
+        /// <param name="httpServerContext">The context of the web server.</param>
+        internal RequestWebSocket(IFeatureCollection contextFeatures, RequestHeaderFields header, IHttpServerContext httpServerContext)
         {
             HttpServerContext = httpServerContext;
-            Uri = uri;
-            Session = session;
             Header = header;
-            Method = method;
-            Protocoll = protocoll;
-            Scheme = scheme;
-            LocalEndPoint = localEndPoint;
-            RemoteEndPoint = remoteEndPoint;
-            RequestTraceIdentifier = traceId;
-            IsSecureConnection = isSecureConnection;
+
+            var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
+            var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
+
+            Method = RequestMethod.GET; // WebSocket handshake always uses GET
+            Protocoll = requestFeature.Protocol;
+
+            Scheme = requestFeature.Scheme.Equals("wss", StringComparison.OrdinalIgnoreCase) ? UriScheme.Wss :
+                requestFeature.Scheme.Equals("ws", StringComparison.OrdinalIgnoreCase) ? UriScheme.Ws : UriScheme.Http;
+
+            LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
+            RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
+            RequestTraceIdentifier = connectionFeature.ConnectionId;
+            IsSecureConnection = Scheme == UriScheme.Wss;
+
+            // build the uri-endpoint for WebSocket (assume raw target is path + query)
+            Uri = new UriEndpoint
+             (
+                 Scheme,
+                 new UriAuthority()
+                 {
+                     Host = Header.Host,
+                     Port = connectionFeature.LocalPort
+                 },
+                 requestFeature.RawTarget
+             );
 
             // WebSocket specific defaults
             WebSocketMessageType = null;
@@ -151,9 +148,11 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Adds several parameters.
+        /// Adds a collection of parameters to the current instance.
         /// </summary>
-        /// <param name="param">The parameters.</param>
+        /// <param name="param">
+        /// An enumerable collection of <see cref="Parameter"/> objects to add. Cannot be null.
+        /// </param>
         public void AddParameter(IEnumerable<Parameter> param)
         {
             foreach (var p in param)
@@ -163,9 +162,13 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Adds one parameter.
+        /// Adds a parameter to the collection, replacing any existing parameter with the 
+        /// same key (case-insensitive).
         /// </summary>
-        /// <param name="param">The parameter.</param>
+        /// <param name="param">
+        /// The parameter to add to the collection. Cannot be null. The parameter's key 
+        /// is used as the unique identifier.
+        /// </param>
         public void AddParameter(Parameter param)
         {
             var key = param.Key.ToLower();
@@ -177,10 +180,15 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Returns a parameter by name.
+        /// Retrieves the parameter with the specified name, if it exists.
         /// </summary>
-        /// <param name="name">The name of the parameter.</param>
-        /// <returns>The value.</returns>
+        /// <param name="name">
+        /// The name of the parameter to retrieve. Cannot be null, empty, or consist 
+        /// only of white-space characters. The comparison is case-insensitive.
+        /// </param>
+        /// <returns>
+        /// The parameter associated with the specified name, or null if no such parameter exists.
+        /// </returns>
         public IParameter GetParameter(string name)
         {
             if (!string.IsNullOrWhiteSpace(name) && HasParameter(name))
@@ -192,17 +200,26 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Returns a parameter by type.
+        /// Retrieves the parameter of the specified type from the current parameter 
+        /// collection, if it exists.
         /// </summary>
-        /// <typeparam name="TParameter">The parameter type.</typeparam>
-        /// <returns>The value.</returns>
+        /// <typeparam name="TParameter">
+        /// The type of parameter to retrieve. Must implement the IParameter interface.
+        /// </typeparam>
+        /// <returns>
+        /// An instance of the specified parameter type with its value and scope set
+        /// if the parameter exists; otherwise, null.
+        /// </returns>
         public IParameter GetParameter<TParameter>()
             where TParameter : IParameter
         {
             var parameter = Parameter.GetParameter<TParameter>();
-            if (parameter is not null
+            if
+            (
+                parameter is not null
                 && !string.IsNullOrWhiteSpace(parameter.Key)
-                && HasParameter(parameter.Key))
+                && HasParameter(parameter.Key)
+            )
             {
                 var p = _param[parameter.Key.ToLower()];
                 parameter.Value = p.Value;
@@ -215,10 +232,14 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Checks whether a parameter exists.
+        /// Determines whether a parameter with the specified name exists.
         /// </summary>
-        /// <param name="name">The name of the parameter.</param>
-        /// <returns>True if the parameter is present, false otherwise.</returns>
+        /// <param name="name">
+        /// The name of the parameter to locate. The comparison is case-insensitive. Can be null.
+        /// </param>
+        /// <returns>
+        /// True if a parameter with the specified name exists; otherwise, false.
+        /// </returns>
         public bool HasParameter(string name)
         {
             if (name is null)
@@ -230,7 +251,8 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Parse the session parameters.
+        /// Parses session parameters from the current session and adds them to 
+        /// the parameter collection.
         /// </summary>
         private void ParseSessionParams()
         {

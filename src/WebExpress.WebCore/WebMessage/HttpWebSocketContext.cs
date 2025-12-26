@@ -6,63 +6,66 @@ using System.Text;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// Represents the context of an HTTP request and response.
+    /// Represents the context for a WebSocket connection.
     /// </summary>
-    public class HttpContext : IHttpContext
+    public class HttpWebSocketContext : IHttpContext
     {
         /// <summary>
-        /// The context of the web server.
+        /// Returns the context of the web server.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns or sets the id.
+        /// Returns the context id.
         /// </summary>
         public string Id { get; protected set; }
 
         /// <summary>
-        /// Returns the request.
+        /// Returns the request associated with this context.
         /// </summary>
         public IRequest Request { get; protected set; }
 
         /// <summary>
-        /// Gets the ip address and port number of the server to which the request is made.
+        /// Returns the ip address and port number of the server receiving the request.
         /// </summary>
         public EndPoint LocalEndPoint { get; protected set; }
 
         /// <summary>
-        /// Gets the ip address and port number of the client from which the request originated.
+        /// Returns the ip address and port number of the client making the request.
         /// </summary>
         public EndPoint RemoteEndPoint { get; protected set; }
 
         /// <summary>
-        /// Set of features.
+        /// Returns the set of features for this context.
         /// </summary>
         public IFeatureCollection Features { get; protected set; }
 
         /// <summary>
-        /// The encoding.
+        /// Returns the encoding used by this context.
         /// </summary>
         public Encoding Encoding { get; protected set; } = Encoding.Default;
 
         /// <summary>
-        /// Returns the uri.
+        /// Returns the URI associated with this context.
         /// </summary>
         public Uri Uri { get; internal set; }
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Returns the WebSocket key for this context.
         /// </summary>
-        internal HttpContext()
-        {
-        }
+        public string WebSocketKey { get; protected set; }
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Returns whether this WebSocket is secure (wss).
         /// </summary>
-        /// <param name="contextFeatures">Initial set of features.</param>
-        /// <param name="httpServerContext">The context of the Web server.</param>
-        public HttpContext(IFeatureCollection contextFeatures, IHttpServerContext httpServerContext)
+        public bool IsSecureWebSocket { get; protected set; }
+
+        /// <summary>
+        /// Initializes a new instance of the WebSocketContext class.
+        /// </summary>
+        /// <param name="contextFeatures">The initial set of features.</param>
+        /// <param name="httpServerContext">The context of the web server.</param>
+        public HttpWebSocketContext(IFeatureCollection contextFeatures, IHttpServerContext httpServerContext)
         {
             var connectionFeature = contextFeatures.Get<IHttpConnectionFeature>();
             var requestFeature = contextFeatures.Get<IHttpRequestFeature>();
@@ -70,6 +73,7 @@ namespace WebExpress.WebCore.WebMessage
             var baseUri = new UriBuilder(requestFeature.Scheme, header.Host, connectionFeature.LocalPort).Uri;
 
             Features = contextFeatures;
+            HttpServerContext = httpServerContext;
             Id = connectionFeature.ConnectionId;
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
@@ -79,7 +83,11 @@ namespace WebExpress.WebCore.WebMessage
                 : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
-            Request = new Request(contextFeatures, header, httpServerContext);
+            // always initialize as websocket-request for this context
+            Request = new RequestWebSocket(contextFeatures, header, httpServerContext);
+
+            WebSocketKey = requestFeature.Headers["Sec-WebSocket-Key"];
+            IsSecureWebSocket = requestFeature.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
