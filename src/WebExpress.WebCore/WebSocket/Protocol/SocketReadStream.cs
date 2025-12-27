@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,16 +8,15 @@ namespace WebExpress.WebCore.WebSocket.Protocol
     /// <summary>
     /// A binary-oriented implementation of <see cref="ISocketReadStream"/>,
     /// exposing incoming WebSocket message data as raw byte segments using
-    /// the native WebExpress WebSocket protocol.
+    /// the RFC 6455 WebSocket protocol.
     /// </summary>
     public sealed class SocketReadStream : ISocketReadStream
     {
-        private readonly Socket _socket;
+        private readonly System.Net.WebSockets.WebSocket _webSocket;
         private readonly ISocketContext _socketContext;
         private readonly string _connectionId;
 
-        private SocketFrame _currentFrame;
-        private int _frameOffset = 0;
+        private WebSocketReceiveResult _lastResult = null;
 
         /// <summary>
         /// Returns the context associated with the underlying socket connection.
@@ -30,14 +30,14 @@ namespace WebExpress.WebCore.WebSocket.Protocol
 
         /// <summary>
         /// Initializes a new instance of the SocketReadStream class for reading data
-        /// from a native WebExpress WebSocket connection.
+        /// from a WebSocket connection.
         /// </summary>
-        /// <param name="socket">The WebExpress WebSocket wrapper.</param>
+        /// <param name="webSocket">The WebSocket instance.</param>
         /// <param name="socketContext">The logical socket context.</param>
         /// <param name="connectionId">The connection identifier.</param>
-        public SocketReadStream(Socket socket, ISocketContext socketContext, string connectionId)
+        public SocketReadStream(System.Net.WebSockets.WebSocket webSocket, ISocketContext socketContext, string connectionId)
         {
-            _socket = socket ?? throw new ArgumentNullException(nameof(socket));
+            _webSocket = webSocket ?? throw new ArgumentNullException(nameof(webSocket));
             _socketContext = socketContext;
             _connectionId = connectionId;
         }
@@ -55,63 +55,25 @@ namespace WebExpress.WebCore.WebSocket.Protocol
             CancellationToken cancellationToken = default
         )
         {
-            // load a new frame if needed
-            if (_currentFrame == null)
-            {
-                // uses the internal stream from the Socket class
-                _currentFrame = await Task.Run(() => SocketFrameParser.ReadFrame(_socket.Stream), cancellationToken);
-                _frameOffset = 0;
-            }
-
-            var payload = _currentFrame.Payload;
-
-            // remaining bytes in this frame
-            int remaining = payload.Length - _frameOffset;
-
-            if (remaining <= 0)
-            {
-                // end of message
-                var messageType = _currentFrame.MessageType;
-                _currentFrame = null;
-
-                return new SocketReceiveResult(
-                    count: 0,
-                    endOfMessage: true,
-                    messageType: messageType
-                );
-            }
-
-            // copy as much as fits into the buffer
-            int toCopy = Math.Min(buffer.Count, remaining);
-
-            Array.Copy(
-                payload,
-                _frameOffset,
-                buffer.Array!,
-                buffer.Offset,
-                toCopy
-            );
-
-            _frameOffset += toCopy;
-
-            bool endOfMessage = _frameOffset >= payload.Length;
-            var type = _currentFrame.MessageType;
-
-            if (endOfMessage)
-            {
-                _currentFrame = null;
-            }
+            // reads data from the WebSocket instance into the provided buffer
+            _lastResult = await _webSocket.ReceiveAsync(buffer, cancellationToken);
 
             return new SocketReceiveResult(
-                count: toCopy,
-                endOfMessage: endOfMessage,
-                messageType: type
+                count: _lastResult.Count,
+                endOfMessage: _lastResult.EndOfMessage,
+                messageType: _lastResult.MessageType switch
+                {
+                    WebSocketMessageType.Binary => SocketMessageType.Binary,
+                    WebSocketMessageType.Text => SocketMessageType.Text,
+                    WebSocketMessageType.Close => SocketMessageType.Close,
+                    _ => SocketMessageType.Binary
+                }
             );
         }
 
         /// <summary>
         /// Marks the current message as fully consumed.
-        /// For the native protocol, this is a no-op.
+        /// For the standard WebSocket protocol, this is a no-op.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token (unused).</param>
         public Task CompleteAsync(CancellationToken cancellationToken = default)
@@ -126,32 +88,41 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// <param name="description">An optional description for the closure.</param>
         /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
         /// <returns>A task that represents the asynchronous close operation.</returns>
-        public Task CloseAsync
+        public async Task CloseAsync
         (
-            SocketCloseStatus status = SocketCloseStatus.NormalClosure,
+            WebSocketCloseStatus status = WebSocketCloseStatus.NormalClosure,
             string description = null,
             CancellationToken cancellationToken = default
         )
         {
-            return _socket.SendCloseAsync(status, description);
+            await _webSocket.CloseAsync(
+                closeStatus: status,
+                statusDescription: description,
+                cancellationToken: cancellationToken
+            );
         }
 
         /// <summary>
         /// Performs cleanup operations for the read stream.
         /// </summary>
         /// <returns>A value task indicating the stream was disposed.</returns>
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             try
             {
-                _socket.SendCloseAsync(SocketCloseStatus.NormalClosure, "disposing");
+                if (_webSocket != null && _webSocket.State != WebSocketState.Closed && _webSocket.State != WebSocketState.Aborted)
+                {
+                    await _webSocket.CloseAsync(
+                        WebSocketCloseStatus.NormalClosure,
+                        "disposing",
+                        CancellationToken.None
+                    );
+                }
             }
             catch
             {
                 // socket already closed or broken – ignore
             }
-
-            return ValueTask.CompletedTask;
         }
     }
 }

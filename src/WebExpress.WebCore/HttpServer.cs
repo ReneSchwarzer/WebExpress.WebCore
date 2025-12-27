@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets;
+using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -130,6 +131,13 @@ namespace WebExpress.WebCore
                 x =>
                 {
                     x.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+                }
+            );
+            serviceCollection.AddWebSockets
+            (
+                x =>
+                {
+                    x.KeepAliveInterval = TimeSpan.FromSeconds(120);
                 }
             );
 
@@ -477,7 +485,7 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            var culture = httpContext?.Request.Culture;
+            var culture = httpContext?.Request?.Culture;
             var searchResult = WebEx.ComponentHub.SitemapManager.SearchResource(httpContext?.Uri, new SearchContext()
             {
                 Culture = culture,
@@ -498,7 +506,7 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            if (httpContext.Request is RequestWebSocket)
+            if (httpContext is HttpWebSocketContext)
             {
                 // try to obtain websocket context and optional handler
                 var socketContext = searchResult.EndpointContext as ISocketContext;
@@ -531,7 +539,7 @@ namespace WebExpress.WebCore
             var socketManager = WebEx.ComponentHub.SocketManager;
 
             // validate that the request is a websocket upgrade
-            if (httpContext.Request is not RequestWebSocket)
+            if (httpContext is not HttpWebSocketContext)
             {
                 // websocket not requested by client; return 400 Bad Request
                 await responseSender.SendAsync(httpContext, new ResponseBadRequest(new StatusMessage("WebSocket upgrade required")));

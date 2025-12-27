@@ -19,5 +19,21 @@ namespace WebExpress.WebCore.WebSocket.Protocol
             : base(message)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SocketHandshakeException"/> class
+        /// with the specified error message.
+        /// </summary>
+        /// <param name="message">
+        /// A descriptive message that explains the reason for the handshake failure.
+        /// </param>
+        /// <param name="exception">
+        /// The exception that is the cause of the current exception, or a null 
+        /// reference if no inner exception is specified.
+        /// </param>
+        public SocketHandshakeException(string message, Exception exception)
+            : base(message, exception)
+        {
+        }
     }
 }

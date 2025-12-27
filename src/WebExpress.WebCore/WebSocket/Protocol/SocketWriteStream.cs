@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
     /// </summary>
     public class SocketWriteStream : ISocketWriteStream
     {
-        private readonly Socket _socket;
+        private readonly System.Net.WebSockets.WebSocket _socket;
         private readonly SocketMessageType _messageType;
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// </summary>
         /// <param name="socket">The underlying native web socket connection.</param>
         /// <param name="messageType">The message type (text or binary).</param>
-        public SocketWriteStream(Socket socket, SocketMessageType messageType)
+        public SocketWriteStream(System.Net.WebSockets.WebSocket socket, SocketMessageType messageType)
         {
             _socket = socket;
             _messageType = messageType;
@@ -33,16 +33,16 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
         public async Task WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         {
-            if (_messageType == SocketMessageType.Text)
-            {
-                // Convert bytes to UTF8 text
-                var text = System.Text.Encoding.UTF8.GetString(buffer.Span);
-                await _socket.SendTextAsync(text);
-            }
-            else
-            {
-                await _socket.SendBinaryAsync(buffer.ToArray());
-            }
+            //if (_messageType == SocketMessageType.Text)
+            //{
+            //    // Convert bytes to UTF8 text
+            //    var text = System.Text.Encoding.UTF8.GetString(buffer.Span);
+            //    await _socket.SendTextAsync(text);
+            //}
+            //else
+            //{
+            //    await _socket.SendBinaryAsync(buffer.ToArray());
+            //}
         }
 
         /// <summary>

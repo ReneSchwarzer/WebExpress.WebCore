@@ -1,4 +1,6 @@
-﻿namespace WebExpress.WebCore.WebSocket.Protocol
+﻿using System.Net.WebSockets;
+
+namespace WebExpress.WebCore.WebSocket.Protocol
 {
     /// <summary>
     /// Represents information about the reason a socket connection was closed, 
@@ -9,7 +11,7 @@
         /// <summary>
         /// Returns the status that indicates the reason the socket was closed.
         /// </summary>
-        public SocketCloseStatus Status { get; }
+        public WebSocketCloseStatus Status { get; }
 
         /// <summary>
         /// Returns the description associated with this instance.
@@ -27,7 +29,7 @@
         /// An optional textual description providing additional details about the 
         /// socket closure. May be null.
         /// </param>
-        public SocketCloseInfo(SocketCloseStatus status, string description)
+        public SocketCloseInfo(WebSocketCloseStatus status, string description)
         {
             Status = status;
             Description = description;

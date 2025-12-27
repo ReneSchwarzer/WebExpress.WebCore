@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebMessage
             // always initialize as websocket-request for this context
             Request = new RequestWebSocket(contextFeatures, header, httpServerContext);
 
-            WebSocketKey = requestFeature.Headers["Sec-WebSocket-Key"];
+            WebSocketKey = header.SecWebSocketKey;
             IsSecureWebSocket = requestFeature.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase);
         }
     }

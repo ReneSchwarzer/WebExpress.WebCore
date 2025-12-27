@@ -1,4 +1,5 @@
 using System;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,7 +59,7 @@ namespace WebExpress.WebCore.WebSocket.Protocol
         /// <returns>A task that represents the asynchronous close operation.</returns>
         Task CloseAsync
         (
-            SocketCloseStatus status = SocketCloseStatus.NormalClosure,
+            WebSocketCloseStatus status = WebSocketCloseStatus.NormalClosure,
             string description = null,
             CancellationToken cancellationToken = default
         );

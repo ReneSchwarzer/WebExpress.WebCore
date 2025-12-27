@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -21,7 +24,8 @@ using WebExpress.WebCore.WebSocket.Protocol;
 namespace WebExpress.WebCore.WebSocket
 {
     /// <summary>
-    /// The socket manager manages socket endpoints (see RFC 6455 – The WebSocket Protocol) which can be called with a URI.
+    /// The socket manager manages socket endpoints (see RFC 6455 – The WebSocket Protocol) 
+    /// which can be called with a URI.
     /// </summary>
     public class SocketManager : ISocketManager
     {
@@ -99,55 +103,69 @@ namespace WebExpress.WebCore.WebSocket
         /// </returns>
         public async Task HandleConnectionAsync(IHttpContext httpContext, ISocketContext socketContext)
         {
+            // generate a unique connection ID and set initial close description
             var connectionId = Guid.NewGuid().ToString();
-            var closeDescription = "closing";
-            var cancellationToken = CancellationToken.None;
-            var requestFeature = httpContext.Features.Get<IHttpRequestFeature>();
             var connection = httpContext.Request.Header.Connection;
             var upgrade = httpContext.Request.Header.Upgrade;
-            var key = httpContext.Request.Header.SecWebSocketKey;
+            var secWebSocketKey = httpContext.Request.Header.SecWebSocketKey;
+            var secWebSocketAccept = ComputeWebSocketAcceptKey(secWebSocketKey);
 
-            // 1. perform handshake
-            var responseSender = new ResponseSender();
-            var response101 = new ResponseSwitchingProtocols
-            (
-                connection,
-                upgrade,
-                ComputeWebSocketAcceptKey(key)
-            );
+            var headerFeatures = httpContext.Features.Get<IHttpResponseFeature>();
+            headerFeatures.Headers.Append("Upgrade", upgrade);
+            headerFeatures.Headers.Append("Connection", connection);
+            headerFeatures.Headers.Append("Sec-WebSocket-Accept", secWebSocketAccept);
 
-            await responseSender.SendAsync(httpContext, response101, true);
+            var upgradeFeature = httpContext.Features.Get<IHttpUpgradeFeature>()
+                ?? throw new SocketHandshakeException("Upgrade feature not supported. WebSocket handshake aborted.");
+            var closeDescription = "closing";
+            var options = new WebSocketCreationOptions()
+            {
+                IsServer = true,
+                SubProtocol = socketContext.SupportedSubProtocols.Any()
+                    ? string.Join(";", socketContext.SupportedSubProtocols)
+                    : null
+            };
 
-            // 2. create native web socket connection using the raw body stream
-            var webSocket = new Socket(requestFeature.Body, cancellationToken);
+            // perform protocol upgrade and obtain the raw network stream
+            var networkStream = default(Stream);
+            try
+            {
+                networkStream = await upgradeFeature.UpgradeAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new SocketHandshakeException("WebSocket upgrade failed.", ex);
+            }
 
-            // 3. create ISocket instance
+            // create WebSocket class using the raw stream
+            var webSocket = System.Net.WebSockets.WebSocket.CreateFromStream(networkStream, options);
+
+            // create the ISocket application instance (application handler)
             var instance = await CreateSocketInstance(socketContext, webSocket);
 
-            // 4. notify user code
+            // notify user/application code of the new connection
             try
             {
                 await instance.OnConnectedAsync();
             }
             catch
             {
-                // optional
+                // ignore
             }
 
-            try
+            // receive loop: handle fragmented frames and large payloads
+            while (webSocket.State == WebSocketState.Open)
             {
-                // 5. receive loop
-                await webSocket.StartAsync();
-            }
-            catch (Exception ex)
-            {
-                closeDescription = "transport error";
-                await instance.OnErrorAsync(ex);
+                var stream = new SocketReadStream(webSocket, socketContext, connectionId);
+                var message = await stream.ReadMessageAsync(CancellationToken.None);
+
+                // dispatch
+                await DispatchMessage(instance, message);
             }
 
-            var closeInfo = new SocketCloseInfo(SocketCloseStatus.NormalClosure, closeDescription);
+            var closeInfo = new SocketCloseInfo(WebSocketCloseStatus.NormalClosure, closeDescription);
 
-            // 6. disconnect
+            // notify the handler/application about the disconnection
             await instance.OnDisconnectedAsync(closeInfo);
         }
 
@@ -240,14 +258,14 @@ namespace WebExpress.WebCore.WebSocket
         private async Task<ISocket> CreateSocketInstance
         (
             ISocketContext socketContext,
-            Socket webSocket
+            System.Net.WebSockets.WebSocket webSocket
         )
         {
             var resourceItem = _dictionary.GetSocketItem(socketContext);
 
             if (resourceItem is not null && resourceItem.Instance is null)
             {
-                await using var stream = new SocketWriteStream(webSocket, socketContext.MessageType);
+                //await using var stream = new SocketWriteStream(webSocket, socketContext.MessageType);
 
                 var instance = ComponentActivator.CreateInstance<ISocket, ISocketContext>
                 (
@@ -255,8 +273,8 @@ namespace WebExpress.WebCore.WebSocket
                     socketContext,
                     _httpServerContext,
                     _componentHub,
-                    socketContext.ApplicationContext,
-                    stream as ISocketWriteStream
+                    socketContext.ApplicationContext //,
+                                                     //  stream as ISocketWriteStream
                 );
 
                 if (resourceItem.Cache)

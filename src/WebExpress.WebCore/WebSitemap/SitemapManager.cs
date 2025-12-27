@@ -115,7 +115,7 @@ namespace WebExpress.WebCore.WebSitemap
             var result = SearchNode
             (
                 _root,
-                new Queue<string>(requestUri.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
+                new Queue<string>(requestUri?.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
                 new Queue<IUriPathSegment>(),
                 searchContext
             );
