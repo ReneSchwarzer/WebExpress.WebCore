@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebSocket
     /// The socket manager manages socket endpoints (see RFC 6455 – The WebSocket Protocol) 
     /// which can be called with a URI.
     /// </summary>
-    public class SocketManager : ISocketManager
+    public class SocketManager : ISocketManager, ISystemComponent
     {
         private const string _webSocketGuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
         private readonly IComponentHub _componentHub;
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.WebSocket
         public async Task HandleConnectionAsync(IHttpContext httpContext, ISocketContext socketContext)
         {
             // generate a unique connection ID and set initial close description
-            var connectionId = Guid.NewGuid().ToString();
+            var connectionId = Guid.NewGuid();
             var connection = httpContext.Request.Header.Connection;
             var upgrade = httpContext.Request.Header.Upgrade;
             var secWebSocketKey = httpContext.Request.Header.SecWebSocketKey;
@@ -141,7 +141,7 @@ namespace WebExpress.WebCore.WebSocket
             var webSocket = System.Net.WebSockets.WebSocket.CreateFromStream(networkStream, options);
 
             // create the ISocket application instance (application handler)
-            var instance = await CreateSocketInstance(socketContext, webSocket);
+            var instance = await CreateSocketInstance(connectionId, socketContext, webSocket);
 
             // notify user/application code of the new connection
             try
@@ -156,7 +156,7 @@ namespace WebExpress.WebCore.WebSocket
             // receive loop: handle fragmented frames and large payloads
             while (webSocket.State == WebSocketState.Open)
             {
-                var stream = new SocketReadStream(webSocket, socketContext, connectionId);
+                var stream = new SocketReadStream(webSocket, socketContext, connectionId.ToString());
                 var message = await stream.ReadMessageAsync(CancellationToken.None);
 
                 // dispatch
@@ -252,11 +252,13 @@ namespace WebExpress.WebCore.WebSocket
         /// Creates a new socket endpoint instance and returns it. 
         /// If an instance is cached, the cached instance is returned.
         /// </summary>
+        /// <param name="connectionId">The unique connection Id.</param>
         /// <param name="socketContext">The context used for socket creation.</param>
         /// <param name="webSocket">The accepted native WebSocket connection.</param>
         /// <returns>The created or cached endpoint instance.</returns>
         private async Task<ISocket> CreateSocketInstance
         (
+            Guid connectionId,
             ISocketContext socketContext,
             System.Net.WebSockets.WebSocket webSocket
         )
@@ -265,7 +267,8 @@ namespace WebExpress.WebCore.WebSocket
 
             if (resourceItem is not null && resourceItem.Instance is null)
             {
-                //await using var stream = new SocketWriteStream(webSocket, socketContext.MessageType);
+                ISocketWriteStream writeStream = new SocketWriteStream(webSocket, socketContext.MessageType);
+                ISocketReadStream readStream = new SocketReadStream(webSocket, socketContext, connectionId.ToString());
 
                 var instance = ComponentActivator.CreateInstance<ISocket, ISocketContext>
                 (
@@ -273,8 +276,11 @@ namespace WebExpress.WebCore.WebSocket
                     socketContext,
                     _httpServerContext,
                     _componentHub,
-                    socketContext.ApplicationContext //,
-                                                     //  stream as ISocketWriteStream
+                    socketContext.ApplicationContext,
+                    connectionId,
+                    writeStream,
+                    readStream
+
                 );
 
                 if (resourceItem.Cache)

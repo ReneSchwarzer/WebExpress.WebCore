@@ -221,7 +221,7 @@ namespace WebExpress.WebCore.WebComponent
         /// Returns the socket manager.
         /// </summary>
         /// <returns>The instance of the socket manager.</returns>
-        public ISocketManager SocketManager  => _socketManager;
+        public ISocketManager SocketManager => _socketManager;
 
         /// <summary>
         /// Returns the theme manager.
@@ -360,8 +360,9 @@ namespace WebExpress.WebCore.WebComponent
 
             var assembly = pluginContext.Assembly;
 
-            _dictionary.Add(pluginContext, []);
-            var componentItems = _dictionary[pluginContext];
+            // initialize the component entry as an empty list for easier manipulation
+            var componentList = new List<ComponentItem>();
+            _dictionary.Add(pluginContext, componentList);
 
             foreach (var type in assembly
                 .GetExportedTypes()
@@ -372,14 +373,15 @@ namespace WebExpress.WebCore.WebComponent
                 // determining attributes
                 var componentInstance = CreateInstance(type);
 
-                if (!componentItems.Where(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)).Any())
+                // check for duplicates
+                if (!componentList.Any(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)))
                 {
-                    _dictionary[pluginContext] = componentItems.Concat([ new ComponentItem()
+                    componentList.Add(new ComponentItem()
                     {
                         ComponentClass = type,
                         ComponentId = id,
                         ComponentInstance = componentInstance
-                    }]);
+                    });
 
                     _httpServerContext.Log.Debug
                     (
@@ -397,6 +399,9 @@ namespace WebExpress.WebCore.WebComponent
                     );
                 }
             }
+
+            // make sure the dictionary uses IEnumerable as value type, if the dictionary requires it
+            _dictionary[pluginContext] = componentList;
 
             Log();
         }
@@ -483,15 +488,19 @@ namespace WebExpress.WebCore.WebComponent
                 return;
             }
 
-            if (_dictionary.TryGetValue(pluginContext, out IEnumerable<ComponentItem> componentItems))
+            // try to get a list for safe removal and iteration
+            if (_dictionary.TryGetValue(pluginContext, out var componentItems))
             {
-                if (!componentItems.Any())
+                // for IEnumerable, first eagerly materialize the enumeration
+                var items = componentItems.ToList();
+                if (items.Count == 0)
                 {
                     return;
                 }
 
-                foreach (var componentItem in componentItems)
+                foreach (var componentItem in items)
                 {
+                    // raise the RemoveComponent event for each item
                     OnRemoveComponent(componentItem.ComponentInstance);
 
                     _httpServerContext.Log.Debug

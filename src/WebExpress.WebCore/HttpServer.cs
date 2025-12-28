@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets;
-using Microsoft.AspNetCore.WebSockets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -131,13 +130,6 @@ namespace WebExpress.WebCore
                 x =>
                 {
                     x.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
-                }
-            );
-            serviceCollection.AddWebSockets
-            (
-                x =>
-                {
-                    x.KeepAliveInterval = TimeSpan.FromSeconds(120);
                 }
             );
 

@@ -14,16 +14,32 @@ namespace WebExpress.WebCore.WebComponent
     public static class ComponentActivator
     {
         /// <summary>
-        /// Creates an instance of the specified response type with the component hub and advanced parameters.
+        /// Creates an instance of the specified response type with the component hub and 
+        /// advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the response.</typeparam>
-        /// <param name="responseType">The type of the response to create.</param>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="statusMessage">Additional parameter with a status message to pass to the response's constructor.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified response type.</returns>
-        public static T CreateInstance<T>(Type responseType, IHttpServerContext httpServerContext, IComponentHub componentHub, StatusMessage statusMessage, params object[] advancedParameters) where T : Response
+        /// <typeparam name="TResponse">
+        /// The type of the response.
+        /// </typeparam>
+        /// <param name="responseType">
+        /// The type of the response to create.
+        /// </param>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="statusMessage">
+        /// Additional parameter with a status message to pass to the response's constructor.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified response type.
+        /// </returns>
+        public static TResponse CreateInstance<TResponse>(Type responseType, IHttpServerContext httpServerContext, IComponentHub componentHub, StatusMessage statusMessage, params object[] advancedParameters)
+            where TResponse : Response
         {
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = responseType?.GetConstructors(flags);
@@ -47,27 +63,37 @@ namespace WebExpress.WebCore.WebComponent
                                   .FirstOrDefault() ?? null
                     ).ToArray();
 
-                    if (constructor.Invoke(parameterValues) is T component)
+                    if (constructor.Invoke(parameterValues) is TResponse component)
                     {
                         return component;
                     }
                 }
             }
 
-            return Activator.CreateInstance(responseType) as T;
+            return Activator.CreateInstance(responseType) as TResponse;
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
+        /// Creates an instance of the specified component type with the provided context, 
+        /// component hub advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the component manager, which must implement <see cref="IComponentManager"/>.</typeparam>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T>(IHttpServerContext httpServerContext, params object[] advancedParameters) where T : class, IComponentHub
+        /// <typeparam name="TComponentHub">
+        /// The type of the component manager, which must implement <see cref="IComponentManager"/>.
+        /// </typeparam>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
+        public static TComponentHub CreateInstance<TComponentHub>(IHttpServerContext httpServerContext, params object[] advancedParameters)
+            where TComponentHub : class, IComponentHub
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            var constructors = typeof(T).GetConstructors(flags);
+            var constructors = typeof(TComponentHub).GetConstructors(flags);
 
             if (constructors is not null)
             {
@@ -83,26 +109,40 @@ namespace WebExpress.WebCore.WebComponent
                                   .FirstOrDefault() ?? null
                     ).ToArray();
 
-                    if (constructor.Invoke(parameterValues) is T component)
+                    if (constructor.Invoke(parameterValues) is TComponentHub component)
                     {
                         return component;
                     }
                 }
             }
 
-            return Activator.CreateInstance(typeof(T), advancedParameters) as T;
+            return Activator.CreateInstance(typeof(TComponentHub), advancedParameters) as TComponentHub;
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
+        /// Creates an instance of the specified component type with the provided context, 
+        /// component hub advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the component manager, which must implement <see cref="IComponentManager"/>.</typeparam>
-        /// <param name="componentType">The type of the component to create.</param>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T>(Type componentType, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters) where T : class, IComponentManager
+        /// <typeparam name="TComponentManager">
+        /// The type of the component manager, which must implement <see cref="IComponentManager"/>.
+        /// </typeparam>
+        /// <param name="componentType">
+        /// The type of the component to create.
+        /// </param>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
+        public static TComponentManager CreateInstance<TComponentManager>(Type componentType, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
+            where TComponentManager : class, IComponentManager
         {
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -125,26 +165,40 @@ namespace WebExpress.WebCore.WebComponent
                                   .FirstOrDefault() ?? null
                     ).ToArray();
 
-                    if (constructor.Invoke(parameterValues) is T component)
+                    if (constructor.Invoke(parameterValues) is TComponentManager component)
                     {
                         return component;
                     }
                 }
             }
 
-            return Activator.CreateInstance(componentType) as T;
+            return Activator.CreateInstance(componentType) as TComponentManager;
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
+        /// Creates an instance of the specified component type with the provided context, 
+        /// component hub advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the component manager, which must implement <see cref="IComponentManager"/>.</typeparam>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="componentType">The type of the component to create.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T>(IHttpServerContext httpServerContext, IComponentHub componentHub, Type componentType, params object[] advancedParameters) where T : IComponent
+        /// <typeparam name="TComponent">
+        /// The type of the component manager, which must implement <see cref="IComponentManager"/>.
+        /// </typeparam>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="componentType">
+        /// The type of the component to create.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
+        public static TComponent CreateInstance<TComponent>(IHttpServerContext httpServerContext, IComponentHub componentHub, Type componentType, params object[] advancedParameters)
+            where TComponent : IComponent
         {
             var flags = BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = componentType?.GetConstructors(flags);
@@ -167,28 +221,40 @@ namespace WebExpress.WebCore.WebComponent
                                   .FirstOrDefault() ?? null
                     ).ToArray();
 
-                    if (constructor.Invoke(parameterValues) is T component)
+                    if (constructor.Invoke(parameterValues) is TComponent component)
                     {
                         return component;
                     }
                 }
             }
 
-            return (T)Activator.CreateInstance(componentType);
+            return (TComponent)Activator.CreateInstance(componentType);
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context, component hub advanced parameters.
+        /// Creates an instance of the specified component type with the provided context, 
+        /// component hub advanced parameters.
         /// </summary>
-        /// <typeparam name="T">The type of the component, which must implement <see cref="IComponent"/>.</typeparam>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
-        public static T CreateInstance<T>(IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters) where T : class, IComponent
+        /// <typeparam name="TComponent">
+        /// The type of the component, which must implement <see cref="IComponent"/>.
+        /// </typeparam>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
+        public static TComponent CreateInstance<TComponent>(IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
+            where TComponent : class, IComponent
         {
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-            var componentType = typeof(T);
+            var componentType = typeof(TComponent);
             var constructors = componentType?.GetConstructors(flags);
 
             if (constructors is not null)
@@ -210,27 +276,44 @@ namespace WebExpress.WebCore.WebComponent
                             .FirstOrDefault() ?? null
                     ).ToArray();
 
-                    if (constructor.Invoke(parameterValues) is T component)
+                    if (constructor.Invoke(parameterValues) is TComponent component)
                     {
                         return component;
                     }
                 }
             }
 
-            return Activator.CreateInstance(componentType) as T;
+            return Activator.CreateInstance(componentType) as TComponent;
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context and component hub and advanced parameters.
+        /// Creates an instance of the specified component type with the provided context and 
+        /// component hub and advanced parameters.
         /// </summary>
-        /// <typeparam name="TComponent">The type of the component, which must implement <see cref="IComponent"/>.</typeparam>
-        /// <typeparam name="TContext">The type of the context, which must implement <see cref="IContext"/>.</typeparam>
-        /// <param name="componentType">The type of the component to create.</param>
-        /// <param name="context">The context to pass to the component's constructor.</param>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
+        /// <typeparam name="TComponent">
+        /// The type of the component, which must implement <see cref="IComponent"/>.
+        /// </typeparam>
+        /// <typeparam name="TContext">
+        /// The type of the context, which must implement <see cref="IContext"/>.
+        /// </typeparam>
+        /// <param name="componentType">
+        /// The type of the component to create.
+        /// </param>
+        /// <param name="context">
+        /// The context to pass to the component's constructor.
+        /// </param>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
         public static TComponent CreateInstance<TComponent, TContext>(Type componentType, TContext context, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
             where TComponent : class, IComponent
             where TContext : IContext
@@ -244,7 +327,12 @@ namespace WebExpress.WebCore.WebComponent
                 {
                     // injection
                     var parameters = constructor.GetParameters();
-                    var hubProperties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var components = componentHub.Managers
+                        .Select(x => new
+                        {
+                            type = x.GetType().GetInterfaces().FirstOrDefault(),
+                            value = x
+                        });
                     var contextIdProperty = context.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                         .Where(x => x.PropertyType == typeof(IComponentId))
                         .FirstOrDefault();
@@ -254,9 +342,9 @@ namespace WebExpress.WebCore.WebComponent
                         parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
                         parameter.ParameterType == typeof(TContext) ? context :
                         parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(context) :
-                        hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
-                            .FirstOrDefault()?
-                            .GetValue(componentHub) ??
+                        components.Where(x => x.type == parameter.ParameterType)
+                            .Select(x => x.value)
+                            .FirstOrDefault() ??
                         advancedParameters.Where(x =>
                                 x.GetType() == parameter.ParameterType ||
                                 (
@@ -282,15 +370,30 @@ namespace WebExpress.WebCore.WebComponent
         }
 
         /// <summary>
-        /// Creates an instance of the specified component type with the provided context and component hub and advanced parameters.
+        /// Creates an instance of the specified component type with the provided context and 
+        /// component hub and advanced parameters.
         /// </summary>
-        /// <typeparam name="TContext">The type of the context, which must implement <see cref="IContext"/>.</typeparam>
-        /// <param name="componentType">The type of the component to create.</param>
-        /// <param name="context">The context to pass to the component's constructor.</param>
-        /// <param name="httpServerContext">The reference to the context of the host.</param>
-        /// <param name="componentHub">The component hub to use for dependency injection.</param>
-        /// <param name="advancedParameters">Additional parameters to pass to the component's constructor.</param>
-        /// <returns>An instance of the specified component type.</returns>
+        /// <typeparam name="TContext">
+        /// The type of the context, which must implement <see cref="IContext"/>.
+        /// </typeparam>
+        /// <param name="componentType">
+        /// The type of the component to create.
+        /// </param>
+        /// <param name="context">
+        /// The context to pass to the component's constructor.
+        /// </param>
+        /// <param name="httpServerContext">
+        /// The reference to the context of the host.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub to use for dependency injection.
+        /// </param>
+        /// <param name="advancedParameters">
+        /// Additional parameters to pass to the component's constructor.
+        /// </param>
+        /// <returns>
+        /// An instance of the specified component type.
+        /// </returns>
         public static IComponent CreateInstance<TContext>(Type componentType, TContext context, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
             where TContext : IContext
         {
