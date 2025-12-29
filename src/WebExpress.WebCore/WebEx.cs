@@ -68,7 +68,7 @@ namespace WebExpress.WebCore
         /// <summary>
         /// Returns or sets the path to the favicon image used by the application.
         /// </summary>
-        public static string Favicon { get; set; } = "webexpress.webui/assets/img/rocket.png";
+        public static string Favicon { get; set; } = "webexpress.webui/assets/img/webexpress.svg";
 
         /// <summary>
         /// Running the application.

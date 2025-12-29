@@ -44,7 +44,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Rocket.ico">
+		<None Update="ufo.ico">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
