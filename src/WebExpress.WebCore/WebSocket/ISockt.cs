@@ -1,8 +1,6 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -16,34 +14,8 @@ namespace WebExpress.WebCore.WebSocket
         /// Implementers may use the optional cancellation token to abort long-running startup tasks.
         /// the optional connectMessage provides initial metadata from the client (may be null).
         /// </summary>
-        /// <param name="connectMessage">Optional initial message or metadata sent by the client during/after connect.</param>
-        /// <param name="cancellationToken">A token to cancel startup work.</param>
+        /// <param name="socketConnection">The socket connection.</param>
         /// <returns>An asynchronous task.</returns>
-        Task OnConnectedAsync(ISocketMessage connectMessage = null, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Invoked for each received message (complete message or assembled fragments).
-        /// Implementations receive a parsed SocketMessage rather than raw byte buffers.
-        /// </summary>
-        /// <param name="message">The parsed message originated from the client.</param>
-        /// <param name="cancellationToken">Cancellation token for cooperative cancellation.</param>
-        /// <returns>An asynchronous task.</returns>
-        Task OnReceiveAsync(ISocketMessage message, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Invoked when the websocket connection is closed or is about to be closed.
-        /// Implementers should perform cleanup and release resources.
-        /// </summary>
-        /// <param name="closeInfo">Information about the socket closure.</param>
-        /// <returns>An asynchronous task.</returns>
-        Task OnDisconnectedAsync(SocketCloseInfo closeInfo);
-
-        /// <summary>
-        /// Invoked when an unhandled exception occurs during websocket processing.
-        /// Implementers should use this to log and perform cleanup.
-        /// </summary>
-        /// <param name="exception">The exception that occurred.</param>
-        /// <returns>An asynchronous task.</returns>
-        Task OnErrorAsync(Exception exception);
+        Task OnConnectedAsync(ISocketConnection socketConnection);
     }
 }

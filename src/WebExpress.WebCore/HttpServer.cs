@@ -23,7 +23,6 @@ using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebSocket;
-using WebExpress.WebCore.WebSocket.Protocol;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebUri;
 

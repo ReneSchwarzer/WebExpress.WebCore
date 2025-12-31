@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebSocket.Protocol;
 
 namespace WebExpress.WebCore.WebSocket
 {

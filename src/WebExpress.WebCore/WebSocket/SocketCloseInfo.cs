@@ -1,6 +1,6 @@
 ﻿using System.Net.WebSockets;
 
-namespace WebExpress.WebCore.WebSocket.Protocol
+namespace WebExpress.WebCore.WebSocket
 {
     /// <summary>
     /// Represents information about the reason a socket connection was closed, 

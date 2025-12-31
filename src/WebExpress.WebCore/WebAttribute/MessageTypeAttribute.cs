@@ -1,5 +1,5 @@
 ﻿using System;
-using WebExpress.WebCore.WebSocket.Protocol;
+using WebExpress.WebCore.WebSocket;
 
 namespace WebExpress.WebCore.WebAttribute
 {

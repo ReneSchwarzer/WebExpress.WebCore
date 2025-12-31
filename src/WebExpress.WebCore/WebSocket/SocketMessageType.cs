@@ -1,4 +1,4 @@
-﻿namespace WebExpress.WebCore.WebSocket.Protocol
+﻿namespace WebExpress.WebCore.WebSocket
 {
     /// <summary>
     /// Defines the type of WebSocket message represented or sent

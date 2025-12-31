@@ -1,4 +1,4 @@
-﻿namespace WebExpress.WebCore.WebSocket.Protocol
+﻿namespace WebExpress.WebCore.WebSocket
 {
     /// <summary>
     /// Represents the result of a read operation on a WebSocket stream,
