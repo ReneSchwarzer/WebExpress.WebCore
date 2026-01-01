@@ -101,6 +101,11 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
+        /// Returns the collection of parameters associated with the request.
+        /// </summary>
+        public IEnumerable<IParameter> Parameters => _param.Values;
+
+        /// <summary>
         /// Returns the content.
         /// </summary>
         public byte[] Content { get; private set; }

@@ -26,5 +26,12 @@ namespace WebExpress.WebCore.WebPage
         /// determine whether content and how content should be displayed.
         /// </summary>
         IEnumerable<Type> Scopes { get; }
+
+        /// <summary>
+        /// Returns the collection of domain types associated with the decorated element.
+        /// Domains represent logical application areas such as workspaces, modules
+        /// or functional segments and can be used for routing, filtering or contextual grouping.
+        /// </summary>
+        IEnumerable<Type> Domains { get; }
     }
 }

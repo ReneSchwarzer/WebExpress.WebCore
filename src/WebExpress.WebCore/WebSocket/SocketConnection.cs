@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -51,9 +50,7 @@ namespace WebExpress.WebCore.WebSocket
             var options = new WebSocketCreationOptions()
             {
                 IsServer = true,
-                SubProtocol = socketContext.SupportedSubProtocols.Any()
-                    ? string.Join(";", socketContext.SupportedSubProtocols)
-                    : null
+                SubProtocol = socketContext.SupportedSubProtocol
             };
 
             _socket = System.Net.WebSockets.WebSocket.CreateFromStream(networkStream, options)

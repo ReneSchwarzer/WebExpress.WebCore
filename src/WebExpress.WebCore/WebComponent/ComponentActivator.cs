@@ -354,6 +354,10 @@ namespace WebExpress.WebCore.WebComponent
                                 (
                                     parameter.ParameterType == typeof(IPageContext) &&
                                     x.GetType().GetInterfaces().Any(x => x == typeof(IPageContext))
+                                ) ||
+                                (
+                                    parameter.ParameterType == typeof(IRequest) &&
+                                    x.GetType().GetInterfaces().Any(x => x == typeof(IRequest))
                                 )
                             )
                             .FirstOrDefault() ?? null

@@ -35,10 +35,9 @@ namespace WebExpress.WebCore.WebSocket.Model
         public Type SocketClass { get; set; }
 
         /// <summary>
-        /// Returns the collection of supported websocket subprotocols.
-        /// implementations should return the subprotocol identifiers the endpoint can speak.
+        /// Returns the name of the WebSocket subprotocol that is supported by the connection.
         /// </summary>
-        public IEnumerable<string> SupportedSubProtocols { get; set; }
+        public string SupportedSubProtocol { get; set; }
 
         /// <summary> 
         /// Returns the default WebSocket message type used by this endpoint when 

@@ -36,9 +36,9 @@ namespace WebExpress.WebCore.WebSocket
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Collection of supported websocket subprotocols.
+        /// Returns the name of the WebSocket subprotocol that is supported by the connection.
         /// </summary>
-        public IEnumerable<string> SupportedSubProtocols { get; set; }
+        public string SupportedSubProtocol { get; internal set; }
 
         /// <summary> 
         /// Returns the default WebSocket message type used by this endpoint when 
@@ -92,8 +92,7 @@ namespace WebExpress.WebCore.WebSocket
         public override string ToString()
         {
             // return a compact representation with name and supported subprotocols
-            var protocols = SupportedSubProtocols != null ? string.Join(",", SupportedSubProtocols) : string.Empty;
-            return $"{EndpointId} (protocols: {protocols})";
+            return $"{EndpointId} (protocols: {SupportedSubProtocol})";
         }
     }
 }

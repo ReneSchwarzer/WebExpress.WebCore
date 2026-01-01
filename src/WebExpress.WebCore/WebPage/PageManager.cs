@@ -326,6 +326,7 @@ namespace WebExpress.WebCore.WebPage
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var domains = new List<Type>();
                 var attributes = pageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                     !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -368,6 +369,10 @@ namespace WebExpress.WebCore.WebPage
                     {
                         scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
                     }
+                    else if (customAttribute.AttributeType.Name == typeof(DomainAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(DomainAttribute<>).Namespace)
+                    {
+                        domains.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                    }
                 }
 
                 if (pageType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
@@ -394,6 +399,7 @@ namespace WebExpress.WebCore.WebPage
                         PageIcon = icon,
                         Route = routePath,
                         Scopes = scopes,
+                        Domains = domains,
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,

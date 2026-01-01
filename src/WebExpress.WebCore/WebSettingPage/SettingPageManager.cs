@@ -442,6 +442,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 var contextPath = string.Empty;
                 var scopes = new List<Type>();
                 var group = default(Type);
+                var domains = new List<Type>();
                 var section = SettingSection.Primary;
                 var includeSubPaths = false;
                 var hide = false;
@@ -506,6 +507,10 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
                     }
+                    else if (customAttribute.AttributeType.Name == typeof(DomainAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(DomainAttribute<>).Namespace)
+                    {
+                        domains.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                    }
                 }
 
                 if (settingPageType.GetInterfaces().Where(x => x == typeof(IScope)).Any())
@@ -533,6 +538,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         PageTitle = title,
                         PageIcon = icon,
                         Scopes = scopes,
+                        Domains = domains,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         Section = section,
                         Hide = hide

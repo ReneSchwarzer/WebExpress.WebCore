@@ -93,6 +93,11 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
+        /// Returns the collection of parameters associated with the request.
+        /// </summary>
+        public IEnumerable<IParameter> Parameters => _param.Values;
+
+        /// <summary>
         /// Returns the current WebSocket message type.
         /// </summary>
         public string WebSocketMessageType { get; internal set; }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net.WebSockets;
 using WebExpress.WebCore.WebEndpoint;
 
@@ -11,10 +10,9 @@ namespace WebExpress.WebCore.WebSocket
     public interface ISocketContext : IEndpointContext
     {
         /// <summary>
-        /// Returns the collection of supported websocket subprotocols.
-        /// implementations should return the subprotocol identifiers the endpoint can speak.
+        /// Returns the name of the WebSocket subprotocol that is supported by the connection.
         /// </summary>
-        IEnumerable<string> SupportedSubProtocols { get; }
+        string SupportedSubProtocol { get; }
 
         /// <summary> 
         /// Returns the default WebSocket message type used by this endpoint when 

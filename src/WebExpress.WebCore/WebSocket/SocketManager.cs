@@ -109,6 +109,10 @@ namespace WebExpress.WebCore.WebSocket
             headerFeatures.Headers.Append("Upgrade", "websocket");
             headerFeatures.Headers.Append("Connection", "Upgrade");
             headerFeatures.Headers.Append("Sec-WebSocket-Accept", secWebSocketAccept);
+            if (!string.IsNullOrWhiteSpace(socketContext.SupportedSubProtocol))
+            {
+                headerFeatures.Headers.Append("Sec-WebSocket-Protocol", socketContext.SupportedSubProtocol);
+            }
 
             var upgradeFeature = httpContext.Features.Get<IHttpUpgradeFeature>()
                 ?? throw new SocketHandshakeException("Upgrade feature not supported. WebSocket handshake aborted.");
@@ -124,7 +128,7 @@ namespace WebExpress.WebCore.WebSocket
             }
 
             // create application socket instance
-            var instance = CreateSocketInstance(connectionId, socketContext);
+            var instance = CreateSocketInstance(connectionId, socketContext, httpContext.Request);
             var socketConnection = new SocketConnection(networkStream, socketContext);
 
             await instance.OnConnectedAsync(socketConnection);
@@ -219,11 +223,13 @@ namespace WebExpress.WebCore.WebSocket
         /// </summary>
         /// <param name="connectionId">The unique connection Id.</param>
         /// <param name="socketContext">The context used for socket creation.</param>
+        /// <param name="request">The request.</param>
         /// <returns>The created or cached endpoint instance.</returns>
         private ISocket CreateSocketInstance
         (
             Guid connectionId,
-            ISocketContext socketContext
+            ISocketContext socketContext,
+            IRequest request
         )
         {
             var resourceItem = _dictionary.GetSocketItem(socketContext);
@@ -237,7 +243,8 @@ namespace WebExpress.WebCore.WebSocket
                     _httpServerContext,
                     _componentHub,
                     socketContext.ApplicationContext,
-                    connectionId
+                    connectionId,
+                    request
                 );
 
                 if (resourceItem.Cache)
@@ -299,7 +306,7 @@ namespace WebExpress.WebCore.WebSocket
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
-                var subProtocols = new List<string>();
+                var subProtocol = "";
                 var messageType = SocketMessageType.Text;
                 var maxMessageSize = ulong.MinValue;
                 var attributes = socketType.CustomAttributes
@@ -332,7 +339,7 @@ namespace WebExpress.WebCore.WebSocket
                     }
                     else if (customAttribute.AttributeType == typeof(SubProtocolAttribute))
                     {
-                        subProtocols.Add(customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString());
+                        subProtocol = customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString();
                     }
                     else if (customAttribute.AttributeType == typeof(MaxMessageSizeAttribute))
                     {
@@ -357,7 +364,7 @@ namespace WebExpress.WebCore.WebSocket
                         ApplicationContext = applicationContext,
                         Route = routePath,
                         MessageType = messageType,
-                        SupportedSubProtocols = subProtocols,
+                        SupportedSubProtocol = subProtocol,
                         MaxMessageSize = maxMessageSize,
                         Cache = cache,
                         Conditions = conditions,
@@ -373,7 +380,7 @@ namespace WebExpress.WebCore.WebSocket
                         SocketContext = socketContext,
                         SocketClass = socketType,
                         MessageType = messageType,
-                        SupportedSubProtocols = subProtocols,
+                        SupportedSubProtocol = subProtocol,
                         MaxMessageSize = maxMessageSize,
                         Cache = cache,
                         Conditions = conditions,

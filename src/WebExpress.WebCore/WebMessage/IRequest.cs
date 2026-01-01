@@ -73,6 +73,11 @@ namespace WebExpress.WebCore.WebMessage
         CultureInfo Culture { get; }
 
         /// <summary>
+        /// Returns the collection of parameters associated with the request.
+        /// </summary>
+        IEnumerable<IParameter> Parameters { get; }
+
+        /// <summary>
         /// Adds several parameters.
         /// </summary>
         /// <param name="param">The parameters.</param>
