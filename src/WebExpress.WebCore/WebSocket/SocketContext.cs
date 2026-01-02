@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.WebSockets;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
@@ -42,8 +41,8 @@ namespace WebExpress.WebCore.WebSocket
 
         /// <summary> 
         /// Returns the default WebSocket message type used by this endpoint when 
-        /// sending data. Implementations may choose <see cref="WebSocketMessageType.Text"/> 
-        /// for JSON or human-readable content, or <see cref="WebSocketMessageType.Binary"/> 
+        /// sending data. Implementations may choose <see cref="SocketMessageType.Text"/> 
+        /// for JSON or human-readable content, or <see cref="SocketMessageType.Binary"/> 
         /// for binary payloads. 
         /// </summary>
         public SocketMessageType MessageType { get; set; }
