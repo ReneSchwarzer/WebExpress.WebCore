@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.WebMessage
                         var dispositions = new List<Tuple<int, int>>(); // Item1=position, Item2=size
 
                         // determine dispositions
-                        for (var i = 0; i < Content.Length; i++)
+                        for (var i = 0; i < Content?.Length; i++)
                         {
                             if (Content[i] == '\r')
                             {
