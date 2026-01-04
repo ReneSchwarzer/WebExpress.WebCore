@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebTheme
     /// <summary>
     /// Manages themes for the web application.
     /// </summary>
-    public class ThemeManager : IThemeManager
+    public class ThemeManager : IThemeManager, ISystemComponent
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;

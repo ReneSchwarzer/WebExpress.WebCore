@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebSocket
     /// The socket manager manages socket endpoints (see RFC 6455 – The WebSocket Protocol) 
     /// which can be called with a URI.
     /// </summary>
-    public class SocketManager : ISocketManager, ISystemComponent
+    public sealed class SocketManager : ISocketManager, ISystemComponent
     {
         private const string _webSocketGuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
         private readonly IComponentHub _componentHub;
