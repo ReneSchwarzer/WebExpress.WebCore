@@ -157,7 +157,6 @@ namespace WebExpress.WebCore.WebMessage
             );
 
             ParseQueryParams(requestFeature.QueryString);
-            ParseRequestParams();
             ParseSessionParams();
         }
 
@@ -190,11 +189,6 @@ namespace WebExpress.WebCore.WebMessage
                 }
             });
         }
-
-        /// <summary>
-        /// Parse the request parameters.
-        /// </summary>
-        protected abstract void ParseRequestParams();
 
         /// <summary>
         /// Parse the session parameters.

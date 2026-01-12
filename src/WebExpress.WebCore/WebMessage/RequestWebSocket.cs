@@ -18,12 +18,5 @@ namespace WebExpress.WebCore.WebMessage
             : base(contextFeatures, header, httpServerContext)
         {
         }
-
-        /// <summary>
-        /// Parse the request parameters.
-        /// </summary>
-        protected override void ParseRequestParams()
-        {
-        }
     }
 }

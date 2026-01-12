@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebAttribute
     /// is intended to handle. This attribute can be applied multiple times
     /// to the same method to declare support for multiple request methods.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class MethodAttribute : Attribute, IEndpointAttribute
     {
         /// <summary>
