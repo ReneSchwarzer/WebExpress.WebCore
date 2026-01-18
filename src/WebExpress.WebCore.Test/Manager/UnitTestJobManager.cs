@@ -16,10 +16,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(3, componentHub.JobManager.Jobs.Count());
         }
 
@@ -29,12 +29,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var jobManager = componentHub.JobManager as JobManager;
 
-            // test execution
+            // act
             jobManager.Remove(plugin);
 
             Assert.Empty(componentHub.JobManager.Jobs);
@@ -46,10 +46,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
         }
 
@@ -59,10 +59,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var job in componentHub.JobManager.Jobs)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(job.GetType()), $"Job context {job.GetType().Name} does not implement IContext.");
@@ -79,12 +79,12 @@ namespace WebExpress.WebCore.Test.Manager
 
         public void Id(Type applicationType, Type jobType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var job = componentHub.JobManager.GetJob(application, jobType);
 
-            // test execution
+            // act
             Assert.Equal(id, job?.JobId.ToString());
         }
 
@@ -97,12 +97,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestJobA), 50, 8, 31, new[] { 1, 2 }, 0)]
         public void Cron(Type applicationType, Type jobType, int minute, int hour, int day, int[] month, int weekday)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var job = componentHub.JobManager.GetJob(application, jobType);
 
-            // test execution
+            // act
             Assert.Equal(minute, job?.Cron.Minute.FirstOrDefault() ?? -1);
             Assert.Equal(hour, job?.Cron.Hour.FirstOrDefault() ?? -1);
             Assert.Equal(day, job?.Cron.Day.FirstOrDefault() ?? -1);

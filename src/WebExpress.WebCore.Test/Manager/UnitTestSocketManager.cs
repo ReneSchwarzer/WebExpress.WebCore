@@ -17,12 +17,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
             var socketManager = componentHub.SocketManager as SocketManager;
 
-            // test execution
+            // act
             pluginManager.Register();
 
             // validation
@@ -37,12 +37,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var socketManager = componentHub.SocketManager as SocketManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             socketManager.Remove(plugin);
 
             // validation
@@ -58,13 +58,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.testsocketa")]
         public void Id(Type applicationType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var applicationContext = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var socket = componentHub.SocketManager.GetSockets<TestSocketA>(applicationContext)
                 .FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(id, socket.EndpointId?.ToString());
         }
 
@@ -77,13 +77,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "/server/testsocketa")]
         public void ContextPath(Type applicationType, string contextPath)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var applicationContext = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var socket = componentHub.SocketManager.GetSockets<TestSocketA>(applicationContext)
                 .FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(contextPath, socket.Route.ToString());
         }
 
@@ -93,10 +93,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SocketManager.GetType()));
         }
 
@@ -106,10 +106,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var application in componentHub.SocketManager.Sockets)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Socket context {application.GetType().Name} does not implement IContext.");

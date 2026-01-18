@@ -16,11 +16,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var logManager = componentHub.LogManager as LogManager;
 
-            // test execution
+            // act
             Assert.NotNull(logManager);
         }
 
@@ -30,11 +30,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var logManager = componentHub.LogManager as LogManager;
 
-            // test execution
+            // act
             Assert.NotNull(logManager);
         }
 
@@ -44,11 +44,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var logManager = componentHub.LogManager as LogManager;
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(logManager.GetType()));
         }
     }

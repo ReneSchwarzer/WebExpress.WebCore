@@ -19,11 +19,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
-            // test execution
+            // act
             Assert.NotNull(packageManager);
         }
 
@@ -33,11 +33,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
-            // test execution
+            // act
             Assert.NotNull(packageManager);
         }
 
@@ -47,11 +47,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(packageManager.GetType()));
         }
 
@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void AddPackageEvent()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
             bool eventFired = false;
@@ -70,7 +70,7 @@ namespace WebExpress.WebCore.Test.Manager
             // create dummy package
             var package = new PackageCatalogItem() { Id = "test", File = "test.wxp", State = PackageCatalogeItemState.Active };
 
-            // test execution
+            // act
             var method = typeof(PackageManager).GetMethod("OnAddPackage", BindingFlags.NonPublic | BindingFlags.Instance);
             method.Invoke(packageManager, [package]);
 
@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RemovePackageEvent()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var packageManager = componentHub.PackageManager as PackageManager;
             bool eventFired = false;
@@ -93,7 +93,7 @@ namespace WebExpress.WebCore.Test.Manager
             // create dummy package
             var package = new PackageCatalogItem() { Id = "test", File = "test.wxp", State = PackageCatalogeItemState.Active };
 
-            // test execution
+            // act
             var method = typeof(PackageManager).GetMethod("OnRemovePackage", BindingFlags.NonPublic | BindingFlags.Instance);
             method.Invoke(packageManager, [package]);
 
@@ -106,7 +106,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void ScanDetectsNewPackage()
         {
-            // preconditions
+            // arrange
             var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
             var packageManager = componentHub.PackageManager as PackageManager;
@@ -131,7 +131,7 @@ namespace WebExpress.WebCore.Test.Manager
                     </package>");
                 }
 
-                // test execution - scan should detect the new file
+                // act - scan should detect the new file
                 packageManager.Scan();
 
                 // validation
@@ -152,7 +152,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void ScanDetectsRemovedPackage()
         {
-            // preconditions
+            // arrange
             var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
             var packageManager = componentHub.PackageManager as PackageManager;
@@ -183,7 +183,7 @@ namespace WebExpress.WebCore.Test.Manager
                 // remove file and scan again
                 File.Delete(dummyFile);
 
-                // test execution - scan should detect the removed file
+                // act - scan should detect the removed file
                 packageManager.Scan();
 
                 // validation
@@ -204,7 +204,7 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void LoadPackageReadsSpec()
         {
-            // preconditions
+            // arrange
             var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
             var packageManager = componentHub.PackageManager as PackageManager;
@@ -231,7 +231,7 @@ namespace WebExpress.WebCore.Test.Manager
                 // use private LoadPackage method via reflection
                 var method = typeof(PackageManager).GetMethod("LoadPackage", BindingFlags.NonPublic | BindingFlags.Instance);
 
-                // test execution
+                // act
                 var result = method.Invoke(packageManager, [dummyFile]) as PackageCatalogItem;
 
                 // validation

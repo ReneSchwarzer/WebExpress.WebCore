@@ -16,10 +16,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(12, componentHub.IncludeManager.Includes.Count());
         }
 
@@ -29,12 +29,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var includeManager = componentHub.IncludeManager as IncludeManager;
 
-            // test execution
+            // act
             includeManager.Remove(plugin);
 
             // validation
@@ -59,12 +59,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestIncludeCssB), "webexpress.webcore.test.testincludecssb")]
         public void Id(Type applicationType, Type includeType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var include = componentHub.IncludeManager.GetIncludes(application, includeType)?.FirstOrDefault();
 
-            // test execution
+            // act
             var id = include?.IncludeId.ToString();
 
             // validation
@@ -89,12 +89,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestIncludeCssB), "/myX.css;/myY.css;/myZ.css")]
         public void Files(Type applicationType, Type resourceType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var include = componentHub.IncludeManager.GetIncludes(application, resourceType)?.FirstOrDefault();
 
-            // test execution
+            // act
             var files = include.Files.Select(x => x.FileName);
 
             // validation
@@ -119,12 +119,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestIncludeCssB), "StyleSheet;StyleSheet;StyleSheet")]
         public void FileType(Type applicationType, Type resourceType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var include = componentHub.IncludeManager.GetIncludes(application, resourceType)?.FirstOrDefault();
 
-            // test execution
+            // act
             var files = include.Files.Select(x => x.Type);
 
             // validation
@@ -137,10 +137,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.IncludeManager.GetType()));
         }
 
@@ -150,10 +150,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var include in componentHub.IncludeManager.Includes)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(include.GetType()), $"Include context '{include.GetType().Name}' does not implement IContext.");

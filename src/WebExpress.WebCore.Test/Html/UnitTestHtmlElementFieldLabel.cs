@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Empty()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel();
 
             Assert.Equal(@"<label></label>", html.Trim());
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtInstancing()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel("abcdef");
 
             Assert.Equal(@"<label>abcdef</label>", html.Trim());
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtProperty()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel
             {
                 Text = "abcdef"
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtHtmlText()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel(new HtmlText("abc"), new HtmlText("def"));
 
             Assert.Equal(@"<label>abcdef</label>", html.Trim());
@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextWithId()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel()
             {
                 Id = "identity"
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Inline()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel();
 
             Assert.False(html.Inline);
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void CloseTag()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel();
 
             Assert.True(html.CloseTag);
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Class()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel()
             {
                 Class = "abc"
@@ -119,7 +119,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Style()
         {
-            // test execution
+            // act
             var html = new HtmlElementFieldLabel()
             {
                 Style = "abc"

@@ -22,10 +22,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData(null, "new", "new")]
         public void AddClass(string initial, string toAdd, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv { Class = initial } as IHtmlNode;
 
-            // test execution
+            // act
             element.AddClass(toAdd);
 
             Assert.Equal(expected, (element as IHtmlElement).Class);
@@ -42,10 +42,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData(null, "gamma", "")]
         public void RemoveClass(string initial, string toRemove, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv { Class = initial } as IHtmlNode;
 
-            // test execution
+            // act
             element.RemoveClass(toRemove);
 
             // validation
@@ -68,10 +68,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData(null, "new", "new")]
         public void AddStyle(string initial, string toAdd, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv { Style = initial } as IHtmlNode;
 
-            // test execution
+            // act
             element.AddStyle(toAdd);
 
             // validation
@@ -91,10 +91,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData(null, "gamma", "")]
         public void RemoveStyle(string initial, string toRemove, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv { Style = initial } as IHtmlNode;
 
-            // test execution
+            // act
             element.RemoveStyle(toRemove);
 
             // validation
@@ -109,10 +109,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData("data-id", "42", "data-id=42")]
         public void AddUserAttribute(string name, string value, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv() as IHtmlNode;
 
-            // test execution
+            // act
             if (!string.IsNullOrWhiteSpace(value))
             {
                 element.AddUserAttribute(name, value);
@@ -145,11 +145,11 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData("data-id", "42")]
         public void RemoveUserAttribute(string name, string value)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementTextContentDiv() as IHtmlNode;
             element.AddUserAttribute(name, value);
 
-            // test execution
+            // act
             element.RemoveUserAttribute(name);
 
             // validation
@@ -162,7 +162,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Find()
         {
-            // preconditions
+            // arrange
             var root = new HtmlElementTextContentDiv();
             var node = root as IHtmlNode;
             var child1 = new HtmlElementTextSemanticsSpan();
@@ -170,7 +170,7 @@ namespace WebExpress.WebCore.Test.Html
             root.Add(child1);
             root.Add(child2);
 
-            // test execution
+            // act
             var result = node.Find(e => e is HtmlElementTextSemanticsSpan).ToList();
 
             // validation

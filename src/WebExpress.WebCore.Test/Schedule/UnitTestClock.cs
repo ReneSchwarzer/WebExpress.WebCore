@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData(-1, -10, 0, 0, (24 * 60) + (10 * 60))]
         public void Synchronize(int? days, int? hours, int? minutes, int? seconds, int expected)
         {
-            // preconditions
+            // arrange
             var dateTime = DateTime.Now;
 
             if (days.HasValue)
@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.Test.Schedule
 
             var clock = new Clock(dateTime);
 
-            // test execution
+            // act
             var elapsed = clock.Synchronize();
 
             Assert.Equal(expected, elapsed.Count());
@@ -60,11 +60,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
         public void CompareEquals(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 == clock2);
         }
 
@@ -76,11 +76,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
         public void CompareInequality(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 != clock2);
         }
 
@@ -93,11 +93,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
         public void CompareLess(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 < clock2);
         }
 
@@ -110,11 +110,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
         public void CompareGreater(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 > clock2);
         }
 
@@ -127,11 +127,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", true)]
         public void CompareLessOrEqual(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 <= clock2);
         }
 
@@ -144,11 +144,11 @@ namespace WebExpress.WebCore.Test.Schedule
         [InlineData("2020-12-31 23:59:00", "2021-01-01 00:00:00", false)]
         public void CompareGreaterOrEqual(string dateTime1, string dateTime2, bool expected)
         {
-            // preconditions
+            // arrange
             var clock1 = new Clock(DateTime.ParseExact(dateTime1, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             var clock2 = new Clock(DateTime.ParseExact(dateTime2, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
 
-            // test execution
+            // act
             Assert.Equal(expected, clock1 >= clock2);
         }
 
@@ -167,7 +167,7 @@ namespace WebExpress.WebCore.Test.Schedule
             var clock2 = new Clock(DateTime.ParseExact(expected, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture));
             clock1.Tick();
 
-            // test execution
+            // act
             Assert.Equal(clock2, clock1);
         }
     }

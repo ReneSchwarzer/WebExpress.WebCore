@@ -17,11 +17,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
-            // test execution
+            // act
             pluginManager.Register();
 
             // validation
@@ -37,12 +37,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var applicationManager = componentHub.ApplicationManager as ApplicationManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             applicationManager.Remove(plugin);
 
             // validation
@@ -58,11 +58,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.testapplicationc")]
         public void Id(Type applicationType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(id, application.ApplicationId);
         }
 
@@ -75,11 +75,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "TestApplicationC")]
         public void Name(Type applicationType, string name)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(name, application.ApplicationName);
         }
 
@@ -92,11 +92,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "application.description")]
         public void Description(Type applicationType, string description)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(description, application.Description);
         }
 
@@ -109,11 +109,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "/server/assets/img/Logo.png")]
         public void Icon(Type applicationType, string icon)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(icon, application.Icon.ToString());
         }
 
@@ -126,11 +126,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "/server")]
         public void ContextPath(Type applicationType, string contextPath)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(contextPath, application.Route.ToString());
         }
 
@@ -143,11 +143,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "*/")]
         public void AssetPath(Type applicationType, string assetPath)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             AssertExtensions.EqualWithPlaceholders(assetPath, application.AssetPath);
         }
 
@@ -160,11 +160,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "*/")]
         public void DataPath(Type applicationType, string dataPath)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             AssertExtensions.EqualWithPlaceholders(dataPath, application.DataPath);
         }
 
@@ -174,10 +174,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ApplicationManager.GetType()));
         }
 
@@ -187,10 +187,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var application in componentHub.ApplicationManager.Applications)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Application context {application.GetType().Name} does not implement IContext.");

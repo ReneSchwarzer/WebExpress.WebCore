@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void FindSingel()
         {
-            // preconditions
+            // arrange
             var html = new HtmlElementTextContentDiv
             (
                 new HtmlElementTextSemanticsI(),
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.Test.Html
                 new HtmlElementTextSemanticsB()
             );
 
-            // test execution
+            // act
             var res = html.Find(x => x is HtmlElementTextSemanticsSpan).FirstOrDefault();
 
             // validation
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Find()
         {
-            // preconditions
+            // arrange
             var html = new HtmlElement[]
             {
                     new HtmlElementTextContentDiv
@@ -47,7 +47,7 @@ namespace WebExpress.WebCore.Test.Html
                     new HtmlElementMultimediaImg()
             };
 
-            // test execution
+            // act
             var res = html.Find(x => x is HtmlElementTextSemanticsSpan).FirstOrDefault();
 
             // validation
@@ -60,10 +60,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void AddClassTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
 
-            // test execution
+            // act
             div.AddClass("test-class");
 
             // validation
@@ -76,11 +76,11 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void RemoveClassTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
             div.AddClass("test-class");
 
-            // test execution
+            // act
             div.RemoveClass("test-class");
 
             // validation
@@ -93,10 +93,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void AddStyleTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
 
-            // test execution
+            // act
             div.AddStyle("color:red;");
 
             // validation
@@ -109,11 +109,11 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void RemoveStyleTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
             div.AddStyle("color", "red");
 
-            // test execution
+            // act
             div.RemoveStyle("color");
 
             // validation
@@ -126,10 +126,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void AddMultipleClassesTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
 
-            // test execution
+            // act
             div.AddClass("class1");
             div.AddClass("class2");
 
@@ -143,12 +143,12 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void RemoveOneOfMultipleClassesTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
             div.AddClass("class1");
             div.AddClass("class2");
 
-            // test execution
+            // act
             div.RemoveClass("class1");
 
             // validation
@@ -162,10 +162,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void AddMultipleStylesTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
 
-            // test execution
+            // act
             div.AddStyle("color:red;");
             div.AddStyle("background:blue;");
 
@@ -180,12 +180,12 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void RemoveOneOfMultipleStylesTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
             div.AddStyle("color:red;");
             div.AddStyle("background:blue;");
 
-            // test execution
+            // act
             div.RemoveStyle("color:red;");
 
             // validation
@@ -199,7 +199,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void ToStringEmptyDivTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv();
 
             // validation
@@ -212,7 +212,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void ToStringWithChildrenTest()
         {
-            // preconditions
+            // arrange
             var div = new HtmlElementTextContentDiv(
                 new HtmlElementTextSemanticsB(),
                 new HtmlElementTextSemanticsI()

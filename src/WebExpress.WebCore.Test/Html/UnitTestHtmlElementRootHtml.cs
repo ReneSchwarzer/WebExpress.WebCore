@@ -14,10 +14,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void HeadBase()
         {
-            // preconditions
+            // arrange
             var url = "https://example.com";
 
-            // test execution
+            // act
             var element = new HtmlElementRootHtml();
             element.Head.Base = url;
 

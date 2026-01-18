@@ -22,10 +22,10 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(106)]
         public void Refresh(int expected)
         {
-            // preconditions
+            // arrange
             var componentManager = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             componentManager.SitemapManager.Refresh();
 
             // validation
@@ -66,13 +66,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/uri/does/not/exist", null)]
         public void SearchResource(string uri, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var context = UnitTestFixture.CreateHttpContextMock();
             var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             componentHub.SitemapManager.Refresh();
 
-            // test execution
+            // act
             var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
             {
                 HttpServerContext = httpServerContext,
@@ -113,12 +113,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(WWW.Products.Details.Index), 2, "/server/appa/products/2")]
         public void GetUri(Type applicationType, Type resourceType, int? param, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             componentHub.SitemapManager.Refresh();
 
-            // test execution
+            // act
             var uri = componentHub.SitemapManager.GetUri(resourceType, application, [param.HasValue ? new TestParameterA(param.Value) : null]);
 
             // validation
@@ -160,11 +160,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/appa/products/10E96737-5C72-4C25-9E74-F96D8863D123/", "webexpress.webcore.test.www.products.details.index")]
         public void GetEndpoint(string uri, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             componentHub.SitemapManager.Refresh();
 
-            // test execution
+            // act
             var endpoint = componentHub.SitemapManager.GetEndpoint(new UriEndpoint(uri));
 
             // validation
@@ -177,10 +177,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SitemapManager.GetType()));
         }
     }

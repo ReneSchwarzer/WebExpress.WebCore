@@ -18,11 +18,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
             var pluginManager = componentHub.PluginManager as PluginManager;
 
-            // test execution
+            // act
             pluginManager.Register();
 
             Assert.Equal("This is a test", I18N.Translate("webexpress.webcore.test:unit.test.message"));
@@ -34,12 +34,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var internationalizationManager = componentHub.InternationalizationManager as InternationalizationManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             internationalizationManager.Remove(plugin);
 
             Assert.Equal("webexpress.webcore.test:unit.test.message", I18N.Translate("webexpress.webcore.test:unit.test.message"));
@@ -51,10 +51,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void GetDefaultCulture()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(CultureInfo.GetCultureInfo("en"), InternationalizationManager.DefaultCulture);
         }
 
@@ -72,47 +72,47 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("non.existent.key", "non.existent.key", "de")]
         public void Translate(string key, string excepted, string cultureName = null, string pluginID = null, params object[] param)
         {
-            // preconditions
+            // arrange
             UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             if (cultureName is null && param.Length == 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName is null && param.Length != 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(key, param);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName is not null && pluginID is null && param.Length == 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName is not null && pluginID is null && param.Length != 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), key, param);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName is not null && pluginID is not null && param.Length == 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key);
 
                 Assert.Equal(excepted, result);
             }
             if (cultureName is not null && pluginID is not null && param.Length != 0)
             {
-                // test execution
+                // act
                 var result = I18N.Translate(CultureInfo.GetCultureInfo(cultureName), pluginID, key, param);
 
                 Assert.Equal(excepted, result);
@@ -125,10 +125,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.InternationalizationManager.GetType()));
         }
     }

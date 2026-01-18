@@ -25,13 +25,13 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData(UriScheme.Http, "example.com", "user", "80", "/abc", "a=1&b=2", "fragment", "http://user@example.com/abc?a=1&b=2#fragment")]
         public void UriAbsolute(UriScheme scheme, string authority, string user, string port, string path, string query, string fragment, string expected)
         {
-            // preconditions
+            // arrange
             var uriUser = user is not null ? user + "@" : "";
             var uriPort = port is not null ? ":" + port : null;
             var uriQuery = query is not null ? "?" + query : "";
             var uriFragment = fragment is not null ? "#" + fragment : null;
 
-            // test execution
+            // act
             var uri = new UriEndpoint($"{scheme}://{uriUser}{authority}{uriPort}{path}{uriQuery}{uriFragment}");
 
             // validation
@@ -63,11 +63,11 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("/assets/img/example.svg", null, null, "/assets/img/example.svg")]
         public void UriRelative(string path, string query, string fragment, string expected)
         {
-            // preconditions
+            // arrange
             var uriQuery = query is not null ? "?" + query : "";
             var uriFragment = fragment is not null ? "#" + fragment : null;
 
-            // test execution
+            // act
             var uri = new UriEndpoint($"{path}{uriQuery}{uriFragment}");
 
             // validation
@@ -89,10 +89,10 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("/a/b/c", "/d/e/f", "/a/b/c/d/e/f", 7)]
         public void Concat(string path, string segment, string expected, int count)
         {
-            // preconditions
+            // arrange
             var uri = new UriEndpoint(path);
 
-            // test execution
+            // act
             var concat = uri.Concat(segment);
 
             // validation
@@ -112,10 +112,10 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("/a/b/c", 5, null)]
         public void Skip(string path, int skipCount, string expected)
         {
-            // preconditions
+            // arrange
             var uri = new UriEndpoint(path);
 
-            // test execution
+            // act
             var skip = uri.Skip(skipCount);
 
             // validation
@@ -139,10 +139,10 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("/a/b/c", -5, null)]
         public void Take(string path, int takeCount, string expected)
         {
-            // preconditions
+            // arrange
             var uri = new UriEndpoint(path);
 
-            // test execution
+            // act
             var take = uri.Take(takeCount);
 
             // validation
@@ -159,7 +159,7 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("http://www.example.com/a/$guid/c", "/a/$guid/c", "http://www.example.com/a/$guid/c")]
         public void Merge(string uri, string route, string expected)
         {
-            // preconditions
+            // arrange
             var random = Guid.NewGuid().ToString();
             var uriEndpoint = new UriEndpoint(uri.Replace("$guid", random));
             var routeEndpoint = new RouteEndpoint
@@ -172,7 +172,7 @@ namespace WebExpress.WebCore.Test.WebUri
                 )]
             );
 
-            // test execution
+            // act
             var resourceUri = new UriEndpoint(uriEndpoint, routeEndpoint.PathSegments);
 
             // validation
@@ -187,7 +187,7 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("http://user@example.com/a/b/c/x/y/z", "http://user@example.com/a/b/c", "http://user@example.com/a/b/c")]
         public void BasePath(string uri, string baseUri, string expected)
         {
-            // test execution
+            // act
             var resourceUri = new UriEndpoint(uri)
             {
                 BasePath = new UriEndpoint(baseUri)
@@ -208,12 +208,12 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData("http://user@example.com/a/b/c", "myfragment", "http://user@example.com/a/b/c#myfragment")]
         public void SetFragment(string uri, string fragment, string expected)
         {
-            // preconditions
+            // arrange
             var resourceUri = (IUri)new UriEndpoint(uri)
             {
             };
 
-            // test execution
+            // act
             resourceUri = resourceUri.SetFragment(fragment);
 
             // validation
@@ -235,7 +235,7 @@ namespace WebExpress.WebCore.Test.WebUri
         [InlineData(typeof(TestApplicationC), typeof(Contact), null)]
         public void GetDisplayText(Type applicationType, Type resourceType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             componentHub.SitemapManager.Refresh();
@@ -243,7 +243,7 @@ namespace WebExpress.WebCore.Test.WebUri
             var endpoint = componentHub.SitemapManager.GetEndpoint(page.Route.ToUri());
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application);
 
-            // test execution
+            // act
             var display = endpoint.Route.ToUri().GetDisplayText(renderContext);
 
             // validation

@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Empty()
         {
-            // test execution
+            // act
             var html = new HtmlElementMultimediaImg();
 
             Assert.Equal(@"<img>", html.ToString().Trim());

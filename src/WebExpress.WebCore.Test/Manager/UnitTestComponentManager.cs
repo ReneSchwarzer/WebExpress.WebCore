@@ -14,10 +14,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void PluginManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
 
-            // test execution
+            // act
             Assert.NotNull(componentHub.PluginManager);
         }
 
@@ -27,10 +27,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void ApplicationManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateComponentHubMock();
 
-            // test execution
+            // act
             Assert.NotNull(componentHub.ApplicationManager);
         }
     }

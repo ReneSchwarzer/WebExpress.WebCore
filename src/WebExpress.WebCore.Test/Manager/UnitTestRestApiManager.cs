@@ -21,10 +21,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(9, componentHub.RestApiManager.RestApis.Count());
         }
 
@@ -34,12 +34,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var apiManager = componentHub.RestApiManager as RestApiManager;
 
-            // test execution
+            // act
             apiManager.Remove(plugin);
 
             // validation
@@ -61,12 +61,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.www.api._3.testrestapic")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(id, api?.EndpointId.ToString());
         }
 
@@ -85,12 +85,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "/server/api/3/testrestapic")]
         public void RoutePath(Type applicationType, Type resourceType, string path)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(path, api?.Route.ToString());
         }
 
@@ -109,19 +109,19 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "3")]
         public void Version(Type applicationType, Type resourceType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
             componentHub.SitemapManager.Refresh();
             var uri = componentHub.SitemapManager.GetUri(resourceType, application);
 
-            // test execution
+            // act
             var version = uri.Parameters
                 .Where(x => x.Key == "_apiversion")
                 .FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(expected, version.Value);
         }
 
@@ -134,12 +134,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), RequestMethod.GET)]
         public void Method(Type applicationType, Type resourceType, RequestMethod method)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var api = componentHub.RestApiManager.GetRestApi(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Contains(method, api?.Methods);
         }
 
@@ -149,10 +149,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.RestApiManager.GetType()));
         }
 
@@ -162,10 +162,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var api in componentHub.RestApiManager.RestApis)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(api.GetType()), $"Api context {api.GetType().Name} does not implement IContext.");
@@ -181,11 +181,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("   ")]
         public void ValidateRequire(string input)
         {
-            // preconditions
+            // arrange
             var request = UnitTestFixture.CrerateRequestMock($"name={input}");
             request.AddParameter(new Parameter("name", input, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .Require("name");
 
@@ -203,11 +203,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("ab")]
         public void ValidateMinLength(string input)
         {
-            // preconditions
+            // arrange
             var request = UnitTestFixture.CrerateRequestMock();
             request.AddParameter(new Parameter("code", input, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .MinLength("code", 3);
 
@@ -223,12 +223,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(300)]
         public void ValidateMaxLength(int length)
         {
-            // preconditions
+            // arrange
             var input = new string('x', length);
             var request = UnitTestFixture.CrerateRequestMock();
             request.AddParameter(new Parameter("bio", input, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .MaxLength("bio", 255);
 
@@ -246,11 +246,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("@nouser.com")]
         public void ValidateEmail(string email)
         {
-            // preconditions
+            // arrange
             var request = UnitTestFixture.CrerateRequestMock();
             request.AddParameter(new Parameter("email", email, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .Email("email");
 
@@ -268,11 +268,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("123a")]
         public void ValidateIsInt(string input)
         {
-            // preconditions
+            // arrange
             var request = UnitTestFixture.CrerateRequestMock();
             request.AddParameter(new Parameter("age", input, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .IsInt("age");
 
@@ -289,11 +289,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("WrongCase")]
         public void ValidateEqualTo(string input)
         {
-            // preconditions
+            // arrange
             var request = UnitTestFixture.CrerateRequestMock();
             request.AddParameter(new Parameter("role", input, ParameterScope.Parameter));
 
-            // test execution
+            // act
             var validator = new RestApiValidator(request)
                 .EqualTo("role", "admin");
 

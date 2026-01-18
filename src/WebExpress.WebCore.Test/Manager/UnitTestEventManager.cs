@@ -16,10 +16,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(6, componentHub.EventManager.EventHandlers.Count());
         }
 
@@ -29,12 +29,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var eventManager = componentHub.EventManager as EventManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             eventManager.Remove(plugin);
 
             Assert.Empty(componentHub.EventManager.EventHandlers);
@@ -46,10 +46,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.EventManager.GetType()));
         }
 
@@ -63,11 +63,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationB), typeof(TestEventB), "webexpress.webcore.test.testeventhandlerb")]
         public void Id(Type applicationType, Type eventType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);
 
             if (id is null)
@@ -89,11 +89,11 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationB), typeof(TestEventB), "webexpress.webcore.test.testeventb")]
         public void EventId(Type applicationType, Type eventType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var eventHandlers = componentHub.EventManager.GetEventHandlers(application, eventType);
 
             if (id is null)
@@ -111,11 +111,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RaiseEventA1()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication<TestApplicationA>();
 
-            // test execution
+            // act
             var eventArgument = new TestEventArgument() { TestProperty = false };
 
             componentHub.EventManager.RaiseEvent<TestEventA>(application, this, eventArgument);
@@ -129,11 +129,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RaiseEventB1()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplication<TestApplicationB>();
 
-            // test execution
+            // act
             var eventArgument = new TestEventArgument() { TestProperty = false };
 
             componentHub.EventManager.RaiseEvent<TestEventB>(application, this, eventArgument);

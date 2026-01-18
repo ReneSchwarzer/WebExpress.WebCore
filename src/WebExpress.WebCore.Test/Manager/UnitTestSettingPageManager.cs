@@ -17,10 +17,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RegisterSettingPages()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(9, componentHub.SettingPageManager.SettingPages.Count());
         }
 
@@ -30,10 +30,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RegisterSettingCategories()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(9, componentHub.SettingPageManager.SettingCategories.Count());
         }
 
@@ -43,10 +43,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RegisterSettingGroups()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(9, componentHub.SettingPageManager.SettingGroups.Count());
         }
 
@@ -56,12 +56,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var settingPageManager = componentHub.SettingPageManager as SettingPageManager;
 
-            // test execution
+            // act
             settingPageManager.Remove(plugin);
 
             Assert.Empty(componentHub.SettingPageManager.SettingPages);
@@ -82,12 +82,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageC), "webexpress.webcore.test.www.settings.testsettingpagec")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(id, settingPage.EndpointId.ToString());
         }
 
@@ -103,12 +103,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageB), "webindex:settingpageb.label")]
         public void Title(Type applicationType, Type resourceType, string title)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(title, settingPage.PageTitle);
         }
 
@@ -127,12 +127,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestSettingPageC), "/server/settings/testsettingpagec")]
         public void RoutePath(Type applicationType, Type resourceType, string path)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingPage = componentHub.SettingPageManager.GetSettingPages(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(path, settingPage.Route.ToString());
         }
 
@@ -142,10 +142,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SettingPageManager.GetType()));
         }
 
@@ -155,10 +155,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var settingPages in componentHub.SettingPageManager.SettingPages)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(settingPages.GetType()), $"Page context {settingPages.GetType().Name} does not implement IContext.");
@@ -174,12 +174,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), new[] { "SettingCategory A", "SettingCategory B", "SettingCategory C" })]
         public void CategoryName(Type applicationType, params string[] names)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategories = componentHub.SettingPageManager.GetSettingCategories(application);
 
-            // test execution
+            // act
             Assert.Equal([.. names], [.. settingCategories.Select(x => x.Name)]);
         }
 
@@ -192,12 +192,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), new[] { "WebExpress.WebCore.Test.TestIconBell", "WebExpress.WebCore.Test.TestIconProfile", null })]
         public void CategoryIcon(Type applicationType, params string[] icons)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategories = componentHub.SettingPageManager.GetSettingCategories(application);
 
-            // test execution
+            // act
             Assert.Equal([.. icons], [.. settingCategories.Select(x => x.Icon?.ToString())]);
         }
 
@@ -210,12 +210,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), new[] { "Description of category a.", "Description of category b.", "Description of category c." })]
         public void CategoryDescription(Type applicationType, params string[] descriptions)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategories = componentHub.SettingPageManager.GetSettingCategories(application);
 
-            // test execution
+            // act
             Assert.Equal([.. descriptions], [.. settingCategories.Select(x => x.Description)]);
         }
 
@@ -228,12 +228,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), new[] { SettingSection.Preferences, SettingSection.Primary, SettingSection.Secondary })]
         public void CategorySection(Type applicationType, params SettingSection[] sections)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategories = componentHub.SettingPageManager.GetSettingCategories(application);
 
-            // test execution
+            // act
             Assert.Equal([.. sections], [.. settingCategories.Select(x => x.Section)]);
         }
 
@@ -248,13 +248,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), null, new[] { "SettingGroup C" })]
         public void GroupName(Type applicationType, Type settingCategoryType, params string[] names)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
             var settinGroups = componentHub.SettingPageManager.GetSettingGroups(application, settingCategory);
 
-            // test execution
+            // act
             Assert.Equal([.. names], [.. settinGroups.Select(x => x.Name)]);
         }
 
@@ -269,13 +269,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), null, new[] { "Description of group c." })]
         public void GroupDescription(Type applicationType, Type settingCategoryType, params string[] descriptions)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
             var settinGroups = componentHub.SettingPageManager.GetSettingGroups(application, settingCategory);
 
-            // test execution
+            // act
             Assert.Equal([.. descriptions], [.. settinGroups.Select(x => x.Description)]);
         }
 
@@ -290,13 +290,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), null, new[] { SettingSection.Secondary })]
         public void GroupSection(Type applicationType, Type settingCategoryType, params SettingSection[] sections)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
             var settinGroups = componentHub.SettingPageManager.GetSettingGroups(application, settingCategory);
 
-            // test execution
+            // act
             Assert.Equal([.. sections], [.. settinGroups.Select(x => x.Section)]);
         }
 
@@ -311,13 +311,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), null)]
         public void GroupCategory(Type applicationType, Type settingCategoryType)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
             var settinGroups = componentHub.SettingPageManager.GetSettingGroups(application, settingCategory);
 
-            // test execution
+            // act
             Assert.Equal(settinGroups.Count(), settinGroups.Where(x => x.SettingCategory == settingCategory).Count());
         }
 
@@ -332,7 +332,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), null, typeof(TestSettingPageC))]
         public void GetFirstSettingPage(Type applicationType, Type settingCategoryType, Type firstPageType)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var settingCategory = componentHub.SettingPageManager.GetSettingCategories(application).FirstOrDefault(x => x.CategoryId.ToString() == settingCategoryType?.FullName.ToLower());
@@ -341,7 +341,7 @@ namespace WebExpress.WebCore.Test.Manager
                 : null;
             var settingPage = componentHub.SettingPageManager.GetFirstSettingPage(application, settingCategory);
 
-            // test execution
+            // act
             Assert.Equal(firstPage, settingPage);
         }
     }

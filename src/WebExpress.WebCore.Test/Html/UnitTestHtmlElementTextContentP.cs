@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Empty()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP();
 
             Assert.Equal(@"<p></p>", html.Trim());
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtInstancing()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP("abcdef");
 
             Assert.Equal(@"<p>abcdef</p>", html.Trim());
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtProperty()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP
             {
                 Text = "abcdef"
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtHtmlText()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP(new HtmlText("abc"), new HtmlText("def"));
             var str = html.ToString();
 
@@ -66,7 +66,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextWithId()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP()
             {
                 Id = "identity"
@@ -81,7 +81,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Inline()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP();
 
             Assert.False(html.Inline);
@@ -93,7 +93,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void CloseTag()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP();
 
             Assert.True(html.CloseTag);
@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Class()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP()
             {
                 Class = "abc"
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Style()
         {
-            // test execution
+            // act
             var html = new HtmlElementTextContentP()
             {
                 Style = "abc"

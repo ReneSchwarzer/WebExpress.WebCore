@@ -17,10 +17,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.NotNull(componentHub.SessionManager);
         }
 
@@ -30,10 +30,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.SessionManager.GetType()));
         }
 
@@ -43,11 +43,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void GetSession()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var request = UnitTestFixture.CrerateRequestMock();
 
-            // test execution
+            // act
             var session = componentHub.SessionManager.GetSession(request);
 
             Assert.NotNull(session);
@@ -59,12 +59,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void AddPropertyToSession()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var request = UnitTestFixture.CrerateRequestMock();
             var session = componentHub.SessionManager.GetSession(request);
 
-            // test execution
+            // act
             session.SetProperty(new SessionPropertyParameter(new Parameter("test", "test param", ParameterScope.Session)));
 
             var testProperty = session.GetProperty<SessionPropertyParameter>();
@@ -81,12 +81,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RemovePropertyFromSession()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var request = UnitTestFixture.CrerateRequestMock();
             var session = componentHub.SessionManager.GetSession(request);
 
-            // test execution
+            // act
             session.SetProperty(new SessionPropertyParameter(new Parameter("test", "test param", ParameterScope.Session)));
             session.RemoveProperty<SessionPropertyParameter>();
 

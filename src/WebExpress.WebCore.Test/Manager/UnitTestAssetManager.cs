@@ -19,10 +19,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(12, componentHub.AssetManager.Assets.Count());
         }
 
@@ -32,12 +32,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var resourceManager = componentHub.AssetManager as AssetManager;
 
-            // test execution
+            // act
             resourceManager.Remove(plugin);
 
             Assert.Empty(componentHub.AssetManager.Assets);
@@ -59,12 +59,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "webexpress.webcore.test.js.myjavascript.mini.js")]
         public void Id(Type applicationType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var asset = componentHub.AssetManager.GetAssets(application)?.FirstOrDefault(x => x.EndpointId.ToString() == id);
 
-            // test execution
+            // act
             Assert.Equal(id, asset?.EndpointId.ToString());
         }
 
@@ -84,13 +84,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), "/server/assets/js/myjavascript.mini.js")]
         public void Uri(Type applicationType, string route)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var asset = componentHub.AssetManager.GetAssets(application)?
                 .FirstOrDefault(x => x.Route.ToString() == route);
 
-            // test execution
+            // act
             Assert.Equal(route, asset?.Route.ToString());
         }
 
@@ -110,14 +110,14 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("http://localhost:8080/server/assets/js/myjavascript.mini.js", "js/myjavascript.mini.js")]
         public void Request(string uri, string resource)
         {
-            // preconditions
+            // arrange
             var embeddedResource = UnitTestFixture.GetEmbeddedResource(resource);
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var context = UnitTestFixture.CreateHttpContextMock();
             var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
             componentHub.SitemapManager.Refresh();
 
-            // test execution
+            // act
             var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
             {
                 HttpServerContext = httpServerContext,
@@ -140,10 +140,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.AssetManager.GetType()));
         }
 
@@ -153,10 +153,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var asset in componentHub.AssetManager.Assets)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(asset.GetType()), $"Asset context {asset.GetType().Name} does not implement IContext.");
