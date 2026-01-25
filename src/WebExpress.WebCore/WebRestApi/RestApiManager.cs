@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebRestApi
         // instantiate the dictionary; assume RestApiDictionary is a non-thread-safe collection
         private readonly RestApiDictionary _dictionary = [];
 
-        [GeneratedRegex(@"\.(?:_|V|v)(\d+)\.")]
+        [GeneratedRegex(@"(?:_|[Vv])(\d+)_?")]
         private static partial Regex ApiVersionRegex();
 
         /// <summary>

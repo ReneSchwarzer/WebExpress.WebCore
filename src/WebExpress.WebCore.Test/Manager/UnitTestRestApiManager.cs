@@ -1,7 +1,7 @@
 ﻿using WebExpress.WebCore.Test.Fixture;
-using WebExpress.WebCore.Test.WWW.Api._1;
+using WebExpress.WebCore.Test.WWW.Api._1_;
 using WebExpress.WebCore.Test.WWW.Api._2;
-using WebExpress.WebCore.Test.WWW.Api._3;
+using WebExpress.WebCore.Test.WWW.Api.V3;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
@@ -50,15 +50,15 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the id property of the rest api.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1.testrestapia")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1_.testrestapia")]
         [InlineData(typeof(TestApplicationA), typeof(TestRestApiB), "webexpress.webcore.test.www.api._2.testrestapib")]
-        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "webexpress.webcore.test.www.api._3.testrestapic")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1.testrestapia")]
+        [InlineData(typeof(TestApplicationA), typeof(TestRestApiC), "webexpress.webcore.test.www.api.v3.testrestapic")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1_.testrestapia")]
         [InlineData(typeof(TestApplicationB), typeof(TestRestApiB), "webexpress.webcore.test.www.api._2.testrestapib")]
-        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "webexpress.webcore.test.www.api._3.testrestapic")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1.testrestapia")]
+        [InlineData(typeof(TestApplicationB), typeof(TestRestApiC), "webexpress.webcore.test.www.api.v3.testrestapic")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiA), "webexpress.webcore.test.www.api._1_.testrestapia")]
         [InlineData(typeof(TestApplicationC), typeof(TestRestApiB), "webexpress.webcore.test.www.api._2.testrestapib")]
-        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.www.api._3.testrestapic")]
+        [InlineData(typeof(TestApplicationC), typeof(TestRestApiC), "webexpress.webcore.test.www.api.v3.testrestapic")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
             // arrange
