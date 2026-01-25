@@ -170,6 +170,6 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new endpoint uri with the populated parameters.
         /// </returns>
-        IUri SetParameters(params Parameter[] parameters);
+        IUri SetParameters(params IParameter[] parameters);
     }
 }

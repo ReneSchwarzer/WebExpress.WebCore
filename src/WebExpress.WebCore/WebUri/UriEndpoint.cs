@@ -391,7 +391,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new endpoint uri with the populated parameters.
         /// </returns>
-        public virtual IUri SetParameters(params Parameter[] parameters)
+        public virtual IUri SetParameters(params IParameter[] parameters)
         {
             var pathSegments = PathSegments.AsEnumerable();
 
