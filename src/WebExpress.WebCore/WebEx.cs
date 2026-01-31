@@ -178,7 +178,7 @@ namespace WebExpress.WebCore
         /// <param name="configFile">The configuration file.</param>
         private void OnInitialization(string args, string configFile)
         {
-            // Config laden
+            // load configuration
             using var reader = new FileStream(configFile, FileMode.Open);
             var serializer = new XmlSerializer(typeof(HttpServerConfig));
             var config = serializer.Deserialize(reader) as HttpServerConfig;
