@@ -99,6 +99,19 @@ namespace WebExpress.WebCore.WebUri
         IUri Concat(params IUriPathSegment[] segments);
 
         /// <summary>
+        /// Appends one or more query segments and returns a new URI instance with the 
+        /// combined query parameters.
+        /// </summary>
+        /// <param name="query">
+        /// An array representing the query segments to append. The order of segments
+        /// determines their position in the resulting query string.
+        /// </param>
+        /// <returns>
+        /// A new uri instance containing the original URI with the specified query segments appended.
+        /// </returns>
+        IUri Concat(params UriQuery[] query);
+
+        /// <summary>
         /// Return a shortened uri containing n-elements.
         /// count greater than 0 count elements are included
         /// count less than 0 count elements are truncated

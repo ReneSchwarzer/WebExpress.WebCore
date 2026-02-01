@@ -101,6 +101,25 @@ namespace WebExpress.WebCore.Test.WebUri
         }
 
         /// <summary>
+        /// Test the concat method.
+        /// </summary>
+        [Theory]
+        [InlineData(null, null, "/")]
+        [InlineData("a", null, "/?a=")]
+        [InlineData("b", "x", "/?b=x")]
+        public void ConcatQuery(string key, string value, string expected)
+        {
+            // arrange
+            var uri = new UriEndpoint();
+
+            // act
+            var concat = uri.Concat(key is not null ? new UriQuery(key, value) : null);
+
+            // validation
+            Assert.Equal(expected, concat.ToString());
+        }
+
+        /// <summary>
         /// Test the skip method.
         /// </summary>
         [Theory]
