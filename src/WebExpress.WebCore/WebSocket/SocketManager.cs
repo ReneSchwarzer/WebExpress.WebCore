@@ -312,38 +312,72 @@ namespace WebExpress.WebCore.WebSocket
                 var attributes = socketType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)));
 
-                foreach (var customAttribute in socketType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
+                foreach
+                (
+                    var attribute in socketType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IEndpointAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+                    var attributeType = attribute.GetType();
+
+                    // include subpaths
+                    if (attributeType == typeof(IncludeSubPathsAttribute))
                     {
-                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        includeSubPaths = (attribute as IncludeSubPathsAttribute)?.IncludeSubPaths
+                            ?? false;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+
+                    // condition attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(ConditionAttribute<>).Name &&
+                        attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                        var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (conditionType != null)
+                        {
+                            conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(CacheAttribute))
+
+                    // cache attribute
+                    if (attributeType == typeof(CacheAttribute))
                     {
                         cache = true;
+                        continue;
                     }
                 }
 
-                foreach (var customAttribute in socketType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISocketAttribute))))
+                foreach
+                (
+                    var attribute in socketType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(ISocketAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType == typeof(MessageTypeAttribute))
+                    var attributeType = attribute.GetType();
+
+                    // MESSAGE TYPE
+                    if (attributeType == typeof(MessageTypeAttribute))
                     {
-                        messageType = Enum.Parse<SocketMessageType>(customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString());
+                        messageType = (attribute as MessageTypeAttribute)?.MessageType ?? default;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(SubProtocolAttribute))
+
+                    // SUB PROTOCOL
+                    if (attributeType == typeof(SubProtocolAttribute))
                     {
-                        subProtocol = customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString();
+                        subProtocol = (attribute as SubProtocolAttribute)?.SubProtocol;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(MaxMessageSizeAttribute))
+
+                    // MAX MESSAGE SIZE
+                    if (attributeType == typeof(MaxMessageSizeAttribute))
                     {
-                        maxMessageSize = Convert.ToUInt64(customAttribute.ConstructorArguments.FirstOrDefault().Value.ToString());
+                        maxMessageSize = (attribute as MaxMessageSizeAttribute)?.MaxMessageSize ?? 0;
+                        continue;
                     }
                 }
 

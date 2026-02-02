@@ -459,30 +459,59 @@ namespace WebExpress.WebCore.WebRestApi
                     .Where(x => x.Item1 is not null)
                     .Select(x => x.Item2);
 
-                foreach (var customAttribute in restApiType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
+                foreach
+                (
+                    var attribute in restApiType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IEndpointAttribute))))
                 {
-                    if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                    var attributeType = attribute.GetType();
+
+                    // segment attribute
+                    if (attributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = restApiType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = attribute as ISegmentAttribute;
+
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(ContextPathAttribute))
+
+                    // context path
+                    if (attributeType == typeof(ContextPathAttribute))
                     {
-                        contextPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        contextPath = (attribute as ContextPathAttribute)?.ContextPath;
+
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+
+                    // include subpaths
+                    if (attributeType == typeof(IncludeSubPathsAttribute))
                     {
-                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        includeSubPaths = (attribute as IncludeSubPathsAttribute)?.IncludeSubPaths
+                            ?? false;
+
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name
-                        && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+
+                    // condition attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(ConditionAttribute<>).Name
+                        && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                        var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (conditionType != null)
+                        {
+                            conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(CacheAttribute))
+
+                    // cache attribute
+                    if (attributeType == typeof(CacheAttribute))
                     {
                         cache = true;
+
+                        continue;
                     }
                 }
 

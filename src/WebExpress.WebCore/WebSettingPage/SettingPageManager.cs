@@ -453,42 +453,81 @@ namespace WebExpress.WebCore.WebSettingPage
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
                 // determining attributes
-                foreach (var customAttribute in settingPageType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
+                foreach
+                (
+                    var attribute in settingPageType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IEndpointAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                    var attributeType = attribute.GetType();
+
+                    // segment attribute
+                    if (attributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = settingPageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = attribute as ISegmentAttribute;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(SettingGroupAttribute<>))
+
+                    // setting group (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition() == typeof(SettingGroupAttribute<>))
                     {
-                        group = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        group = attributeType.GetGenericArguments().FirstOrDefault();
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(SettingSectionAttribute))
+
+                    // setting section
+                    if (attributeType == typeof(SettingSectionAttribute))
                     {
-                        section = Enum.Parse<SettingSection>(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
+                        section = (attribute as SettingSectionAttribute)?.Section ?? default;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(SettingHideAttribute))
+
+                    // setting hide
+                    if (attributeType == typeof(SettingHideAttribute))
                     {
                         hide = true;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
+
+                    // web icon attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        icon ??= Activator.CreateInstance(type) as IIcon;
+                        var iconType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (iconType != null)
+                        {
+                            icon ??= Activator.CreateInstance(iconType) as IIcon;
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(CacheAttribute))
+
+                    // cache attribute
+                    if (attributeType == typeof(CacheAttribute))
                     {
                         cache = true;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+
+                    // include subpaths
+                    if (attributeType == typeof(IncludeSubPathsAttribute))
                     {
-                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        includeSubPaths = (attribute as IncludeSubPathsAttribute)?.IncludeSubPaths ?? false;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+
+                    // condition attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(ConditionAttribute<>).Name &&
+                        attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                        var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (conditionType != null)
+                        {
+                            conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
                     }
                 }
 
@@ -497,19 +536,46 @@ namespace WebExpress.WebCore.WebSettingPage
                     _httpServerContext?.Log.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nogroup", id));
                 }
 
-                foreach (var customAttribute in settingPageType.CustomAttributes.Where(x => x.AttributeType.GetInterfaces().Contains(typeof(ISettingPageAttribute))))
+                foreach
+                (
+                    var attribute in settingPageType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(ISettingPageAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType == typeof(TitleAttribute))
+                    var attributeType = attribute.GetType();
+
+                    // title attribute
+                    if (attributeType == typeof(TitleAttribute))
                     {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        title = (attribute as TitleAttribute)?.Title;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
+
+                    // scope attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(ScopeAttribute<>).Name &&
+                        attributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                        var scopeType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (scopeType != null)
+                        {
+                            scopes.Add(scopeType);
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(DomainAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(DomainAttribute<>).Namespace)
+
+                    // domain attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(DomainAttribute<>).Name &&
+                        attributeType.Namespace == typeof(DomainAttribute<>).Namespace)
                     {
-                        domains.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                        var domainType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (domainType != null)
+                        {
+                            domains.Add(domainType);
+                        }
+                        continue;
                     }
                 }
 
