@@ -169,6 +169,29 @@ namespace WebExpress.WebCore.Test.WebUri
         }
 
         /// <summary>
+        /// Test the take last method.
+        /// </summary>
+        [Theory]
+        [InlineData("/a/b/c", 0, "/a/b/c")]
+        [InlineData("/a/b/c", 1, "/c")]
+        [InlineData("/a/b/c", 2, "/b/c")]
+        [InlineData("/a/b/c", 3, "/a/b/c")]
+        [InlineData("/a/b/c", 4, "/a/b/c")]
+        [InlineData("/a/b/c", 5, "/a/b/c")]
+        [InlineData("/a/b/c", -5, "/a/b/c")]
+        public void TakeLast(string path, int takeCount, string expected)
+        {
+            // arrange
+            var uri = new UriEndpoint(path);
+
+            // act
+            var take = uri.TakeLast(takeCount);
+
+            // validation
+            Assert.Equal(expected, take?.ToString());
+        }
+
+        /// <summary>
         /// Test the merge method.
         /// </summary>
         [Theory]

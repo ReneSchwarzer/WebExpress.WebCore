@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -351,6 +351,46 @@ namespace WebExpress.WebCore.WebUri
             {
                 return null;
             }
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Returns a new URI containing the last <paramref name="count"/> path segments.
+        /// </summary>
+        /// <param name="count">
+        /// The number of trailing path segments to include.  
+        /// 
+        /// <para>
+        /// • If <paramref name="count"/> is 0, the full URI is returned.  
+        /// • If <paramref name="count"/> is positive, the last <paramref name="count"/> segments are returned.  
+        /// • If <paramref name="count"/> exceeds the number of segments, the full URI is returned.  
+        /// • Negative values are not allowed and result in <c>null</c>.
+        /// </para>
+        /// </param>
+        /// <returns>
+        /// A new URI containing the selected trailing segments, or <c>null</c> if
+        /// <paramref name="count"/> is negative.
+        /// </returns>
+        public virtual IUri TakeLast(int count)
+        {
+            var copy = new UriEndpoint((IUri)this);
+            var path = copy.PathSegments.ToList();
+
+            // negative values → return full URI
+            if (count < 0)
+            {
+                return copy;
+            }
+
+            // 0 or count >= total → full URI
+            if (count is 0 || count >= path.Count)
+            {
+                return copy;
+            }
+
+            // take last n segments
+            copy.PathSegments = [.. path.Skip(path.Count - count)];
 
             return copy;
         }
