@@ -352,7 +352,8 @@ namespace WebExpress.WebCore.WebFragment
         /// <typeparam name="TFragment">The fragment type.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase
+        public IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext)
+            where TFragment : IFragmentBase
         {
             return GetFragments(applicationContext, typeof(TFragment));
         }

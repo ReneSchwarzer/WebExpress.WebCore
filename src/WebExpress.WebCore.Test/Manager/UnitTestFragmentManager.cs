@@ -40,6 +40,7 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             fragmentManager.Remove(plugin);
 
+            // validation
             Assert.Empty(componentHub.FragmentManager.Fragments);
         }
 
@@ -84,6 +85,7 @@ namespace WebExpress.WebCore.Test.Manager
                 return;
             }
 
+            // validation
             Assert.Contains(id, fragment.Select(x => x.FragmentId?.ToString()));
         }
 
@@ -106,6 +108,31 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             var fragments = componentHub.FragmentManager.GetFragments<TestFragmentA, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
 
+            // validation
+            Assert.NotNull(fragments);
+            Assert.Equal(count, fragments.Count);
+        }
+
+        /// <summary>
+        /// Test the get fragment function of the fragment.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(IScope), 0)]
+        [InlineData(typeof(TestApplicationA), typeof(TestScopeA), 1)]
+        [InlineData(typeof(TestApplicationA), typeof(About), 1)]
+        [InlineData(typeof(TestApplicationB), typeof(IScope), 0)]
+        [InlineData(typeof(TestApplicationB), typeof(About), 1)]
+        public void GetFragmentsBase(Type applicationType, Type scopeType, int count)
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+            var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
+
+            // act
+            var fragments = componentHub.FragmentManager.GetFragments<IFragment, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
+
+            // validation
             Assert.NotNull(fragments);
             Assert.Equal(count, fragments.Count);
         }
@@ -130,6 +157,7 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             var html = componentHub.FragmentManager.Render<IRenderContext, IVisualTree>(renderContext, visualTree, sectionType);
 
+            // validation
             Assert.NotNull(html);
 
             if (!empty)

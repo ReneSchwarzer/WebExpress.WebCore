@@ -150,15 +150,15 @@ namespace WebExpress.WebCore.WebFragment.Model
         public IEnumerable<FragmentItem> GetFragmentItems(IApplicationContext applicationContext, Type fragment, Type section, IEnumerable<Type> scopes)
         {
             return _dict.Values
-                    .SelectMany(x => x)
-                    .Where(x => x.Key == applicationContext)
-                    .SelectMany(x => x.Value)
-                    .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
-                    .SelectMany(x => x.Value)
-                    .Where(x => scopes.Any(y => x.Key == y))
-                    .SelectMany(x => x.Value)
-                    .Where(x => x.FragmentClass == fragment || fragment.IsAssignableFrom(x.FragmentClass))
-                    .OrderBy(x => x.Order);
+                .SelectMany(x => x)
+                .Where(x => x.Key == applicationContext)
+                .SelectMany(x => x.Value)
+                .Where(x => x.Key == section || section.IsAssignableFrom(x.Key))
+                .SelectMany(x => x.Value)
+                .Where(x => scopes.Any(y => x.Key == y))
+                .SelectMany(x => x.Value)
+                .Where(x => x.FragmentClass == fragment || fragment.IsAssignableFrom(x.FragmentClass))
+                .OrderBy(x => x.Order);
         }
 
         /// <summary>
