@@ -46,7 +46,7 @@
         /// </summary>
         /// <param name="target">The call target.</param>
         /// <returns>The plain text of the target.</returns>
-        public static string ToStringValue(this TypeTarget target)
+        public static string ToValue(this TypeTarget target)
         {
             return target switch
             {

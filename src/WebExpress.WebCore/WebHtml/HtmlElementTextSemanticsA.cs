@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebHtml
         public TypeTarget Target
         {
             get => (TypeTarget)Enum.Parse(typeof(TypeTarget), GetAttribute("target"));
-            set => SetAttribute("target", value.ToStringValue());
+            set => SetAttribute("target", value.ToValue());
         }
 
         /// <summary>
