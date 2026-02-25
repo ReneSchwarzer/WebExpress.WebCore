@@ -106,13 +106,13 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// A dividing line with * characters
         /// </summary>
-        public void Seperator();
+        public void Separator();
 
         /// <summary>
         /// A separator with custom characters
         /// </summary>
         /// <param name="sepChar">The separator.</param>
-        public void Seperator(char sepChar);
+        public void Separator(char sepChar);
 
         /// <summary>
         /// Logs an info message.

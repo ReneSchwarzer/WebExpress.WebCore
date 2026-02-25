@@ -236,7 +236,7 @@ namespace WebExpress.WebCore
             _httpServer.HttpServerContext.Log.Begin(config.Log);
 
             // log program start
-            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Separator('/');
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.startup"));
             _httpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.version"), args: Version);
@@ -254,7 +254,7 @@ namespace WebExpress.WebCore
                 _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.uri"), args: v.Uri);
             }
 
-            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Separator('=');
 
             if (!Directory.Exists(config.PackageBase))
             {
@@ -298,11 +298,11 @@ namespace WebExpress.WebCore
             Exit?.Invoke(this, EventArgs.Empty);
 
             // end of program log
-            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Separator('=');
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.errors"), args: _httpServer.HttpServerContext.Log.ErrorCount);
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.warnings"), args: _httpServer.HttpServerContext.Log.WarningCount);
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.done"));
-            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Separator('/');
 
             // Stop running
             (_componentHub as ComponentHub).ShutDown();

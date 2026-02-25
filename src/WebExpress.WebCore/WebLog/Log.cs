@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Constant that determines the further of the separator rows.
         /// </summary>
-        private const int _seperatorWidth = 260;
+        private const int _SeparatorWidth = 260;
 
         /// <summary>
         /// End worker thread lifecycle.
@@ -222,7 +222,7 @@ namespace WebExpress.WebCore.WebLog
                             break;
                     }
 
-                    Console.WriteLine(item.ToString().Length > _seperatorWidth ? string.Concat(item.ToString().AsSpan(0, _seperatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
+                    Console.WriteLine(item.ToString().Length > _SeparatorWidth ? string.Concat(item.ToString().AsSpan(0, _SeparatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
                     Console.ResetColor();
 
                     _queue.Enqueue(item);
@@ -233,18 +233,18 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// A dividing line with * characters
         /// </summary>
-        public void Seperator()
+        public void Separator()
         {
-            Seperator('*');
+            Separator('*');
         }
 
         /// <summary>
         /// A separator with custom characters
         /// </summary>
         /// <param name="sepChar">The separator.</param>
-        public void Seperator(char sepChar)
+        public void Separator(char sepChar)
         {
-            Add(LogLevel.Seperartor, "".PadRight(_seperatorWidth, sepChar));
+            Add(LogLevel.Seperartor, "".PadRight(_SeparatorWidth, sepChar));
         }
 
         /// <summary>

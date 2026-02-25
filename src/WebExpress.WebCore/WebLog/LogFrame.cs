@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebLog
             Status = string.Format("{0} completed. ", name);
 
             Log = log;
-            Log.Seperator();
+            Log.Separator();
             Log.Info(string.Format("Starting {0}", name) + (!string.IsNullOrWhiteSpace(additionalHeading) ? " " + additionalHeading : ""), instance, line, file);
             Log.Info("".PadRight(80, '-'), instance, line, file);
         }
