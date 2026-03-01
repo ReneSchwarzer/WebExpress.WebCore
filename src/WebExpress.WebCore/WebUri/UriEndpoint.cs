@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
 
@@ -450,11 +451,11 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new endpoint uri with the populated parameters.
         /// </returns>
-        public virtual IUri SetParameters(params IParameter[] parameters)
+        public virtual IUri BindParameters(params IParameter[] parameters)
         {
             var pathSegments = PathSegments.AsEnumerable();
 
-            foreach (var parameter in parameters)
+            foreach (var parameter in parameters ?? [])
             {
                 pathSegments = pathSegments.Select(x =>
                 {
@@ -472,6 +473,34 @@ namespace WebExpress.WebCore.WebUri
             }
 
             return new UriEndpoint(this, pathSegments);
+        }
+
+        /// <summary>
+        /// Creates a new endpoint uri and fills it with the given parameters.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters that fill in the variable parts of the uri.
+        /// </param>
+        /// <returns>
+        /// A new endpoint uri with the populated parameters.
+        /// </returns>
+        public virtual IUri BindParameters(IEnumerable<IParameter> parameters)
+        {
+            return BindParameters([.. parameters]);
+        }
+
+        /// <summary>
+        /// Binds the parameters from the specified request to a URI instance.
+        /// </summary>
+        /// <param name="request">
+        /// The request object containing the parameters to be bound to the URI. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An new IUri instance that represents the URI with parameters bound from the request.
+        /// </returns>
+        public virtual IUri BindParameters(IRequest request)
+        {
+            return BindParameters([.. request?.Parameters]);
         }
 
         /// <summary>

@@ -170,7 +170,7 @@ namespace WebExpress.WebCore.WebSitemap
                 .Where(x => endpointContexts.Contains(x.EndpointContext))
                 .FirstOrDefault();
 
-            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).SetParameters(parameters);
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).BindParameters(parameters);
         }
 
         /// <summary>

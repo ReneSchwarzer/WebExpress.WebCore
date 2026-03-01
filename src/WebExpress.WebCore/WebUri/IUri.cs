@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
 
@@ -183,6 +184,28 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new endpoint uri with the populated parameters.
         /// </returns>
-        IUri SetParameters(params IParameter[] parameters);
+        IUri BindParameters(params IParameter[] parameters);
+
+        /// <summary>
+        /// Creates a new endpoint uri and fills it with the given parameters.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters that fill in the variable parts of the uri.
+        /// </param>
+        /// <returns>
+        /// A new endpoint uri with the populated parameters.
+        /// </returns>
+        IUri BindParameters(IEnumerable<IParameter> parameters);
+
+        /// <summary>
+        /// Binds the parameters from the specified request to a URI instance.
+        /// </summary>
+        /// <param name="request">
+        /// The request object containing the parameters to be bound to the URI. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An new IUri instance that represents the URI with parameters bound from the request.
+        /// </returns>
+        IUri BindParameters(IRequest request);
     }
 }

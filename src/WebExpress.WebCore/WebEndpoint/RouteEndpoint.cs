@@ -208,7 +208,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>An instance of IUri representing the route as a URI.</returns>
         public IUri ToUri(params Parameter[] parameters)
         {
-            return new UriEndpoint([.. PathSegments]).SetParameters(parameters);
+            return new UriEndpoint([.. PathSegments]).BindParameters(parameters);
         }
 
         /// <summary>
