@@ -8,18 +8,15 @@ namespace WebExpress.WebCore.WebUri
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     public class UriPathSegmentVariableInt<TParameter> : UriPathSegmentVariable<TParameter>
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name.</param>
         /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableInt(string name, object tag = null)
-            : base(name, tag)
+        public UriPathSegmentVariableInt(object tag = null)
+            : base(tag)
         {
-            VariableName = name;
-            Value = name;
             Expression = @"^[+-]*\d$";
             Tag = tag;
         }
@@ -29,7 +26,7 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
         public UriPathSegmentVariableInt(UriPathSegmentVariableInt<TParameter> segment)
-            : base(segment.VariableName, segment.Tag)
+            : base(segment.Tag)
         {
             Expression = segment.Expression;
         }

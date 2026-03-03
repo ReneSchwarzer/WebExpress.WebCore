@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="applicationContext">The application context.</param>
         /// <param name="parameters">The parameters to be considered for the uri.</param>
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
+        IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params IParameter[] parameters)
             where TEndpoint : IEndpoint;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="applicationContext">The application context.</param>
         /// <param name="parameters">The parameters to be considered for the uri.</param>
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters);
+        IUri GetUri(Type endpointType, IApplicationContext applicationContext, params IParameter[] parameters);
 
         /// <summary>
         /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.

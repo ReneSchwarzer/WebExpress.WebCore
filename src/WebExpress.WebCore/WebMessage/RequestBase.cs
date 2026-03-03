@@ -253,23 +253,25 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <typeparam name="TParameter">The parameter.</typeparam>
         /// <returns>The value.</returns>
-        public IParameter GetParameter<TParameter>()
-            where TParameter : IParameter
+        public TParameter GetParameter<TParameter>()
+            where TParameter : IParameterStatic, new()
         {
-            var parameter = Parameter.GetParameter<TParameter>();
+            var key = TParameter.Key;
 
-            if (parameter is not null
-                && !string.IsNullOrWhiteSpace(parameter.Key)
-                && HasParameter(parameter.Key))
+            if (!string.IsNullOrWhiteSpace(key) && HasParameter(key))
             {
-                var p = _param[parameter.Key.ToLower()];
-                parameter.Value = p.Value;
-                parameter.Scope = p.Scope;
+                var p = _param[key.ToLower()];
+
+                var parameter = new TParameter
+                {
+                    Value = p.Value,
+                    Scope = p.Scope
+                };
 
                 return parameter;
             }
 
-            return null;
+            return default;
         }
 
         /// <summary>
@@ -279,7 +281,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <returns>True if parameters are present, false otherwise.</returns>
         public bool HasParameter(string name)
         {
-            if (name is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
                 return false;
             }

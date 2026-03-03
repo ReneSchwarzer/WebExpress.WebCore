@@ -117,9 +117,19 @@ namespace WebExpress.WebCore.Test.Manager
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             componentHub.SitemapManager.Refresh();
+            var parameter = param.HasValue
+                ? new TestParameterA(param ?? 0)
+                : new TestParameterA();
 
             // act
-            var uri = componentHub.SitemapManager.GetUri(resourceType, application, [param.HasValue ? new TestParameterA(param.Value) : null]);
+            var uri = componentHub.SitemapManager.GetUri
+            (
+                resourceType,
+                application,
+                [
+                    parameter
+                ]
+            );
 
             // validation
             Assert.Equal(expected, uri?.ToString());

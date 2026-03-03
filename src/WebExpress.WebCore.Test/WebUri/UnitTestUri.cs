@@ -291,5 +291,104 @@ namespace WebExpress.WebCore.Test.WebUri
             // validation
             Assert.Equal(expected, display);
         }
+
+        /// <summary>
+        /// Tests the BindParameters method to verify that parameters are correctly 
+        /// bound to the URI endpoint.
+        /// </summary>
+        [Fact]
+        public void BindParametersSingle()
+        {
+            // arrange
+            var pathSegments = new IUriPathSegment[]
+            {
+                new UriPathSegmentConstant("a"),
+                new UriPathSegmentVariableGuid<TestParameterA>("testparametera"),
+                new UriPathSegmentConstant("b")
+            };
+
+            var uri = new UriEndpoint(pathSegments);
+            var parameter = new TestParameterA()
+            {
+                Value = "CFABEA8C-4223-4E17-AB31-C8FA4454B745"
+            };
+
+            // act
+            var bind = uri.BindParameters(parameter);
+
+            // validation
+            Assert.Equal("/a/${testparametera}/b", uri.ToString());
+            Assert.Equal("/a/CFABEA8C-4223-4E17-AB31-C8FA4454B745/b", bind.ToString());
+        }
+
+        /// <summary>
+        /// Tests the BindParameters method to verify that parameters are correctly 
+        /// bound to the URI endpoint.
+        /// </summary>
+        [Fact]
+        public void BindParametersMultible()
+        {
+            // arrange
+            var pathSegments = new IUriPathSegment[]
+            {
+                new UriPathSegmentConstant("a"),
+                new UriPathSegmentVariableInt<TestParameterA>(),
+                new UriPathSegmentConstant("b"),
+                new UriPathSegmentVariableInt<TestParameterB>()
+            };
+
+            var uri = new UriEndpoint(pathSegments);
+            var parameter1 = new TestParameterA()
+            {
+                Value = "10"
+            };
+
+            var parameter2 = new TestParameterB()
+            {
+                Value = "20"
+            };
+
+            // act
+            var bind = uri.BindParameters(parameter1, parameter2);
+
+            // validation
+            Assert.Equal("/a/${testparametera}/b/${testparameterb}", uri.ToString());
+            Assert.Equal("/a/10/b/20", bind.ToString());
+        }
+
+        /// <summary>
+        /// Tests the BindParameters method to verify that parameters are correctly 
+        /// bound to the URI endpoint.
+        /// </summary>
+        [Fact]
+        public void BindParametersQuery()
+        {
+            // arrange
+            var pathSegments = new IUriPathSegment[]
+            {
+                new UriPathSegmentConstant("a"),
+                new UriPathSegmentVariableInt<TestParameterA>(),
+                new UriPathSegmentConstant("b")
+            };
+
+            var uri = new UriEndpoint(pathSegments)
+                .Add(new UriQuery<TestParameterB>());
+            var parameter1 = new TestParameterA()
+            {
+                Value = "10"
+            };
+
+            var parameter2 = new TestParameterB()
+            {
+                Value = "20"
+            };
+
+            // act
+            var bind = uri.BindParameters(parameter1, parameter2);
+
+            // validation
+            Assert.Equal("/a/${testparametera}/b?testparameterb=", uri.ToString());
+            Assert.Equal("/a/10/b?testparameterb=20", bind.ToString());
+        }
     }
 }

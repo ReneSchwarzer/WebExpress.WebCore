@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebUri
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     public abstract class UriPathSegmentVariable<TParameter> : IUriPathSegmentVariable
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
         /// <summary>
         /// Returns or sets the id.
@@ -48,11 +48,10 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name.</param>
         /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariable(string name, object tag = null)
+        public UriPathSegmentVariable(object tag = null)
         {
-            VariableName = name;
+            VariableName = TParameter.Key;
             Tag = tag;
         }
 
@@ -146,9 +145,9 @@ namespace WebExpress.WebCore.WebUri
         public virtual string GetDisplayText(IRenderContext renderContext)
         {
             var parameter = renderContext.Request.GetParameter<TParameter>();
-            var displayText = parameter.GetDisplayText(renderContext);
+            var displayText = parameter?.GetDisplayText(renderContext);
 
-            return string.Format(I18N.Translate(renderContext, displayText), Value);
+            return string.Format(I18N.Translate(renderContext, displayText ?? ""), Value);
         }
 
         /// <summary>
@@ -164,7 +163,7 @@ namespace WebExpress.WebCore.WebUri
         public virtual IIcon GetIcon(IRenderContext renderContext)
         {
             var parameter = renderContext.Request.GetParameter<TParameter>();
-            var icon = parameter.GetIcon(renderContext);
+            var icon = parameter?.GetIcon(renderContext);
 
             return icon;
         }

@@ -149,7 +149,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>
         /// Returns the URI taking into account the context, or null if no valid URI is found.
         /// </returns>
-        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
+        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params IParameter[] parameters)
             where TEndpoint : IEndpoint
         {
             return GetUri(typeof(TEndpoint), applicationContext, parameters);
@@ -162,13 +162,12 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="applicationContext">The application context.</param>
         /// <param name="parameters">The parameters to be considered for the uri.</param>
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters)
+        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params IParameter[] parameters)
         {
             var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
             var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
+                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
 
             return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).BindParameters(parameters);
         }

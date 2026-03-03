@@ -12,13 +12,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// </typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SegmentGuidAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
-        /// <summary>
-        /// Returns or sets the name of the variable.
-        /// </summary>
-        private string VariableName { get; set; }
-
         /// <summary>
         /// Returns or sets the display format.
         /// </summary>
@@ -30,7 +25,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// <param name="displayFormat">The display format.</param>
         public SegmentGuidAttribute(UriPathSegmentVariableGuid<TParameter>.Format displayFormat = UriPathSegmentVariableGuid<TParameter>.Format.Simple)
         {
-            VariableName = (Activator.CreateInstance<TParameter>() as Parameter)?.Key?.ToLower();
             DisplayFormat = displayFormat;
         }
 
@@ -40,7 +34,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableGuid<TParameter>(VariableName, DisplayFormat);
+            return new UriPathSegmentVariableGuid<TParameter>(DisplayFormat);
         }
     }
 }

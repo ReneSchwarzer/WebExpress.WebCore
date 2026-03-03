@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        public IEnumerable<UriQuery> Query { get; private set; } = [];
+        public IEnumerable<IUriQuery> Query { get; private set; } = [];
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
@@ -240,7 +240,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="fragment">References a position within a resource (e.g. #Anchor).</param>
         /// <param name="query">The query part (e.g. ?title=Uniform_Resource_Identifier).</param>
         /// <param name="segments">The path segments.</param>
-        public UriEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<UriQuery> query, IEnumerable<IUriPathSegment> segments)
+        public UriEndpoint(UriScheme scheme, UriAuthority authority, string fragment, IEnumerable<IUriQuery> query, IEnumerable<IUriPathSegment> segments)
         {
             Scheme = scheme;
             Authority = authority;
@@ -257,7 +257,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="query">An array of objects representing the query parameters to add. Each 
         /// parameter must not be null.</param>
         /// <returns>The current instance for method chaining.</returns>
-        public virtual IUri Add(params UriQuery[] query)
+        public virtual IUri Add(params IUriQuery[] query)
         {
             Query = Query.Concat(query.Where(x => x is not null));
 
@@ -314,7 +314,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new uri instance containing the original URI with the specified query segments appended.
         /// </returns>
-        public IUri Concat(params UriQuery[] query)
+        public IUri Concat(params IUriQuery[] query)
         {
             var copy = new UriEndpoint((IUri)this);
             copy.Query = copy.Query.Concat(query.Where(x => x is not null));
@@ -457,10 +457,17 @@ namespace WebExpress.WebCore.WebUri
 
             foreach (var parameter in parameters ?? [])
             {
+                var key = parameter switch
+                {
+                    IParameterStatic staticParam => staticParam.GetKey(),
+                    IParameterDynamic dynamicParam => dynamicParam.Key,
+                    _ => null
+                };
+
                 pathSegments = pathSegments.Select(x =>
                 {
                     if (x is IUriPathSegmentVariable variable &&
-                        variable.VariableName.Equals(parameter?.Key, StringComparison.OrdinalIgnoreCase))
+                        variable.VariableName.Equals(key, StringComparison.OrdinalIgnoreCase))
                     {
                         var copy = variable.Copy() as IUriPathSegmentVariable;
                         copy.Value = parameter.Value;
@@ -472,7 +479,39 @@ namespace WebExpress.WebCore.WebUri
                 });
             }
 
-            return new UriEndpoint(this, pathSegments);
+            // copy query collection and bind matching parameters by query keys
+            var boundQuery = new List<IUriQuery>();
+            foreach (var query in Query)
+            {
+                var parameter = parameters
+                    .Select(x =>
+                    {
+                        var key = x switch
+                        {
+                            IParameterStatic staticParam => staticParam.GetKey(),
+                            IParameterDynamic dynamicParam => dynamicParam.Key,
+                            _ => null
+                        };
+                        return (key, x.Value);
+                    })
+                    .FirstOrDefault(x => x.key.Equals(query?.Key, StringComparison.InvariantCultureIgnoreCase));
+
+                if (!string.IsNullOrWhiteSpace(parameter.key))
+                {
+                    // if parameter found for query key, set value accordingly
+                    boundQuery.Add(new UriQuery(parameter.key, parameter.Value));
+                }
+                else
+                {
+                    // otherwise keep unchanged
+                    boundQuery.Add(new UriQuery(query.Key, query.Value));
+                }
+            }
+
+            return new UriEndpoint(this, pathSegments)
+            {
+                Query = boundQuery
+            };
         }
 
         /// <summary>

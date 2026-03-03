@@ -12,13 +12,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// </typeparam>
     [AttributeUsage(AttributeTargets.Class)]
     public class SegmentRegexAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
-        /// <summary>
-        /// Returns or sets the name of the variable.
-        /// </summary>
-        private string VariableName { get; set; }
-
         /// <summary>
         /// Reurns or sets the string representation of the expression.
         /// </summary>
@@ -34,9 +29,8 @@ namespace WebExpress.WebCore.WebAttribute
         /// </summary>
         /// <param name="expression">The regular expression.</param>
         /// <param name="display">The display string.</param>
-        public SegmentRegexAttribute(string expression, string display)
+        public SegmentRegexAttribute(string expression, string display = null)
         {
-            VariableName = (Activator.CreateInstance<TParameter>() as Parameter)?.Key?.ToLower();
             Expression = expression;
             Display = display;
         }
@@ -47,7 +41,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableRegex<TParameter>(VariableName, Expression, Display);
+            return new UriPathSegmentVariableRegex<TParameter>(Expression, Display);
         }
     }
 }

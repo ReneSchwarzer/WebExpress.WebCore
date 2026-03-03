@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebUri
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     public class UriPathSegmentVariableGuid<TParameter> : UriPathSegmentVariable<TParameter>
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
         /// <summary>
         /// The display formats of the guid.
@@ -37,23 +37,20 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The path text.</param>
         /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableGuid(string name, object tag = null)
-            : this(name, Format.Simple, tag)
+        public UriPathSegmentVariableGuid(object tag = null)
+            : this(Format.Simple, tag)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name.</param>
         /// <param name="displayFormat">The display format.</param>
         /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariableGuid(string name, Format displayFormat, object tag = null)
-            : base(name, tag)
+        public UriPathSegmentVariableGuid(Format displayFormat, object tag = null)
+            : base(tag)
         {
-            VariableName = name;
             DisplayFormat = displayFormat;
             Expression = @"^(\{){0,1}(([0-9a-fA-F]{8})\-([0-9a-fA-F]{4})\-([0-9a-fA-F]{4})\-([0-9a-fA-F]{4})\-([0-9a-fA-F]{12}))(\}){0,1}$";
         }
@@ -86,7 +83,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableGuid<TParameter>(VariableName, DisplayFormat)
+            return new UriPathSegmentVariableGuid<TParameter>(DisplayFormat)
             {
                 Expression = Expression,
                 Value = Value
@@ -103,6 +100,11 @@ namespace WebExpress.WebCore.WebUri
         /// </returns>
         public override string GetDisplayText(IRenderContext renderContext)
         {
+            if (Value is null)
+            {
+                return base.GetDisplayText(renderContext);
+            }
+
             var match = Regex.Match(Value, Expression, RegexOptions.IgnoreCase | RegexOptions.Compiled);
             var guid = DisplayFormat == Format.Simple ? match.Groups[7].ToString() : match.Groups[2].ToString();
 

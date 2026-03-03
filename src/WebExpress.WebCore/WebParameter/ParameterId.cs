@@ -1,18 +1,19 @@
-﻿using WebExpress.WebCore.WebIcon;
+﻿using System;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebParameter
 {
     /// <summary>
-    /// Represents a api version parameter with a key, value, and scope.
+    /// Represents a id parameter with a key, value, and scope.
     /// </summary>
-    public sealed class ParameterApiVersion : IParameterStatic
+    public sealed class ParameterId : IParameterStatic
     {
         /// <summary>
         /// Returns the key that uniquely identifies the parameter in configuration or
         /// settings contexts.
         /// </summary>
-        public static string Key => "_apiVersion";
+        public static string Key => "id";
 
         /// <summary>
         /// Returns or sets the scope of the parameter.
@@ -27,7 +28,7 @@ namespace WebExpress.WebCore.WebParameter
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ParameterApiVersion()
+        public ParameterId()
         {
             Scope = ParameterScope.Url;
         }
@@ -36,10 +37,20 @@ namespace WebExpress.WebCore.WebParameter
         /// Initializes a new instance of the class with a specified value.
         /// </summary>
         /// <param name="value">The value of the parameter.</param>
-        public ParameterApiVersion(string value)
+        public ParameterId(string value)
             : this()
         {
             Value = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class with a specified value.
+        /// </summary>
+        /// <param name="value">The value of the parameter.</param>
+        public ParameterId(Guid value)
+            : this()
+        {
+            Value = value.ToString();
         }
 
         /// <summary>

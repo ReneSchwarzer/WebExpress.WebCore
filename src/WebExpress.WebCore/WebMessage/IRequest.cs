@@ -101,7 +101,8 @@ namespace WebExpress.WebCore.WebMessage
         /// </summary>
         /// <typeparam name="TParameter">The parameter.</typeparam>
         /// <returns>The value.</returns>
-        IParameter GetParameter<TParameter>() where TParameter : IParameter;
+        TParameter GetParameter<TParameter>()
+            where TParameter : IParameterStatic, new();
 
         /// <summary>
         /// Checks whether a parameter exists.

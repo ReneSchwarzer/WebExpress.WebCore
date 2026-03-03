@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebParameter
     /// <summary>
     /// Represents a parameter with a key, value, and scope.
     /// </summary>
-    public class Parameter : IParameter
+    public class Parameter : IParameterDynamic
     {
         /// <summary>
         /// Returns the key of the parameter.
@@ -133,28 +133,6 @@ namespace WebExpress.WebCore.WebParameter
         public static List<Parameter> Create(params Parameter[] param)
         {
             return [.. param];
-        }
-
-        /// <summary>
-        /// Returns the key.
-        /// </summary>
-        /// <typeparam name="TParameter">The type.</typeparam>
-        /// <returns>The key.</returns>
-        public static TParameter GetParameter<TParameter>()
-            where TParameter : IParameter
-        {
-            return Activator.CreateInstance<TParameter>();
-        }
-
-        /// <summary>
-        /// Returns the key.
-        /// </summary>
-        /// <typeparam name="TParameter">The type.</typeparam>
-        /// <returns>The key.</returns>
-        public static string GetKey<TParameter>()
-            where TParameter : IParameter
-        {
-            return Activator.CreateInstance<TParameter>()?.Key;
         }
 
         /// <summary>

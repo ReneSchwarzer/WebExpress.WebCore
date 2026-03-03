@@ -12,13 +12,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// </typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SegmentStringAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
-        /// <summary>
-        /// Returns or sets the name of the variable.
-        /// </summary>
-        private string VariableName { get; set; }
-
         /// <summary>
         /// Returns or sets the display string.
         /// </summary>
@@ -28,9 +23,8 @@ namespace WebExpress.WebCore.WebAttribute
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="display">The display string.</param>
-        public SegmentStringAttribute(string display)
+        public SegmentStringAttribute(string display = null)
         {
-            VariableName = (Activator.CreateInstance<TParameter>() as Parameter)?.Key?.ToLower();
             Display = display;
         }
 
@@ -40,7 +34,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableString<TParameter>(VariableName, Display);
+            return new UriPathSegmentVariableString<TParameter>(Display);
         }
     }
 }

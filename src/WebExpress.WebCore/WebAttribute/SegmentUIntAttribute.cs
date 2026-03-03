@@ -15,13 +15,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// </typeparam>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SegmentUIntAttribute<TParameter> : Attribute, IEndpointAttribute, ISegmentAttribute
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
-        /// <summary>
-        /// Returns or sets the name of the variable.
-        /// </summary>
-        private string VariableName { get; set; }
-
         /// <summary>
         /// Returns or sets the display string.
         /// </summary>
@@ -30,11 +25,9 @@ namespace WebExpress.WebCore.WebAttribute
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="variableName">The name of the variable.</param>
         /// <param name="display">The display string.</param>
-        public SegmentUIntAttribute(string variableName, string display)
+        public SegmentUIntAttribute(string display = null)
         {
-            VariableName = variableName;
             Display = display;
         }
 
@@ -44,7 +37,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableUInt<TParameter>(VariableName, Display);
+            return new UriPathSegmentVariableUInt<TParameter>(Display);
         }
     }
 }

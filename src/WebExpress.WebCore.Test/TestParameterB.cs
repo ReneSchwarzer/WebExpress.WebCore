@@ -1,18 +1,19 @@
 ﻿using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebParameter;
 
-namespace WebExpress.WebCore.WebParameter
+namespace WebExpress.WebCore.Test
 {
     /// <summary>
-    /// Represents a api version parameter with a key, value, and scope.
+    /// Represents a test parameter.
     /// </summary>
-    public sealed class ParameterApiVersion : IParameterStatic
+    internal class TestParameterB : IParameterStatic
     {
-        /// <summary>
+        // <summary>
         /// Returns the key that uniquely identifies the parameter in configuration or
         /// settings contexts.
         /// </summary>
-        public static string Key => "_apiVersion";
+        public static string Key => "testparameterb";
 
         /// <summary>
         /// Returns or sets the scope of the parameter.
@@ -27,19 +28,24 @@ namespace WebExpress.WebCore.WebParameter
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        public ParameterApiVersion()
+        public TestParameterB()
         {
-            Scope = ParameterScope.Url;
         }
 
         /// <summary>
         /// Initializes a new instance of the class with a specified value.
         /// </summary>
         /// <param name="value">The value of the parameter.</param>
-        public ParameterApiVersion(string value)
-            : this()
+        public TestParameterB(int value)
         {
-            Value = value;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class with a specified value.
+        /// </summary>
+        /// <param name="value">The value of the parameter.</param>
+        public TestParameterB(Guid value)
+        {
         }
 
         /// <summary>

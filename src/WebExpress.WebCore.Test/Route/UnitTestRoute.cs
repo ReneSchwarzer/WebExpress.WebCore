@@ -25,6 +25,7 @@ namespace WebExpress.WebCore.Test.Route
             // act
             var concat = route.Concat(segment);
 
+            // validation
             Assert.Equal(expected, concat.ToString());
             Assert.Equal(count, concat.PathSegments.Count());
         }
@@ -47,6 +48,7 @@ namespace WebExpress.WebCore.Test.Route
                 ? [.. segment?.Split('/').Select(x => new UriPathSegmentConstant(x))]
                 : null);
 
+            // validation
             Assert.Equal(expected, concat.ToString());
             Assert.Equal(count, concat.PathSegments.Count());
         }
@@ -64,6 +66,7 @@ namespace WebExpress.WebCore.Test.Route
             // act
             var combine = RouteEndpoint.Combine([new RouteEndpoint(baseRoute), new RouteEndpoint(pathB)]);
 
+            // validation
             Assert.Equal(expected, combine.ToString());
         }
 
@@ -80,6 +83,7 @@ namespace WebExpress.WebCore.Test.Route
             // act
             var combine = RouteEndpoint.Combine(new RouteEndpoint(baseRoute), [pathB]);
 
+            // validation
             Assert.Equal(expected, combine.ToString());
         }
 
@@ -96,6 +100,7 @@ namespace WebExpress.WebCore.Test.Route
             // act
             var combine = RouteEndpoint.Combine(new RouteEndpoint(baseRoute), segment);
 
+            // validation
             Assert.Equal(expected, combine.ToString());
         }
 
@@ -111,11 +116,13 @@ namespace WebExpress.WebCore.Test.Route
         [InlineData("/a/b/c", "/a/c", "/a/b/c")]
         public void RemoveSegment(string route, string segment, string expected)
         {
-            // act
+            // arrange
             var routeEndpoint = new RouteEndpoint(route);
 
+            // act
             var removed = routeEndpoint.RemoveSegment(segment);
 
+            // validation
             Assert.Equal(expected, removed.ToString());
         }
     }

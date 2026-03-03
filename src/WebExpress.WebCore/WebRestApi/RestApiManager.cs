@@ -530,7 +530,10 @@ namespace WebExpress.WebCore.WebRestApi
                         restApiType,
                         prefix,
                         segment,
-                        [new UriPathSegmentConstant("api"), new UriPathSegmentVariableApiVersion<ParameterApiVersion>("_apiVersion", $"{version}")],
+                        [
+                            new UriPathSegmentConstant("api"),
+                            new UriPathSegmentVariableApiVersion<ParameterApiVersion>($"{version}")
+                        ],
                         ["api", "restapi", "rest"]
                     ).RemoveSegment(versionSegment);
 

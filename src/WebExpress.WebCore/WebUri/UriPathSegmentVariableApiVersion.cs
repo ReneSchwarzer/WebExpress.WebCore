@@ -9,17 +9,15 @@ namespace WebExpress.WebCore.WebUri
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     internal class UriPathSegmentVariableApiVersion<TParameter> : UriPathSegmentVariable<TParameter>
-        where TParameter : IParameter
+        where TParameter : IParameterStatic, new()
     {
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
-        public UriPathSegmentVariableApiVersion(string name, string value)
-            : base(name)
+        public UriPathSegmentVariableApiVersion(string value)
+            : base()
         {
-            VariableName = name;
             Value = value;
         }
 
@@ -28,7 +26,7 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <param name="segment">The path segment to copy.</param>
         public UriPathSegmentVariableApiVersion(UriPathSegmentVariableApiVersion<TParameter> segment)
-            : base(segment.VariableName, segment.Tag)
+            : base(segment.Tag)
         {
         }
 

@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        IEnumerable<UriQuery> Query { get; }
+        IEnumerable<IUriQuery> Query { get; }
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// An uri instance containing the original URI with the specified query parameters appended.
         /// </returns>
-        IUri Add(params UriQuery[] query);
+        IUri Add(params IUriQuery[] query);
 
         /// <summary>
         /// Concatenates the given path segment to the current URI and returns a new instance of IUri with the updated path.
@@ -110,7 +110,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>
         /// A new uri instance containing the original URI with the specified query segments appended.
         /// </returns>
-        IUri Concat(params UriQuery[] query);
+        IUri Concat(params IUriQuery[] query);
 
         /// <summary>
         /// Return a shortened uri containing n-elements.

@@ -9,19 +9,14 @@ namespace WebExpress.WebCore.WebParameter
     public interface IParameter
     {
         /// <summary>
-        /// Returns the key of the parameter.
-        /// </summary>
-        string Key { get; }
-
-        /// <summary>
         /// Returns or sets the scope of the parameter.
         /// </summary>
-        ParameterScope Scope { get; internal set; }
+        ParameterScope Scope { get; set; }
 
         /// <summary>
         /// Returns the value of the parameter.
         /// </summary>
-        string Value { get; internal set; }
+        string Value { get; set; }
 
         /// <summary>
         /// Returns a string that represents the display text for the current instance.
