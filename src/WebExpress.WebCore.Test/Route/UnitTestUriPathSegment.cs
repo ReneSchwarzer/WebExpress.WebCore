@@ -32,8 +32,8 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the int segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
-        [InlineData("123", "123", "")]
+        [InlineData(null, "${testparametera}", null)]
+        [InlineData("123", "123", "123")]
         public void Int(string value, string expected, string displayText)
         {
             // arrange
@@ -54,8 +54,8 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the uint segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
-        [InlineData("123", "123", "")]
+        [InlineData(null, "${testparametera}", null)]
+        [InlineData("123", "123", "123")]
         public void UInt(string value, string expected, string displayText)
         {
             // arrange
@@ -76,8 +76,8 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the double segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
-        [InlineData("123", "123", "")]
+        [InlineData(null, "${testparametera}", null)]
+        [InlineData("123", "123", "123")]
         public void Double(string value, string expected, string displayText)
         {
             // arrange
@@ -98,7 +98,7 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the guid segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
+        [InlineData(null, "${testparametera}", null)]
         [InlineData("123", "123", "")]
         public void Guid(string value, string expected, string displayText)
         {
@@ -120,8 +120,8 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the regex segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
-        [InlineData("123", "123", "")]
+        [InlineData(null, "${testparametera}", null)]
+        [InlineData("123", "123", "123")]
         public void Regex(string value, string expected, string displayText)
         {
             // arrange
@@ -142,8 +142,8 @@ namespace WebExpress.WebCore.Test.Route
         /// Test the regex segment.
         /// </summary>
         [Theory]
-        [InlineData(null, "${testparametera}", "")]
-        [InlineData("123", "123", "")]
+        [InlineData(null, "${testparametera}", null)]
+        [InlineData("123", "123", "123")]
         public void String(string value, string expected, string displayText)
         {
             // arrange

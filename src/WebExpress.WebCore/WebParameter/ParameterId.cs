@@ -1,6 +1,4 @@
 ﻿using System;
-using WebExpress.WebCore.WebIcon;
-using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebParameter
 {
@@ -51,35 +49,6 @@ namespace WebExpress.WebCore.WebParameter
             : this()
         {
             Value = value.ToString();
-        }
-
-        /// <summary>
-        /// Returns a string that represents the display text for the current instance.
-        /// </summary>
-        /// <param name="renderContext">The render context.</param>
-        /// <returns>
-        /// A string containing the display text associated with the instance. The 
-        /// value may be empty if no display text is available.
-        /// </returns>
-        public string GetDisplayText(IRenderContext renderContext)
-        {
-            return Value;
-        }
-
-        /// <summary>
-        /// Retrieves the icon that corresponds to the specified render context.
-        /// </summary>
-        /// <param name="renderContext">
-        /// The context in which the icon will be rendered. This parameter determines 
-        /// the appearance and behavior of the
-        /// returned icon.
-        /// </param>
-        /// <returns>
-        /// An icon instance that represents the icon for the given render context.
-        /// </returns>
-        public IIcon GetIcon(IRenderContext renderContext)
-        {
-            return null;
         }
 
         /// <summary>

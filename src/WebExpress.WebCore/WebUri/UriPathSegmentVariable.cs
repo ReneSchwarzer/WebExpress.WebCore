@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
@@ -144,10 +143,7 @@ namespace WebExpress.WebCore.WebUri
         /// </returns>
         public virtual string GetDisplayText(IRenderContext renderContext)
         {
-            var parameter = renderContext.Request.GetParameter<TParameter>();
-            var displayText = parameter?.GetDisplayText(renderContext);
-
-            return string.Format(I18N.Translate(renderContext, displayText ?? ""), Value);
+            return Value;
         }
 
         /// <summary>
@@ -162,10 +158,7 @@ namespace WebExpress.WebCore.WebUri
         /// </returns>
         public virtual IIcon GetIcon(IRenderContext renderContext)
         {
-            var parameter = renderContext.Request.GetParameter<TParameter>();
-            var icon = parameter?.GetIcon(renderContext);
-
-            return icon;
+            return null;
         }
 
         /// <summary>
