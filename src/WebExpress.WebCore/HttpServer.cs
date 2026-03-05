@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -72,6 +73,21 @@ namespace WebExpress.WebCore
         /// Returns the request number;
         /// </summary>
         public long RequestNumber { get; private set; }
+
+        /// <summary>
+        /// Returns the statistics history.
+        /// </summary>
+        public static List<HttpServerStatisticItem> Statistics { get; } = [];
+
+        /// <summary>
+        /// Synchronization object for statistics.
+        /// </summary>
+        private static readonly Lock _statLock = new();
+
+        // Variables for CPU usage calculation
+        private static DateTime _lastCpuTime = DateTime.UtcNow;
+        private static TimeSpan _lastProcessorTime = Process.GetCurrentProcess().TotalProcessorTime;
+        private static readonly Process _currentProcess = Process.GetCurrentProcess();
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -357,6 +373,8 @@ namespace WebExpress.WebCore
 
             stopwatch.Stop();
 
+            UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
+
             HttpServerContext.Log.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request.done",
@@ -367,6 +385,86 @@ namespace WebExpress.WebCore
             ));
 
             return response;
+        }
+
+        /// <summary>
+        /// Updates the request statistics with ring buffer logic (max 24h).
+        /// </summary>
+        /// <param name="response">The response containing the status code.</param>
+        /// <param name="duration">The duration of the request in milliseconds.</param>
+        private static void UpdateStatistics(IResponse response, long duration)
+        {
+            var now = DateTime.Now;
+            var minute = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
+            var isError = response != null && response.Status >= 400;
+
+            // calculate memory usage in MB
+            var memUsage = _currentProcess.WorkingSet64 / (1024.0 * 1024.0);
+
+            // calculate cpu usage
+            var currentCpuTime = _currentProcess.TotalProcessorTime;
+            var currentWallTime = DateTime.UtcNow;
+            var cpuUsedMs = (currentCpuTime - _lastProcessorTime).TotalMilliseconds;
+            var totalMsPassed = (currentWallTime - _lastCpuTime).TotalMilliseconds;
+            var cpuUsage = 0.0;
+
+            if (totalMsPassed > 0)
+            {
+                cpuUsage = (cpuUsedMs / (totalMsPassed * Environment.ProcessorCount)) * 100.0;
+            }
+
+            // update pointers for next calculation
+            _lastProcessorTime = currentCpuTime;
+            _lastCpuTime = currentWallTime;
+
+            lock (_statLock)
+            {
+                // remove entries older than 24 hours (1440 minutes)
+                while (Statistics.Count >= 1440)
+                {
+                    Statistics.RemoveAt(0);
+                }
+
+                var current = Statistics.LastOrDefault();
+
+                if (current != null && current.Timestamp == minute)
+                {
+                    current.Requests++;
+                    if (isError)
+                    {
+                        current.Errors++;
+                    }
+
+                    // update min, max and total duration
+                    if (duration < current.MinDuration)
+                    {
+                        current.MinDuration = duration;
+                    }
+                    if (duration > current.MaxDuration)
+                    {
+                        current.MaxDuration = duration;
+                    }
+                    current.TotalDuration += duration;
+
+                    // calculate moving average for system metrics within this minute
+                    current.CpuUsage += (cpuUsage - current.CpuUsage) / current.Requests;
+                    current.MemoryUsage += (memUsage - current.MemoryUsage) / current.Requests;
+                }
+                else
+                {
+                    Statistics.Add(new HttpServerStatisticItem()
+                    {
+                        Timestamp = minute,
+                        Requests = 1,
+                        Errors = isError ? 1 : 0,
+                        MinDuration = duration,
+                        MaxDuration = duration,
+                        TotalDuration = duration,
+                        CpuUsage = cpuUsage,
+                        MemoryUsage = memUsage
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -589,7 +687,7 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="requestFeature">The HTTP request feature instance.</param>
         /// <returns>True if it is a WebSocket connection; otherwise, false.</returns>
-        private bool IsWebSocketRequest(IHttpRequestFeature requestFeature)
+        private static bool IsWebSocketRequest(IHttpRequestFeature requestFeature)
         {
             // check scheme and "Upgrade" header for websocket protocol
             if (requestFeature == null)
