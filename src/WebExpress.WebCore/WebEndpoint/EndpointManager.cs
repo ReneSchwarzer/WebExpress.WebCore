@@ -182,9 +182,23 @@ namespace WebExpress.WebCore.WebEndpoint
                 var name = default(string);
                 var description = default(string);
                 var icon = default(IIcon);
+                var hidden = false;
 
-                var typeName = $"{s.FullNamespace}.Index";
-                var segmentInfoType = classType.Assembly.GetType(typeName, throwOnError: false, ignoreCase: true);
+                var segmentInfoType = classType.Assembly
+                    .GetTypes()
+                    .Where(t => t.IsClass)
+                    .Where(t => t.Namespace?.ToLowerInvariant() == s.FullNamespace.ToLowerInvariant())
+                    .FirstOrDefault(t => t.Name.StartsWith("Index", StringComparison.OrdinalIgnoreCase));
+
+                var nameAttr = segmentInfoType?.CustomAttributes
+                        .FirstOrDefault(x => x.AttributeType == typeof(TitleAttribute));
+                var descAttr = segmentInfoType?.CustomAttributes
+                    .FirstOrDefault(x => x.AttributeType == typeof(DescriptionAttribute));
+                var iconAttr = segmentInfoType?.CustomAttributes
+                    .FirstOrDefault(x => x.AttributeType.IsGenericType &&
+                                         x.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>));
+                var hiddenAttr = segmentInfoType?.CustomAttributes
+                     .FirstOrDefault(x => x.AttributeType == typeof(SegmentHiddenAttribute));
 
                 if (segmentInfoType is not null)
                 {
@@ -196,28 +210,27 @@ namespace WebExpress.WebCore.WebEndpoint
                     var segInstance = segAttrType is not null
                         ? segmentInfoType.GetCustomAttribute(segAttrType, false) as ISegmentAttribute
                         : null;
-                    var nameAttr = segmentInfoType.CustomAttributes
-                        .FirstOrDefault(x => x.AttributeType == typeof(TitleAttribute));
-                    var descAttr = segmentInfoType.CustomAttributes
-                        .FirstOrDefault(x => x.AttributeType == typeof(DescriptionAttribute));
-                    var iconAttr = segmentInfoType.CustomAttributes
-                        .FirstOrDefault(x => x.AttributeType.IsGenericType &&
-                                             x.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>));
 
                     segmentResult = segInstance?.ToPathSegment();
+                    segmentResult?.IsHidden = hiddenAttr is not null;
                     name = nameAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     description = descAttr?.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     icon = iconAttr is not null
                         ? Activator.CreateInstance(iconAttr.AttributeType.GenericTypeArguments.FirstOrDefault()) as IIcon
                         : null;
+                    hidden = hiddenAttr is not null;
                 }
 
                 return new
                 {
-                    Segment = segmentResult ?? new UriPathSegmentConstant(s.Segment),
+                    Segment = segmentResult ?? new UriPathSegmentConstant(s.Segment)
+                    {
+                        IsHidden = segmentInfoType is null || hiddenAttr is not null
+                    },
                     Name = name,
                     Description = description,
-                    Icon = icon
+                    Icon = icon,
+                    Hidden = segmentResult is null || hidden
                 };
             });
 

@@ -8,7 +8,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// </summary>
     /// <typeparamref name="TApplication">The type of the application.</typeparamref>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ApplicationAttribute<TApplication> : Attribute, IPluginAttribute where TApplication : class, IApplication
+    public class ApplicationAttribute<TApplication> : Attribute, IPluginAttribute
+        where TApplication : class, IApplication
     {
 
     }

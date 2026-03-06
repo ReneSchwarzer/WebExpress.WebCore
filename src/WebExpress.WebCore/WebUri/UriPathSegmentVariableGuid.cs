@@ -86,7 +86,9 @@ namespace WebExpress.WebCore.WebUri
             return new UriPathSegmentVariableGuid<TParameter>(DisplayFormat)
             {
                 Expression = Expression,
-                Value = Value
+                Value = Value,
+                IsHidden = IsHidden,
+                Uri = Uri
             };
         }
 

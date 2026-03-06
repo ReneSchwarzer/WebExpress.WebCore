@@ -26,6 +26,20 @@ namespace WebExpress.WebCore.WebUri
         bool IsEmpty { get; }
 
         /// <summary>
+        /// Returns a value indicating whether the item is hidden.
+        /// </summary>
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        bool IsHidden { get; internal set; }
+
+        /// <summary>
+        /// Returns the URI to which the user is redirected.
+        /// </summary>
+        IUri Uri { get; internal set; }
+
+        /// <summary>
         /// Checks whether the node matches the path element.
         /// </summary>
         /// <param name="value">The value to check.</param>

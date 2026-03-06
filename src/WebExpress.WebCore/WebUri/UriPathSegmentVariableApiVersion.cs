@@ -22,15 +22,6 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="segment">The path segment to copy.</param>
-        public UriPathSegmentVariableApiVersion(UriPathSegmentVariableApiVersion<TParameter> segment)
-            : base(segment.Tag)
-        {
-        }
-
-        /// <summary>
         /// Returns the variable.
         /// </summary>
         /// <param name="value">The value.</param>
@@ -65,7 +56,11 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableApiVersion<TParameter>(this) { Value = Value };
+            return new UriPathSegmentVariableApiVersion<TParameter>(Value)
+            {
+                IsHidden = IsHidden,
+                Uri = Uri
+            };
         }
 
         /// <summary>

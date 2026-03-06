@@ -35,6 +35,20 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => false;
 
         /// <summary>
+        /// Returns or sets a value indicating whether the item is hidden.
+        /// </summary>
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Returns or sets the URI to which the user is redirected.
+        /// </summary>
+        public IUri Uri { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UriPathSegmentRoot"/> class.
         /// </summary>
         /// <param name="display">The display text.</param>
@@ -68,7 +82,11 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>A copy of the current segment.</returns>
         public virtual IUriPathSegment Copy()
         {
-            return new UriPathSegmentRoot(Display, Tag);
+            return new UriPathSegmentRoot(Display, Tag)
+            {
+                IsHidden = IsHidden,
+                Uri = Uri
+            };
         }
 
         /// <summary>

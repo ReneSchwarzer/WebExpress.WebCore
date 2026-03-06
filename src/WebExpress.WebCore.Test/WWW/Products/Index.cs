@@ -6,6 +6,7 @@ namespace WebExpress.WebCore.Test.WWW.Products
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
+    [SegmentHidden]
     [Title("webindex:index.label")]
     public sealed class Index : IPage<VisualTree>
     {

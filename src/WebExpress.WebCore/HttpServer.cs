@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -356,19 +357,28 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                if (ex is TargetInvocationException tie && tie.InnerException is RedirectException rex)
+                {
+                    response = rex.Permanet
+                        ? new ResponseMovedPermanently(rex.Uri)
+                        : new ResponseMovedTemporarily(rex.Uri);
+                }
+                else
+                {
+                    HttpServerContext.Log.Exception(ex);
 
-                var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
-                        $"<h5>Source</h5>{ex.Source}<br/><br/>" +
-                        $"<h5>StackTrace</h5>{ex.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
-                        $"<h5>InnerException</h5>{ex.InnerException?.ToString().Replace("\n", "<br/>\n")}";
+                    var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
+                            $"<h5>Source</h5>{ex.Source}<br/><br/>" +
+                            $"<h5>StackTrace</h5>{ex.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
+                            $"<h5>InnerException</h5>{ex.InnerException?.ToString().Replace("\n", "<br/>\n")}";
 
-                response = CreateStatusPage<ResponseInternalServerError>
-                (
-                    message,
-                    request,
-                    searchResult
-                );
+                    response = CreateStatusPage<ResponseInternalServerError>
+                    (
+                        message,
+                        request,
+                        searchResult
+                    );
+                }
             }
 
             stopwatch.Stop();

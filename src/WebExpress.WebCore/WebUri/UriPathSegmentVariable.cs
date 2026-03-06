@@ -45,6 +45,20 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => string.IsNullOrWhiteSpace(VariableName) || VariableName.Equals("/");
 
         /// <summary>
+        /// Returns or sets a value indicating whether the item is hidden.
+        /// </summary>
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Returns or sets the URI to which the user is redirected.
+        /// </summary>
+        public IUri Uri { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="tag">The tag or null</param>

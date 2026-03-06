@@ -47,7 +47,12 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The copy.</returns>
         public override IUriPathSegment Copy()
         {
-            return new UriPathSegmentVariableDouble<TParameter>(this) { Value = Value };
+            return new UriPathSegmentVariableDouble<TParameter>(this)
+            {
+                Value = Value,
+                IsHidden = IsHidden,
+                Uri = Uri
+            };
         }
 
         /// <summary>
