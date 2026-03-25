@@ -439,7 +439,24 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>true if part of the uri, false otherwise.</returns>
         public bool StartsWith(IUri uri)
         {
-            return ToString().StartsWith(uri.ToString());
+            var a = uri.PathSegments;
+            var b = PathSegments;
+
+            if (a.Count() > b.Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < a.Count(); i++)
+            {
+                if (!a.ElementAt(i).Value.Equals(b.ElementAt(i).Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
         }
 
         /// <summary>
