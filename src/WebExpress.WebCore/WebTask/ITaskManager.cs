@@ -10,6 +10,11 @@ namespace WebExpress.WebCore.WebTask
     public interface ITaskManager : IComponentManager
     {
         /// <summary>
+        /// Event is triggered when a task's changes.
+        /// </summary>
+        event EventHandler<TaskEventArgs> TaskChanged;
+
+        /// <summary>
         /// Returns the collection of tasks.
         /// </summary>
         IEnumerable<ITask> Tasks { get; }

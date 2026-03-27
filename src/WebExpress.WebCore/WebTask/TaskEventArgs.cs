@@ -7,5 +7,32 @@ namespace WebExpress.WebCore.WebTask
     /// </summary>
     public class TaskEventArgs : EventArgs
     {
+        /// <summary>
+        /// Returns the related task.
+        /// </summary>
+        public ITask Task { get; }
+
+        /// <summary>
+        /// Returns the current progress (if relevant).
+        /// </summary>
+        public int Progress { get; }
+
+        /// <summary>
+        /// Returns the current or new message (if relevant).
+        /// </summary>
+        public string Message { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="task">The related task.</param>
+        /// <param name="progress">The current progress.</param>
+        /// <param name="message">The current or new message.</param>
+        public TaskEventArgs(ITask task, int progress = 0, string message = null)
+        {
+            Task = task;
+            Progress = progress;
+            Message = message;
+        }
     }
 }

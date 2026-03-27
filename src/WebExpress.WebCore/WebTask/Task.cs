@@ -11,6 +11,7 @@ namespace WebExpress.WebCore.WebTask
     public class Task : ITask
     {
         private int _progress;
+        private string _message;
 
         /// <summary>
         /// Event is triggered when the task is executed.
@@ -21,6 +22,16 @@ namespace WebExpress.WebCore.WebTask
         /// Event is triggered when the task is terminated.
         /// </summary>
         public event EventHandler<TaskEventArgs> Finish;
+
+        /// <summary>
+        /// Event is triggered when the progress changes.
+        /// </summary>
+        public event EventHandler<TaskEventArgs> ProgressChanged;
+
+        /// <summary>
+        /// Event is triggered when the message changes.
+        /// </summary>
+        public event EventHandler<TaskEventArgs> MessageChanged;
 
         /// <summary>
         /// Returns the id of the task.
@@ -47,14 +58,35 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         public int Progress
         {
-            get => _progress;
-            set => _progress = Math.Min(value, 100);
+            get { return _progress; }
+            set
+            {
+                var newValue = Math.Min(value, 100);
+                if (_progress != newValue)
+                {
+                    _progress = newValue;
+                    // trigger progress changed event
+                    OnProgressChanged();
+                }
+            }
         }
 
         /// <summary>
         /// Returns or sets a message that provides information about the processing.
         /// </summary>
-        public string Message { get; set; }
+        public string Message
+        {
+            get { return _message; }
+            set
+            {
+                if (_message != value)
+                {
+                    _message = value;
+                    // trigger message changed event
+                    OnMessageChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -72,7 +104,7 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         protected virtual void OnProcess()
         {
-            Process?.Invoke(this, new TaskEventArgs());
+            Process?.Invoke(this, new TaskEventArgs(this, 0));
         }
 
         /// <summary>
@@ -80,7 +112,23 @@ namespace WebExpress.WebCore.WebTask
         /// </summary>
         protected virtual void OnFinish()
         {
-            Finish?.Invoke(this, new TaskEventArgs());
+            Finish?.Invoke(this, new TaskEventArgs(this, 100));
+        }
+
+        /// <summary>
+        /// Triggered when the progress changes.
+        /// </summary>
+        protected virtual void OnProgressChanged()
+        {
+            ProgressChanged?.Invoke(this, new TaskEventArgs(this, Progress));
+        }
+
+        /// <summary>
+        /// Triggered when the message changes.
+        /// </summary>
+        protected virtual void OnMessageChanged()
+        {
+            MessageChanged?.Invoke(this, new TaskEventArgs(this, Progress, Message));
         }
 
         /// <summary>
