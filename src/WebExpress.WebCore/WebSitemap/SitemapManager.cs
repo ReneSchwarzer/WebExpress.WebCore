@@ -193,8 +193,13 @@ namespace WebExpress.WebCore.WebSitemap
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
+                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
+
+            if (node is null)
+            {
+                // fallback to the search by application context
+                return GetUri<TEnpoint>(endpointContext.ApplicationContext);
+            }
 
             return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null);
         }
