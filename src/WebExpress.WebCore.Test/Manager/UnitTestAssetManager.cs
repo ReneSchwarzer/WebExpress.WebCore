@@ -127,7 +127,7 @@ namespace WebExpress.WebCore.Test.Manager
 
             var response = componentHub
                 .EndpointManager
-                .HandleRequest(UnitTestFixture.CrerateRequestMock("", uri), searchResult.EndpointContext);
+                .HandleRequest(UnitTestFixture.CreateRequestMock("", uri), searchResult.EndpointContext);
 
             Assert.Equal($"webexpress.webcore.test.{resource.Replace('/', '.')}", searchResult?.EndpointContext?.EndpointId.ToString());
             Assert.IsNotType<ResponseNotFound>(response);

@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
 
             // act
             var session = componentHub.SessionManager.GetSession(request);
@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var session = componentHub.SessionManager.GetSession(request);
 
             // act
@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var session = componentHub.SessionManager.GetSession(request);
 
             // act

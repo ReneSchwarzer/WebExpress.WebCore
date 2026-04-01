@@ -145,7 +145,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
@@ -169,7 +169,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
@@ -195,7 +195,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));

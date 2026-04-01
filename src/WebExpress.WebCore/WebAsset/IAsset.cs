@@ -13,6 +13,6 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        Response Process(IRequest request);
+        IResponse Process(IRequest request);
     }
 }

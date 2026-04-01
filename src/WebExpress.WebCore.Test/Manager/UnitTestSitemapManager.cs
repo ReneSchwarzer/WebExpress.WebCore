@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.Test.Manager
                 HttpContext = context
             });
 
-            componentHub.EndpointManager.HandleRequest(UnitTestFixture.CrerateRequestMock(), searchResult?.EndpointContext);
+            componentHub.EndpointManager.HandleRequest(UnitTestFixture.CreateRequestMock(), searchResult?.EndpointContext);
 
             // validation
             Assert.Equal(id, searchResult?.EndpointContext?.EndpointId.ToString());

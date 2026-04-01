@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
@@ -46,7 +45,7 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        public Response Process(IRequest request)
+        public IResponse Process(IRequest request)
         {
             if (_data is null)
             {
@@ -157,8 +156,6 @@ namespace WebExpress.WebCore.WebAsset
         public void Dispose()
         {
             _data = null;
-
-            GC.SuppressFinalize(this);
         }
     }
 }

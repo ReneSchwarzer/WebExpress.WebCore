@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ValidateRequire(string input)
         {
             // arrange
-            var request = UnitTestFixture.CrerateRequestMock($"name={input}");
+            var request = UnitTestFixture.CreateRequestMock($"name={input}");
             request.AddParameter(new Parameter("name", input, ParameterScope.Parameter));
 
             // act
@@ -204,7 +204,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ValidateMinLength(string input)
         {
             // arrange
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("code", input, ParameterScope.Parameter));
 
             // act
@@ -225,7 +225,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var input = new string('x', length);
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("bio", input, ParameterScope.Parameter));
 
             // act
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ValidateEmail(string email)
         {
             // arrange
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("email", email, ParameterScope.Parameter));
 
             // act
@@ -269,7 +269,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ValidateIsInt(string input)
         {
             // arrange
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("age", input, ParameterScope.Parameter));
 
             // act
@@ -290,7 +290,7 @@ namespace WebExpress.WebCore.Test.Manager
         public void ValidateEqualTo(string input)
         {
             // arrange
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("role", input, ParameterScope.Parameter));
 
             // act
@@ -310,7 +310,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("101")]
         public void ValidateRange(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("level", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -328,7 +328,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("xyz-start")]
         public void ValidateStartsWith(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("code", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -346,7 +346,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("document.pdf")]
         public void ValidateEndsWith(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("filename", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -364,7 +364,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("anonymous")]
         public void ValidateIn(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("role", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -382,7 +382,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("foo bar")]
         public void ValidateContains(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("description", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -402,7 +402,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("easy-peasy")]
         public void ValidateMatchesEnum(string value)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("difficulty", value, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -420,7 +420,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("31/31/2020")]
         public void ValidateIsDate(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("date", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -439,7 +439,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("nonpirate")]
         public void ValidateCustom(string input)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("nickname", input, ParameterScope.Parameter));
 
             var validator = new RestApiValidator(request)
@@ -462,7 +462,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("true", "")]
         public void ValidateWhen_ConditionalRequire(string subscribe, string email)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("subscribe", subscribe, ParameterScope.Parameter));
             request.AddParameter(new Parameter("email", email, ParameterScope.Parameter));
 
@@ -482,7 +482,7 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(null, "")]
         public void ValidateWhen_ConditionFalse(string subscribe, string email)
         {
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             request.AddParameter(new Parameter("subscribe", subscribe, ParameterScope.Parameter));
             request.AddParameter(new Parameter("email", email, ParameterScope.Parameter));
 
