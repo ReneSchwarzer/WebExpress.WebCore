@@ -124,11 +124,14 @@ namespace WebExpress.WebCore.WebMessage
             SecWebSocketVersion = requestFeature.Headers.SecWebSocketVersion;
             
             Cookies = requestFeature.Headers.Cookie
+                .SelectMany(c => c.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 .Select(c =>
                 {
-                    var split = c.Split('=');
-                    return new Cookie(split[0], split[1]);
-                });
+                    var eqIndex = c.IndexOf('=');
+                    if (eqIndex < 0) { return null; }
+                    return new Cookie(c[..eqIndex].Trim(), c[(eqIndex + 1)..].Trim());
+                })
+                .Where(c => c != null);
 
             Authorization = RequestAuthorization.Parse(requestFeature.Headers.Authorization);
         }

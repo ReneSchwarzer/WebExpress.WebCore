@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Returns or sets the id.
         /// </summary>
-        internal string Id { get; }
+        string Id { get; }
 
         /// <summary>
         /// Returns the value.
@@ -32,12 +32,12 @@ namespace WebExpress.WebCore.WebUri
         /// This property can be used to determine if the item should be displayed in user
         /// interfaces or lists.
         /// </remarks>
-        bool IsHidden { get; internal set; }
+        bool IsHidden { get; set; }
 
         /// <summary>
         /// Returns the URI to which the user is redirected.
         /// </summary>
-        IUri Uri { get; internal set; }
+        IUri Uri { get; set; }
 
         /// <summary>
         /// Checks whether the node matches the path element.

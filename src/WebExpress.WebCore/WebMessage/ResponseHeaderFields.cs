@@ -142,6 +142,11 @@ namespace WebExpress.WebCore.WebMessage
                 sb.AppendLine("Connection: Upgrade");
             }
 
+            if (!string.IsNullOrWhiteSpace(SecWebSocketAccept))
+            {
+                sb.AppendLine("Sec-WebSocket-Accept: " + SecWebSocketAccept);
+            }
+
             foreach (var c in CustomHeader)
             {
                 sb.AppendLine(c.Key + ": " + c.Value);

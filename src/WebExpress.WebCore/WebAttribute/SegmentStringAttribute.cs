@@ -15,17 +15,17 @@ namespace WebExpress.WebCore.WebAttribute
         where TParameter : IParameterStatic, new()
     {
         /// <summary>
-        /// Returns or sets the display string.
+        /// Returns or sets the tag.
         /// </summary>
-        private string Display { get; set; }
+        private string Tag { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="display">The display string.</param>
-        public SegmentStringAttribute(string display = null)
+        /// <param name="tag">The tag.</param>
+        public SegmentStringAttribute(string tag = null)
         {
-            Display = display;
+            Tag = tag;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableString<TParameter>(Display);
+            return new UriPathSegmentVariableString<TParameter>(Tag);
         }
     }
 }

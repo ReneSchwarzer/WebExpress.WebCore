@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (_dictionary.TryGetValue(id, out var value))
+            if (_dictionary.TryGetValue(key, out var value))
             {
                 return value;
             }
@@ -118,7 +118,7 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (_dictionary.TryGetValue(id, out var value))
+            if (_dictionary.TryGetValue(key, out var value))
             {
                 return value;
             }
@@ -141,7 +141,12 @@ namespace WebExpress.WebCore.WebTask
         /// <param name="task">The task.</param>
         public void RemoveTask(ITask task)
         {
-            var key = task?.Id.ToLower();
+            if (task?.Id is null)
+            {
+                return;
+            }
+
+            var key = task.Id.ToLower();
 
             if (_dictionary.TryGetValue(key, out var storedTask) && storedTask is Task t)
             {

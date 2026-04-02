@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.WebSocket.Model
         /// Returns the maximum allowed message size in bytes, or null when the endpoint imposes no limit.
         /// servers and hosts may use this to protect against excessively large frames.
         /// </summary>
-        public ulong MaxMessageSize { get; set; }
+        public ulong? MaxMessageSize { get; set; }
 
         /// <summary>
         /// Returns the conditions that must be met for the resource to be active.

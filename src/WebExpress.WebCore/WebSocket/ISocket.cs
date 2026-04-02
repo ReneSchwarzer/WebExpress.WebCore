@@ -11,8 +11,6 @@ namespace WebExpress.WebCore.WebSocket
     {
         /// <summary>
         /// Invoked after the websocket handshake has been accepted.
-        /// Implementers may use the optional cancellation token to abort long-running startup tasks.
-        /// the optional connectMessage provides initial metadata from the client (may be null).
         /// </summary>
         /// <param name="socketConnection">The socket connection.</param>
         /// <returns>An asynchronous task.</returns>
