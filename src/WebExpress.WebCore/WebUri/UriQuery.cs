@@ -41,12 +41,12 @@ namespace WebExpress.WebCore.WebUri
     /// <summary>
     /// Represents a key-value pair used as a query parameter in a URI.
     /// </summary>
-    /// <typeparam name="TParamerer">
+    /// <typeparam name="TParameter">
     /// The type that implements the IParameterStatic interface and defines the structure 
     /// of the query parameter.
     /// </typeparam>
-    public class UriQuery<TParamerer> : IUriQuery
-        where TParamerer : IParameterStatic
+    public class UriQuery<TParameter> : IUriQuery
+        where TParameter : IParameterStatic
     {
         /// <summary>
         /// Returns the key.
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="value">The value.</param>
         public UriQuery(string value = null)
         {
-            Key = TParamerer.Key;
+            Key = TParameter.Key;
             Value = value;
         }
 

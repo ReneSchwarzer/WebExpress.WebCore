@@ -308,7 +308,7 @@ namespace WebExpress.WebCore.WebSocket
                 var cache = false;
                 var subProtocol = "";
                 var messageType = SocketMessageType.Text;
-                var maxMessageSize = ulong.MinValue;
+                var maxMessageSize = (ulong?)null;
                 var attributes = socketType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)));
 
@@ -376,7 +376,7 @@ namespace WebExpress.WebCore.WebSocket
                     // MAX MESSAGE SIZE
                     if (attributeType == typeof(MaxMessageSizeAttribute))
                     {
-                        maxMessageSize = (attribute as MaxMessageSizeAttribute)?.MaxMessageSize ?? 0;
+                        maxMessageSize = (attribute as MaxMessageSizeAttribute)?.MaxMessageSize;
                         continue;
                     }
                 }

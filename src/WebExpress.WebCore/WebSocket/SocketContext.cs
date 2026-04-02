@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.WebSocket
         /// <summary>
         /// Maximum allowed message size in bytes, or null when no limit is imposed.
         /// </summary>
-        public ulong MaxMessageSize { get; set; }
+        public ulong? MaxMessageSize { get; set; }
 
         /// <summary>
         /// Indicates whether this websocket endpoint requires an authenticated client.

@@ -59,7 +59,7 @@ namespace WebExpress.WebCore.Test.Html
             var id = RandomId.Create();
 
             // validation
-            var hex = id.Substring(4);
+            var hex = id.Substring("id_".Length);
             Assert.Matches("^[0-9A-F]+$", hex);
         }
 

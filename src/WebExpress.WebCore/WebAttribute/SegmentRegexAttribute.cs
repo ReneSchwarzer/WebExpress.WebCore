@@ -20,19 +20,19 @@ namespace WebExpress.WebCore.WebAttribute
         private string Expression { get; set; }
 
         /// <summary>
-        /// Returns or sets the display string.
+        /// Returns or sets the tag.
         /// </summary>
-        private string Display { get; set; }
+        private string Tag { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="expression">The regular expression.</param>
-        /// <param name="display">The display string.</param>
-        public SegmentRegexAttribute(string expression, string display = null)
+        /// <param name="tag">The tag.</param>
+        public SegmentRegexAttribute(string expression, string tag = null)
         {
             Expression = expression;
-            Display = display;
+            Tag = tag;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace WebExpress.WebCore.WebAttribute
         /// <returns>The path segment.</returns>
         public IUriPathSegment ToPathSegment()
         {
-            return new UriPathSegmentVariableRegex<TParameter>(Expression, Display);
+            return new UriPathSegmentVariableRegex<TParameter>(Expression, Tag);
         }
     }
 }
