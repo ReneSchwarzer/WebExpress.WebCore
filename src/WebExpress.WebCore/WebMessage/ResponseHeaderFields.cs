@@ -136,10 +136,14 @@ namespace WebExpress.WebCore.WebMessage
                 sb.AppendLine("Location: " + Location);
             }
 
+            if (!string.IsNullOrWhiteSpace(Connection))
+            {
+                sb.AppendLine("Connection: " + Connection);
+            }
+
             if (!string.IsNullOrWhiteSpace(Upgrade))
             {
                 sb.AppendLine("Upgrade: " + Upgrade);
-                sb.AppendLine("Connection: Upgrade");
             }
 
             if (!string.IsNullOrWhiteSpace(SecWebSocketAccept))
