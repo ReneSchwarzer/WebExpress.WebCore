@@ -165,16 +165,18 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the CreateStatusResponse function of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), 400, "content", "content", 72)]
-        [InlineData(typeof(TestApplicationA), 500, "content", "content", 72)]
+        [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]
+        [InlineData(typeof(TestApplicationA), 500, "content", "content", 78)]
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
-            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
             // act
+            var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
+
+            // validation
             Assert.Contains(expected, statusResponse?.Content?.ToString());
             Assert.Equal(length, statusResponse?.Header?.ContentLength);
         }
