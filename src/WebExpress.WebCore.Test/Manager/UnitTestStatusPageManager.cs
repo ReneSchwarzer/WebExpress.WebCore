@@ -165,8 +165,8 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the CreateStatusResponse function of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]
-        [InlineData(typeof(TestApplicationA), 500, "content", "content", 78)]
+        [InlineData(typeof(TestApplicationA), 400, "content", "content", 72)]
+        [InlineData(typeof(TestApplicationA), 500, "content", "content", 72)]
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
             // arrange
@@ -177,8 +177,10 @@ namespace WebExpress.WebCore.Test.Manager
             var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
             // validation
+            var normalized = statusResponse?.Content?.ToString().Replace("\r\n", "\n").Replace("\r", "\n");
             Assert.Contains(expected, statusResponse?.Content?.ToString());
-            Assert.Equal(length, statusResponse?.Header?.ContentLength);
+            Assert.Equal(length, normalized.Length);
+            Assert.Equal(statusResponse?.Content?.ToString().Length, statusResponse?.Header?.ContentLength);
         }
 
         /// <summary>
