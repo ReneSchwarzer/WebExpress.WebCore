@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace WebExpress.WebCore.WebPage
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly PageDictionary _dictionary = new();
-        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
+        private static readonly ConcurrentDictionary<Type, Delegate> _delegateCache = new();
 
         /// <summary>
         /// An event that fires when an page is added.
@@ -59,44 +60,52 @@ namespace WebExpress.WebCore.WebPage
 
             var endpointtRegistration = new EndpointRegistration()
             {
-                EndpointResolver = (type, applicationContext) => applicationContext != null ? GetPages(type, applicationContext) : GetPages(type),
+                EndpointResolver = (type, applicationContext) => applicationContext is not null
+                    ? GetPages(type, applicationContext)
+                    : GetPages(type),
                 EndpointsResolver = () => Pages,
                 HandleRequest = (request, endpontContext) =>
                 {
+                    // create or get page instance for this request
                     var pageInstance = CreatePageInstance(endpontContext as IPageContext);
                     var pageType = pageInstance.GetType();
                     var pageContext = endpontContext as IPageContext;
                     var renderContext = new RenderContext(pageInstance, pageContext, request);
                     var visualTreeContext = new VisualTreeContext(renderContext);
 
-                    var visualTreeType = pageType.GetInterface(typeof(IPage<>).Name).GetGenericArguments()[0];
+                    // determine visual tree type implemented by the page
+                    var pageInterface = pageType.GetInterface(typeof(IPage<>).Name) ?? throw new InvalidOperationException($"Page type {pageType.FullName} does not implement IPage<>.");
+                    var visualTreeType = pageInterface.GetGenericArguments()[0];
+
+                    // obtain or create a cached open-instance delegate safely
                     if (!_delegateCache.TryGetValue(pageType, out var del))
                     {
-                        // create and compile the expression
+                        // create an open-instance delegate: (instance, renderContext, visualTree) => instance.Process(renderContext, visualTree)
+                        var instanceParam = Expression.Parameter(pageType, "instance");
                         var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
                         var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
-                        var processMethod = pageType.GetMethod("Process", [typeof(IRenderContext), visualTreeType]);
-                        var callProzessMethod = Expression.Call
-                        (
-                            Expression.Constant(pageInstance),
-                            processMethod,
-                            renderContextParam,
-                            visualTreeParam
-                        );
-                        var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
-                            .Compile();
 
-                        _delegateCache[pageType] = lambda;
-                        del = lambda;
+                        // find Process method matching signature Process(IRenderContext, TVisualTree)
+                        var processMethod = pageType.GetMethod("Process", new[] { typeof(IRenderContext), visualTreeType }) ?? throw new InvalidOperationException($"Process method not found on type {pageType.FullName}");
+
+                        // call instance.Process(renderContext, visualTree)
+                        var callProcess = Expression.Call(instanceParam, processMethod, renderContextParam, visualTreeParam);
+
+                        // compile lambda with signature (instance, renderContext, visualTree)
+                        var lambda = Expression.Lambda(callProcess, instanceParam, renderContextParam, visualTreeParam).Compile();
+
+                        // add to concurrent dictionary atomically; if another thread added concurrently, use the existing one
+                        del = _delegateCache.GetOrAdd(pageType, lambda);
                     }
 
                     // create visual tree instance
-                    var visualTreeInstance = default(IVisualTree);
+                    IVisualTree visualTreeInstance = null;
                     var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
                     var constructors = visualTreeType?.GetConstructors(flags);
 
-                    if (constructors != null)
+                    if (constructors is not null)
                     {
+                        // try constructors ordered by parameter count (descending)
                         foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                         {
                             // injection
@@ -107,30 +116,43 @@ namespace WebExpress.WebCore.WebPage
                                 .FirstOrDefault();
 
                             var parameterValues = parameters.Select(parameter =>
-                                parameter.ParameterType == typeof(IComponentHub) ? componentHub :
-                                parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
+                                parameter.ParameterType == typeof(IComponentHub) ? _componentHub :
+                                parameter.ParameterType == typeof(IHttpServerContext) ? _httpServerContext :
                                 parameter.ParameterType == typeof(IPageContext) ? pageContext :
+                                parameter.ParameterType == typeof(IApplicationContext) ? pageContext?.ApplicationContext :
                                 parameter.ParameterType == typeof(IComponentId) ? contextIdProperty?.GetValue(pageContext) :
                                 hubProperties.Where(x => x.PropertyType == parameter.ParameterType)
                                     .FirstOrDefault()?
-                                    .GetValue(componentHub) ?? null
+                                    .GetValue(_componentHub) ?? null
                             ).ToArray();
 
-                            if (constructor.Invoke(parameterValues) is IVisualTree visualTree)
+                            // attempt to invoke constructor with resolved parameters
+                            var invoked = constructor.Invoke(parameterValues);
+                            if (invoked is IVisualTree visualTree)
                             {
                                 visualTreeInstance = visualTree;
+                                break;
                             }
                         }
                     }
                     else
                     {
-                        visualTreeInstance = Activator.CreateInstance<IVisualTree>();
+                        // fallback: try parameterless creation
+                        visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
                     }
 
-                    // execute the cached delegate
-                    del.DynamicInvoke(renderContext, visualTreeInstance);
+                    if (visualTreeInstance is null)
+                    {
+                        throw new InvalidOperationException($"Could not create visual tree instance of type {visualTreeType.FullName} for page {pageType.FullName}.");
+                    }
 
-                    return visualTreeInstance.GetResponse(visualTreeContext);
+                    // execute the cached open-instance delegate; pass the current pageInstance
+                    del.DynamicInvoke(pageInstance, renderContext, visualTreeInstance);
+
+                    // build response from visual tree
+                    var response = visualTreeInstance.GetResponse(visualTreeContext);
+
+                    return response;
                 }
             };
 
@@ -230,7 +252,7 @@ namespace WebExpress.WebCore.WebPage
         {
             var resourceItem = _dictionary.GetPageItem(pageContext);
 
-            if (resourceItem != null && resourceItem.Instance == null)
+            if (resourceItem is not null && resourceItem.Instance is null)
             {
                 var instance = ComponentActivator.CreateInstance<IEndpoint, IPageContext>
                 (
@@ -294,7 +316,7 @@ namespace WebExpress.WebCore.WebPage
 
             foreach (var pageType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IPage<>).Name) != null))
+                .Where(x => x.GetInterface(typeof(IPage<>).Name) is not null))
             {
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
@@ -304,47 +326,107 @@ namespace WebExpress.WebCore.WebPage
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var domains = new List<Type>();
                 var attributes = pageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                     !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
-                foreach (var customAttribute in pageType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
+                foreach
+                (
+                    var attribute in pageType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IEndpointAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                    var attributeType = attribute.GetType();
+
+                    // segment attribute
+                    if (attributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = pageType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = attribute as ISegmentAttribute;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+
+                    // include subpaths
+                    if (attributeType == typeof(IncludeSubPathsAttribute))
                     {
-                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        includeSubPaths = (attribute as IncludeSubPathsAttribute)?.IncludeSubPaths ?? false;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+
+                    // condition attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(ConditionAttribute<>).Name
+                        && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                        var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (conditionType != null)
+                        {
+                            conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(CacheAttribute))
+
+                    // cache attribute
+                    if (attributeType == typeof(CacheAttribute))
                     {
                         cache = true;
+                        continue;
                     }
                 }
 
-                foreach (var customAttribute in pageType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute))))
+                foreach
+                (
+                    var attribute in pageType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IPageAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType.IsGenericType && customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
+                    var attributeType = attribute.GetType();
+
+                    // web icon attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        icon ??= Activator.CreateInstance(type) as IIcon;
+                        var iconType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (iconType != null)
+                        {
+                            icon ??= Activator.CreateInstance(iconType) as IIcon;
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(TitleAttribute))
+
+                    // title attribute
+                    if (attributeType == typeof(TitleAttribute))
                     {
-                        title = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        title = (attribute as TitleAttribute)?.Title;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ScopeAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
+
+                    // scope attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(ScopeAttribute<>).Name &&
+                        attributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
-                        scopes.Add(customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault());
+                        var scopeType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (scopeType != null)
+                        {
+                            scopes.Add(scopeType);
+                        }
+                        continue;
+                    }
+
+                    // domain attribute (generic)
+                    if (attributeType.IsGenericType &&
+                        attributeType.GetGenericTypeDefinition().Name == typeof(DomainAttribute<>).Name &&
+                        attributeType.Namespace == typeof(DomainAttribute<>).Namespace)
+                    {
+                        var domainType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (domainType != null)
+                        {
+                            domains.Add(domainType);
+                        }
+                        continue;
                     }
                 }
 
@@ -372,6 +454,7 @@ namespace WebExpress.WebCore.WebPage
                         PageIcon = icon,
                         Route = routePath,
                         Scopes = scopes,
+                        Domains = domains,
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
@@ -417,7 +500,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="pluginContext">The context of the plugin that contains the pages to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -435,7 +518,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="applicationContext">The context of the application that contains the page to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }

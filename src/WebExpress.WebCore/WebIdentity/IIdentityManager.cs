@@ -39,20 +39,20 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="identity">The identity.</param>
         /// <param name="password">The password.</param>
         /// <returns>True if successful, false otherwise.</returns>
-        bool Login(Request request, IIdentity identity, SecureString password);
+        bool Login(IRequest request, IIdentity identity, SecureString password);
 
         /// <summary>
         /// Logout an identity.
         /// </summary>
         /// <param name="request">The request.</param>
-        void Logout(Request request);
+        void Logout(IRequest request);
 
         /// <summary>
         /// Returns the current signed-in identity based on the provided request.
         /// </summary>
         /// <param name="request">The request to get the current identity for.</param>
         /// <returns>The current signed-in identity.</returns>
-        IIdentity GetCurrentIdentity(Request request);
+        IIdentity GetCurrentIdentity(IRequest request);
 
         /// <summary>
         /// Checks if the specified identity has the given permission.

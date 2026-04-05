@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
@@ -46,9 +45,9 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The response.</returns>
-        public Response Process(Request request)
+        public IResponse Process(IRequest request)
         {
-            if (_data == null)
+            if (_data is null)
             {
                 return new ResponseNotFound();
             }
@@ -139,7 +138,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <returns>The data.</returns>
         private byte[] GetData(Assembly assembly)
         {
-            if (assembly == null || _embeddedResource == null)
+            if (assembly is null || _embeddedResource is null)
             {
                 return [];
             }
@@ -157,8 +156,6 @@ namespace WebExpress.WebCore.WebAsset
         public void Dispose()
         {
             _data = null;
-
-            GC.SuppressFinalize(this);
         }
     }
 }

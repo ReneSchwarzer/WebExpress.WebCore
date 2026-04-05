@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <returns>True if both objects are similar; false otherwise.</returns>
         public bool Equals(T x, T y)
         {
-            if (x == null && y == null)
+            if (x is null && y is null)
             {
                 return true;
             }

@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
@@ -10,17 +8,12 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// Returns or sets the id.
         /// </summary>
-        internal string Id { get; }
+        string Id { get; }
 
         /// <summary>
         /// Returns the value.
         /// </summary>
         string Value { get; }
-
-        /// <summary>
-        /// Returns or sets the display text.
-        /// </summary>
-        string Display { get; set; }
 
         /// <summary>
         /// Returns the tag.
@@ -31,6 +24,20 @@ namespace WebExpress.WebCore.WebUri
         /// Checks for empty path segment.
         /// </summary>
         bool IsEmpty { get; }
+
+        /// <summary>
+        /// Returns a value indicating whether the item is hidden.
+        /// </summary>
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Returns the URI to which the user is redirected.
+        /// </summary>
+        IUri Uri { get; set; }
 
         /// <summary>
         /// Checks whether the node matches the path element.
@@ -51,11 +58,5 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="obj">The comparison object.</param>
         /// <returns>true if equals, false otherwise</returns>
         bool Equals(IUriPathSegment obj);
-
-        /// <summary>
-        /// Returns or sets the display text.
-        /// </summary>
-        /// <param name="culture">The culture.</param>
-        string GetDisplay(CultureInfo culture);
     }
 }

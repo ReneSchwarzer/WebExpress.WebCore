@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebTheme
     /// <summary>
     /// Manages themes for the web application.
     /// </summary>
-    public class ThemeManager : IThemeManager
+    public class ThemeManager : IThemeManager, ISystemComponent
     {
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
@@ -144,7 +144,7 @@ namespace WebExpress.WebCore.WebTheme
                 x.IsSealed &&
                 x.IsPublic &&
                 (
-                    x.GetInterface(typeof(ITheme).Name) != null
+                    x.GetInterface(typeof(ITheme).Name) is not null
                 )
             );
 
@@ -199,9 +199,9 @@ namespace WebExpress.WebCore.WebTheme
                         ApplicationContext = applicationContext,
                         Name = name,
                         Description = description,
-                        Image = image != null ? RouteEndpoint.Combine(applicationContext.Route, image) : null,
+                        Image = image is not null ? RouteEndpoint.Combine(applicationContext.Route, image) : null,
                         ThemeMode = mode,
-                        ThemeStyle = style != null ? RouteEndpoint.Combine(applicationContext.Route, style) : null,
+                        ThemeStyle = style is not null ? RouteEndpoint.Combine(applicationContext.Route, style) : null,
                     };
 
                     var themeItem = new ThemeItem()

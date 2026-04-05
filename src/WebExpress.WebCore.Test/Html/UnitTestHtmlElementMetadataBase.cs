@@ -14,10 +14,10 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Constructor()
         {
-            // preconditions
+            // arrange
             var url = "https://example.com";
 
-            // test execution
+            // act
             var element = new HtmlElementMetadataBase(url);
 
             // validation
@@ -32,10 +32,10 @@ namespace WebExpress.WebCore.Test.Html
         [InlineData("https://example.com", "https://example.com")]
         public void Href(string uri, string expected)
         {
-            // preconditions
+            // arrange
             var element = new HtmlElementMetadataBase();
 
-            // test execution
+            // act
             element.Href = uri;
 
             // validation

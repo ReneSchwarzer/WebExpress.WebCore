@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void Empty()
         {
-            // test execution
+            // act
             var html = new HtmlText();
 
             Assert.Null(html.Value);
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtInstancing()
         {
-            // test execution
+            // act
             var html = new HtmlText("abcdef");
 
             Assert.Equal(@"abcdef", html.Value);
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.Test.Html
         [Fact]
         public void TextAtProperty()
         {
-            // test execution
+            // act
             var html = new HtmlText
             {
                 Value = "abcdef"

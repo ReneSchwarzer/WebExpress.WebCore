@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.WebEvent.Model
                 .GetInterfaces()
                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
 
-            if (handlerType != null)
+            if (handlerType is not null)
             {
                 var genericArgument = handlerType.GetGenericArguments().First();
                 var method = handlerType.GetMethod("Process");

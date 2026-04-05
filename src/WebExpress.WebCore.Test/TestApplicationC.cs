@@ -22,13 +22,13 @@ namespace WebExpress.WebCore.Test
         private TestApplicationC(IApplicationContext applicationContext, IPluginManager pluginManager)
         {
             // test the injection
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 throw new ArgumentNullException(nameof(applicationContext), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (pluginManager == null)
+            if (pluginManager is null)
             {
                 throw new ArgumentNullException(nameof(pluginManager), "Parameter cannot be null or empty.");
             }

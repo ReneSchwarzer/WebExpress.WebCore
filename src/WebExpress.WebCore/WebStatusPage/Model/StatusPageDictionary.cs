@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.WebStatusPage.Model
         /// <returns>The status page item if found, otherwise null.</returns>
         public StatusPageItem GetStatusPageItem(IApplicationContext applicationContext, int statusCode)
         {
-            if (applicationContext != null && ContainsKey(applicationContext?.PluginContext))
+            if (applicationContext is not null && ContainsKey(applicationContext?.PluginContext))
             {
                 var appContextDict = this[applicationContext?.PluginContext];
 

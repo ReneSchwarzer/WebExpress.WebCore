@@ -82,18 +82,18 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// Create the instance of the component.
         /// </summary>
         /// <param name="pageContext">The page context.</param>
-        public TFragment CreateInstance<TFragment>(IPageContext pageContext = null) 
+        public TFragment CreateInstance<TFragment>(IPageContext pageContext = null)
             where TFragment : IFragmentBase
         {
             var instance = _instance;
 
             instance ??= ComponentActivator.CreateInstance<IFragmentBase, IFragmentContext>
             (
-                FragmentClass, 
-                FragmentContext, 
-                _httpServerContext, 
-                _componentHub, 
-                FragmentContext, 
+                FragmentClass,
+                FragmentContext,
+                _httpServerContext,
+                _componentHub,
+                FragmentContext,
                 pageContext
             );
 
@@ -157,7 +157,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>True if the fragment is active, false otherwise.</returns>
-        public bool CheckConditions(Request request)
+        public bool CheckConditions(IRequest request)
         {
             return !FragmentContext.Conditions.Any() || FragmentContext.Conditions.All(x => x.Fulfillment(request));
         }

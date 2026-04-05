@@ -115,7 +115,7 @@ namespace WebExpress.WebCore.WebJob
                     x => x.IsClass == true &&
                     x.IsSealed &&
                     x.IsPublic &&
-                    x.GetInterface(typeof(IJob).Name) != null
+                    x.GetInterface(typeof(IJob).Name) is not null
                 ))
             {
                 var id = job.FullName?.ToLower();
@@ -201,7 +201,7 @@ namespace WebExpress.WebCore.WebJob
         /// <param name="pluginContext">The context of the plugin that contains the jobs to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -227,7 +227,7 @@ namespace WebExpress.WebCore.WebJob
         /// <param name="applicationContext">The context of the application that contains the jobs to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }

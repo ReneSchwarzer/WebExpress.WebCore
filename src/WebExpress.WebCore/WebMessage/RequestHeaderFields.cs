@@ -80,6 +80,26 @@ namespace WebExpress.WebCore.WebMessage
         public string Referer { get; private set; }
 
         /// <summary>
+        /// Returns the upgrade header (e.g. "websocket" for WebSocket upgrades).
+        /// </summary>
+        public string Upgrade { get; private set; }
+
+        /// <summary>
+        /// Returns the Sec-WebSocket-Key header value if present.
+        /// </summary>
+        public string SecWebSocketKey { get; private set; }
+
+        /// <summary>
+        /// Returns the Sec-WebSocket-Protocol header value if present.
+        /// </summary>
+        public string SecWebSocketProtocol { get; private set; }
+
+        /// <summary>
+        /// Returns the Sec-WebSocket-Version header value if present.
+        /// </summary>
+        public string SecWebSocketVersion { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="contextFeatures">Initial set of features.</param>
@@ -98,19 +118,20 @@ namespace WebExpress.WebCore.WebMessage
             AcceptLanguage = requestFeature.Headers.AcceptLanguage.SelectMany(x => x.Split(';', StringSplitOptions.RemoveEmptyEntries));
             UserAgent = requestFeature.Headers.UserAgent;
             Referer = requestFeature.Headers.Referer;
-
-            var cookies = new List<Cookie>();
-
-            foreach (var cookie in requestFeature.Headers.Cookie)
-            {
-                var split = cookie.Split('=');
-                var key = split[0];
-                var value = split[1];
-
-                cookies.Add(new Cookie(key, value));
-            }
-
-            Cookies = cookies;
+            Upgrade = requestFeature.Headers.Upgrade;
+            SecWebSocketKey = requestFeature.Headers.SecWebSocketKey;
+            SecWebSocketProtocol = requestFeature.Headers.SecWebSocketProtocol;
+            SecWebSocketVersion = requestFeature.Headers.SecWebSocketVersion;
+            
+            Cookies = requestFeature.Headers.Cookie
+                .SelectMany(c => c.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                .Select(c =>
+                {
+                    var eqIndex = c.IndexOf('=');
+                    if (eqIndex < 0) { return null; }
+                    return new Cookie(c[..eqIndex].Trim(), c[(eqIndex + 1)..].Trim());
+                })
+                .Where(c => c != null);
 
             Authorization = RequestAuthorization.Parse(requestFeature.Headers.Authorization);
         }

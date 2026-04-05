@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.Test.WWW.Blog.Post
         private Index(IPageContext pageContext)
         {
             // test the injection
-            if (pageContext == null)
+            if (pageContext is null)
             {
                 throw new ArgumentNullException(nameof(pageContext), "Parameter cannot be null or empty.");
             }
@@ -30,13 +30,13 @@ namespace WebExpress.WebCore.Test.WWW.Blog.Post
         public override void Process(IRenderContext renderContext, TestVisualTree visualTree)
         {
             // test the context
-            if (renderContext == null)
+            if (renderContext is null)
             {
                 throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }
 
             // test the visualTree
-            if (visualTree == null)
+            if (visualTree is null)
             {
                 throw new ArgumentNullException(nameof(visualTree), "Parameter cannot be null or empty.");
             }

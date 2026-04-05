@@ -68,7 +68,7 @@ namespace WebExpress.WebCore.WebInclude
         /// <param name="pluginContext">The plugin context.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -87,7 +87,7 @@ namespace WebExpress.WebCore.WebInclude
         /// <param name="applicationContext">The application context.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
@@ -112,14 +112,14 @@ namespace WebExpress.WebCore.WebInclude
         {
             var assembly = pluginContext?.Assembly;
 
-            if (assembly == null)
+            if (assembly is null)
             {
                 return;
             }
 
             foreach (var includeType in assembly.GetTypes()
                 .Where(x => x.IsClass && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IInclude).Name) != null))
+                .Where(x => x.GetInterface(typeof(IInclude).Name) is not null))
             {
                 var id = includeType.FullName?.ToLower();
                 var cache = false;
@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebInclude
         /// <param name="pluginContext">The plugin context.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -237,7 +237,7 @@ namespace WebExpress.WebCore.WebInclude
         /// <param name="applicationContext">The application context.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
@@ -250,6 +250,14 @@ namespace WebExpress.WebCore.WebInclude
                     {
                         OnRemoveInclude(includeItem.IncludeContext);
                         includeItem.Dispose();
+
+                        _httpServerContext?.Log.Debug(
+                            I18N.Translate(
+                                "webexpress.webcore:includemanager.removeinclude",
+                                includeItem.IncludeId,
+                                includeItem.ApplicationContext.ApplicationId
+                            )
+                        );
                     }
                 }
 
@@ -264,7 +272,7 @@ namespace WebExpress.WebCore.WebInclude
         /// <returns>Enumerable of include contexts.</returns>
         public IEnumerable<IIncludeContext> GetIncludes(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return [];
             }
@@ -284,9 +292,9 @@ namespace WebExpress.WebCore.WebInclude
         /// <returns>Enumerable of include contexts.</returns>
         public IEnumerable<IIncludeContext> GetIncludes(IApplicationContext applicationContext, Type includeType)
         {
-            if (applicationContext == null || includeType == null)
+            if (applicationContext is null || includeType is null)
             {
-                return Enumerable.Empty<IIncludeContext>();
+                return [];
             }
 
             return _dictionary.Values

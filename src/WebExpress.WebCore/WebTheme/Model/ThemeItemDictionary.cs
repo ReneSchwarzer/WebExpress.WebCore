@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebTheme.Model
         /// <returns>An enumeration of theme contexts that were removed.</returns>
         public IEnumerable<IThemeContext> Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return [];
             }
@@ -95,7 +95,7 @@ namespace WebExpress.WebCore.WebTheme.Model
         /// <returns>An enumeration of theme contexts that were removed.</returns>
         internal IEnumerable<IThemeContext> Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return [];
             }

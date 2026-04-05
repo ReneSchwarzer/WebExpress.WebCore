@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebRestApi
     /// during the processing of a REST API request. It includes methods to add individual 
     /// or multiple errors, and properties to check the overall validity of the result.
     /// </remarks>
-    public class RestApiValidationResult
+    public class RestApiValidationResult : IRestApiValidationResult
     {
         private readonly List<RestApiError> _errors = [];
 
@@ -45,9 +45,12 @@ namespace WebExpress.WebCore.WebRestApi
         /// A code representing the type or category of the error, if applicable. 
         /// This parameter is optional and can be null.
         /// </param>
-        public void Add(string message, string field = null, string code = null)
+        /// <returns>The current instance for method chaining.</returns>
+        public IRestApiValidationResult Add(string message, string field = null, string code = null)
         {
             _errors.Add(new RestApiError(message, code, field));
+
+            return this;
         }
 
         /// <summary>
@@ -58,9 +61,12 @@ namespace WebExpress.WebCore.WebRestApi
         /// the array is empty, no changes are made.
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
-        public void Add(params RestApiError[] errors)
+        /// <returns>The current instance for method chaining.</returns>
+        public IRestApiValidationResult Add(params RestApiError[] errors)
         {
             _errors.AddRange(errors);
+
+            return this;
         }
 
         /// <summary>
@@ -71,12 +77,15 @@ namespace WebExpress.WebCore.WebRestApi
         /// the array is empty, no changes are made.
         /// </remarks>
         /// <param name="errors">An array of error objects to add.</param>
-        public void AddRange(IEnumerable<RestApiError> errors)
+        /// <returns>The current instance for method chaining.</returns>
+        public IRestApiValidationResult AddRange(IEnumerable<RestApiError> errors)
         {
-            if (errors != null)
+            if (errors is not null)
             {
                 _errors.AddRange(errors);
             }
+
+            return this;
         }
 
         /// <summary>

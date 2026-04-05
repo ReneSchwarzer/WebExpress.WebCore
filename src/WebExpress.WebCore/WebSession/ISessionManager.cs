@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebSession
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The session.</returns>
-        Session GetSession(Request request);
+        Session GetSession(IRequest request);
 
         /// <summary>
         /// Cleans up expired sessions from the session manager based on the specified session timeout.

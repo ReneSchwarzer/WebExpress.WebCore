@@ -1,19 +1,33 @@
-﻿using WebExpress.WebCore.WebMessage;
+﻿using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.Test
 {
     /// <summary>
     /// Represents a test parameter.
     /// </summary>
-    internal class TestParameterA : Parameter
+    internal class TestParameterA : IParameterStatic
     {
+        /// <summary>
+        /// Returns the key that uniquely identifies the parameter in configuration or
+        /// settings contexts.
+        /// </summary>
+        public static string Key => "testparametera";
+
+        /// <summary>
+        /// Returns or sets the scope of the parameter.
+        /// </summary>
+        public ParameterScope Scope { get; set; }
+
+        /// <summary>
+        /// Returns the value of the parameter.
+        /// </summary>
+        public string Value { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public TestParameterA()
-            : base("TestParameterA", null, ParameterScope.Url)
         {
-
         }
 
         /// <summary>
@@ -21,9 +35,8 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="value">The value of the parameter.</param>
         public TestParameterA(int value)
-            : base("TestParameterA", value, ParameterScope.Url)
         {
-
+            Value = value.ToString();
         }
 
         /// <summary>
@@ -31,9 +44,20 @@ namespace WebExpress.WebCore.Test
         /// </summary>
         /// <param name="value">The value of the parameter.</param>
         public TestParameterA(Guid value)
-            : base("TestParameterA", value.ToString(), ParameterScope.Url)
         {
+            Value = value.ToString();
+        }
 
+        /// <summary>
+        /// Retrieves the unique key associated with the current instance.
+        /// </summary>
+        /// <returns>
+        /// A string representing the unique key. This key is used for identifying 
+        /// the instance in various operations.
+        /// </returns>
+        public string GetKey()
+        {
+            return Key;
         }
     }
 }

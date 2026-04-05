@@ -55,10 +55,27 @@ namespace WebExpress.WebCore.WebMessage
         public CookieCollection Cookies { get; } = [];
 
         /// <summary>
+        /// Returns or sets the Upgrade header (for protocol upgrade responses, e.g. "websocket").
+        /// </summary>
+        public string Upgrade { get; set; }
+
+        /// <summary>
+        /// Returns the connection. Keep-Alive or close.
+        /// </summary>
+        public string Connection { get; set; }
+
+        /// <summary>
+        /// Returns or sets the value of the Sec-WebSocket-Accept header used in 
+        /// the WebSocket handshake response.
+        /// </summary>
+        public string SecWebSocketAccept { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public ResponseHeaderFields()
         {
+            // set defaults
             CustomHeader = new Dictionary<string, string>();
             WWWAuthenticate = false;
             ContentLength = -1;
@@ -117,6 +134,21 @@ namespace WebExpress.WebCore.WebMessage
             if (!string.IsNullOrWhiteSpace(Location))
             {
                 sb.AppendLine("Location: " + Location);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Connection))
+            {
+                sb.AppendLine("Connection: " + Connection);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Upgrade))
+            {
+                sb.AppendLine("Upgrade: " + Upgrade);
+            }
+
+            if (!string.IsNullOrWhiteSpace(SecWebSocketAccept))
+            {
+                sb.AppendLine("Sec-WebSocket-Accept: " + SecWebSocketAccept);
             }
 
             foreach (var c in CustomHeader)

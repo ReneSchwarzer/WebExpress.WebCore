@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebComponent.Model
     /// key = plugin
     /// value = component item
     /// </summary>
-    internal class ComponentDictionary : Dictionary<IPluginContext, IEnumerable<ComponentItem>>
+    internal class ComponentDictionary : Dictionary<IPluginContext, List<ComponentItem>>
     {
 
     }

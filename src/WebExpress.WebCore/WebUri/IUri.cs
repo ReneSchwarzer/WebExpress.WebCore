@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// An Uri represents a complete, fully qualified Uniform Resource Identifier (URI) that uniquely identifies a endpoint.
-    /// 
-    /// This interface encapsulates all components of a typical URI, such as the scheme (e.g., "http", "https"),
-    /// the authority (e.g., "example.com"), path segments, query parameters, and fragment. It provides the external
-    /// address used for resource identification and linking (e.g., "http://example.com/users/123").
+    /// An Uri represents a complete, fully qualified Uniform Resource 
+    /// Identifier (URI) that uniquely identifies a endpoint.
+    /// This interface encapsulates all components of a typical URI, such as 
+    /// the scheme (e.g., "http", "https"), the authority (e.g., "example.com"), 
+    /// path segments, query parameters, and fragment. It provides the external
+    /// address used for resource identification and linking 
+    /// (e.g., "http://example.com/users/123").
     /// </summary>
     public interface IUri
     {
@@ -40,17 +46,12 @@ namespace WebExpress.WebCore.WebUri
         /// <summary>
         /// The query part (e.g. ?title=Uniform_Resource_Identifier).
         /// </summary>
-        IEnumerable<UriQuery> Query { get; }
+        IEnumerable<IUriQuery> Query { get; }
 
         /// <summary>
         /// References a position within a resource (e.g. #Anchor).
         /// </summary>
         string Fragment { get; }
-
-        /// <summary>
-        /// Returns the display string of the Uri
-        /// </summary>
-        string Display { get; }
 
         /// <summary>
         /// Determines if the uri is empty.
@@ -73,6 +74,18 @@ namespace WebExpress.WebCore.WebUri
         IDictionary<string, string> Parameters { get; }
 
         /// <summary>
+        /// Appends one or more query parameters to the current URI and returns a new instance with 
+        /// the updated query
+        /// string.
+        /// </summary>
+        /// <param name="query">An array of objects representing the query parameters to add. Each 
+        /// parameter must not be null.</param>
+        /// <returns>
+        /// An uri instance containing the original URI with the specified query parameters appended.
+        /// </returns>
+        IUri Add(params IUriQuery[] query);
+
+        /// <summary>
         /// Concatenates the given path segment to the current URI and returns a new instance of IUri with the updated path.
         /// </summary>
         /// <param name="segment">The path segment to be concatenated with the existing URI.</param>
@@ -85,6 +98,19 @@ namespace WebExpress.WebCore.WebUri
         /// <param name="segments">An array of path segments to be concatenated to the existing URI.</param>
         /// <returns>A new IUri instance representing the URI after concatenation.</returns>
         IUri Concat(params IUriPathSegment[] segments);
+
+        /// <summary>
+        /// Appends one or more query segments and returns a new URI instance with the 
+        /// combined query parameters.
+        /// </summary>
+        /// <param name="query">
+        /// An array representing the query segments to append. The order of segments
+        /// determines their position in the resulting query string.
+        /// </param>
+        /// <returns>
+        /// A new uri instance containing the original URI with the specified query segments appended.
+        /// </returns>
+        IUri Concat(params IUriQuery[] query);
 
         /// <summary>
         /// Return a shortened uri containing n-elements.
@@ -124,5 +150,62 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <returns>A new IUri instance with the updated fragment. The original URI remains unchanged.</returns>
         IUri SetFragment(string fragment);
+
+        /// <summary>
+        /// Returns a string that represents the display text for the current instance.
+        /// </summary>
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        string GetDisplayText(IRenderContext renderContext);
+
+        /// <summary>
+        /// Returns an icon that visually represents the parameter within 
+        /// the given render context.
+        /// </summary>
+        /// <param name="renderContext">
+        /// The rendering context that provides information required to 
+        /// determine the appropriate icon.
+        /// </param>
+        /// <returns>
+        /// An icon associated with the current instance. The value may be 
+        /// null or empty if no icon is available.
+        /// </returns>
+        IIcon GetIcon(IRenderContext renderContext);
+
+        /// <summary>
+        /// Creates a new endpoint uri and fills it with the given parameters.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters that fill in the variable parts of the uri.
+        /// </param>
+        /// <returns>
+        /// A new endpoint uri with the populated parameters.
+        /// </returns>
+        IUri BindParameters(params IParameter[] parameters);
+
+        /// <summary>
+        /// Creates a new endpoint uri and fills it with the given parameters.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters that fill in the variable parts of the uri.
+        /// </param>
+        /// <returns>
+        /// A new endpoint uri with the populated parameters.
+        /// </returns>
+        IUri BindParameters(IEnumerable<IParameter> parameters);
+
+        /// <summary>
+        /// Binds the parameters from the specified request to a URI instance.
+        /// </summary>
+        /// <param name="request">
+        /// The request object containing the parameters to be bound to the URI. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An new IUri instance that represents the URI with parameters bound from the request.
+        /// </returns>
+        IUri BindParameters(IRequest request);
     }
 }

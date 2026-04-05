@@ -66,6 +66,11 @@ namespace WebExpress.WebCore
         public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
+        /// Returns or sets the path to the favicon image used by the application.
+        /// </summary>
+        public static string Favicon { get; set; } = "webexpress.webui/assets/img/webexpress.svg";
+
+        /// <summary>
         /// Running the application.
         /// </summary>
         /// <param name="args">Call arguments.</param>
@@ -173,7 +178,7 @@ namespace WebExpress.WebCore
         /// <param name="configFile">The configuration file.</param>
         private void OnInitialization(string args, string configFile)
         {
-            // Config laden
+            // load configuration
             using var reader = new FileStream(configFile, FileMode.Open);
             var serializer = new XmlSerializer(typeof(HttpServerConfig));
             var config = serializer.Deserialize(reader) as HttpServerConfig;
@@ -231,7 +236,7 @@ namespace WebExpress.WebCore
             _httpServer.HttpServerContext.Log.Begin(config.Log);
 
             // log program start
-            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Separator('/');
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.startup"));
             _httpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.version"), args: Version);
@@ -249,7 +254,7 @@ namespace WebExpress.WebCore
                 _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.uri"), args: v.Uri);
             }
 
-            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Separator('=');
 
             if (!Directory.Exists(config.PackageBase))
             {
@@ -293,11 +298,11 @@ namespace WebExpress.WebCore
             Exit?.Invoke(this, EventArgs.Empty);
 
             // end of program log
-            _httpServer.HttpServerContext.Log.Seperator('=');
+            _httpServer.HttpServerContext.Log.Separator('=');
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.errors"), args: _httpServer.HttpServerContext.Log.ErrorCount);
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.warnings"), args: _httpServer.HttpServerContext.Log.WarningCount);
             _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.done"));
-            _httpServer.HttpServerContext.Log.Seperator('/');
+            _httpServer.HttpServerContext.Log.Separator('/');
 
             // Stop running
             (_componentHub as ComponentHub).ShutDown();

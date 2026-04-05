@@ -19,13 +19,13 @@ namespace WebExpress.WebCore.Test
         private TestEventHandlerB(IEventHandlerContext eventHandlerContext, IApplicationManager applicationManager)
         {
             // test the injection
-            if (eventHandlerContext == null)
+            if (eventHandlerContext is null)
             {
                 throw new ArgumentNullException(nameof(eventHandlerContext), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (applicationManager == null)
+            if (applicationManager is null)
             {
                 throw new ArgumentNullException(nameof(applicationManager), "Parameter cannot be null or empty.");
             }
@@ -39,13 +39,13 @@ namespace WebExpress.WebCore.Test
         public void Process(object sender, TestEventArgument eventArgument)
         {
             // test the parameter
-            if (sender == null)
+            if (sender is null)
             {
                 throw new ArgumentNullException(nameof(sender), "Parameter cannot be null or empty.");
             }
 
             // test the parameter
-            if (eventArgument == null)
+            if (eventArgument is null)
             {
                 throw new ArgumentNullException(nameof(eventArgument), "Parameter cannot be null or empty.");
             }

@@ -16,10 +16,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(6, componentHub.ThemeManager.Themes.Count());
         }
 
@@ -29,14 +29,15 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var themeManager = componentHub.ThemeManager as ThemeManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             themeManager.Remove(plugin);
 
+            // validation
             Assert.Empty(componentHub.ThemeManager.Themes);
         }
 
@@ -46,10 +47,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ThemeManager.GetType()));
         }
 
@@ -65,14 +66,15 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), "webexpress.webcore.test.testthemeb")]
         public void Id(Type applicationType, Type themeType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
-            if (id == null)
+            // validation
+            if (id is null)
             {
                 Assert.Empty(themes);
                 return;
@@ -93,14 +95,15 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), "TestThemeB")]
         public void Name(Type applicationType, Type themeType, string name)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var themes = componentHub.ThemeManager.GetThemes(application, themeType);
 
-            if (name == null)
+            // validation
+            if (name is null)
             {
                 Assert.Empty(themes);
                 return;
@@ -121,13 +124,14 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), null)]
         public void Description(Type applicationType, Type themeType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.Description);
         }
@@ -144,13 +148,14 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), null)]
         public void Image(Type applicationType, Type themeType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.Image?.ToString());
         }
@@ -167,13 +172,14 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), ThemeMode.Light)]
         public void Mode(Type applicationType, Type themeType, ThemeMode expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.ThemeMode);
         }
@@ -190,13 +196,14 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestThemeB), null)]
         public void ThemeStyle(Type applicationType, Type themeType, string expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var theme = componentHub.ThemeManager.GetThemes(application, themeType).FirstOrDefault();
 
+            // validation
             Assert.NotNull(theme);
             Assert.Equal(expected, theme?.ThemeStyle?.ToString());
         }

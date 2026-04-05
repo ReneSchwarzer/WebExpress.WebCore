@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.WebFragment
 
             foreach (var fragmentType in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IFragment<,>).Name) != null))
+                .Where(x => x.GetInterface(typeof(IFragment<,>).Name) is not null))
             {
                 var id = fragmentType.FullName?.ToLower();
                 var scopes = new List<Type>();
@@ -236,7 +236,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="pluginContext">The context of the plugin that contains the components to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
@@ -255,7 +255,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="applicationContext">The context of the application that contains the fragments to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
@@ -352,7 +352,8 @@ namespace WebExpress.WebCore.WebFragment
         /// <typeparam name="TFragment">The fragment type.</typeparam>
         /// <param name="applicationContext">The application context.</param>
         /// <returns>An enumeration of the filtered fragment contexts.</returns>
-        public IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext) where TFragment : IFragmentBase
+        public IEnumerable<IFragmentContext> GetFragments<TFragment>(IApplicationContext applicationContext)
+            where TFragment : IFragmentBase
         {
             return GetFragments(applicationContext, typeof(TFragment));
         }

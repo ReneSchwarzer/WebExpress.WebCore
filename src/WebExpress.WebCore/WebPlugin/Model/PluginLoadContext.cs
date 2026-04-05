@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebPlugin.Model
         {
             string assemblyPath = Resolver.ResolveAssemblyToPath(assemblyName);
 
-            if (assemblyPath != null)
+            if (assemblyPath is not null)
             {
                 return LoadFromAssemblyPath(assemblyPath);
             }
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebPlugin.Model
         {
             string libraryPath = Resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
 
-            if (libraryPath != null)
+            if (libraryPath is not null)
             {
                 return LoadUnmanagedDllFromPath(libraryPath);
             }

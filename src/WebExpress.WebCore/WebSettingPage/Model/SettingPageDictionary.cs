@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         /// <returns>An enumerable collection of setting page contexts that were removed.</returns>
         public IEnumerable<ISettingPageContext> Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 yield break;
             }
@@ -148,7 +148,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
                 .SelectMany(x => x)
                 .FirstOrDefault(x => x.SettingPageContext.Equals(settingPageContext));
 
-            if (settingPageItem != null && settingPageItem.Instance == null)
+            if (settingPageItem is not null && settingPageItem.Instance is null)
             {
                 var instance = ComponentActivator.CreateInstance<IEndpoint, ISettingPageContext>
                 (

@@ -6,6 +6,7 @@ namespace WebExpress.WebCore.Test.WWW.Products
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
+    [SegmentHidden]
     [Title("webindex:index.label")]
     public sealed class Index : IPage<VisualTree>
     {
@@ -28,7 +29,7 @@ namespace WebExpress.WebCore.Test.WWW.Products
             PageContext = pageContext;
 
             // test the injection
-            if (pageContext == null)
+            if (pageContext is null)
             {
                 throw new ArgumentNullException(nameof(pageContext), "Parameter cannot be null or empty.");
             }
@@ -42,7 +43,7 @@ namespace WebExpress.WebCore.Test.WWW.Products
         public void Process(IRenderContext renderContext, VisualTree visualTree)
         {
             // test the context
-            if (renderContext == null)
+            if (renderContext is null)
             {
                 throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }

@@ -34,7 +34,7 @@ namespace WebExpress.WebCore.WebPage.Model
         {
             var type = pageItem.PageClass;
 
-            if (type.GetInterface(typeof(IPage<>).Name) == null)
+            if (type.GetInterface(typeof(IPage<>).Name) is null)
             {
                 return false;
             }

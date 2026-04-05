@@ -90,7 +90,7 @@ namespace WebExpress.WebCore.WebSession.Model
                 var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
                 var constructors = type.GetConstructors(flags);
 
-                if (constructors != null || parameters.Length > 0)
+                if (constructors is not null || parameters.Length > 0)
                 {
                     foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                     {

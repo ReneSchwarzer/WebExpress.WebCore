@@ -17,6 +17,11 @@ namespace WebExpress.WebCore.WebTask
         private readonly TaskDictionary _dictionary = [];
 
         /// <summary>
+        /// Event is triggered when a task's changes.
+        /// </summary>
+        public event EventHandler<TaskEventArgs> TaskChanged;
+
+        /// <summary>
         /// Returns the collection of tasks.
         /// </summary>
         public IEnumerable<ITask> Tasks => _dictionary.Values;
@@ -73,12 +78,16 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (_dictionary.TryGetValue(id, out var value))
+            if (_dictionary.TryGetValue(key, out var value))
             {
                 return value;
             }
 
             var task = ComponentActivator.CreateInstance<Task>(_httpServerContext, _componentHub, [id, args]);
+
+            // register events for the newly created task
+            task.ProgressChanged += OnTaskChanged;
+
             _dictionary.Add(key, task);
 
             return task;
@@ -109,12 +118,16 @@ namespace WebExpress.WebCore.WebTask
         {
             var key = id?.ToLower();
 
-            if (_dictionary.TryGetValue(id, out var value))
+            if (_dictionary.TryGetValue(key, out var value))
             {
                 return value;
             }
 
             var task = ComponentActivator.CreateInstance<TTask>(_httpServerContext, _componentHub, [id, args]);
+
+            // register events for the newly created task
+            task.ProgressChanged += OnTaskChanged;
+
             _dictionary.Add(key, task);
 
             task.Process += handler;
@@ -128,7 +141,18 @@ namespace WebExpress.WebCore.WebTask
         /// <param name="task">The task.</param>
         public void RemoveTask(ITask task)
         {
-            var key = task?.Id.ToLower();
+            if (task?.Id is null)
+            {
+                return;
+            }
+
+            var key = task.Id.ToLower();
+
+            if (_dictionary.TryGetValue(key, out var storedTask) && storedTask is Task t)
+            {
+                // unregister events to prevent memory leaks
+                t.ProgressChanged -= OnTaskChanged;
+            }
 
             _dictionary.Remove(key);
         }
@@ -139,6 +163,16 @@ namespace WebExpress.WebCore.WebTask
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Handles the changed event from a task.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnTaskChanged(object sender, TaskEventArgs e)
+        {
+            TaskChanged?.Invoke(sender, e);
         }
     }
 }

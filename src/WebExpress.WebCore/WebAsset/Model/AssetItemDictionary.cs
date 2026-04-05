@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.WebAsset.Model
         /// <returns>An enumeration of asset contexts that were removed.</returns>
         public IEnumerable<IAssetContext> Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return [];
             }
@@ -97,7 +97,7 @@ namespace WebExpress.WebCore.WebAsset.Model
         /// <returns>An enumeration of asset contexts that were removed.</returns>
         internal IEnumerable<IAssetContext> Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return [];
             }

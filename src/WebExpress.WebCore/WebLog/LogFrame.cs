@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// The log entry.
         /// </summary>
-        protected Log Log { get; set; }
+        protected ILog Log { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -42,28 +42,15 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="instance">Method that wants to log.</param>
         /// <param name="line">The line number.</param>
         /// <param name="file">The source file.</param>
-        public LogFrame(Log log, string name, string additionalHeading = null, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
+        public LogFrame(ILog log, string name, string additionalHeading = null, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
             Instance = instance;
-            Status = string.Format("{0} abgeschlossen. ", name);
+            Status = string.Format("{0} completed. ", name);
 
             Log = log;
-            Log.Seperator();
-            Log.Info(string.Format("Beginne mit {0}", name) + (!string.IsNullOrWhiteSpace(additionalHeading) ? " " + additionalHeading : ""), instance, line, file);
+            Log.Separator();
+            Log.Info(string.Format("Starting {0}", name) + (!string.IsNullOrWhiteSpace(additionalHeading) ? " " + additionalHeading : ""), instance, line, file);
             Log.Info("".PadRight(80, '-'), instance, line, file);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the class.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="additionalHeading">The additional heading or zero.</param>
-        /// <param name="instance">Method that wants to log.</param>
-        /// <param name="line">The line number.</param>
-        /// <param name="file">The source file.</param>
-        public LogFrame(string name, string additionalHeading = null, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
-            : this(Log.Current, name, additionalHeading, instance, line, file)
-        {
         }
 
         /// <summary>

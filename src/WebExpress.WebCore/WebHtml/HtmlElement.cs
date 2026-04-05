@@ -278,7 +278,7 @@ namespace WebExpress.WebCore.WebHtml
         {
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
-            if (a != null)
+            if (a is not null)
             {
                 return a is HtmlAttribute ? (a as HtmlAttribute).Value : string.Empty;
             }
@@ -295,7 +295,7 @@ namespace WebExpress.WebCore.WebHtml
         {
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
-            return (a != null);
+            return (a is not null);
         }
 
         /// <summary>
@@ -307,7 +307,7 @@ namespace WebExpress.WebCore.WebHtml
         {
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
-            if (a != null)
+            if (a is not null)
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -340,7 +340,7 @@ namespace WebExpress.WebCore.WebHtml
 
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
-            if (a == null)
+            if (a is null)
             {
                 _attributes.Add(new HtmlAttributeNoneValue(name));
             }
@@ -354,7 +354,7 @@ namespace WebExpress.WebCore.WebHtml
         {
             var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
 
-            if (a != null)
+            if (a is not null)
             {
                 _attributes.Remove(a);
             }
@@ -378,7 +378,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="element">The element.</param>
         protected void SetElement(HtmlElement element)
         {
-            if (element != null)
+            if (element is not null)
             {
                 var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == element.ElementName);
 
@@ -430,7 +430,7 @@ namespace WebExpress.WebCore.WebHtml
                 closeTag = true;
                 var count = builder.Length;
 
-                foreach (var v in _elements.Where(x => x != null))
+                foreach (var v in _elements.Where(x => x is not null))
                 {
                     v.ToString(builder, deep + 1);
                 }

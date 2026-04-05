@@ -155,8 +155,8 @@ namespace WebExpress.WebCore.WebEvent
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IEventHandler).Name) != null ||
-                        x.GetInterface(typeof(IEventHandler<>).Name) != null
+                        x.GetInterface(typeof(IEventHandler).Name) is not null ||
+                        x.GetInterface(typeof(IEventHandler<>).Name) is not null
                     )
                 ))
             {
@@ -260,7 +260,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <param name="applicationContext">The context of the application that contains the events to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }

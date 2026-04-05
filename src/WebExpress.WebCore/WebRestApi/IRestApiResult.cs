@@ -8,9 +8,9 @@ namespace WebExpress.WebCore.WebRestApi
     public interface IRestApiResult
     {
         /// <summary>
-        /// Converts the current instance into a <see cref="Response"/> object.
+        /// Converts the current instance into a <see cref="IResponse"/> object.
         /// </summary>
         /// <returns>A Response object representing the result of the conversion.</returns>
-        Response ToResponse();
+        IResponse ToResponse();
     }
 }

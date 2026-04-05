@@ -33,6 +33,6 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Returns or sets the function to handle requests.
         /// </summary>
-        public Func<Request, IEndpointContext, Response> HandleRequest { get; set; }
+        public Func<IRequest, IEndpointContext, IResponse> HandleRequest { get; set; }
     }
 }

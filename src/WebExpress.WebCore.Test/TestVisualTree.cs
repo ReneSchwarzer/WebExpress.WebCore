@@ -108,8 +108,10 @@ namespace WebExpress.WebCore.Test
             html.Body.Add(Content);
             html.Body.Scripts = [.. Scripts.Values];
 
-            html.Head.CssLinks = CssLinks.Where(x => x != null).Select(x => x.ToString());
-            html.Head.ScriptLinks = HeaderScriptLinks?.Where(x => x != null).Select(x => x.ToString());
+            html.Head.CssLinks = CssLinks.Where(x => x is not null)
+                .Select(x => x.ToString());
+            html.Head.ScriptLinks = HeaderScriptLinks?.Where(x => x is not null)
+                .Select(x => x.ToString());
 
             return html;
         }

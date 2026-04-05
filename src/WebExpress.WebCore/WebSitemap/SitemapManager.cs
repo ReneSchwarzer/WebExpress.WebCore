@@ -7,7 +7,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap.Model;
 using WebExpress.WebCore.WebUri;
 
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// Returns the side map.
         /// </summary>
         public IEnumerable<IEndpointContext> SiteMap => _root.GetPreOrder()
-            .Where(x => x != null)
+            .Where(x => x is not null)
             .Select(x => x.EndpointContext);
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // endpoints
-            var resources = _componentHub.EndpointManager.Endpoints
-                .Where(x => x.Route != null)
+            var endpoints = _componentHub.EndpointManager.Endpoints
+                .Where(x => x.Route is not null)
                 .Select(x => new
                 {
                     EndpointContext = x,
@@ -89,7 +89,7 @@ namespace WebExpress.WebCore.WebSitemap
                 })
                 .OrderBy(x => x.PathSegments.Count());
 
-            foreach (var item in resources)
+            foreach (var item in endpoints)
             {
                 MergeSitemap(newSiteMapNode, CreateSiteMap
                 (
@@ -115,12 +115,12 @@ namespace WebExpress.WebCore.WebSitemap
             var result = SearchNode
             (
                 _root,
-                new Queue<string>(requestUri.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
+                new Queue<string>(requestUri?.Segments.Select(x => x == "/" ? x : (x.EndsWith('/') ? x[..^1] : x))),
                 new Queue<IUriPathSegment>(),
                 searchContext
             );
 
-            if (result != null && result.EndpointContext != null)
+            if (result is not null && result.EndpointContext is not null)
             {
                 if (!result.EndpointContext.Conditions.Any() || result.EndpointContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request)))
                 {
@@ -133,14 +133,23 @@ namespace WebExpress.WebCore.WebSitemap
         }
 
         /// <summary>
-        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context 
-        /// in which the URI is valid. 
+        /// Returns the URI for this type based on the sitemap configuration, taking into account 
+        /// the specific context in which the URI is valid. 
         /// </summary>
-        /// <typeparam name="TEndpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
-        /// <param name="applicationContext">The application context.</param>
-        /// <param name="parameters">The parameters to be considered for the uri.</param>
-        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params Parameter[] parameters)
+        /// <typeparam name="TEndpoint">
+        /// The class from which the URI is to be determined. URI route must not have any dynamic 
+        /// components (such as '/a/guid/b').
+        /// </typeparam>
+        /// <param name="applicationContext">
+        /// The application context.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters to be considered for the uri.
+        /// </param>
+        /// <returns>
+        /// Returns the URI taking into account the context, or null if no valid URI is found.
+        /// </returns>
+        public IUri GetUri<TEndpoint>(IApplicationContext applicationContext, params IParameter[] parameters)
             where TEndpoint : IEndpoint
         {
             return GetUri(typeof(TEndpoint), applicationContext, parameters);
@@ -153,23 +162,30 @@ namespace WebExpress.WebCore.WebSitemap
         /// <param name="applicationContext">The application context.</param>
         /// <param name="parameters">The parameters to be considered for the uri.</param>
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
-        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params Parameter[] parameters)
+        public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params IParameter[] parameters)
         {
             var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
             var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
+                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
 
-            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).SetParameters(parameters);
+            return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).BindParameters(parameters);
         }
 
         /// <summary>
-        /// Returns the URI for this type based on the sitemap configuration, taking into account the specific context in which the URI is valid.
+        /// Returns the URI for this type based on the sitemap configuration, taking into account 
+        /// the specific context in which the URI is valid.
         /// </summary>
-        /// <typeparam name="TEnpoint">The class from which the URI is to be determined. URI route must not have any dynamic components (such as '/a/guid/b').</typeparam>
-        /// <param name="endpointContext">The endpoint context.</param>
-        /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
+        /// <typeparam name="TEnpoint">
+        /// The class from which the URI is to be determined. URI route must not have any dynamic 
+        /// components (such as '/a/guid/b').
+        /// </typeparam>
+        /// <param name="endpointContext">
+        /// The endpoint context.
+        /// </param>
+        /// <returns>
+        /// Returns the URI taking into account the context, or null if no valid URI is found.
+        /// </returns>
         public IUri GetUri<TEnpoint>(IEndpointContext endpointContext)
             where TEnpoint : IEndpoint
         {
@@ -177,8 +193,13 @@ namespace WebExpress.WebCore.WebSitemap
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()
-                .Where(x => endpointContexts.Contains(x.EndpointContext))
-                .FirstOrDefault();
+                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
+
+            if (node is null)
+            {
+                // fallback to the search by application context
+                return GetUri<TEnpoint>(endpointContext.ApplicationContext);
+            }
 
             return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null);
         }
@@ -190,7 +211,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>The endpoint context if found, otherwise null.</returns>
         public IEndpointContext GetEndpoint(IUri uri)
         {
-            if (uri == null || uri.Empty)
+            if (uri is null || uri.Empty)
             {
                 return null;
             }
@@ -229,7 +250,7 @@ namespace WebExpress.WebCore.WebSitemap
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, applicationContext, root);
 
-            if (next != null)
+            if (next is not null)
             {
                 root.Children.Add(next);
             }
@@ -255,7 +276,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
-            if (pathSegment == null)
+            if (pathSegment is null)
             {
                 return null;
             }
@@ -296,7 +317,7 @@ namespace WebExpress.WebCore.WebSitemap
             var root = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
             var next = CreateSiteMap(contextPathSegments, endpointContext, root);
 
-            if (next != null)
+            if (next is not null)
             {
                 root.Children.Add(next);
             }
@@ -326,7 +347,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var pathSegment = contextPathSegments.Count != 0 ? contextPathSegments.Dequeue() : null;
 
-            if (pathSegment == null)
+            if (pathSegment is null)
             {
                 return null;
             }
@@ -393,17 +414,20 @@ namespace WebExpress.WebCore.WebSitemap
 
             if (IsMatched(node, pathSegment))
             {
-                var copy = node.PathSegment.Copy();
-                if (copy is UriPathSegmentVariable variable)
+
+                if (node.PathSegment is IUriPathSegmentVariable variable)
                 {
-                    variable.Value = pathSegment;
+                    var copy = variable.Copy(pathSegment);
+                    outPathSegments.Enqueue(copy);
+                }
+                else
+                {
+                    outPathSegments.Enqueue(node.PathSegment.Copy());
                 }
 
                 var type = node.EndpointContext?.GetType();
 
-                outPathSegments.Enqueue(copy);
-
-                if (nextPathSegment == null)
+                if (nextPathSegment is null)
                 {
                     return new SearchResult()
                     {
@@ -424,8 +448,8 @@ namespace WebExpress.WebCore.WebSitemap
                 else if
                 (
                     node.IsLeaf
-                    && nextPathSegment != null
-                    && node.EndpointContext != null
+                    && nextPathSegment is not null
+                    && node.EndpointContext is not null
                     && node.EndpointContext.IncludeSubPaths
                 )
                 {
@@ -464,7 +488,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>True if the path element matched, false otherwise.</returns>
         private static bool IsMatched(SitemapNode node, string pathSegement)
         {
-            if (node == null || string.IsNullOrWhiteSpace(pathSegement))
+            if (node is null || string.IsNullOrWhiteSpace(pathSegement))
             {
                 return false;
             }

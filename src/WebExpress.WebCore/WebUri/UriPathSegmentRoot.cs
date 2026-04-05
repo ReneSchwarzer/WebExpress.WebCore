@@ -1,6 +1,6 @@
 using System;
-using System.Globalization;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebUri
 {
@@ -33,6 +33,20 @@ namespace WebExpress.WebCore.WebUri
         /// Returns a value indicating whether the path segment is empty.
         /// </summary>
         public bool IsEmpty => false;
+
+        /// <summary>
+        /// Returns or sets a value indicating whether the item is hidden.
+        /// </summary>
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Returns or sets the URI to which the user is redirected.
+        /// </summary>
+        public IUri Uri { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UriPathSegmentRoot"/> class.
@@ -68,7 +82,11 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>A copy of the current segment.</returns>
         public virtual IUriPathSegment Copy()
         {
-            return new UriPathSegmentRoot(Display, Tag);
+            return new UriPathSegmentRoot(Display, Tag)
+            {
+                IsHidden = IsHidden,
+                Uri = Uri
+            };
         }
 
         /// <summary>
@@ -78,7 +96,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>True if the objects are equal, false otherwise.</returns>
         public virtual bool Equals(IUriPathSegment obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
@@ -87,13 +105,16 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Returns the display text for the specified culture.
+        /// Returns a string that represents the display text for the current instance.
         /// </summary>
-        /// <param name="culture">The culture.</param>
-        /// <returns>The display text for the specified culture.</returns>
-        public virtual string GetDisplay(CultureInfo culture)
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
         {
-            return I18N.Translate(culture, Display);
+            return I18N.Translate(renderContext, Display);
         }
 
         /// <summary>

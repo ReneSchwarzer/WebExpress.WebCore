@@ -16,13 +16,13 @@ namespace WebExpress.WebCore.Test.WWW.Resources
         public TestResourceD(IResourceContext resourceContext, IResourceManager resourceManager)
         {
             // test the injection
-            if (resourceManager == null)
+            if (resourceManager is null)
             {
                 throw new ArgumentNullException(nameof(resourceManager), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (resourceContext == null)
+            if (resourceContext is null)
             {
                 throw new ArgumentNullException(nameof(resourceContext), "Parameter cannot be null or empty.");
             }
@@ -33,10 +33,10 @@ namespace WebExpress.WebCore.Test.WWW.Resources
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The processed response.</returns>
-        public Response Process(Request request)
+        public IResponse Process(IRequest request)
         {
             // test the request
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request), "Parameter cannot be null or empty.");
             }

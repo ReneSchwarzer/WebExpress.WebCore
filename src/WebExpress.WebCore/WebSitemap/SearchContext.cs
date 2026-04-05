@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <summary>
         /// Returns the http context.
         /// </summary>
-        public HttpContext HttpContext { get; internal set; }
+        public IHttpContext HttpContext { get; internal set; }
 
         /// <summary>
         /// Returns the server context.

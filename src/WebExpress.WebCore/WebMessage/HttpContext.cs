@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebMessage
     /// <summary>
     /// Represents the context of an HTTP request and response.
     /// </summary>
-    public class HttpContext
+    public class HttpContext : IHttpContext
     {
         /// <summary>
         /// The context of the web server.
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebMessage
         /// <summary>
         /// Returns the request.
         /// </summary>
-        public Request Request { get; protected set; }
+        public IRequest Request { get; protected set; }
 
         /// <summary>
         /// Gets the ip address and port number of the server to which the request is made.
@@ -74,7 +74,9 @@ namespace WebExpress.WebCore.WebMessage
             LocalEndPoint = new IPEndPoint(connectionFeature.LocalIpAddress, connectionFeature.LocalPort);
             RemoteEndPoint = new IPEndPoint(connectionFeature.RemoteIpAddress, connectionFeature.RemotePort);
 
-            Encoding = requestFeature.Headers.ContentEncoding.Count != 0 ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding) : Encoding.Default;
+            Encoding = requestFeature.Headers.ContentEncoding.Count != 0
+                ? Encoding.GetEncoding(requestFeature.Headers.ContentEncoding)
+                : Encoding.Default;
             Uri = new Uri(baseUri, requestFeature.RawTarget);
 
             Request = new Request(contextFeatures, header, httpServerContext);

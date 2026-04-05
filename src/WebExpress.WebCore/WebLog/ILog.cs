@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// The default instance of the logger.
         /// </summary>
-        public static Log Current { get; }
+        public static ILog Current { get; }
 
         /// <summary>
         /// Set file name time patterns.
@@ -106,13 +106,13 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// A dividing line with * characters
         /// </summary>
-        public void Seperator();
+        public void Separator();
 
         /// <summary>
         /// A separator with custom characters
         /// </summary>
         /// <param name="sepChar">The separator.</param>
-        public void Seperator(char sepChar);
+        public void Separator(char sepChar);
 
         /// <summary>
         /// Logs an info message.

@@ -56,13 +56,13 @@ namespace WebExpress.WebCore.WebSitemap.Model
         /// Checks whether the node is the root.
         /// </summary>
         /// <returns>true if root, otherwise false.</returns>
-        public bool IsRoot => Parent == null;
+        public bool IsRoot => Parent is null;
 
         /// <summary>
         /// Checks whether the node is a leaf.
         /// </summary>
         /// <returns>true if a leaf, otherwise false.</returns>
-        public bool IsLeaf => !Children.Any();
+        public bool IsLeaf => Children.Count == 0;
 
         /// <summary>
         /// Returns the path.
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebSitemap.Model
                 };
 
                 var parent = Parent;
-                while (parent != null)
+                while (parent is not null)
                 {
                     list.Add(parent);
 

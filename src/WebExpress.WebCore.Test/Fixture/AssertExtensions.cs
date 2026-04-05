@@ -23,6 +23,14 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <param name="actual">The actual string to compare.</param>
         public static void EqualWithPlaceholders(string expected, string actual)
         {
+            if (expected is null && actual is null)
+            {
+                return;
+            }
+
+            Assert.NotNull(expected);
+            Assert.NotNull(actual);
+
             var str = RemoveLineBreaks(actual?.ToString());
             Assert.True(AreEqualWithPlaceholders(expected, str), $"Expected: {expected}{Environment.NewLine}Actual:   {str}");
         }
@@ -47,15 +55,15 @@ namespace WebExpress.WebCore.Test.Fixture
         /// <returns>True if the actual string matches the expected string with placeholders; otherwise, false.</returns>
         private static bool AreEqualWithPlaceholders(string expected, string actual)
         {
-            if (expected == null && actual == null)
+            if (expected is null && actual is null)
             {
                 return true;
             }
-            else if (expected != null && actual == null)
+            else if (expected is not null && actual is null)
             {
                 return false;
             }
-            else if (expected == null && actual != null)
+            else if (expected is null && actual is not null)
             {
                 return false;
             }

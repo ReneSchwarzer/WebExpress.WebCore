@@ -12,6 +12,6 @@ namespace WebExpress.WebCore.WebCondition
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>True if the condition is met, false otherwise.</returns>
-        bool Fulfillment(Request request);
+        bool Fulfillment(IRequest request);
     }
 }

@@ -6,14 +6,14 @@
     public enum TypeEnctype
     {
         /// <summary>
-        /// All characters are encoded (spaces are conferred to "+" and special characters in the hex representation).
+        /// All characters are encoded (spaces are converted to "+" and special characters to hex representation).
         /// </summary>
         UrLEncoded,
 
         /// <summary>
-        /// No characters will be encodes. Used when transferring files.
+        /// Multipart form data (used for file uploads and FormData).
         /// </summary>
-        None,
+        Multipart,
 
         /// <summary>
         /// Only space characters are encoded.
@@ -21,9 +21,15 @@
         Text,
 
         /// <summary>
+        /// No characters will be encoded.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// Not assignable.
         /// </summary>
         Default
+
     }
 
     /// <summary>
@@ -38,13 +44,25 @@
         /// <returns>The converted encoding.</returns>
         public static TypeEnctype Convert(string enctype)
         {
-            return (enctype?.ToLower()) switch
+            if (string.IsNullOrWhiteSpace(enctype))
             {
-                "multipart/form-data" => TypeEnctype.None,
+                return TypeEnctype.Default;
+            }
+
+            var ct = enctype.ToLowerInvariant();
+
+            if (ct.StartsWith("multipart/form-data"))
+            {
+                return TypeEnctype.Multipart;
+            }
+
+            return ct switch
+            {
                 "text/plain" => TypeEnctype.Text,
                 "application/x-www-form-urlencoded" => TypeEnctype.UrLEncoded,
                 _ => TypeEnctype.Default,
             };
+
         }
 
         /// <summary>
@@ -56,9 +74,11 @@
         {
             return enctype switch
             {
-                TypeEnctype.None => "multipart/form-data",
+                TypeEnctype.Multipart => "multipart/form-data",
                 TypeEnctype.Text => "text/plain",
-                _ => "application/x-www-form-urlencoded",
+                TypeEnctype.UrLEncoded => "application/x-www-form-urlencoded",
+                TypeEnctype.None => string.Empty,
+                _ => string.Empty
             };
         }
     }

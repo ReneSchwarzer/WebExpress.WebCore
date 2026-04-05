@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
 using WebExpress.WebCore.WebStatusPage;
@@ -15,12 +17,18 @@ using WebExpress.WebCore.WebStatusPage;
 namespace WebExpress.WebCore.WebResource
 {
     /// <summary>
-    /// The resource manager manages WebExpress elements, which can be called with a URI (Uniform Resource Identifier).
+    /// The resource manager manages WebExpress elements, which can be called with a 
+    /// URI (Uniform Resource Identifier).
     /// </summary>
     public sealed class ResourceManager : IResourceManager, ISystemComponent
     {
+        // synchronization root for protecting _dictionary and related mutable state
+        private readonly Lock _guard = new();
+
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
+
+        // instantiate the dictionary; assume ResourceDictionary is a non-thread-safe collection
         private readonly ResourceDictionary _dictionary = [];
 
         /// <summary>
@@ -36,10 +44,21 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Returns all resource contexts.
         /// </summary>
-        public IEnumerable<IResourceContext> Resources => _dictionary.Values
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x.Values)
-            .Select(x => x.ResourceContext);
+        public IEnumerable<IResourceContext> Resources
+        {
+            get
+            {
+                // return a snapshot to avoid enumeration during concurrent modifications
+                lock (_guard)
+                {
+                    return _dictionary.Values
+                        .SelectMany(x => x.Values)
+                        .SelectMany(x => x.Values)
+                        .Select(x => x.ResourceContext)
+                        .ToList();
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -50,6 +69,7 @@ namespace WebExpress.WebCore.WebResource
         private ResourceManager(IComponentHub componentHub, IHttpServerContext httpServerContext)
         {
             _componentHub = componentHub;
+            _httpServerContext = httpServerContext;
 
             _componentHub.PluginManager.AddPlugin += OnAddPlugin;
             _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
@@ -58,26 +78,47 @@ namespace WebExpress.WebCore.WebResource
 
             var endpointtRegistration = new EndpointRegistration()
             {
-                EndpointResolver = (type, applicationContext) => applicationContext != null ? GetResorces(type, applicationContext) : GetResorces(type),
-                EndpointsResolver = () => Resources,
+                EndpointResolver = (type, applicationContext) =>
+                {
+                    // return appropriate endpoints based on applicationContext
+                    return applicationContext is not null ? GetResorces(type, applicationContext) : GetResorces(type);
+                },
+                EndpointsResolver = () =>
+                {
+                    // return snapshot of available resources
+                    return Resources;
+                },
                 HandleRequest = (request, endpointContext) =>
                 {
+                    // create or obtain resource instance and process request
                     var resourceContext = endpointContext as IResourceContext;
                     var resource = CreateResourceInstance(resourceContext);
+
+                    if (resource is null)
+                    {
+                        // resource not found, return status page or bad request
+                        return new ResponseBadRequest()
+                        {
+                            Content = I18N.Translate("webexpress.webcore:resourcemanager.resourcenotfound")
+                        };
+                    }
 
                     return resource.Process(request);
                 }
             };
 
-            AddResource += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
-            RemoveResource += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+            AddResource += (sender, e) =>
+            {
+                endpointtRegistration.AddEndpoint?.Invoke(sender, e);
+            };
+            RemoveResource += (sender, e) =>
+            {
+                endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
+            };
 
             _componentHub.EndpointManager.Register<ResourceContext>(endpointtRegistration);
 
-            _httpServerContext = httpServerContext;
-
-            _httpServerContext.Log.Debug
-            (
+            _httpServerContext.Log.Debug(
                 I18N.Translate("webexpress.webcore:resourcemanager.initialization")
             );
         }
@@ -88,9 +129,12 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="pluginContext">The context of the plugin whose resources are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_dictionary.ContainsKey(pluginContext))
+            lock (_guard)
             {
-                return;
+                if (_dictionary.ContainsKey(pluginContext))
+                {
+                    return;
+                }
             }
 
             Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
@@ -104,12 +148,22 @@ namespace WebExpress.WebCore.WebResource
         {
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                bool shouldContinue = false;
+
+                lock (_guard)
+                {
+                    if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                    {
+                        shouldContinue = true;
+                    }
+                }
+
+                if (shouldContinue)
                 {
                     continue;
                 }
 
-                Register(pluginContext, [applicationContext]);
+                Register(pluginContext, new[] { applicationContext });
             }
         }
 
@@ -120,12 +174,13 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="applicationContexts">The application context (optional).</param>
         private void Register(IPluginContext pluginContext, IEnumerable<IApplicationContext> applicationContexts)
         {
+            // assembly and reflection operations are per-plugin and read-only; mutations to _dictionary are synchronized
             var assembly = pluginContext?.Assembly;
 
             foreach (var resourceType in assembly.GetTypes()
                 .Where(x => x.IsClass && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IResource).Name) != null)
-                .Where(x => x.GetInterface(typeof(IStatusPage).Name) == null))
+                .Where(x => x.GetInterface(typeof(IResource).Name) is not null)
+                .Where(x => x.GetInterface(typeof(IStatusPage).Name) is null))
             {
                 var id = resourceType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
@@ -135,39 +190,61 @@ namespace WebExpress.WebCore.WebResource
                 var cache = false;
                 var attributes = resourceType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
-                    !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
+                                !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
 
-                foreach (var customAttribute in resourceType.CustomAttributes
-                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute))))
+                foreach
+                (
+                    var attribute in resourceType
+                        .GetCustomAttributes(inherit: true)
+                        .Where(x => x.GetType().GetInterfaces().Contains(typeof(IEndpointAttribute)))
+                )
                 {
-                    if (customAttribute.AttributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
+                    var attributeType = attribute.GetType();
+
+                    // segment attribute
+                    if (attributeType.GetInterfaces().Contains(typeof(ISegmentAttribute)))
                     {
-                        segment = resourceType.GetCustomAttributes(customAttribute.AttributeType, false).FirstOrDefault() as ISegmentAttribute;
+                        segment = attribute as ISegmentAttribute;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(IncludeSubPathsAttribute))
+
+                    // include subpaths
+                    if (attributeType == typeof(IncludeSubPathsAttribute))
                     {
-                        includeSubPaths = Convert.ToBoolean(customAttribute.ConstructorArguments.FirstOrDefault().Value);
+                        includeSubPaths = (attribute as IncludeSubPathsAttribute)?.IncludeSubPaths ?? false;
+                        continue;
                     }
-                    else if (customAttribute.AttributeType.Name == typeof(ConditionAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
+
+                    // condition attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(ConditionAttribute<>).Name
+                        && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
-                        var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                        conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                        var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (conditionType != null)
+                        {
+                            conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
                     }
-                    else if (customAttribute.AttributeType == typeof(CacheAttribute))
+
+                    // cache attribute
+                    if (attributeType == typeof(CacheAttribute))
                     {
                         cache = true;
+                        continue;
                     }
                 }
 
                 // assign the resource to existing applications
                 foreach (var applicationContext in applicationContexts)
                 {
-                    var prefix = applicationContext.Route.Concat
-                    (
+                    var prefix = applicationContext.Route.Concat(
                         applicationContext.PluginContext != pluginContext
                             ? pluginContext.PluginName.ToLower()
                             : ""
                     );
+
                     var routePath = EndpointManager.CreateEndpointRoute(resourceType, prefix, segment);
                     var resourceContext = new ResourceContext()
                     {
@@ -194,9 +271,17 @@ namespace WebExpress.WebCore.WebResource
                         Attributes = attributes.Select(x => x.AttributeType)
                     };
 
-                    if (_dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem))
+                    bool added = false;
+
+                    lock (_guard)
+                    {
+                        added = _dictionary.AddResourceItem(pluginContext, applicationContext, resourceItem);
+                    }
+
+                    if (added)
                     {
                         OnAddResource(resourceItem.ResourceContext);
+
                         _httpServerContext?.Log.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:resourcemanager.addresource",
@@ -215,22 +300,23 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="pluginContext">The context of the plugin that contains the resources to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
 
-            // the plugin has not been registered in the manager
-            if (_dictionary.TryGetValue(pluginContext, out var value))
+            lock (_guard)
             {
-                foreach (var resourceItem in value.Values
-                    .SelectMany(x => x.Values))
+                if (_dictionary.TryGetValue(pluginContext, out var value))
                 {
-                    OnRemoveResource(resourceItem.ResourceContext);
-                    resourceItem.Dispose();
-                }
+                    foreach (var resourceItem in value.Values.SelectMany(x => x.Values))
+                    {
+                        OnRemoveResource(resourceItem.ResourceContext);
+                        resourceItem.Dispose();
+                    }
 
-                _dictionary.Remove(pluginContext);
+                    _dictionary.Remove(pluginContext);
+                }
             }
         }
 
@@ -240,23 +326,27 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="applicationContext">The context of the application that contains the resources to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
 
-            foreach (var pluginDict in _dictionary.Values)
+            lock (_guard)
             {
-                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
+                foreach (var pluginDict in _dictionary.Values)
                 {
-                    foreach (var resourceItem in appDict.Values)
+                    foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
                     {
-                        OnRemoveResource(resourceItem.ResourceContext);
-                        resourceItem.Dispose();
+                        foreach (var resourceItem in appDict.Values)
+                        {
+                            OnRemoveResource(resourceItem.ResourceContext);
+                            resourceItem.Dispose();
+                        }
                     }
-                }
 
-                pluginDict.Remove(applicationContext);
+                    // remove the application mapping from the plugin dictionary
+                    pluginDict.Remove(applicationContext);
+                }
             }
         }
 
@@ -267,72 +357,87 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces(IPluginContext pluginContext)
         {
-            if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
+            lock (_guard)
             {
-                return pluginResources
-                    .SelectMany(x => x.Value)
-                    .Select(x => x.Value.ResourceContext);
-            }
+                if (_dictionary.TryGetValue(pluginContext, out var pluginResources))
+                {
+                    return pluginResources
+                        .SelectMany(x => x.Value)
+                        .Select(x => x.Value.ResourceContext)
+                        .ToList();
+                }
 
-            return [];
+                return Enumerable.Empty<IResourceContext>();
+            }
         }
 
         /// <summary>
-        /// Returns an enumeration of resource contextes.
+        /// Returns an enumeration of resource contexts.
         /// </summary>
         /// <typeparam name="T">The resource type.</typeparam>
-        /// <returns>An enumeration of resource contextes.</returns>
+        /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces<T>() where T : IResource
         {
             return GetResorces(typeof(T));
         }
 
         /// <summary>
-        /// Returns an enumeration of resource contextes.
+        /// Returns an enumeration of resource contexts.
         /// </summary>
         /// <param name="resourceType">The resource type.</param>
-        /// <returns>An enumeration of resource contextes.</returns>
+        /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces(Type resourceType)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.ResourceClass.Equals(resourceType))
-                .Select(x => x.ResourceContext);
+            lock (_guard)
+            {
+                return _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .Where(x => x.ResourceClass.Equals(resourceType))
+                    .Select(x => x.ResourceContext)
+                    .ToList();
+            }
         }
 
         /// <summary>
-        /// Returns an enumeration of resource contextes.
+        /// Returns an enumeration of resource contexts.
         /// </summary>
         /// <param name="resourceType">The resource type.</param>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>An enumeration of resource contextes.</returns>
+        /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces(Type resourceType, IApplicationContext applicationContext)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.ResourceClass.Equals(resourceType))
-                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.ResourceContext);
+            lock (_guard)
+            {
+                return _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .Where(x => x.ResourceClass.Equals(resourceType))
+                    .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
+                    .Select(x => x.ResourceContext)
+                    .ToList();
+            }
         }
 
         /// <summary>
-        /// Returns an enumeration of resource contextes.
+        /// Returns an enumeration of resource contexts.
         /// </summary>
         /// <typeparam name="T">The resource type.</typeparam>
         /// <param name="applicationContext">The context of the application.</param>
-        /// <returns>An enumeration of resource contextes.</returns>
+        /// <returns>An enumeration of resource contexts.</returns>
         public IEnumerable<IResourceContext> GetResorces<T>(IApplicationContext applicationContext) where T : IResource
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.ResourceClass.Equals(typeof(T)))
-                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
-                .Select(x => x.ResourceContext);
+            lock (_guard)
+            {
+                return _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .Where(x => x.ResourceClass.Equals(typeof(T)))
+                    .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
+                    .Select(x => x.ResourceContext)
+                    .ToList();
+            }
         }
-
 
         /// <summary>
         /// Returns the resource context.
@@ -342,13 +447,16 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>An resource context or null.</returns>
         public IResourceContext GetResorce(IApplicationContext applicationContext, string resourceId)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
-                .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
-                .Select(x => x.ResourceContext)
-                .FirstOrDefault();
+            lock (_guard)
+            {
+                return _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .Where(x => x.ResourceContext.ApplicationContext.Equals(applicationContext))
+                    .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
+                    .Select(x => x.ResourceContext)
+                    .FirstOrDefault();
+            }
         }
 
         /// <summary>
@@ -359,47 +467,78 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>An resource context or null.</returns>
         public IResourceContext GetResorce(string applicationId, string resourceId)
         {
-            return _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .Where(x => x.ResourceContext.ApplicationContext.ApplicationId.Equals(applicationId))
-                .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
-                .Select(x => x.ResourceContext)
-                .FirstOrDefault();
+            lock (_guard)
+            {
+                return _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .Where(x => x.ResourceContext.ApplicationContext.ApplicationId.Equals(applicationId))
+                    .Where(x => x.ResourceContext.EndpointId.Equals(resourceId))
+                    .Select(x => x.ResourceContext)
+                    .FirstOrDefault();
+            }
         }
 
         /// <summary>
         /// Creates a new resource and returns it. If a resource already exists (through caching), the existing instance is returned.
+        /// Thread-safe: cached instance creation and assignment is protected.
         /// </summary>
         /// <param name="resourceContext">The context used for resource creation.</param>
         /// <returns>The created or cached resource.</returns>
         private IResource CreateResourceInstance(IResourceContext resourceContext)
         {
-            var resourceItem = _dictionary.Values
-                .SelectMany(x => x.Values)
-                .SelectMany(x => x.Values)
-                .FirstOrDefault(x => x.ResourceContext.Equals(resourceContext));
-
-            if (resourceItem != null && resourceItem.Instance == null)
+            if (resourceContext is null)
             {
-                var instance = ComponentActivator.CreateInstance<IResource, IResourceContext>
-                (
-                    resourceItem.ResourceClass,
-                    resourceContext,
-                    _httpServerContext,
-                    _componentHub,
-                    resourceContext.ApplicationContext
-                );
-
-                if (resourceItem.Cache)
-                {
-                    resourceItem.Instance = instance;
-                }
-
-                return instance;
+                return null;
             }
 
-            return resourceItem?.Instance as IResource;
+            ResourceItem resourceItem = null;
+
+            // locate resourceItem and handle caching under lock
+            lock (_guard)
+            {
+                resourceItem = _dictionary.Values
+                    .SelectMany(x => x.Values)
+                    .SelectMany(x => x.Values)
+                    .FirstOrDefault(x => x.ResourceContext.Equals(resourceContext));
+
+                if (resourceItem is null)
+                {
+                    return null;
+                }
+
+                // if instance already cached, return immediately
+                if (resourceItem.Instance is not null)
+                {
+                    return resourceItem.Instance as IResource;
+                }
+
+                // if caching is enabled, create and assign instance while holding lock to avoid double-creation
+                if (resourceItem.Cache)
+                {
+                    var instanceCached = ComponentActivator.CreateInstance<IResource, IResourceContext>(
+                        resourceItem.ResourceClass,
+                        resourceContext,
+                        _httpServerContext,
+                        _componentHub,
+                        resourceContext.ApplicationContext
+                    );
+
+                    resourceItem.Instance = instanceCached;
+                    return instanceCached;
+                }
+            }
+
+            // if not caching, create instance outside lock (no shared state to modify)
+            var instanceNoCache = ComponentActivator.CreateInstance<IResource, IResourceContext>(
+                resourceItem.ResourceClass,
+                resourceContext,
+                _httpServerContext,
+                _componentHub,
+                resourceContext.ApplicationContext
+            );
+
+            return instanceNoCache;
         }
 
         /// <summary>
@@ -439,6 +578,7 @@ namespace WebExpress.WebCore.WebResource
         {
             Remove(e);
         }
+
         /// <summary>
         /// Raises the event when an application is removed.
         /// </summary>
@@ -468,6 +608,8 @@ namespace WebExpress.WebCore.WebResource
             _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+
+            GC.SuppressFinalize(this);
         }
     }
 }

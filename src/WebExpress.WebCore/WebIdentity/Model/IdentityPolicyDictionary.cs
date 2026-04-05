@@ -66,7 +66,7 @@ namespace WebExpress.WebCore.WebIdentity.Model
                 if (appContextDict.TryGetValue(applicationContext, out var policyList))
                 {
                     var itemToRemove = policyList.FirstOrDefault(x => x.PolicyClass == type);
-                    if (itemToRemove != null)
+                    if (itemToRemove is not null)
                     {
                         policyList.Remove(itemToRemove);
 

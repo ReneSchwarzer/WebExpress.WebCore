@@ -15,10 +15,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
         }
 
@@ -28,12 +28,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsCompopnent()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
             componentHub.TaskManager.CreateTask("test");
 
-            // test execution
+            // act
             foreach (var task in componentHub.TaskManager.Tasks)
             {
                 Assert.True(typeof(IComponent).IsAssignableFrom(task.GetType()), $"Task {task.GetType().Name} does not implement IComponent.");
@@ -46,10 +46,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void CreateSystemTask()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             var task = componentHub.TaskManager.CreateTask("test");
             Assert.Equal("test", task?.Id);
         }
@@ -60,10 +60,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void CreateOwnTask()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             var task = componentHub.TaskManager.CreateTask<TestTask>("test", null, []);
             Assert.Equal("test", task?.Id);
         }
@@ -74,11 +74,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void ContainsTask()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
-            // test execution
+            // act
             var res = componentHub.TaskManager.ContainsTask("test");
             Assert.True(res);
         }
@@ -89,11 +89,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void GetTask()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
-            // test execution
+            // act
             var res = componentHub.TaskManager.GetTask("test");
             Assert.Equal(task, res);
         }
@@ -104,11 +104,11 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void RemoveTask()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var task = componentHub.TaskManager.CreateTask("test");
 
-            // test execution
+            // act
             componentHub.TaskManager.RemoveTask(task);
             Assert.Empty(componentHub.TaskManager.Tasks);
         }

@@ -18,10 +18,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(9, componentHub.IdentityManager.Permissions.Count());
             Assert.Equal(6, componentHub.IdentityManager.Policies.Count());
         }
@@ -32,12 +32,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var identityManager = componentHub.IdentityManager as IdentityManager;
 
-            // test execution
+            // act
             identityManager.Remove(plugin);
 
             Assert.Empty(componentHub.IdentityManager.Permissions);
@@ -50,10 +50,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.IdentityManager.GetType()));
         }
 
@@ -72,13 +72,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), "Charlie", typeof(TestIdentityPermissionC), false)]
         public void CheckAccessIdentity(Type application, string identityName, Type permission, bool expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
             var identity = MockIdentityFactory.GetIdentity(identityName);
 
-            // test execution
+            // act
             var access = identityManager.CheckAccess(applicationContext, identity, permission);
 
             Assert.Equal(expected, access);
@@ -99,13 +99,13 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), "Guests", typeof(TestIdentityPermissionC), false)]
         public void CheckAccessGroup(Type application, string groupName, Type permission, bool expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
             var group = MockIdentityFactory.GetIdentityGroup(groupName);
 
-            // test execution
+            // act
             var access = identityManager.CheckAccess(applicationContext, group, permission);
 
             Assert.Equal(expected, access);
@@ -123,12 +123,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(TestIdentityPolicyB), typeof(TestIdentityPermissionC), false)]
         public void CheckAccess(Type application, Type policy, Type permission, bool expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var applicationContext = componentHub.ApplicationManager.GetApplications(application).FirstOrDefault();
 
-            // test execution
+            // act
             var access = identityManager.CheckAccess(applicationContext, policy, permission);
 
             Assert.Equal(expected, access);
@@ -142,16 +142,16 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("Alice", "123", false)]
         public void Login(string identityName, string password, bool expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
             securePassword.MakeReadOnly();
 
-            // test execution
+            // act
             var res = identityManager.Login(request, identity, securePassword);
 
             Assert.Equal(expected, res);
@@ -166,17 +166,17 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("Charlie", "abc")]
         public void Logout(string identityName, string password)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
             securePassword.MakeReadOnly();
             identityManager.Login(request, identity, securePassword);
 
-            // test execution
+            // act
             identityManager.Logout(request);
 
             var res = identityManager.GetCurrentIdentity(request);
@@ -192,17 +192,17 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData("Charlie", "abc")]
         public void GetCurrentIdentity(string identityName, string password)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var request = UnitTestFixture.CrerateRequestMock();
+            var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
             var securePassword = new SecureString();
             password.ToList().ForEach(x => securePassword.AppendChar(x));
             securePassword.MakeReadOnly();
             identityManager.Login(request, identity, securePassword);
 
-            // test execution
+            // act
             var res = identityManager.GetCurrentIdentity(request);
 
             Assert.Equal(identity, res);

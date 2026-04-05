@@ -27,13 +27,13 @@ namespace WebExpress.WebCore.Test
         private TestStatusPage400(IStatusPageContext statusPageContext, StatusMessage message)
         {
             // test the injection
-            if (statusPageContext == null)
+            if (statusPageContext is null)
             {
                 throw new ArgumentNullException(nameof(statusPageContext), "Parameter cannot be null or empty.");
             }
 
             // test the injection
-            if (message == null)
+            if (message is null)
             {
                 throw new ArgumentNullException(nameof(message), "Parameter cannot be null or empty.");
             }
@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.Test
         public void Process(IRenderContext renderContext, VisualTree visualTree)
         {
             // test the parameter
-            if (renderContext == null)
+            if (renderContext is null)
             {
                 throw new ArgumentNullException(nameof(renderContext), "Parameter cannot be null or empty.");
             }

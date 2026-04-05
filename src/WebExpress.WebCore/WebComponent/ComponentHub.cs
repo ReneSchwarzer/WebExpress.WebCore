@@ -20,6 +20,7 @@ using WebExpress.WebCore.WebRestApi;
 using WebExpress.WebCore.WebSession;
 using WebExpress.WebCore.WebSettingPage;
 using WebExpress.WebCore.WebSitemap;
+using WebExpress.WebCore.WebSocket;
 using WebExpress.WebCore.WebStatusPage;
 using WebExpress.WebCore.WebTask;
 using WebExpress.WebCore.WebTheme;
@@ -53,6 +54,7 @@ namespace WebExpress.WebCore.WebComponent
         private readonly JobManager _jobManager;
         private readonly TaskManager _taskManager;
         private readonly IdentityManager _identityManager;
+        private readonly SocketManager _socketManager;
         private readonly ThemeManager _themeManager;
         private int _lastCounter = 0;
 
@@ -91,6 +93,7 @@ namespace WebExpress.WebCore.WebComponent
                 _identityManager,
                 _sessionManager,
                 _taskManager,
+                _socketManager,
                 _themeManager
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
@@ -215,6 +218,12 @@ namespace WebExpress.WebCore.WebComponent
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
+        /// Returns the socket manager.
+        /// </summary>
+        /// <returns>The instance of the socket manager.</returns>
+        public ISocketManager SocketManager => _socketManager;
+
+        /// <summary>
         /// Returns the theme manager.
         /// </summary>
         /// <returns>The instance of the theme manager.</returns>
@@ -250,6 +259,7 @@ namespace WebExpress.WebCore.WebComponent
             _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
             _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
             _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
+            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager;
             _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager;
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
@@ -277,7 +287,7 @@ namespace WebExpress.WebCore.WebComponent
         /// <returns>The instance of the create and initialized component.</returns>
         private IComponentManager CreateInstance(Type componentType)
         {
-            if (componentType == null)
+            if (componentType is null)
             {
                 return null;
             }
@@ -350,24 +360,28 @@ namespace WebExpress.WebCore.WebComponent
 
             var assembly = pluginContext.Assembly;
 
-            _dictionary.Add(pluginContext, []);
-            var componentItems = _dictionary[pluginContext];
+            // initialize the component entry as an empty list for easier manipulation
+            var componentList = new List<ComponentItem>();
+            _dictionary.Add(pluginContext, componentList);
 
-            foreach (var type in assembly.GetExportedTypes().Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) != null))
+            foreach (var type in assembly
+                .GetExportedTypes()
+                .Where(x => x.IsClass && x.IsSealed && x.GetInterface(typeof(IComponentManager).Name) is not null))
             {
                 var id = type.FullName?.ToLower();
 
                 // determining attributes
                 var componentInstance = CreateInstance(type);
 
-                if (!componentItems.Where(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)).Any())
+                // check for duplicates
+                if (!componentList.Any(x => x.ComponentId.Equals(id, StringComparison.OrdinalIgnoreCase)))
                 {
-                    _dictionary[pluginContext] = componentItems.Concat([ new ComponentItem()
+                    componentList.Add(new ComponentItem()
                     {
                         ComponentClass = type,
                         ComponentId = id,
                         ComponentInstance = componentInstance
-                    }]);
+                    });
 
                     _httpServerContext.Log.Debug
                     (
@@ -385,6 +399,9 @@ namespace WebExpress.WebCore.WebComponent
                     );
                 }
             }
+
+            // make sure the dictionary uses IEnumerable as value type, if the dictionary requires it
+            _dictionary[pluginContext] = componentList;
 
             Log();
         }
@@ -466,20 +483,24 @@ namespace WebExpress.WebCore.WebComponent
         /// <param name="pluginContext">The context of the plugin that contains the applications to remove.</param>
         public void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
 
-            if (_dictionary.TryGetValue(pluginContext, out IEnumerable<ComponentItem> componentItems))
+            // try to get a list for safe removal and iteration
+            if (_dictionary.TryGetValue(pluginContext, out var componentItems))
             {
-                if (!componentItems.Any())
+                // for IEnumerable, first eagerly materialize the enumeration
+                var items = componentItems.ToList();
+                if (items.Count == 0)
                 {
                     return;
                 }
 
-                foreach (var componentItem in componentItems)
+                foreach (var componentItem in items)
                 {
+                    // raise the RemoveComponent event for each item
                     OnRemoveComponent(componentItem.ComponentInstance);
 
                     _httpServerContext.Log.Debug

@@ -16,10 +16,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(12, componentHub.StatusPageManager.StatusPages.Count());
         }
 
@@ -29,12 +29,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var statusPageManager = componentHub.StatusPageManager as StatusPageManager;
 
-            // test execution
+            // act
             statusPageManager.Remove(plugin);
 
             Assert.Empty(componentHub.StatusPageManager.StatusPages);
@@ -51,12 +51,12 @@ namespace WebExpress.WebCore.Test.Manager
 
         public void Id(Type applicationType, Type statusPageType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
-            // test execution
+            // act
             Assert.Equal(id, statusPage.StatusPageId.ToString());
         }
 
@@ -78,12 +78,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "webindex:homepage.label")]
         public void Title(Type applicationType, Type resourceType, string title)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, resourceType);
 
-            // test execution
+            // act
             Assert.Equal(title, statusPage.StatusTitle);
         }
 
@@ -105,12 +105,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), 500)]
         public void Code(Type applicationType, Type statusPageType, int? code)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
-            // test execution
+            // act
             Assert.Equal(code, statusPage?.StatusCode);
         }
 
@@ -132,12 +132,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestStatusPage500), "/server/webexpress/icon.png")]
         public void Icon(Type applicationType, Type statusPageType, string icon)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusPage = componentHub.StatusPageManager.GetStatusPage(application, statusPageType);
 
-            // test execution
+            // act
             Assert.Equal(icon, statusPage?.StatusIcon?.ToString());
         }
 
@@ -152,12 +152,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), 500, 500)]
         public void CreateAndCheckCode(Type applicationType, int statusCode, int? expected)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var statusResponse = componentHub.StatusPageManager.CreateStatusResponse("content", statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
-            // test execution
+            // act
             Assert.Equal(expected, statusResponse?.Status);
         }
 
@@ -165,18 +165,22 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the CreateStatusResponse function of the status page.
         /// </summary>
         [Theory]
-        [InlineData(typeof(TestApplicationA), 400, "content", "content", 78)]
-        [InlineData(typeof(TestApplicationA), 500, "content", "content", 78)]
+        [InlineData(typeof(TestApplicationA), 400, "content", "content", 72)]
+        [InlineData(typeof(TestApplicationA), 500, "content", "content", 72)]
         public void CreateAndCheckMessage(Type applicationType, int statusCode, string content, string expected, int length)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+
+            // act
             var statusResponse = componentHub.StatusPageManager.CreateStatusResponse(content, statusCode, application, UnitTestFixture.CreateHttpContextMock().Request);
 
-            // test execution
+            // validation
+            var normalized = statusResponse?.Content?.ToString().Replace("\r\n", "\n").Replace("\r", "\n");
             Assert.Contains(expected, statusResponse?.Content?.ToString());
-            Assert.Equal(length, statusResponse?.Header?.ContentLength);
+            Assert.Equal(length, normalized.Length);
+            Assert.Equal(statusResponse?.Content?.ToString().Length, statusResponse?.Header?.ContentLength);
         }
 
         /// <summary>
@@ -185,10 +189,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.StatusPageManager.GetType()));
         }
 
@@ -198,10 +202,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var application in componentHub.StatusPageManager.StatusPages)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(application.GetType()), $"Page context {application.GetType().Name} does not implement IContext.");

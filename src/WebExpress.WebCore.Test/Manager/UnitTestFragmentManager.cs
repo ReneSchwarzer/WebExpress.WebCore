@@ -19,10 +19,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(15, componentHub.FragmentManager.Fragments.Count());
         }
 
@@ -32,14 +32,15 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var fragmentManager = componentHub.FragmentManager as FragmentManager;
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
 
-            // test execution
+            // act
             fragmentManager.Remove(plugin);
 
+            // validation
             Assert.Empty(componentHub.FragmentManager.Fragments);
         }
 
@@ -49,10 +50,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.EventManager.GetType()));
         }
 
@@ -71,19 +72,20 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestFragmentC), "webexpress.webcore.test.testfragmentc")]
         public void Id(Type applicationType, Type fragmentType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
 
-            // test execution
+            // act
             var fragment = componentHub.FragmentManager.GetFragments(application, fragmentType);
 
-            if (id == null)
+            if (id is null)
             {
                 Assert.Empty(fragment);
                 return;
             }
 
+            // validation
             Assert.Contains(id, fragment.Select(x => x.FragmentId?.ToString()));
         }
 
@@ -98,14 +100,39 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationB), typeof(About), 1)]
         public void GetFragments(Type applicationType, Type scopeType, int count)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
 
-            // test execution
+            // act
             var fragments = componentHub.FragmentManager.GetFragments<TestFragmentA, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
 
+            // validation
+            Assert.NotNull(fragments);
+            Assert.Equal(count, fragments.Count);
+        }
+
+        /// <summary>
+        /// Test the get fragment function of the fragment.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(IScope), 0)]
+        [InlineData(typeof(TestApplicationA), typeof(TestScopeA), 1)]
+        [InlineData(typeof(TestApplicationA), typeof(About), 1)]
+        [InlineData(typeof(TestApplicationB), typeof(IScope), 0)]
+        [InlineData(typeof(TestApplicationB), typeof(About), 1)]
+        public void GetFragmentsBase(Type applicationType, Type scopeType, int count)
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+            var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
+
+            // act
+            var fragments = componentHub.FragmentManager.GetFragments<IFragment, TestSectionA>(application, renderContext?.PageContext?.Scopes).ToList();
+
+            // validation
             Assert.NotNull(fragments);
             Assert.Equal(count, fragments.Count);
         }
@@ -121,15 +148,16 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationA), typeof(TestSectionA), typeof(TestScopeD), true)]
         public void Render(Type applicationType, Type sectionType, Type scopeType, bool empty)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
             var renderContext = UnitTestFixture.CrerateRenderContextMock(application, [scopeType]);
             var visualTree = new VisualTree();
 
-            // test execution
+            // act
             var html = componentHub.FragmentManager.Render<IRenderContext, IVisualTree>(renderContext, visualTree, sectionType);
 
+            // validation
             Assert.NotNull(html);
 
             if (!empty)

@@ -17,10 +17,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Register()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.Equal(12, componentHub.ResourceManager.Resources.Count());
         }
 
@@ -30,12 +30,12 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void Remove()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
             var resourceManager = componentHub.ResourceManager as ResourceManager;
 
-            // test execution
+            // act
             resourceManager.Remove(plugin);
 
             Assert.Empty(componentHub.ResourceManager.Resources);
@@ -59,12 +59,12 @@ namespace WebExpress.WebCore.Test.Manager
         [InlineData(typeof(TestApplicationC), typeof(TestResourceD), "webexpress.webcore.test.www.resources.testresourced")]
         public void Id(Type applicationType, Type resourceType, string id)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(id, resource?.EndpointId.ToString());
         }
 
@@ -87,12 +87,12 @@ namespace WebExpress.WebCore.Test.Manager
 
         public void RoutePath(Type applicationType, Type resourceType, string path)
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var application = componentHub.ApplicationManager.GetApplications(applicationType)?.FirstOrDefault();
             var resource = componentHub.ResourceManager.GetResorces(resourceType, application)?.FirstOrDefault();
 
-            // test execution
+            // act
             Assert.Equal(path, resource.Route.ToString());
         }
 
@@ -102,10 +102,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIComponentManager()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.ResourceManager.GetType()));
         }
 
@@ -115,10 +115,10 @@ namespace WebExpress.WebCore.Test.Manager
         [Fact]
         public void IsIContext()
         {
-            // preconditions
+            // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // test execution
+            // act
             foreach (var resources in componentHub.ResourceManager.Resources)
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(resources.GetType()), $"Resource context {resources.GetType().Name} does not implement IContext.");

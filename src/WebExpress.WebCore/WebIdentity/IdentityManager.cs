@@ -126,7 +126,7 @@ namespace WebExpress.WebCore.WebIdentity
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IIdentityPermission).Name) != null
+                        x.GetInterface(typeof(IIdentityPermission).Name) is not null
                     )
                 ))
             {
@@ -143,7 +143,7 @@ namespace WebExpress.WebCore.WebIdentity
                 foreach (var customAttribute in matchingAttributes)
                 {
                     var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    if (type != null && !policyTypes.Contains(type))
+                    if (type is not null && !policyTypes.Contains(type))
                     {
                         policyTypes.Add(type);
                     }
@@ -199,7 +199,7 @@ namespace WebExpress.WebCore.WebIdentity
                     x.IsSealed &&
                     x.IsPublic &&
                     (
-                        x.GetInterface(typeof(IIdentityPolicy).Name) != null
+                        x.GetInterface(typeof(IIdentityPolicy).Name) is not null
                     )
                 ))
             {
@@ -216,7 +216,7 @@ namespace WebExpress.WebCore.WebIdentity
                 foreach (var customAttribute in matchingAttributes)
                 {
                     var type = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
-                    if (type != null && !permissionTypes.Contains(type))
+                    if (type is not null && !permissionTypes.Contains(type))
                     {
                         permissionTypes.Add(type);
                     }
@@ -302,7 +302,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="applicationContext">The context of the application that contains the identities to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
@@ -383,7 +383,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="identity">The identity.</param>
         /// <param name="password">The password.</param>
         /// <returns>True if successful, false otherwise.</returns>
-        public bool Login(Request request, IIdentity identity, SecureString password)
+        public bool Login(IRequest request, IIdentity identity, SecureString password)
         {
             if (identity?.PasswordHash == ComputeHash(password))
             {
@@ -405,7 +405,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// Logout an identity.
         /// </summary>
         /// <param name="request">The request.</param>
-        public void Logout(Request request)
+        public void Logout(IRequest request)
         {
             var session = _componentHub.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
@@ -416,7 +416,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// </summary>
         /// <param name="request">The request to get the current identity for.</param>
         /// <returns>The current signed-in identity.</returns>
-        public IIdentity GetCurrentIdentity(Request request)
+        public IIdentity GetCurrentIdentity(IRequest request)
         {
             var session = _componentHub.SessionManager.GetSession(request);
             var authentification = session.GetProperty<SessionPropertyAuthentification>();

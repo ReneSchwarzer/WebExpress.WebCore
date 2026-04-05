@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebUri;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -89,6 +89,19 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
+        /// <param name="segments">The path segments.</param>
+        public RouteEndpoint(IEnumerable<IUriPathSegment> segments)
+        {
+            if (segments.Any())
+            {
+                PathSegments = PathSegments
+                    .Concat(segments.Where(x => !x.IsEmpty).Select(x => x.Copy()));
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
         /// <param name="route">The base route.</param>
         /// <param name="segments">The path segments.</param>
         public RouteEndpoint(IRoute route, params string[] segments)
@@ -153,7 +166,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>A new IRoute instance representing the route after concatenation.</returns>
         public virtual IRoute Concat(params IUriPathSegment[] segments)
         {
-            if (segments == null || segments.Length == 0)
+            if (segments is null || segments.Length == 0)
             {
                 return this;
             }
@@ -161,7 +174,7 @@ namespace WebExpress.WebCore.WebEndpoint
             var copy = new RouteEndpoint((IRoute)this);
             copy.PathSegments = copy.PathSegments
                 .Select(x => x.Copy())
-                .Concat(segments.Where(x => x != null).Where(x => !x.IsEmpty));
+                .Concat(segments.Where(x => x is not null).Where(x => !x.IsEmpty));
 
             return copy;
         }
@@ -195,7 +208,7 @@ namespace WebExpress.WebCore.WebEndpoint
         /// <returns>An instance of IUri representing the route as a URI.</returns>
         public IUri ToUri(params Parameter[] parameters)
         {
-            return new UriEndpoint(this).SetParameters(parameters);
+            return new UriEndpoint([.. PathSegments]).BindParameters(parameters);
         }
 
         /// <summary>

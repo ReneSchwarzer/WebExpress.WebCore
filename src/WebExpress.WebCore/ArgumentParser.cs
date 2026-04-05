@@ -78,7 +78,7 @@ namespace WebExpress.WebCore
                                              x.ShortName.Equals(key[1..], StringComparison.OrdinalIgnoreCase)
                                        select x).FirstOrDefault();
 
-                        if (command != null)
+                        if (command is not null)
                         {
                             argsDict.Add(command.FullName.ToLower(), value.Trim());
                         }
@@ -100,7 +100,7 @@ namespace WebExpress.WebCore
                                      x.ShortName.Equals(key[1..], StringComparison.OrdinalIgnoreCase)
                                select x).FirstOrDefault();
 
-                if (command != null)
+                if (command is not null)
                 {
                     argsDict.Add(command.FullName.ToLower(), value.Trim());
                 }

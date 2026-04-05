@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
@@ -23,11 +25,18 @@ namespace WebExpress.WebCore.WebStatusPage
     /// </summary>
     public class StatusPageManager : IStatusPageManager, ISystemComponent
     {
+        // synchronization guard for protecting _dictionary and related mutable state
+        private readonly Lock _guard = new();
+
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
-        private readonly StatusPageDictionary _dictionary = [];
-        private readonly Dictionary<int, StatusPageItem> _defaults = [];
-        private static readonly Dictionary<Type, Delegate> _delegateCache = [];
+        private readonly StatusPageDictionary _dictionary = new StatusPageDictionary();
+
+        // use a concurrent dictionary for defaults to make default lookups/updates thread-safe
+        private readonly ConcurrentDictionary<int, StatusPageItem> _defaults = new();
+
+        // change delegate cache to concurrent dictionary (open-instance delegates are cached)
+        private static readonly ConcurrentDictionary<Type, Delegate> _delegateCache = new();
 
         /// <summary>
         /// An event that fires when an status page is added.
@@ -42,10 +51,21 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <summary>
         /// Returns all status pages.
         /// </summary>
-        public IEnumerable<IStatusPageContext> StatusPages => _dictionary.Values
-            .SelectMany(x => x.Values)
-            .SelectMany(x => x.Values)
-            .Select(x => x.StatusPageContext);
+        public IEnumerable<IStatusPageContext> StatusPages
+        {
+            get
+            {
+                // return a stable snapshot to avoid enumeration during concurrent modifications
+                lock (_guard)
+                {
+                    return _dictionary.Values
+                        .SelectMany(x => x.Values)
+                        .SelectMany(x => x.Values)
+                        .Select(x => x.StatusPageContext)
+                        .ToList();
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -76,9 +96,12 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="pluginContext">The context of the plugin whose status pages are to be associated.</param>
         private void Register(IPluginContext pluginContext)
         {
-            if (_dictionary.ContainsKey(pluginContext))
+            lock (_guard)
             {
-                return;
+                if (_dictionary.ContainsKey(pluginContext))
+                {
+                    return;
+                }
             }
 
             Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
@@ -92,12 +115,18 @@ namespace WebExpress.WebCore.WebStatusPage
         {
             foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
             {
-                if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
+                bool already;
+                lock (_guard)
+                {
+                    already = _dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext);
+                }
+
+                if (already)
                 {
                     continue;
                 }
 
-                Register(pluginContext, [applicationContext]);
+                Register(pluginContext, new[] { applicationContext });
             }
         }
 
@@ -112,7 +141,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
             foreach (var resource in assembly.GetTypes()
                 .Where(x => x.IsClass == true && x.IsSealed && x.IsPublic)
-                .Where(x => x.GetInterface(typeof(IStatusPage<>).Name) != null))
+                .Where(x => x.GetInterface(typeof(IStatusPage<>).Name) is not null))
             {
                 var id = new ComponentId(resource.FullName);
                 var statusResponse = typeof(ResponseInternalServerError);
@@ -149,7 +178,9 @@ namespace WebExpress.WebCore.WebStatusPage
                 // assign the status pages to existing applications.
                 foreach (var applicationContext in applicationContexts)
                 {
-                    if (statusResponse?.GetCustomAttribute<StatusCodeAttribute>()?.StatusCode == null)
+                    // validate that a StatusCodeAttribute is present; if not, log and skip registration for this resource
+                    var statusCodeAttr = statusResponse?.GetCustomAttribute<StatusCodeAttribute>();
+                    if (statusCodeAttr is null || statusCodeAttr.StatusCode == 0)
                     {
                         _httpServerContext.Log.Debug
                         (
@@ -160,10 +191,13 @@ namespace WebExpress.WebCore.WebStatusPage
                                 applicationContext?.ApplicationId
                             )
                         );
+
+                        // skip registration because no valid status code is available
+                        continue;
                     }
 
                     var stausIcon = !string.IsNullOrEmpty(icon) ? RouteEndpoint.Combine(applicationContext.Route, icon) : null;
-                    var statusCode = statusResponse.GetCustomAttribute<StatusCodeAttribute>().StatusCode;
+                    var statusCode = statusCodeAttr.StatusCode;
                     var statusPageContext = new StatusPageContext()
                     {
                         StatusPageId = id,
@@ -175,14 +209,21 @@ namespace WebExpress.WebCore.WebStatusPage
                         StatusDescription = description
                     };
 
-                    if (_dictionary.AddStatusPageItem(pluginContext, applicationContext, statusCode, new StatusPageItem()
+                    var added = false;
+                    // add into _dictionary under lock to avoid concurrent modifications
+                    lock (_guard)
                     {
-                        StatusPageContext = statusPageContext,
-                        PluginContext = pluginContext,
-                        ApplicationContext = applicationContext,
-                        StatusResponse = statusResponse,
-                        StatusPageClass = resource
-                    }))
+                        added = _dictionary.AddStatusPageItem(pluginContext, applicationContext, statusCode, new StatusPageItem()
+                        {
+                            StatusPageContext = statusPageContext,
+                            PluginContext = pluginContext,
+                            ApplicationContext = applicationContext,
+                            StatusResponse = statusResponse,
+                            StatusPageClass = resource
+                        });
+                    }
+
+                    if (added)
                     {
                         OnAddStatusPage(statusPageContext);
 
@@ -209,43 +250,59 @@ namespace WebExpress.WebCore.WebStatusPage
                         );
                     }
 
-                    // default
-                    if (!_defaults.ContainsKey(statusCode))
+                    // default handling using concurrent dictionary for atomicity
+                    if (!_defaults.TryAdd(statusCode, new StatusPageItem()
                     {
-                        _defaults.Add(statusCode, new StatusPageItem()
+                        StatusPageContext = new StatusPageContext()
                         {
-                            StatusPageContext = new StatusPageContext()
-                            {
-                                StatusPageId = id,
-                                PluginContext = pluginContext,
-                                ApplicationContext = applicationContext,
-                                StatusCode = statusCode,
-                                StatusTitle = title,
-                                StatusIcon = stausIcon,
-                                StatusDescription = description
-                            },
-                            StatusPageClass = resource,
-                            StatusResponse = statusResponse,
-                            PluginContext = pluginContext
-                        });
-                    }
-                    else if (defaultItem)
-                    {
-                        _defaults[statusCode] = new StatusPageItem()
-                        {
-                            StatusPageContext = new StatusPageContext()
-                            {
-                                StatusPageId = id,
-                                PluginContext = pluginContext,
-                                ApplicationContext = applicationContext,
-                                StatusCode = statusCode,
-                                StatusTitle = title,
-                                StatusIcon = stausIcon
-                            },
-                            StatusPageClass = resource,
-                            StatusResponse = statusResponse,
+                            StatusPageId = id,
                             PluginContext = pluginContext,
-                        };
+                            ApplicationContext = applicationContext,
+                            StatusCode = statusCode,
+                            StatusTitle = title,
+                            StatusIcon = stausIcon,
+                            StatusDescription = description
+                        },
+                        StatusPageClass = resource,
+                        StatusResponse = statusResponse,
+                        PluginContext = pluginContext
+                    }))
+                    {
+                        if (defaultItem)
+                        {
+                            // replace existing default if marked as defaultItem
+                            _defaults.AddOrUpdate(statusCode,
+                                (_) => new StatusPageItem()
+                                {
+                                    StatusPageContext = new StatusPageContext()
+                                    {
+                                        StatusPageId = id,
+                                        PluginContext = pluginContext,
+                                        ApplicationContext = applicationContext,
+                                        StatusCode = statusCode,
+                                        StatusTitle = title,
+                                        StatusIcon = stausIcon
+                                    },
+                                    StatusPageClass = resource,
+                                    StatusResponse = statusResponse,
+                                    PluginContext = pluginContext,
+                                },
+                                (_, __) => new StatusPageItem()
+                                {
+                                    StatusPageContext = new StatusPageContext()
+                                    {
+                                        StatusPageId = id,
+                                        PluginContext = pluginContext,
+                                        ApplicationContext = applicationContext,
+                                        StatusCode = statusCode,
+                                        StatusTitle = title,
+                                        StatusIcon = stausIcon
+                                    },
+                                    StatusPageClass = resource,
+                                    StatusResponse = statusResponse,
+                                    PluginContext = pluginContext,
+                                });
+                        }
                     }
                 }
             }
@@ -261,9 +318,11 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <returns>The context of the status page or null.</returns>
         public IStatusPageContext GetStatusPage(IApplicationContext applicationContext, Type statusPageClass)
         {
-            var item = _dictionary.GetStatusPageItem(applicationContext, statusPageClass);
-
-            return item?.StatusPageContext;
+            lock (_guard)
+            {
+                var item = _dictionary.GetStatusPageItem(applicationContext, statusPageClass);
+                return item?.StatusPageContext;
+            }
         }
 
         /// <summary>
@@ -274,16 +333,22 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="applicationContext">The application context where the status pages are located or null for an undefined page (may be from another application) that matches the status code.</param>
         /// <param name="request">The request.</param>
         /// <returns>The response or null.</returns>
-        public Response CreateStatusResponse(string message, int status, IApplicationContext applicationContext, Request request)
+        public Response CreateStatusResponse(string message, int status, IApplicationContext applicationContext, IRequest request)
         {
-            var statusPageItem = _dictionary.GetStatusPageItem(applicationContext, status);
+            StatusPageItem statusPageItem = null;
 
-            if (statusPageItem == null && _defaults.TryGetValue(status, out StatusPageItem value))
+            // access dictionary safely
+            lock (_guard)
+            {
+                statusPageItem = _dictionary.GetStatusPageItem(applicationContext, status);
+            }
+
+            if (statusPageItem is null && _defaults.TryGetValue(status, out StatusPageItem value))
             {
                 statusPageItem = value;
             }
 
-            if (statusPageItem == null)
+            if (statusPageItem is null)
             {
                 return status switch
                 {
@@ -307,30 +372,36 @@ namespace WebExpress.WebCore.WebStatusPage
             var pageContext = new PageContext()
             {
                 ApplicationContext = applicationContext,
-                Scopes = [typeof(IScopeStatusPage)]
+                Scopes = new[] { typeof(IScopeStatusPage) }
             };
             var renderContext = new RenderContext(pageInstance as IEndpoint, pageContext, request);
             var visualTreeContext = new VisualTreeContext(renderContext);
 
             var visualTreeType = pageType.GetInterface(typeof(IStatusPage<>).Name).GetGenericArguments()[0];
+
+            // obtain or create a cached open-instance delegate safely
             if (!_delegateCache.TryGetValue(pageType, out var del))
             {
-                // create and compile the expression
+                // create an open-instance delegate: (instance, renderContext, visualTree) => instance.Process(renderContext, visualTree)
+                var instanceParam = Expression.Parameter(pageType, "instance");
                 var renderContextParam = Expression.Parameter(typeof(IRenderContext), "renderContext");
                 var visualTreeParam = Expression.Parameter(visualTreeType, "visualTree");
-                var processMethod = pageType.GetMethod("Process", [typeof(IRenderContext), visualTreeType]);
-                var callProzessMethod = Expression.Call
-                (
-                    Expression.Constant(pageInstance),
-                    processMethod,
-                    renderContextParam,
-                    visualTreeParam
-                );
-                var lambda = Expression.Lambda(callProzessMethod, renderContextParam, visualTreeParam)
-                    .Compile();
 
-                _delegateCache[pageType] = lambda;
-                del = lambda;
+                var processMethod = pageType.GetMethod("Process", new[] { typeof(IRenderContext), visualTreeType });
+
+                if (processMethod is null)
+                {
+                    throw new InvalidOperationException($"Process method not found on type {pageType.FullName}");
+                }
+
+                // call instance.Process(renderContext, visualTree)
+                var callProcess = Expression.Call(instanceParam, processMethod, renderContextParam, visualTreeParam);
+
+                // create a lambda with signature (instance, renderContext, visualTree) and compile it
+                var lambda = Expression.Lambda(callProcess, instanceParam, renderContextParam, visualTreeParam).Compile();
+
+                // try to add to concurrent dictionary atomically; if another thread added concurrently, use the existing one
+                del = _delegateCache.GetOrAdd(pageType, lambda);
             }
 
             // create visual tree instance
@@ -338,7 +409,7 @@ namespace WebExpress.WebCore.WebStatusPage
             var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
             var constructors = visualTreeType?.GetConstructors(flags);
 
-            if (constructors != null)
+            if (constructors is not null)
             {
                 foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                 {
@@ -363,6 +434,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     if (constructor.Invoke(parameterValues) is IVisualTree visualTree)
                     {
                         visualTreeInstance = visualTree;
+                        break;
                     }
                 }
             }
@@ -371,8 +443,13 @@ namespace WebExpress.WebCore.WebStatusPage
                 visualTreeInstance = Activator.CreateInstance(visualTreeType) as IVisualTree;
             }
 
-            // execute the cached delegate
-            del.DynamicInvoke(renderContext, visualTreeInstance);
+            if (visualTreeInstance is null)
+            {
+                throw new InvalidOperationException($"Could not create visual tree instance of type {visualTreeType.FullName} for page {pageType.FullName}.");
+            }
+
+            // execute the cached open-instance delegate; pass the current pageInstance
+            del.DynamicInvoke(pageInstance, renderContext, visualTreeInstance);
 
             var response = ComponentActivator.CreateInstance<Response>(statusPageItem.StatusResponse, _httpServerContext, _componentHub, new StatusMessage(message));
             var content = visualTreeInstance.Render(new VisualTreeContext(renderContext))?.ToString();
@@ -389,18 +466,20 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="pluginContext">The context of the plugin that contains the status pages to remove.</param>
         internal void Remove(IPluginContext pluginContext)
         {
-            if (pluginContext == null)
+            if (pluginContext is null)
             {
                 return;
             }
 
-            // the plugin has not been registered in the manager
-            if (!_dictionary.ContainsKey(pluginContext))
+            lock (_guard)
             {
-                return;
-            }
+                if (!_dictionary.ContainsKey(pluginContext))
+                {
+                    return;
+                }
 
-            _dictionary.Remove(pluginContext);
+                _dictionary.Remove(pluginContext);
+            }
         }
 
         /// <summary>
@@ -409,23 +488,26 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="applicationContext">The context of the application that contains the status pages to remove.</param>
         internal void Remove(IApplicationContext applicationContext)
         {
-            if (applicationContext == null)
+            if (applicationContext is null)
             {
                 return;
             }
 
-            foreach (var pluginDict in _dictionary.Values)
+            lock (_guard)
             {
-                foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
+                foreach (var pluginDict in _dictionary.Values)
                 {
-                    foreach (var resourceItem in appDict.Values)
+                    foreach (var appDict in pluginDict.Where(x => x.Key == applicationContext).Select(x => x.Value))
                     {
-                        OnRemoveStatusPage(resourceItem.StatusPageContext);
-                        resourceItem.Dispose();
+                        foreach (var resourceItem in appDict.Values)
+                        {
+                            OnRemoveStatusPage(resourceItem.StatusPageContext);
+                            resourceItem.Dispose();
+                        }
                     }
-                }
 
-                pluginDict.Remove(applicationContext);
+                    pluginDict.Remove(applicationContext);
+                }
             }
         }
 
@@ -491,6 +573,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         private void Log()
         {
+            // use snapshot StatusPages property (which is already locked) to avoid concurrent enumeration exceptions
             if (!StatusPages.Any())
             {
                 return;

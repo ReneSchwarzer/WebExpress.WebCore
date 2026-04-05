@@ -6,7 +6,7 @@ namespace WebExpress.WebCore.WebMessage
     /// <summary>
     /// Represents a response according to RFC 2616 Section 6.
     /// </summary>
-    public abstract class Response
+    public abstract class Response : IResponse
     {
         /// <summary>
         /// Returns the response header fields.

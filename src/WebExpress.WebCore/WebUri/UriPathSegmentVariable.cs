@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
     /// Variable path segment.
     /// </summary>
-    public abstract class UriPathSegmentVariable : IUriPathSegmentVariable
+    /// <typeparam name="TParameter">The parameter type.</typeparam>
+    public abstract class UriPathSegmentVariable<TParameter> : IUriPathSegmentVariable
+        where TParameter : IParameterStatic, new()
     {
         /// <summary>
         /// Returns or sets the id.
@@ -27,11 +30,6 @@ namespace WebExpress.WebCore.WebUri
         public string Value { get; set; }
 
         /// <summary>
-        /// Returns or sets the display text.
-        /// </summary>
-        public string Display { get; set; }
-
-        /// <summary>
         /// Returns or sets the regex expression.
         /// </summary>
         public string Expression { get; protected set; }
@@ -47,25 +45,26 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => string.IsNullOrWhiteSpace(VariableName) || VariableName.Equals("/");
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Returns or sets a value indicating whether the item is hidden.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariable(string name, object tag = null)
-            : this(name, null, tag)
-        {
-        }
+        /// <remarks>
+        /// This property can be used to determine if the item should be displayed in user
+        /// interfaces or lists.
+        /// </remarks>
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Returns or sets the URI to which the user is redirected.
+        /// </summary>
+        public IUri Uri { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="display">The display text.</param>
         /// <param name="tag">The tag or null</param>
-        public UriPathSegmentVariable(string name, string display, object tag = null)
+        public UriPathSegmentVariable(object tag = null)
         {
-            VariableName = name;
-            Display = display;
+            VariableName = TParameter.Key;
             Tag = tag;
         }
 
@@ -81,7 +80,7 @@ namespace WebExpress.WebCore.WebUri
         /// </summary>
         /// <param name="value">The value to check.</param>
         /// <returns>True if the path element matched, false otherwise.</returns>
-        public bool IsMatched(string value)
+        public virtual bool IsMatched(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -112,26 +111,68 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>true if equals, false otherwise</returns>
         public virtual bool Equals(IUriPathSegment obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return false;
             }
-            else if (obj is UriPathSegmentVariable segment)
+            else if (obj is UriPathSegmentVariable<TParameter> segment)
             {
-                return VariableName.Equals(segment.VariableName, StringComparison.OrdinalIgnoreCase) &&
-                    Expression.Equals(segment.Expression);
+                return VariableName.Equals(segment.VariableName, StringComparison.OrdinalIgnoreCase)
+                    && (
+                        (Expression is null && segment.Expression is null)
+                        || Expression.Equals(segment.Expression)
+                    );
             }
 
             return false;
         }
 
         /// <summary>
-        /// Returns or sets the display text.
+        /// Creates a deep copy of the current path segment and assigns the specified value.
         /// </summary>
-        /// <param name="culture">The culture.</param>
-        public virtual string GetDisplay(CultureInfo culture)
+        /// <param name="value">
+        /// The string value to assign to the copied segment.
+        /// </param>
+        /// <returns>
+        /// A new instance representing the copied segment with the assigned value.
+        /// </returns>
+        public IUriPathSegment Copy(string value)
         {
-            return string.Format(I18N.Translate(culture, Display), Value);
+            var copy = Copy();
+            if (copy is UriPathSegmentVariable<TParameter> segment)
+            {
+                segment.Value = value;
+            }
+
+            return copy;
+        }
+
+        /// <summary>
+        /// Returns a string that represents the display text for the current instance.
+        /// </summary>
+        /// <param name="renderContext">The render context.</param>
+        /// <returns>
+        /// A string containing the display text associated with the instance. The 
+        /// value may be empty if no display text is available.
+        /// </returns>
+        public virtual string GetDisplayText(IRenderContext renderContext)
+        {
+            return Value;
+        }
+
+        /// <summary>
+        /// Returns an icon that visually represents the parameter within the given render context.
+        /// </summary>
+        /// <param name="renderContext">
+        /// The rendering context that provides information required to determine the appropriate icon.
+        /// </param>
+        /// <returns>
+        /// An icon associated with the current instance. The value may be <c>null</c> or empty 
+        /// if no icon is available.
+        /// </returns>
+        public virtual IIcon GetIcon(IRenderContext renderContext)
+        {
+            return null;
         }
 
         /// <summary>
