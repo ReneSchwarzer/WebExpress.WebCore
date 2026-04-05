@@ -1,4 +1,4 @@
-name: UnitTests
+name: UnitTest-Verification
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.x
+          dotnet-version: 10.x
 
       - name: Restore dependencies
         run: dotnet restore
