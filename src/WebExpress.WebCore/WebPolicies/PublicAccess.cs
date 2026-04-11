@@ -1,6 +1,7 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebIdentity;
 
-namespace WebExpress.WebCore.WebIdentity
+namespace WebExpress.WebCore.WebPolicies
 {
     /// <summary>
     /// Standard policy for accessing public resources without authentication.

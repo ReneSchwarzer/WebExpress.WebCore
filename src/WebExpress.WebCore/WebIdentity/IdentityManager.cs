@@ -13,6 +13,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIdentity.Model;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebPolicies;
 using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebIdentity

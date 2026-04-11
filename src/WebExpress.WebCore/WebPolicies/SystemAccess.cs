@@ -1,6 +1,7 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebIdentity;
 
-namespace WebExpress.WebCore.WebIdentity
+namespace WebExpress.WebCore.WebPolicies
 {
     /// <summary>
     /// Standard policy for system-level operations such as installing, updating, and maintaining the application.

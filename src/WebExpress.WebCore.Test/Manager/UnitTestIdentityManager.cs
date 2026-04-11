@@ -3,6 +3,7 @@ using WebExpress.WebCore.Test.Data;
 using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIdentity;
+using WebExpress.WebCore.WebPolicies;
 
 namespace WebExpress.WebCore.Test.Manager
 {
