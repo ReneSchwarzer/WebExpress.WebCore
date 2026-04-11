@@ -258,18 +258,16 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test that CheckAccess via AllGroup provides PublicAccess policy evaluation for any identity.
+        /// Test that the AllGroup has the expected name and contains the PublicAccess policy.
         /// </summary>
         [Fact]
-        public void CheckAccessViaAllGroup()
+        public void AllGroupHasExpectedProperties()
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
-            var applicationContext = componentHub.ApplicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
 
-            // act - the AllGroup has the PublicAccess policy, so checking AllGroup for a permission
-            // that is linked to PublicAccess should succeed
+            // act
             var allGroup = identityManager.AllGroup;
 
             // assert
