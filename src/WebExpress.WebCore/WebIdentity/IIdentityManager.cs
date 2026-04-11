@@ -28,6 +28,11 @@ namespace WebExpress.WebCore.WebIdentity
         IEnumerable<IIdentity> Identities { get; }
 
         /// <summary>
+        /// Returns the default "All" group to which every identity automatically belongs.
+        /// </summary>
+        IdentityGroupAll AllGroup { get; }
+
+        /// <summary>
         /// Returns the current signed-in identity.
         /// </summary>
         IIdentity CurrentIdentity { get; }

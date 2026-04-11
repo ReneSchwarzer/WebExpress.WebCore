@@ -28,6 +28,11 @@ namespace WebExpress.WebCore.WebIdentity
         private readonly IdentityPolicyDictionary _policyDictionary = [];
 
         /// <summary>
+        /// Returns the default "All" group to which every identity automatically belongs.
+        /// </summary>
+        public IdentityGroupAll AllGroup { get; } = new IdentityGroupAll([typeof(PublicAccess).FullName.ToLower()]);
+
+        /// <summary>
         /// Returns all permissions.
         /// </summary>
         public IEnumerable<IIdentityPermissionContext> Permissions => _permissionDictionary.Values
@@ -229,7 +234,8 @@ namespace WebExpress.WebCore.WebIdentity
                     {
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
-                        PolicyId = id
+                        PolicyId = id,
+                        Policy = policyType
                     };
 
                     if (_policyDictionary.AddPolicyItem
@@ -437,7 +443,8 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Checks whether the given identity has the specified permission by evaluating all associated groups.
+        /// Checks whether the given identity has the specified permission by evaluating all associated groups,
+        /// including the default "All" group to which every identity automatically belongs.
         /// </summary>
         /// <param name="applicationContext">The context of the application.</param>
         /// <param name="identity">The identity to check.</param>
@@ -445,7 +452,9 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>True if any group grants the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentity identity, Type permission)
         {
-            return (identity?.Groups ?? []).Any(group => CheckAccess(applicationContext, group, permission));
+            var groups = (identity?.Groups ?? []).Append(AllGroup);
+
+            return groups.Any(group => CheckAccess(applicationContext, group, permission));
         }
 
         /// <summary>

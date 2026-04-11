@@ -165,6 +165,12 @@ identitymanager.registerpermission=Die Berechtigung '{0}' wurde der Anwendung '{
 identitymanager.duplicatepermission=Die Berechtigung '{0}' wurde bereits in der Anwendung '{1}' registriert.
 identitymanager.registerpolicy=Die Policy '{0}' wurde der Anwendung '{1}' zugewiesen und im Identitymanager registriert.
 identitymanager.duplicatepolicy=Die Policy '{0}' wurde bereits in der Anwendung '{1}' registriert.
+identitymanager.policy.publicaccess.name=Öffentlicher Zugang
+identitymanager.policy.publicaccess.description=Policy für den Zugriff auf öffentliche Ressourcen ohne Authentifizierung.
+identitymanager.policy.authenticatedaccess.name=Authentifizierter Zugang
+identitymanager.policy.authenticatedaccess.description=Policy für den allgemeinen Zugriff durch authentifizierte Benutzer.
+identitymanager.policy.systemaccess.name=Systemzugang
+identitymanager.policy.systemaccess.description=Policy für Operationen auf Systemebene wie Installation, Aktualisierung und Wartung der Anwendung.
 
 includemanager.initialization=Der Includemanager wurde initialisiert.
 includemanager.addinclude=Die Client-Ressource '{0}' wurde in der Anwendung '{1}' registiert.
