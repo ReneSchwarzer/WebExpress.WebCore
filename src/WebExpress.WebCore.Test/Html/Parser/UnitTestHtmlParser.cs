@@ -1,0 +1,344 @@
+using System.Linq;
+using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebHtml.Parser;
+
+namespace WebExpress.WebCore.Test.Html.Parser
+{
+    /// <summary>
+    /// Unit tests for the <see cref="HtmlParser"/> class.
+    /// </summary>
+    [Collection("NonParallelTests")]
+    public class UnitTestHtmlParser
+    {
+        private static readonly HtmlParser Parser = new();
+
+        // ------------------------------------------------------------------
+        // Simple elements
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// A simple element is correctly reconstructed.
+        /// </summary>
+        [Fact]
+        public void SimpleElement_Div_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<div></div>");
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+
+            Assert.NotNull(div);
+        }
+
+        /// <summary>
+        /// An element with a class attribute retains its attribute.
+        /// </summary>
+        [Fact]
+        public void ElementWithClass_RetainsAttribute()
+        {
+            var nodes = Parser.Parse("<div class=\"container\"></div>");
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+
+            Assert.Equal("container", div.Class);
+        }
+
+        /// <summary>
+        /// An element with an id attribute retains its attribute.
+        /// </summary>
+        [Fact]
+        public void ElementWithId_RetainsAttribute()
+        {
+            var nodes = Parser.Parse("<p id=\"intro\">text</p>");
+            var p = nodes.OfType<HtmlElementTextContentP>().Single();
+
+            Assert.Equal("intro", p.Id);
+        }
+
+        // ------------------------------------------------------------------
+        // Nested structures
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// A nested element hierarchy is correctly reconstructed.
+        /// </summary>
+        [Fact]
+        public void NestedElements_AreReconstructed()
+        {
+            var nodes = Parser.Parse("<div><span>text</span></div>");
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+            var span = div.Elements.OfType<HtmlElementTextSemanticsSpan>().Single();
+
+            Assert.NotNull(span);
+        }
+
+        /// <summary>
+        /// A deeply nested structure is correctly reconstructed.
+        /// </summary>
+        [Fact]
+        public void DeepNesting_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<ul><li><span>item</span></li></ul>");
+            var ul = nodes.OfType<HtmlElementTextContentUl>().Single();
+            var li = ul.Elements.OfType<HtmlElementTextContentLi>().Single();
+            var span = li.Elements.OfType<HtmlElementTextSemanticsSpan>().Single();
+
+            Assert.NotNull(span);
+        }
+
+        // ------------------------------------------------------------------
+        // Text nodes
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// A text node inside an element is preserved.
+        /// </summary>
+        [Fact]
+        public void TextNode_IsPreserved()
+        {
+            var nodes = Parser.Parse("<p>Hello World</p>");
+            var p = nodes.OfType<HtmlElementTextContentP>().Single();
+            var text = p.Elements.OfType<HtmlText>().Single();
+
+            Assert.Equal("Hello World", text.Value);
+        }
+
+        /// <summary>
+        /// A bare text node at the top level is returned as a text node.
+        /// </summary>
+        [Fact]
+        public void BareText_ReturnsTextNode()
+        {
+            var nodes = Parser.Parse("Hello");
+            var text = nodes.OfType<HtmlText>().Single();
+
+            Assert.Equal("Hello", text.Value);
+        }
+
+        // ------------------------------------------------------------------
+        // Self-closing tags
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// A self-closing &lt;br/&gt; tag produces a <see cref="HtmlElementTextSemanticsBr"/>.
+        /// </summary>
+        [Fact]
+        public void SelfClosingBr_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<br/>");
+            var br = nodes.OfType<HtmlElementTextSemanticsBr>().Single();
+
+            Assert.NotNull(br);
+        }
+
+        /// <summary>
+        /// A void &lt;img&gt; tag (no trailing slash) produces a <see cref="HtmlElementMultimediaImg"/>.
+        /// </summary>
+        [Fact]
+        public void VoidImg_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<img src=\"photo.png\" alt=\"photo\">");
+            var img = nodes.OfType<HtmlElementMultimediaImg>().Single();
+
+            Assert.Equal("photo.png", img.Src);
+            Assert.Equal("photo", img.Alt);
+        }
+
+        // ------------------------------------------------------------------
+        // Attributes
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Boolean attributes are applied to the element.
+        /// </summary>
+        [Fact]
+        public void BooleanAttribute_IsApplied()
+        {
+            var nodes = Parser.Parse("<input disabled>");
+            var input = nodes.OfType<HtmlElementFieldInput>().Single();
+
+            Assert.True(input.HasUserAttribute("disabled"));
+        }
+
+        /// <summary>
+        /// data-* attributes are preserved on the element.
+        /// </summary>
+        [Fact]
+        public void DataAttribute_IsPreserved()
+        {
+            var nodes = Parser.Parse("<div data-toggle=\"modal\"></div>");
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+
+            Assert.Equal("modal", div.GetUserAttribute("data-toggle"));
+        }
+
+        /// <summary>
+        /// ARIA attributes are preserved on the element.
+        /// </summary>
+        [Fact]
+        public void AriaAttribute_IsPreserved()
+        {
+            var nodes = Parser.Parse("<button aria-label=\"Close\"></button>");
+            var btn = nodes.OfType<HtmlElementFieldButton>().Single();
+
+            Assert.Equal("Close", btn.GetUserAttribute("aria-label"));
+        }
+
+        // ------------------------------------------------------------------
+        // Comments
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// An HTML comment is reconstructed as a <see cref="HtmlComment"/> node.
+        /// </summary>
+        [Fact]
+        public void Comment_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<!-- remark -->");
+            var comment = nodes.OfType<HtmlComment>().Single();
+
+            Assert.Equal("remark", comment.Text);
+        }
+
+        // ------------------------------------------------------------------
+        // DOCTYPE
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// A DOCTYPE declaration does not produce a node in the tree (it is
+        /// informational only).
+        /// </summary>
+        [Fact]
+        public void Doctype_ProducesNoNode()
+        {
+            var nodes = Parser.Parse("<!DOCTYPE html><html></html>");
+
+            Assert.DoesNotContain(nodes, n => n is HtmlText t && t.Value.Contains("DOCTYPE"));
+        }
+
+        // ------------------------------------------------------------------
+        // Unknown tags
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// An unknown tag is mapped to a generic <see cref="HtmlElement"/>.
+        /// </summary>
+        [Fact]
+        public void UnknownTag_MapsToGenericElement()
+        {
+            var nodes = Parser.Parse("<x-widget foo=\"bar\"></x-widget>");
+            var element = nodes.OfType<HtmlElement>().Single();
+
+            Assert.Equal("bar", element.GetUserAttribute("foo"));
+        }
+
+        // ------------------------------------------------------------------
+        // Malformed HTML
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// An unclosed tag is handled gracefully and the element is still returned.
+        /// </summary>
+        [Fact]
+        public void UnclosedTag_IsHandledGracefully()
+        {
+            var nodes = Parser.Parse("<div><p>text");
+
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+            Assert.NotNull(div);
+        }
+
+        /// <summary>
+        /// Parsing an empty string does not throw.
+        /// </summary>
+        [Fact]
+        public void EmptyInput_ReturnsEmptyList()
+        {
+            var nodes = Parser.Parse("");
+
+            Assert.Empty(nodes);
+        }
+
+        /// <summary>
+        /// Passing <c>null</c> to <see cref="HtmlParser.Parse"/> throws
+        /// <see cref="System.ArgumentNullException"/>.
+        /// </summary>
+        [Fact]
+        public void NullInput_Throws()
+        {
+            Assert.Throws<System.ArgumentNullException>(() => Parser.Parse(null));
+        }
+
+        // ------------------------------------------------------------------
+        // Round-trip tests
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Parsing the HTML produced by the renderer reconstructs the same
+        /// element type.
+        /// </summary>
+        [Fact]
+        public void RoundTrip_SimpleDiv_PreservesType()
+        {
+            // arrange
+            var original = new HtmlElementTextContentDiv();
+            original.Id = "main";
+            original.AddClass("container");
+
+            // act
+            var html = original.ToString().Trim();
+            var parsed = Parser.Parse(html);
+
+            var restored = parsed.OfType<HtmlElementTextContentDiv>().Single();
+
+            // validation
+            Assert.Equal(original.Id, restored.Id);
+            Assert.Equal(original.Class, restored.Class);
+        }
+
+        /// <summary>
+        /// Parsing the HTML produced by the renderer for a nested structure
+        /// reconstructs the hierarchy.
+        /// </summary>
+        [Fact]
+        public void RoundTrip_NestedStructure_PreservesHierarchy()
+        {
+            // arrange
+            var original = new HtmlElementTextContentDiv(
+                new HtmlElementTextSemanticsSpan(new HtmlText("hello"))
+            );
+
+            // act
+            var html = original.ToString().Trim();
+            var parsed = Parser.Parse(html);
+
+            var div = parsed.OfType<HtmlElementTextContentDiv>().Single();
+            var span = div.Elements.OfType<HtmlElementTextSemanticsSpan>().Single();
+            var text = span.Elements.OfType<HtmlText>().Single();
+
+            // validation
+            Assert.Equal("hello", text.Value);
+        }
+
+        /// <summary>
+        /// Rendering the parsed HTML of an &lt;img&gt; element produces equivalent HTML.
+        /// </summary>
+        [Fact]
+        public void RoundTrip_Img_ProducesEquivalentHtml()
+        {
+            // arrange
+            var original = new HtmlElementMultimediaImg
+            {
+                Src = "logo.png",
+                Alt = "Logo"
+            };
+
+            // act
+            var html = original.ToString().Trim();
+            var parsed = Parser.Parse(html);
+
+            var img = parsed.OfType<HtmlElementMultimediaImg>().Single();
+            var restoredHtml = img.ToString().Trim();
+
+            // validation
+            Assert.Equal(html, restoredHtml);
+        }
+    }
+}
