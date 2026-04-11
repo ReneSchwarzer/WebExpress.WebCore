@@ -77,6 +77,9 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["dfn"] = () => new HtmlElementTextSemanticsDfn(),
                 ["em"] = () => new HtmlElementTextSemanticsEm(),
                 ["i"] = () => new HtmlElementTextSemanticsI(),
+                // The standard HTML element is <kbd>, but the existing class uses "kdb" as
+                // its element name.  Both spellings are mapped so that the parser handles
+                // real-world HTML (<kbd>) as well as the project's own renderer output (<kdb>).
                 ["kbd"] = () => new HtmlElementTextSemanticsKdb(),
                 ["kdb"] = () => new HtmlElementTextSemanticsKdb(),
                 ["mark"] = () => new HtmlElementTextSemanticsMark(),
