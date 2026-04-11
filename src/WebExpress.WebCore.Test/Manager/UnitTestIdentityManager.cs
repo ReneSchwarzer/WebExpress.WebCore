@@ -207,5 +207,73 @@ namespace WebExpress.WebCore.Test.Manager
 
             Assert.Equal(identity, res);
         }
+
+        /// <summary>
+        /// Test that the AllGroup is not null and has the expected default properties.
+        /// </summary>
+        [Fact]
+        public void AllGroupExists()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager;
+
+            // act & assert
+            Assert.NotNull(identityManager.AllGroup);
+            Assert.Equal("All", identityManager.AllGroup.Name);
+            Assert.Equal(Guid.Empty, identityManager.AllGroup.Id);
+        }
+
+        /// <summary>
+        /// Test that the AllGroup has the PublicAccess policy.
+        /// </summary>
+        [Fact]
+        public void AllGroupHasPublicAccessPolicy()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager;
+
+            // act
+            var policies = identityManager.AllGroup.Policies;
+
+            // assert
+            Assert.Contains(typeof(PublicAccess).FullName.ToLower(), policies);
+        }
+
+        /// <summary>
+        /// Test that the IIdentityGroup interface has the Id and Name properties.
+        /// </summary>
+        [Fact]
+        public void IIdentityGroupHasIdAndName()
+        {
+            // arrange
+            var group = MockIdentityFactory.GetIdentityGroup("Admins");
+
+            // act & assert
+            Assert.NotNull(group);
+            Assert.IsAssignableFrom<IIdentityGroup>(group);
+            Assert.NotEqual(Guid.Empty, group.Id);
+            Assert.Equal("Admins", group.Name);
+        }
+
+        /// <summary>
+        /// Test that the AllGroup has the expected name and contains the PublicAccess policy.
+        /// </summary>
+        [Fact]
+        public void AllGroupHasExpectedProperties()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+
+            // act
+            var allGroup = identityManager.AllGroup;
+
+            // assert
+            Assert.NotNull(allGroup);
+            Assert.Equal("All", allGroup.Name);
+            Assert.Contains(typeof(PublicAccess).FullName.ToLower(), allGroup.Policies);
+        }
     }
 }
