@@ -340,5 +340,161 @@ namespace WebExpress.WebCore.Test.Html.Parser
             // validation
             Assert.Equal(html, restoredHtml);
         }
+
+        // ------------------------------------------------------------------
+        // Additional tests
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// ParseSingle returns the first node.
+        /// </summary>
+        [Fact]
+        public void ParseSingle_ReturnsFirstNode()
+        {
+            var node = Parser.ParseSingle("<div></div>");
+
+            Assert.IsType<HtmlElementTextContentDiv>(node);
+        }
+
+        /// <summary>
+        /// ParseSingle returns null for an empty input.
+        /// </summary>
+        [Fact]
+        public void ParseSingle_EmptyInput_ReturnsNull()
+        {
+            var node = Parser.ParseSingle("");
+
+            Assert.Null(node);
+        }
+
+        /// <summary>
+        /// An element with an inline style attribute retains its value.
+        /// </summary>
+        [Fact]
+        public void InlineStyleAttribute_IsPreserved()
+        {
+            var nodes = Parser.Parse("<div style=\"color: red;\"></div>");
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+
+            Assert.Equal("color: red;", div.Style);
+        }
+
+        /// <summary>
+        /// A table structure with thead, tbody, and rows is correctly reconstructed.
+        /// </summary>
+        [Fact]
+        public void TableStructure_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<table><thead><tr><th>Header</th></tr></thead><tbody><tr><td>Cell</td></tr></tbody></table>");
+            var table = nodes.OfType<HtmlElementTableTable>().Single();
+            var thead = table.Elements.OfType<HtmlElementTableThead>().Single();
+            var tbody = table.Elements.OfType<HtmlElementTableTbody>().Single();
+
+            Assert.NotNull(thead);
+            Assert.NotNull(tbody);
+        }
+
+        /// <summary>
+        /// Multiple top-level elements are all returned.
+        /// </summary>
+        [Fact]
+        public void MultipleRoots_AreAllReturned()
+        {
+            var nodes = Parser.Parse("<p>one</p><p>two</p>");
+
+            Assert.Equal(2, nodes.Count);
+            Assert.All(nodes, n => Assert.IsType<HtmlElementTextContentP>(n));
+        }
+
+        /// <summary>
+        /// A mismatched end tag is handled gracefully without throwing.
+        /// </summary>
+        [Fact]
+        public void MismatchedEndTag_IsHandledGracefully()
+        {
+            var nodes = Parser.Parse("<div><span>text</div>");
+
+            var div = nodes.OfType<HtmlElementTextContentDiv>().Single();
+            Assert.NotNull(div);
+        }
+
+        /// <summary>
+        /// Mixed text and element children are preserved in order.
+        /// </summary>
+        [Fact]
+        public void MixedContent_TextAndElements_ArePreserved()
+        {
+            var nodes = Parser.Parse("<p>Hello <strong>World</strong>!</p>");
+            var p = nodes.OfType<HtmlElementTextContentP>().Single();
+
+            Assert.Equal(3, p.Elements.Count());
+        }
+
+        /// <summary>
+        /// Roundtrip of a styled element preserves the style attribute.
+        /// </summary>
+        [Fact]
+        public void RoundTrip_StyleAttribute_IsPreserved()
+        {
+            // arrange
+            var original = new HtmlElementTextContentDiv();
+            original.Style = "color: red;";
+
+            // act
+            var html = original.ToString().Trim();
+            var parsed = Parser.Parse(html);
+
+            var restored = parsed.OfType<HtmlElementTextContentDiv>().Single();
+
+            // validation
+            Assert.Equal("color: red;", restored.Style);
+        }
+
+        /// <summary>
+        /// Roundtrip of an anchor element preserves href and text content.
+        /// </summary>
+        [Fact]
+        public void RoundTrip_Anchor_PreservesHrefAndText()
+        {
+            // arrange
+            var original = new HtmlElementTextSemanticsA(new HtmlText("click me"));
+            original.Href = "https://example.com";
+
+            // act
+            var html = original.ToString().Trim();
+            var parsed = Parser.Parse(html);
+
+            var a = parsed.OfType<HtmlElementTextSemanticsA>().Single();
+            var text = a.Elements.OfType<HtmlText>().Single();
+
+            // validation
+            Assert.Equal("https://example.com", a.Href);
+            Assert.Equal("click me", text.Value);
+        }
+
+        /// <summary>
+        /// A form with input fields is correctly reconstructed.
+        /// </summary>
+        [Fact]
+        public void FormWithInputs_IsReconstructed()
+        {
+            var nodes = Parser.Parse("<form action=\"/submit\"><input type=\"text\" name=\"q\"></form>");
+            var form = nodes.OfType<HtmlElementFormForm>().Single();
+            var input = form.Elements.OfType<HtmlElementFieldInput>().Single();
+
+            Assert.NotNull(input);
+        }
+
+        /// <summary>
+        /// The kbd tag (standard HTML) maps to HtmlElementTextSemanticsKdb.
+        /// </summary>
+        [Fact]
+        public void KbdTag_MapsToKdbElement()
+        {
+            var nodes = Parser.Parse("<kbd>Ctrl+C</kbd>");
+            var kbd = nodes.OfType<HtmlElementTextSemanticsKdb>().Single();
+
+            Assert.NotNull(kbd);
+        }
     }
 }

@@ -77,6 +77,10 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["dfn"] = () => new HtmlElementTextSemanticsDfn(),
                 ["em"] = () => new HtmlElementTextSemanticsEm(),
                 ["i"] = () => new HtmlElementTextSemanticsI(),
+                // The standard HTML element is <kbd>, but the existing class uses "kdb" as
+                // its element name.  Both spellings are mapped so that the parser handles
+                // real-world HTML (<kbd>) as well as the project's own renderer output (<kdb>).
+                ["kbd"] = () => new HtmlElementTextSemanticsKdb(),
                 ["kdb"] = () => new HtmlElementTextSemanticsKdb(),
                 // 'kbd' is the correct HTML tag name; 'kdb' mirrors the existing class typo.
                 ["kbd"] = () => new HtmlElementTextSemanticsKdb(),
@@ -140,6 +144,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["datalist"] = () => new HtmlElementFormDatalist(),
                 ["fieldset"] = () => new HtmlElementFormFieldset(),
                 ["form"] = () => new HtmlElementFormForm(),
+                ["keygen"] = () => new HtmlElementFormKeygen(),
                 ["meter"] = () => new HtmlElementFormMeter(),
                 ["optgroup"] = () => new HtmlElementFormOptgroup(),
                 ["option"] = () => new HtmlElementFormOption(),
@@ -148,6 +153,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["textarea"] = () => new HtmlElementFormTextarea(),
 
                 // Interactive
+                ["command"] = () => new HtmlElementInteractiveCommand(),
                 ["details"] = () => new HtmlElementInteractiveDetails(),
                 ["menu"] = () => new HtmlElementInteractiveMenu(),
                 ["summary"] = () => new HtmlElementInteractiveSummary(),
