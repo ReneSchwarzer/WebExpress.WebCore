@@ -113,5 +113,38 @@ namespace WebExpress.WebCore.Test.Html.Parser
         {
             Assert.Throws<System.ArgumentNullException>(() => HtmlElementFactory.Create(null));
         }
+
+        /// <summary>
+        /// Both 'kbd' and 'kdb' map to the existing <see cref="HtmlElementTextSemanticsKdb"/>.
+        /// </summary>
+        [Fact]
+        public void KbdTag_MapsToKdbElement()
+        {
+            var element = HtmlElementFactory.Create("kbd");
+
+            Assert.IsType<HtmlElementTextSemanticsKdb>(element);
+        }
+
+        /// <summary>
+        /// The 'keygen' tag is resolved to <see cref="HtmlElementFormKeygen"/>.
+        /// </summary>
+        [Fact]
+        public void KnownTag_Keygen_ReturnsCorrectType()
+        {
+            var element = HtmlElementFactory.Create("keygen");
+
+            Assert.IsType<HtmlElementFormKeygen>(element);
+        }
+
+        /// <summary>
+        /// The 'command' tag is resolved to <see cref="HtmlElementInteractiveCommand"/>.
+        /// </summary>
+        [Fact]
+        public void KnownTag_Command_ReturnsCorrectType()
+        {
+            var element = HtmlElementFactory.Create("command");
+
+            Assert.IsType<HtmlElementInteractiveCommand>(element);
+        }
     }
 }

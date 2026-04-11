@@ -77,6 +77,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["dfn"] = () => new HtmlElementTextSemanticsDfn(),
                 ["em"] = () => new HtmlElementTextSemanticsEm(),
                 ["i"] = () => new HtmlElementTextSemanticsI(),
+                ["kbd"] = () => new HtmlElementTextSemanticsKdb(),
                 ["kdb"] = () => new HtmlElementTextSemanticsKdb(),
                 ["mark"] = () => new HtmlElementTextSemanticsMark(),
                 ["q"] = () => new HtmlElementTextSemanticsQ(),
@@ -138,6 +139,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["datalist"] = () => new HtmlElementFormDatalist(),
                 ["fieldset"] = () => new HtmlElementFormFieldset(),
                 ["form"] = () => new HtmlElementFormForm(),
+                ["keygen"] = () => new HtmlElementFormKeygen(),
                 ["meter"] = () => new HtmlElementFormMeter(),
                 ["optgroup"] = () => new HtmlElementFormOptgroup(),
                 ["option"] = () => new HtmlElementFormOption(),
@@ -146,6 +148,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["textarea"] = () => new HtmlElementFormTextarea(),
 
                 // Interactive
+                ["command"] = () => new HtmlElementInteractiveCommand(),
                 ["details"] = () => new HtmlElementInteractiveDetails(),
                 ["menu"] = () => new HtmlElementInteractiveMenu(),
                 ["summary"] = () => new HtmlElementInteractiveSummary(),

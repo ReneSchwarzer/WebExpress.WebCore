@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
             new(StringComparer.OrdinalIgnoreCase)
             {
                 "area", "base", "br", "col", "embed", "hr", "img", "input",
-                "link", "meta", "param", "source", "track", "wbr"
+                "keygen", "link", "meta", "param", "source", "track", "wbr"
             };
 
         /// <summary>

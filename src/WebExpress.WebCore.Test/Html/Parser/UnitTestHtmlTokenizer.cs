@@ -246,5 +246,76 @@ namespace WebExpress.WebCore.Test.Html.Parser
             Assert.Equal("div", tokens[0].TagName);
             Assert.Equal("class", tokens[0].Attributes[0].Name);
         }
+
+        // ------------------------------------------------------------------
+        // Whitespace and edge cases
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Whitespace-only text between tags is preserved as a text token.
+        /// </summary>
+        [Fact]
+        public void WhitespaceText_IsPreservedAsTextToken()
+        {
+            var tokens = Tokenize("<div> </div>");
+
+            Assert.Equal(HtmlTokenType.StartTag, tokens[0].Type);
+            Assert.Equal(HtmlTokenType.Text, tokens[1].Type);
+            Assert.Equal(" ", tokens[1].Value);
+            Assert.Equal(HtmlTokenType.EndTag, tokens[2].Type);
+        }
+
+        /// <summary>
+        /// An unquoted attribute value is read until whitespace or closing bracket.
+        /// </summary>
+        [Fact]
+        public void UnquotedAttributeValue_IsExtracted()
+        {
+            var tokens = Tokenize("<div class=foo>");
+
+            var attr = tokens[0].Attributes.Single();
+            Assert.Equal("class", attr.Name);
+            Assert.Equal("foo", attr.Value);
+        }
+
+        /// <summary>
+        /// An inline style attribute is preserved in its entirety.
+        /// </summary>
+        [Fact]
+        public void InlineStyleAttribute_IsPreserved()
+        {
+            var tokens = Tokenize("<div style=\"color: red; font-size: 14px;\">");
+
+            var attr = tokens[0].Attributes.Single();
+            Assert.Equal("style", attr.Name);
+            Assert.Equal("color: red; font-size: 14px;", attr.Value);
+        }
+
+        /// <summary>
+        /// A stray less-than character is emitted as text.
+        /// </summary>
+        [Fact]
+        public void StrayLessThan_IsEmittedAsText()
+        {
+            var tokens = Tokenize("a < b");
+
+            Assert.Equal(HtmlTokenType.Text, tokens[0].Type);
+            Assert.Equal("a ", tokens[0].Value);
+            Assert.Equal(HtmlTokenType.Text, tokens[1].Type);
+            Assert.Equal("<", tokens[1].Value);
+            Assert.Equal(HtmlTokenType.Text, tokens[2].Type);
+        }
+
+        /// <summary>
+        /// A keygen void element without slash is emitted as self-closing.
+        /// </summary>
+        [Fact]
+        public void KeygenVoidElement_ReturnsSelfClosing()
+        {
+            var tokens = Tokenize("<keygen>");
+
+            Assert.Equal(HtmlTokenType.SelfClosingTag, tokens[0].Type);
+            Assert.Equal("keygen", tokens[0].TagName);
+        }
     }
 }
