@@ -78,6 +78,8 @@ namespace WebExpress.WebCore.WebHtml.Parser
                 ["em"] = () => new HtmlElementTextSemanticsEm(),
                 ["i"] = () => new HtmlElementTextSemanticsI(),
                 ["kdb"] = () => new HtmlElementTextSemanticsKdb(),
+                // 'kbd' is the correct HTML tag name; 'kdb' mirrors the existing class typo.
+                ["kbd"] = () => new HtmlElementTextSemanticsKdb(),
                 ["mark"] = () => new HtmlElementTextSemanticsMark(),
                 ["q"] = () => new HtmlElementTextSemanticsQ(),
                 ["rp"] = () => new HtmlElementTextSemanticsRp(),
