@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebPolicies
     /// </summary>
     [Name("webexpress.webcore:identitymanager.policy.authenticatedaccess.name")]
     [Description("webexpress.webcore:identitymanager.policy.authenticatedaccess.description")]
-    public sealed class AuthenticatedAccess : IIdentityPolicy
+    public sealed class AuthenticatedAccessPolicy : IIdentityPolicy
     {
         /// <summary>
         /// Releases all resources used by the current instance of the class.

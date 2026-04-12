@@ -4,11 +4,11 @@ using WebExpress.WebCore.WebIdentity;
 namespace WebExpress.WebCore.WebPolicies
 {
     /// <summary>
-    /// Standard policy for system-level operations such as installing, updating, and maintaining the application.
+    /// Standard policy for accessing public resources without authentication.
     /// </summary>
-    [Name("webexpress.webcore:identitymanager.policy.systemaccess.name")]
-    [Description("webexpress.webcore:identitymanager.policy.systemaccess.description")]
-    public sealed class SystemAccess : IIdentityPolicy
+    [Name("webexpress.webcore:identitymanager.policy.publicaccess.name")]
+    [Description("webexpress.webcore:identitymanager.policy.publicaccess.description")]
+    public sealed class PublicAccessPolicy : IIdentityPolicy
     {
         /// <summary>
         /// Releases all resources used by the current instance of the class.

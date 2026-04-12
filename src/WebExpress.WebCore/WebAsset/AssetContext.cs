@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebAsset
@@ -52,6 +53,11 @@ namespace WebExpress.WebCore.WebAsset
         /// Returns the attributes associated with the page.
         /// </summary>
         public IEnumerable<Attribute> Attributes => [];
+
+        /// <summary>
+        /// Returns the collection of identity policies for the endpoint.
+        /// </summary>
+        public IEnumerable<IIdentityPolicy> Policies => [];
 
         /// <summary>
         /// Initializes a new instance of the class with the specified endpoint manager, parent type, context path, and path segment.

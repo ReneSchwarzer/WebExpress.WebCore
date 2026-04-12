@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebPlugin;
@@ -414,6 +415,7 @@ namespace WebExpress.WebCore.WebRestApi
                 var match = ApiVersionRegex().Match(id);
                 var versionSegment = match.Success ? match.Groups[0].Value.Replace(".", "") : "";
                 var version = match.Success && uint.TryParse(match.Groups[1].Value, out var result) ? result : 1u;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = restApiType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -506,6 +508,19 @@ namespace WebExpress.WebCore.WebRestApi
                         continue;
                     }
 
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType != null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
+                        }
+                        continue;
+                    }
+
                     // cache attribute
                     if (attributeType == typeof(CacheAttribute))
                     {
@@ -548,6 +563,7 @@ namespace WebExpress.WebCore.WebRestApi
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes),
                         Version = version,
+                        Policies = policies,
                         Methods = methods.Distinct()
                     };
 

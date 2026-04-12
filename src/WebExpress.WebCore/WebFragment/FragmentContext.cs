@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebFragment
@@ -32,6 +33,11 @@ namespace WebExpress.WebCore.WebFragment
         /// Returns the conditions that must be met for the component to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; internal set; } = [];
+
+        /// <summary>
+        /// Returns the collection of identity policies for the endpoint.
+        /// </summary>
+        public IEnumerable<IIdentityPolicy> Policies { get; internal set; } = [];
 
         /// <summary>
         /// Determines whether the component is created once and reused on each execution.

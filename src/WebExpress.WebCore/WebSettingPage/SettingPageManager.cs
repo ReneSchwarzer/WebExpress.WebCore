@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -448,6 +449,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 var hide = false;
                 var icon = default(IIcon);
                 var cache = false;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = settingPageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -529,6 +531,19 @@ namespace WebExpress.WebCore.WebSettingPage
                         }
                         continue;
                     }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType != null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
+                        }
+                        continue;
+                    }
                 }
 
                 if (group == default)
@@ -607,6 +622,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         Domains = domains,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         Section = section,
+                        Policies = policies,
                         Hide = hide
                     };
 

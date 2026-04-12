@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebSocket
@@ -76,6 +77,11 @@ namespace WebExpress.WebCore.WebSocket
         /// Returns the attributes associated with the page.
         /// </summary>
         public IEnumerable<Attribute> Attributes { get; internal set; }
+
+        /// <summary>
+        /// Returns the collection of identity policies for the endpoint.
+        /// </summary>
+        public IEnumerable<IIdentityPolicy> Policies { get; internal set; }
 
         /// <summary>
         /// Creates a new instance of DefaultWebSocketContext.

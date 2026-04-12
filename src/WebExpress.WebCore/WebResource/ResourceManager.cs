@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
@@ -188,6 +189,7 @@ namespace WebExpress.WebCore.WebResource
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = resourceType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -228,6 +230,19 @@ namespace WebExpress.WebCore.WebResource
                         continue;
                     }
 
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType != null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
+                        }
+                        continue;
+                    }
+
                     // cache attribute
                     if (attributeType == typeof(CacheAttribute))
                     {
@@ -255,6 +270,7 @@ namespace WebExpress.WebCore.WebResource
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
+                        Policies = policies,
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 

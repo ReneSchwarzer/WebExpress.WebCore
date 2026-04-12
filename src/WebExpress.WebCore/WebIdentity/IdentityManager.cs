@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns the default "All" group to which every identity automatically belongs.
         /// </summary>
-        public IdentityGroupAll AllGroup { get; } = new IdentityGroupAll([typeof(PublicAccess).FullName.ToLower()]);
+        public IdentityGroupAll AllGroup { get; } = new IdentityGroupAll([typeof(PublicAccessPolicy).FullName.ToLower()]);
 
         /// <summary>
         /// Returns all permissions.

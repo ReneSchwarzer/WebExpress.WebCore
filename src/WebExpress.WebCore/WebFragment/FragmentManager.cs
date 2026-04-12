@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebFragment.Model;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -111,6 +112,7 @@ namespace WebExpress.WebCore.WebFragment
                 var scopes = new List<Type>();
                 var sections = new List<Type>();
                 var conditions = new List<ICondition>();
+                var policies = new List<IIdentityPolicy>();
                 var cache = false;
                 var order = 0;
 
@@ -129,6 +131,11 @@ namespace WebExpress.WebCore.WebFragment
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(PolicyAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policy = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        policies.Add(Activator.CreateInstance(policy) as IIdentityPolicy);
                     }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
@@ -191,7 +198,8 @@ namespace WebExpress.WebCore.WebFragment
                                 Cache = cache,
                                 Section = section,
                                 Scope = scope,
-                                Conditions = conditions
+                                Conditions = conditions,
+                                Policies = policies
                             };
 
                             var fragmentItem = new FragmentItem(_componentHub, _httpServerContext)

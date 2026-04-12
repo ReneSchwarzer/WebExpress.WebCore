@@ -239,7 +239,7 @@ namespace WebExpress.WebCore.Test.Manager
             var policies = identityManager.AllGroup.Policies;
 
             // assert
-            Assert.Contains(typeof(PublicAccess).FullName.ToLower(), policies);
+            Assert.Contains(typeof(PublicAccessPolicy).FullName.ToLower(), policies);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace WebExpress.WebCore.Test.Manager
             // assert
             Assert.NotNull(allGroup);
             Assert.Equal("All", allGroup.Name);
-            Assert.Contains(typeof(PublicAccess).FullName.ToLower(), allGroup.Policies);
+            Assert.Contains(typeof(PublicAccessPolicy).FullName.ToLower(), allGroup.Policies);
         }
     }
 }

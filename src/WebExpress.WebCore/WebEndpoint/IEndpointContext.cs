@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -48,8 +49,13 @@ namespace WebExpress.WebCore.WebEndpoint
         IRoute Route { get; }
 
         /// <summary>
-        /// Returns the attributes associated with the page.
+        /// Returns the attributes associated with the endpoint.
         /// </summary>
         IEnumerable<Attribute> Attributes { get; }
+
+        /// <summary>
+        /// Returns the collection of identity policies for the endpoint.
+        /// </summary>
+        IEnumerable<IIdentityPolicy> Policies { get; }
     }
 }

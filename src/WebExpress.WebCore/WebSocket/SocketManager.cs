@@ -14,6 +14,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSocket.Model;
@@ -309,6 +310,7 @@ namespace WebExpress.WebCore.WebSocket
                 var subProtocol = "";
                 var messageType = SocketMessageType.Text;
                 var maxMessageSize = (ulong?)null;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = socketType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)));
 
@@ -338,6 +340,19 @@ namespace WebExpress.WebCore.WebSocket
                         if (conditionType != null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
+                    }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType != null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
                         }
                         continue;
                     }
@@ -403,6 +418,7 @@ namespace WebExpress.WebCore.WebSocket
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
+                        Policies = policies,
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
