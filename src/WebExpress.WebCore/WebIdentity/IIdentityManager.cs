@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebIdentity
@@ -15,21 +15,53 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Returns all permissions.
         /// </summary>
-        public IEnumerable<IIdentityPermissionContext> Permissions { get; }
+        IEnumerable<IIdentityPermissionContext> Permissions { get; }
 
         /// <summary>
         /// Returns all policies.
         /// </summary>
-        public IEnumerable<IIdentityPolicyContext> Policies { get; }
+        IEnumerable<IIdentityPolicyContext> Policies { get; }
+
+        /// <summary>
+        /// Displays a login dialog using the specified request and identity information.
+        /// </summary>
+        /// <param name="request">
+        /// The request containing parameters and context for the login operation. Cannot be null.
+        /// </param>
+        /// <param name="initiator">
+        /// The endpoint that triggered the authentication process. Used to determine the origin and
+        /// context of the authentication requirement.
+        /// </param>
+        /// <param name="identity">
+        /// The identity information to be used for authentication. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An object that represents the response to the login dialog, including authentication results and any
+        /// relevant status information.
+        /// </returns>
+        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null);
+
+        /// <summary>
+        /// Attempts to authenticate the specified request within the given application context.
+        /// </summary>
+        /// <param name="request">
+        /// The request to be authenticated. Must not be null.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context in which the authentication is performed. Must not be null.
+        /// </param>
+        /// <returns>
+        /// An identity representing the authenticated user if authentication is successful; otherwise, null.
+        /// </returns>
+        IIdentity Authenticate(IRequest request, IApplicationContext applicationContext);
 
         /// <summary>
         /// Login an identity.
         /// </summary>
         /// <param name="request">The request.</param>
         /// <param name="identity">The identity.</param>
-        /// <param name="password">The password.</param>
         /// <returns>True if successful, false otherwise.</returns>
-        bool Login(IRequest request, IIdentity identity, SecureString password);
+        bool Login(IRequest request, IIdentity identity);
 
         /// <summary>
         /// Logout an identity.
@@ -43,6 +75,30 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="request">The request to get the current identity for.</param>
         /// <returns>The current signed-in identity.</returns>
         IIdentity GetCurrentIdentity(IRequest request);
+
+        /// <summary>
+        /// Checks whether the specified identity satisfies all policies associated with the given endpoint context.
+        /// </summary>
+        /// <param name="identity">The identity to check.</param>
+        /// <param name="endpointContext">The endpoint context containing the policies to evaluate.</param>
+        /// <returns>True if the identity has the permission, false otherwise.</returns>
+        bool CheckAccess(IIdentity identity, IEndpointContext endpointContext);
+
+        /// <summary>
+        /// Checks whether the specified identity satisfies the given identity policy.
+        /// </summary>
+        /// <param name="identity">The identity to check.</param>
+        /// <param name="policy">The identity policy to evaluate.</param>
+        /// <returns>True if the identity is assigned to a group that contains the policy, false otherwise.</returns>
+        bool CheckAccess(IIdentity identity, IIdentityPolicy policy);
+
+        /// <summary>
+        /// Checks whether the specified identity group satisfies the given identity policy.
+        /// </summary>
+        /// <param name="group">The identity group to check.</param>
+        /// <param name="policy">The identity policy to evaluate.</param>
+        /// <returns>True if the identity is assigned to a group that contains the policy, false otherwise.</returns>
+        bool CheckAccess(IIdentityGroup group, IIdentityPolicy policy);
 
         /// <summary>
         /// Checks if the specified identity has the given permission.

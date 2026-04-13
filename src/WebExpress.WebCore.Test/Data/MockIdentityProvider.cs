@@ -1,4 +1,6 @@
-﻿using WebExpress.WebCore.WebIdentity;
+﻿using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
+using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.Test.Data
 {
@@ -41,12 +43,39 @@ namespace WebExpress.WebCore.Test.Data
         public IEnumerable<IIdentityGroup> GetGroups() => Groups;
 
         /// <summary>
-        /// Validates the specified credentials against the identity provider.
+        /// Authenticates the specified request and returns the associated identity.
         /// </summary>
-        /// <param name="identity">The identity to validate. Cannot be null.</param>
-        /// <param name="password">The password associated with the identity. Cannot be null or empty.</param>
-        /// <returns>true if the credentials are valid; otherwise, false.</returns>
-        public bool ValidateCredentials(IIdentity identity, string password)
-            => false; // not needed for this test
+        /// <param name="request">
+        /// The request to authenticate. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An identity representing the authenticated user if authentication is successful; otherwise, null.
+        /// </returns>
+        public IIdentity Authenticate(IRequest request)
+        {
+            return null; // not needed for this test
+        }
+
+        /// <summary>
+        /// Displays a login dialog using the specified request and identity information.
+        /// </summary>
+        /// <param name="request">
+        /// The request containing parameters and context for the login operation. Cannot be null.
+        /// </param>
+        /// <param name="initiator">
+        /// The endpoint that triggered the authentication process. Used to determine the origin and
+        /// context of the authentication requirement.
+        /// </param>
+        /// <param name="identity">
+        /// The identity information to be used for authentication. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An object that represents the response to the login dialog, including authentication results and any
+        /// relevant status information.
+        /// </returns>
+        public IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity)
+        {
+            return null;
+        }
     }
 }

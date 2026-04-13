@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
@@ -35,6 +36,8 @@ namespace WebExpress.WebCore
     /// </summary>
     public class HttpServer : IHost, IHttpApplication<IHttpContext>
     {
+        private static readonly IComponentHub _componentHub = WebEx.ComponentHub;
+
         /// <summary>
         /// Event is triggered after the web server is started.
         /// </summary>
@@ -94,7 +97,7 @@ namespace WebExpress.WebCore
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The server context.</param>
-        public HttpServer(HttpServerContext context)
+        public HttpServer(IHttpServerContext context)
         {
             HttpServerContext = new HttpServerContext
             (
@@ -484,9 +487,10 @@ namespace WebExpress.WebCore
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private static Response CreateStatusPage<T>(string message, IRequest request, SearchResult searchResult = null) where T : Response, new()
+        private static IResponse CreateStatusPage<TResponse>(string message, IRequest request, SearchResult searchResult = null)
+            where TResponse : Response, new()
         {
-            var response = new T() as Response;
+            var response = new TResponse() as Response;
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
             var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
@@ -615,9 +619,56 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            var response = HandleClient(httpContext, searchResult);
+            // no policies
+            if (!searchResult.EndpointContext.Policies?.Any() ?? false)
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
 
-            await responseSender.SendAsync(httpContext, response);
+                return;
+            }
+
+            var identity = _componentHub.IdentityManager.GetCurrentIdentity(httpContext.Request);
+            var applicationContext = searchResult.EndpointContext.ApplicationContext;
+
+            // if access is granted
+            if (_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
+
+                return;
+            }
+
+            // try to authenticate if no identity exists
+            if (identity is null)
+            {
+                identity = _componentHub.IdentityManager.Authenticate(httpContext.Request, applicationContext);
+                _componentHub.IdentityManager.Login(httpContext.Request, identity);
+            }
+
+            // check again
+            if (!_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
+            {
+                var loginResponse = _componentHub.IdentityManager.CreateAuthenticationPrompt
+                (
+                    httpContext.Request,
+                    searchResult.EndpointContext,
+                    identity
+                );
+
+                if (loginResponse is not null)
+                {
+                    await responseSender.SendAsync(httpContext, loginResponse);
+                    return;
+                }
+            }
+
+            // access is granted
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
+            }
         }
 
         /// <summary>

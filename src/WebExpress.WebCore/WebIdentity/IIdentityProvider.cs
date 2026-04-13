@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -19,11 +21,33 @@ namespace WebExpress.WebCore.WebIdentity
         IEnumerable<IIdentityGroup> GetGroups();
 
         /// <summary>
-        /// Validates the credentials of the given identity.
+        /// Authenticates the specified request and returns the associated identity.
         /// </summary>
-        /// <param name="identity">The identity.</param>
-        /// <param name="password">The password.</param>
-        /// <returns>True if the credentials are valid, false otherwise.</returns>
-        bool ValidateCredentials(IIdentity identity, string password);
+        /// <param name="request">
+        /// The request to authenticate. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An identity representing the authenticated user if authentication is successful; otherwise, null.
+        /// </returns>
+        IIdentity Authenticate(IRequest request);
+
+        /// <summary>
+        /// Displays a login dialog using the specified request and identity information.
+        /// </summary>
+        /// <param name="request">
+        /// The request containing parameters and context for the login operation. Cannot be null.
+        /// </param>
+        /// <param name="initiator">
+        /// The endpoint that triggered the authentication process. Used to determine the origin and
+        /// context of the authentication requirement.
+        /// </param>
+        /// <param name="identity">
+        /// The identity information to be used for authentication. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An object that represents the response to the login dialog, including authentication results and any
+        /// relevant status information.
+        /// </returns>
+        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity);
     }
 }

@@ -98,6 +98,31 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="endpointContext">The endpoint context.</param>
+        /// <param name="title">The page title.</param>
+        /// <param name="icon">The page icon.</param>
+        /// <param name="scopes">The scope types.</param>
+        /// <param name="domains">The domain types.</param>
+        public PageContext(IEndpointContext endpointContext, string title = null, IIcon icon = null, IEnumerable<Type> scopes = null, IEnumerable<Type> domains = null)
+        {
+            PluginContext = endpointContext.PluginContext;
+            ApplicationContext = endpointContext.ApplicationContext;
+            Conditions = endpointContext.Conditions;
+            EndpointId = endpointContext.EndpointId;
+            Cache = endpointContext.Cache;
+            IncludeSubPaths = endpointContext.IncludeSubPaths;
+            Attributes = endpointContext.Attributes;
+            Policies = endpointContext.Policies;
+            Route = endpointContext.Route;
+            PageTitle = title;
+            PageIcon = icon;
+            Scopes = scopes;
+            Domains = domains;
+        }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>

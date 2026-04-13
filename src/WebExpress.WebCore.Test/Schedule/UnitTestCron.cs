@@ -10,6 +10,9 @@ namespace WebExpress.WebCore.Test.Schedule
     [Collection("NonParallelTests")]
     public class UnitTestCron
     {
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_1()
         {
@@ -22,6 +25,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.True(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_2()
         {
@@ -35,6 +41,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.True(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_3()
         {
@@ -48,6 +57,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.True(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_4()
         {
@@ -63,6 +75,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.Equal(1, context.Log.WarningCount);
         }
 
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_5()
         {
@@ -76,6 +91,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.True(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron‑matching logic works correctly for a given schedule.
+        /// </summary>
         [Fact]
         public void Create_6()
         {
@@ -91,6 +109,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.Equal(1, context.Log.WarningCount);
         }
 
+        /// <summary>
+        /// Verifies that the cron expression does not match the specified clock time for the given test scenario.
+        /// </summary>
         [Fact]
         public void Matching_1()
         {
@@ -104,6 +125,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.False(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron expression does not match the specified clock time for the given test scenario.
+        /// </summary>
         [Fact]
         public void Matching_2()
         {
@@ -117,6 +141,9 @@ namespace WebExpress.WebCore.Test.Schedule
             Assert.True(cron.Matching(clock));
         }
 
+        /// <summary>
+        /// Verifies that the cron expression does not match the specified clock time for the given test scenario.
+        /// </summary>
         [Fact]
         public void Matching_3()
         {

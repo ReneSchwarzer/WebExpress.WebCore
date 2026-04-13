@@ -7,7 +7,8 @@ namespace WebExpress.WebCore.WebAttribute
     /// Connects policies with permissions.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class PolicyAttribute<T> : Attribute, IPolicyAttribute where T : class, IIdentityPolicy
+    public class PolicyAttribute<T> : Attribute, IPolicyAttribute, IEndpointAttribute
+        where T : class, IIdentityPolicy
     {
         /// <summary>
         /// Initializes a new instance of the class.

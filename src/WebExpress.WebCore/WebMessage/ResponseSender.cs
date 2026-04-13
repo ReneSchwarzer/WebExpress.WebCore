@@ -24,11 +24,20 @@ namespace WebExpress.WebCore.WebMessage
                 var responseFeature = context.Features.Get<IHttpResponseFeature>();
                 var responseBodyFeature = context.Features.Get<IHttpResponseBodyFeature>();
 
+                if (responseFeature is null)
+                {
+                    // write error to server log
+                    var log = WebEx.ComponentHub.LogManager.DefaultLog;
+                    log.Error(context.RemoteEndPoint + ": The HTTP response feature is not available in the current context.");
+
+                    return;
+                }
+
                 responseFeature.StatusCode = response.Status;
                 responseFeature.ReasonPhrase = response.Reason;
                 responseFeature.Headers.KeepAlive = "true";
 
-                if (response.Header.Location != null)
+                if (response.Header.Location is not null)
                 {
                     responseFeature.Headers.Location = response.Header.Location;
                 }
