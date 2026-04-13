@@ -23,21 +23,6 @@ namespace WebExpress.WebCore.WebIdentity
         public IEnumerable<IIdentityPolicyContext> Policies { get; }
 
         /// <summary>
-        /// Returns all identities.
-        /// </summary>
-        IEnumerable<IIdentity> Identities { get; }
-
-        /// <summary>
-        /// Returns the default "All" group to which every identity automatically belongs.
-        /// </summary>
-        IdentityGroupAll AllGroup { get; }
-
-        /// <summary>
-        /// Returns the current signed-in identity.
-        /// </summary>
-        IIdentity CurrentIdentity { get; }
-
-        /// <summary>
         /// Login an identity.
         /// </summary>
         /// <param name="request">The request.</param>
@@ -116,5 +101,62 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="permission">The permission to check for.</param>
         /// <returns>True if the identity policy has the permission, false otherwise.</returns>
         bool CheckAccess(IApplicationContext applicationContext, Type policy, Type permission);
+
+        /// <summary>
+        /// Registers an identity provider for use within the application context.
+        /// </summary>
+        /// <param name="identityProvider">
+        /// The identity provider to register. Cannot be null.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context in which the identity provider will be used.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if identityProvider or applicationContext is null.
+        /// </exception>
+        void RegisterIdentityProvider(IIdentityProvider identityProvider, IApplicationContext applicationContext);
+
+        /// <summary>
+        /// Unregisters a previously registered identity provider from the given application context.
+        /// </summary>
+        /// <param name="identityProvider">
+        /// The identity provider to unregister. Cannot be null.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context from which the identity provider will be removed.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if identityProvider or applicationContext is null.
+        /// </exception>
+        /// <returns>
+        /// True if the provider was successfully removed; false if it was not registered.
+        /// </returns>
+        bool UnregisterIdentityProvider(IIdentityProvider identityProvider, IApplicationContext applicationContext);
+
+        /// <summary>
+        /// Retrieves all available identities from the configured identity providers for the specified application
+        /// context.
+        /// </summary>
+        /// <param name="applicationContext">
+        /// The application context used to determine which identity providers to query. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An enumerable collection of identities provided by all configured identity providers. The 
+        /// collection is empty if no identities are available.
+        /// </returns>
+        IEnumerable<IIdentity> GetIdentities(IApplicationContext applicationContext);
+
+        /// <summary>
+        /// Retrieves all identity groups available from the configured group providers for the specified application
+        /// context.
+        /// </summary>
+        /// <param name="applicationContext">
+        /// The application context that determines which group providers are queried. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An enumerable collection of identity groups available in the given application context. The 
+        /// collection is empty if no groups are found.
+        /// </returns>
+        IEnumerable<IIdentityGroup> GetGroups(IApplicationContext applicationContext);
     }
 }

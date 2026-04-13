@@ -3,7 +3,6 @@ using WebExpress.WebCore.Test.Data;
 using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIdentity;
-using WebExpress.WebCore.WebPolicies;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -210,39 +209,6 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
-        /// Test that the AllGroup is not null and has the expected default properties.
-        /// </summary>
-        [Fact]
-        public void AllGroupExists()
-        {
-            // arrange
-            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var identityManager = componentHub.IdentityManager;
-
-            // act & assert
-            Assert.NotNull(identityManager.AllGroup);
-            Assert.Equal("All", identityManager.AllGroup.Name);
-            Assert.Equal(Guid.Empty, identityManager.AllGroup.Id);
-        }
-
-        /// <summary>
-        /// Test that the AllGroup has the PublicAccess policy.
-        /// </summary>
-        [Fact]
-        public void AllGroupHasPublicAccessPolicy()
-        {
-            // arrange
-            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var identityManager = componentHub.IdentityManager;
-
-            // act
-            var policies = identityManager.AllGroup.Policies;
-
-            // assert
-            Assert.Contains(typeof(PublicAccessPolicy).FullName.ToLower(), policies);
-        }
-
-        /// <summary>
         /// Test that the IIdentityGroup interface has the Id and Name properties.
         /// </summary>
         [Fact]
@@ -253,28 +219,69 @@ namespace WebExpress.WebCore.Test.Manager
 
             // act & assert
             Assert.NotNull(group);
-            Assert.IsAssignableFrom<IIdentityGroup>(group);
+            Assert.IsType<IIdentityGroup>(group, exactMatch: false);
             Assert.NotEqual(Guid.Empty, group.Id);
             Assert.Equal("Admins", group.Name);
         }
 
         /// <summary>
-        /// Test that the AllGroup has the expected name and contains the PublicAccess policy.
+        /// Tests that an identity provider can be registered and that its identities
+        /// are returned by the IdentityManager for the given application context.
         /// </summary>
         [Fact]
-        public void AllGroupHasExpectedProperties()
+        public void RegisterIdentityProvider()
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
+            var applicationContext = componentHub.ApplicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
+            var provider = new MockIdentityProvider();
+            var identity = MockIdentityFactory.GetIdentity("alice@example.com");
+
+            provider.Identities.Add(identity);
 
             // act
-            var allGroup = identityManager.AllGroup;
+            identityManager.RegisterIdentityProvider(provider, applicationContext);
+            var identities = identityManager.GetIdentities(applicationContext).ToList();
 
             // assert
-            Assert.NotNull(allGroup);
-            Assert.Equal("All", allGroup.Name);
-            Assert.Contains(typeof(PublicAccessPolicy).FullName.ToLower(), allGroup.Policies);
+            Assert.Contains(identity, identities);
+            Assert.Single(identities);
+        }
+
+        /// <summary>
+        /// Tests that an identity provider can be unregistered and that its identities
+        /// are no longer returned by the IdentityManager for the given application context.
+        /// </summary>
+        [Fact]
+        public void UnregisterIdentityProvider()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var applicationContext = componentHub.ApplicationManager
+                .GetApplications(typeof(TestApplicationA))
+                .FirstOrDefault();
+
+            var provider = new MockIdentityProvider();
+            var identity = MockIdentityFactory.GetIdentity("alice@example.com");
+
+            provider.Identities.Add(identity);
+
+            identityManager.RegisterIdentityProvider(provider, applicationContext);
+
+            var identitiesBefore = identityManager.GetIdentities(applicationContext).ToList();
+            Assert.Contains(identity, identitiesBefore);
+            Assert.Single(identitiesBefore);
+
+            // act
+            var removed = identityManager.UnregisterIdentityProvider(provider, applicationContext);
+            var identitiesAfter = identityManager.GetIdentities(applicationContext).ToList();
+
+            // assert
+            Assert.True(removed);
+            Assert.DoesNotContain(identity, identitiesAfter);
+            Assert.Empty(identitiesAfter);
         }
     }
 }

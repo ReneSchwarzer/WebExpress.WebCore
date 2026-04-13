@@ -13,7 +13,6 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIdentity.Model;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
-using WebExpress.WebCore.WebPolicies;
 using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebIdentity
@@ -27,11 +26,7 @@ namespace WebExpress.WebCore.WebIdentity
         private readonly IHttpServerContext _httpServerContext;
         private readonly IdentityPermissionDictionary _permissionDictionary = [];
         private readonly IdentityPolicyDictionary _policyDictionary = [];
-
-        /// <summary>
-        /// Returns the default "All" group to which every identity automatically belongs.
-        /// </summary>
-        public IdentityGroupAll AllGroup { get; } = new IdentityGroupAll([typeof(PublicAccessPolicy).FullName.ToLower()]);
+        private readonly Dictionary<IApplicationContext, List<IIdentityProvider>> _identityProviders = [];
 
         /// <summary>
         /// Returns all permissions.
@@ -48,16 +43,6 @@ namespace WebExpress.WebCore.WebIdentity
             .SelectMany(x => x.Values)
             .SelectMany(x => x)
             .Select(x => x.PolicyContext);
-
-        /// <summary>
-        /// Returns all identities.
-        /// </summary>
-        public IEnumerable<IIdentity> Identities => [];
-
-        /// <summary>
-        /// Returns the current signed-in identity.
-        /// </summary>
-        public IIdentity CurrentIdentity { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -453,7 +438,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>True if any group grants the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentity identity, Type permission)
         {
-            var groups = (identity?.Groups ?? []).Append(AllGroup);
+            var groups = identity?.Groups ?? [];
 
             return groups.Any(group => CheckAccess(applicationContext, group, permission));
         }
@@ -575,6 +560,114 @@ namespace WebExpress.WebCore.WebIdentity
                     Marshal.ZeroFreeBSTR(bstr);
                 }
             }
+        }
+
+        /// <summary>
+        /// Registers an identity provider for use within the application context.
+        /// </summary>
+        /// <param name="identityProvider">
+        /// The identity provider to register. Cannot be null.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context in which the identity provider will be used.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if identityProvider or applicationContext is null.
+        /// </exception>
+        public void RegisterIdentityProvider(IIdentityProvider identityProvider, IApplicationContext applicationContext)
+        {
+            ArgumentNullException.ThrowIfNull(identityProvider);
+            ArgumentNullException.ThrowIfNull(applicationContext);
+
+            if (!_identityProviders.TryGetValue(applicationContext, out var list))
+            {
+                list = [];
+                _identityProviders[applicationContext] = list;
+            }
+
+            list.Add(identityProvider);
+        }
+
+        /// <summary>
+        /// Unregisters a previously registered identity provider from the given application context.
+        /// </summary>
+        /// <param name="identityProvider">
+        /// The identity provider to unregister. Cannot be null.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context from which the identity provider will be removed.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if identityProvider or applicationContext is null.
+        /// </exception>
+        /// <returns>
+        /// True if the provider was successfully removed; false if it was not registered.
+        /// </returns>
+        public bool UnregisterIdentityProvider(IIdentityProvider identityProvider, IApplicationContext applicationContext)
+        {
+            ArgumentNullException.ThrowIfNull(identityProvider);
+            ArgumentNullException.ThrowIfNull(applicationContext);
+
+            if (_identityProviders.TryGetValue(applicationContext, out var list))
+            {
+                return list.Remove(identityProvider);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Retrieves all available identities from the configured identity providers for the specified application
+        /// context.
+        /// </summary>
+        /// <param name="applicationContext">
+        /// The application context used to determine which identity providers to query. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An enumerable collection of identities provided by all configured identity providers. The 
+        /// collection is empty if no identities are available.
+        /// </returns>
+        public IEnumerable<IIdentity> GetIdentities(IApplicationContext applicationContext)
+        {
+            return GetProviders(applicationContext)
+                .SelectMany(p => p.GetIdentities());
+        }
+
+        /// <summary>
+        /// Retrieves all identity groups available from the configured group providers for the specified application
+        /// context.
+        /// </summary>
+        /// <param name="applicationContext">
+        /// The application context that determines which group providers are queried. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An enumerable collection of identity groups available in the given application context. The 
+        /// collection is empty if no groups are found.
+        /// </returns>
+        public IEnumerable<IIdentityGroup> GetGroups(IApplicationContext applicationContext)
+        {
+            return GetProviders(applicationContext)
+                .SelectMany(p => p.GetGroups());
+        }
+
+        /// <summary>
+        /// Retrieves the collection of identity providers associated with the specified application context.
+        /// </summary>
+        /// <param name="applicationContext">
+        /// The application context for which to retrieve the identity providers. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// An enumerable collection of identity providers registered for the specified application 
+        /// context. Returns an empty collection if no providers are found.
+        /// </returns>
+        private IEnumerable<IIdentityProvider> GetProviders(IApplicationContext applicationContext)
+        {
+            if (_identityProviders.TryGetValue(applicationContext, out var list))
+            {
+                return list;
+            }
+
+            return [];
         }
 
         /// <summary>
