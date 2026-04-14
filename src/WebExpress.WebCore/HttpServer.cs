@@ -657,6 +657,24 @@ namespace WebExpress.WebCore
             // check again
             if (!_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
             {
+                // if the user is authenticated but lacks the required permissions, show the forbidden page
+                if (identity is not null)
+                {
+                    var forbiddenResponse = _componentHub.IdentityManager.CreateForbiddenResponse
+                    (
+                        httpContext.Request,
+                        searchResult.EndpointContext,
+                        identity
+                    );
+
+                    if (forbiddenResponse is not null)
+                    {
+                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        return;
+                    }
+                }
+
+                // if the user is not authenticated, show the login prompt
                 var loginResponse = _componentHub.IdentityManager.CreateAuthenticationPrompt
                 (
                     httpContext.Request,

@@ -42,6 +42,26 @@ namespace WebExpress.WebCore.WebIdentity
         IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null);
 
         /// <summary>
+        /// Creates a forbidden response page for the specified request when the authenticated
+        /// user lacks the required permissions to access the requested resource.
+        /// </summary>
+        /// <param name="request">
+        /// The request for which access was denied. Cannot be null.
+        /// </param>
+        /// <param name="initiator">
+        /// The endpoint that the user attempted to access. Used to determine the origin and
+        /// context of the authorization failure.
+        /// </param>
+        /// <param name="identity">
+        /// The authenticated identity that lacks sufficient permissions. Cannot be null.
+        /// </param>
+        /// <returns>
+        /// A response representing the forbidden page if a registered identity provider can handle the 
+        /// forbidden scenario; otherwise, <c>null</c>.
+        /// </returns>
+        IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity);
+
+        /// <summary>
         /// Attempts to authenticate the specified request within the given application context.
         /// </summary>
         /// <param name="request">

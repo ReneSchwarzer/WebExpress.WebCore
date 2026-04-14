@@ -405,6 +405,36 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
+        /// Creates a forbidden response page for the specified request when the authenticated
+        /// user lacks the required permissions to access the requested resource.
+        /// </summary>
+        /// <param name="request">The request for which access was denied. Cannot be null.</param>
+        /// <param name="initiator">The endpoint that the user attempted to access.</param>
+        /// <param name="identity">The authenticated identity that lacks sufficient permissions.</param>
+        /// <returns>
+        /// A response representing the forbidden page if a registered identity provider can handle the 
+        /// forbidden scenario; otherwise, <c>null</c>.
+        /// </returns>
+        public IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity)
+        {
+            if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
+            {
+                foreach (var provider in list)
+                {
+                    var response = provider.CreateForbiddenResponse(request, initiator, identity);
+
+                    if (response is not null)
+                    {
+                        // the first provider that can show a forbidden page wins
+                        return response;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Attempts to authenticate the specified request within the given application context.
         /// </summary>
         /// <param name="request">The request to be authenticated. Must not be null.</param>
@@ -454,6 +484,15 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="request">The request.</param>
         public void Logout(IRequest request)
         {
+            // notify all registered identity providers so they can clear their own state
+            foreach (var list in _identityProviders.Values)
+            {
+                foreach (var provider in list)
+                {
+                    provider.Logout(request);
+                }
+            }
+
             var session = _componentHub.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
         }
