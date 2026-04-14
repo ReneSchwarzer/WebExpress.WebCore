@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebUri
         IEnumerable<IUriPathSegment> PathSegments { get; }
 
         /// <summary>
-        /// Returns or sets the base path of the endpoint's URI.
+        /// Gets or sets the base path of the endpoint's URI.
         /// The base path is included only when the endpoint class has the IncludeSubPaths attribute enabled.
         /// For example, if the complete URI is "http://example.com/server/app/endpoint/extended",
         /// the <c>BasePath</c> property will represent the "http://example.com/server/app/endpoint" portion of the URI.

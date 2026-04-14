@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextSemanticsTime : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Returns or sets the date and time.
+        /// Gets or sets the date and time.
         /// </summary>
         public string Time
         {

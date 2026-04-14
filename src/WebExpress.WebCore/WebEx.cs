@@ -51,22 +51,22 @@ namespace WebExpress.WebCore
         public event EventHandler Exit;
 
         /// <summary>
-        /// Returns or sets the name of the web server.
+        /// Gets or sets the name of the web server.
         /// </summary>
         public string Name { get; set; } = "WebExpress";
 
         /// <summary>
-        /// Returns the program version.
+        /// Gets the program version.
         /// </summary>
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// Returns the component hub.
+        /// Gets the component hub.
         /// </summary>
         public static IComponentHub ComponentHub => _componentHub;
 
         /// <summary>
-        /// Returns or sets the path to the favicon image used by the application.
+        /// Gets or sets the path to the favicon image used by the application.
         /// </summary>
         public static string Favicon { get; set; } = "webexpress.webui/assets/img/webexpress.svg";
 

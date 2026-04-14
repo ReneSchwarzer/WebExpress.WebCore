@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebSitemap
         private readonly IUri _serverUri;
 
         /// <summary>
-        /// Returns the side map.
+        /// Gets the side map.
         /// </summary>
         public IEnumerable<IEndpointContext> SiteMap => _root.GetPreOrder()
             .Where(x => x is not null)

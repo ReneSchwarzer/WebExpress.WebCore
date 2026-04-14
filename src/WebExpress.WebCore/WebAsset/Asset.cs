@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebAsset
         private byte[] _data;
 
         /// <summary>
-        /// Returns the root directory.
+        /// Gets the root directory.
         /// </summary>
         public string AssetDirectory { get; protected set; }
 

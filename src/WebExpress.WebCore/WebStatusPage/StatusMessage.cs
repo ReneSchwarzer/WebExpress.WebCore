@@ -7,7 +7,7 @@
     public class StatusMessage
     {
         /// <summary>
-        /// Returns the message.
+        /// Gets the message.
         /// </summary>
         public string Message { get; private set; }
 

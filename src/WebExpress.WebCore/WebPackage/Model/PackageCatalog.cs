@@ -12,13 +12,13 @@ namespace WebExpress.WebCore.WebPackage.Model
     public class PackageCatalog
     {
         /// <summary>
-        /// Returns the package entries in the catalog.
+        /// Gets the package entries in the catalog.
         /// </summary>
         [XmlElement("package")]
         public List<PackageCatalogItem> Packages { get; } = [];
 
         /// <summary>
-        /// Returns the system package entries in the catalog.
+        /// Gets the system package entries in the catalog.
         /// </summary>
         [XmlIgnore]
         public List<PackageCatalogItem> SystemPackages { get; } = [];

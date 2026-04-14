@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.Serialization;
 
 namespace WebExpress.WebCore.WebSocket
 {
@@ -10,12 +9,12 @@ namespace WebExpress.WebCore.WebSocket
     public class SocketMessageTooLargeException : Exception
     {
         /// <summary>
-        /// Returns the total number of bytes received for the message.
+        /// Gets the total number of bytes received for the message.
         /// </summary>
         public ulong ActualSize { get; }
 
         /// <summary>
-        /// Returns the maximum allowed message size in bytes.
+        /// Gets the maximum allowed message size in bytes.
         /// </summary>
         public ulong MaxSize { get; }
 

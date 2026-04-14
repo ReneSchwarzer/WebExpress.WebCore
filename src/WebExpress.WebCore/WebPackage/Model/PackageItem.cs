@@ -8,57 +8,57 @@ namespace WebExpress.WebCore.WebPackage.Model
     public class PackageItem
     {
         /// <summary>
-        /// Returns or sets the package file name.
+        /// Gets or sets the package file name.
         /// </summary>
         public string FileName { get; set; }
 
         /// <summary>
-        /// Returns or sets Returns or sets the id.
+        /// Gets or sets Returns or sets the id.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// Returns or sets the version.
+        /// Gets or sets the version.
         /// </summary>
         public string Version { get; set; }
 
         /// <summary>
-        /// Returns or sets the titles.
+        /// Gets or sets the titles.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns or sets the authors.
+        /// Gets or sets the authors.
         /// </summary>
         public string Authors { get; set; }
 
         /// <summary>
-        /// Returns or sets the license.
+        /// Gets or sets the license.
         /// </summary>
         public string License { get; set; }
 
         /// <summary>
-        /// Returns or sets the package icon.
+        /// Gets or sets the package icon.
         /// </summary>
         public string Icon { get; set; }
 
         /// <summary>
-        /// Returns or sets the readme file of the package (md format).
+        /// Gets or sets the readme file of the package (md format).
         /// </summary>
         public string Readme { get; set; }
 
         /// <summary>
-        /// Returns or sets the description.
+        /// Gets or sets the description.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Returns or sets the tags.
+        /// Gets or sets the tags.
         /// </summary>
         public string Tags { get; set; }
 
         /// <summary>
-        /// Returns or sets the plugin sources.
+        /// Gets or sets the plugin sources.
         /// </summary>
         public IEnumerable<string> PluginSources { get; set; }
 

@@ -17,87 +17,87 @@ namespace WebExpress.WebCore.WebRestApi.Model
     internal class RestApiItem : IDisposable
     {
         /// <summary>
-        /// Returns the endpoint id.
+        /// Gets the endpoint id.
         /// </summary>
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the type of rest api resource.
+        /// Gets the type of rest api resource.
         /// </summary>
         public Type RestApiClass { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the instance of the rest api resource, if the rest api resource is cached, otherwise null.
+        /// Gets the instance of the rest api resource, if the rest api resource is cached, otherwise null.
         /// </summary>
         public IRestApi Instance { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the paths of the resource.
+        /// Gets the paths of the resource.
         /// </summary>
         public UriEndpoint ContextPath { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the path segment.
+        /// Gets the path segment.
         /// </summary>
         public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
-        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// Gets whether all subpaths should be taken into sitemap.
         /// </summary>
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the rest api resource to be active.
+        /// Gets the conditions that must be met for the rest api resource to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; internal set; }
 
         /// <summary>
-        /// Returns the crud methods.
+        /// Gets the crud methods.
         /// </summary>
         public IEnumerable<RequestMethod> Methods { get; internal set; }
 
         /// <summary>
-        /// Returns the version number of the rest api.
+        /// Gets the version number of the rest api.
         /// </summary>
         public uint Version { get; internal set; }
 
         /// <summary>
-        /// Returns whether the resource is created once and reused each time it is called.
+        /// Gets whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
 
         /// <summary>
-        /// Returns the reflection information for the associated get method.
+        /// Gets the reflection information for the associated get method.
         /// </summary>
         public MethodInfo GetMethod { get; internal set; }
 
         /// <summary>
-        /// Returns the reflection information for the associated post method.
+        /// Gets the reflection information for the associated post method.
         /// </summary>
         public MethodInfo PostMethod { get; internal set; }
 
         /// <summary>
-        /// Returns the reflection information for the associated patch method.
+        /// Gets the reflection information for the associated patch method.
         /// </summary>
         public MethodInfo PatchMethod { get; internal set; }
 
         /// <summary>
-        /// Returns the reflection information for the associated put method.
+        /// Gets the reflection information for the associated put method.
         /// </summary>
         public MethodInfo PutMethod { get; internal set; }
 
         /// <summary>
-        /// Returns the reflection information for the associated delete method.
+        /// Gets the reflection information for the associated delete method.
         /// </summary>
         public MethodInfo DeleteMethod { get; internal set; }
 
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebRestApi.Model
         public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
-        /// Returns the rest api contexts.
+        /// Gets the rest api contexts.
         /// </summary>
         public IRestApiContext RestApiContext { get; internal set; }
 

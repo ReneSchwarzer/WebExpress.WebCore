@@ -49,37 +49,37 @@ namespace WebExpress.WebCore
         private KestrelServer Kestrel { get; set; }
 
         /// <summary>
-        /// Server thread termination.
+        /// Gets the server thread termination.
         /// </summary>
         private CancellationTokenSource ServerTokenSource { get; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Returns or sets the configuration.
+        /// Gets or sets the configuration.
         /// </summary>
         public HttpServerConfig Config { get; set; }
 
         /// <summary>
-        /// Returns or sets the context.
+        /// Gets the context.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets or sets the culture.
         /// </summary>
         public CultureInfo Culture { get; set; }
 
         /// <summary>
-        /// Returns the execution time of the web server.
+        /// Gets the execution time of the web server.
         /// </summary>
         public static DateTime ExecutionTime { get; } = DateTime.Now;
 
         /// <summary>
-        /// Returns the request number;
+        /// Gets the request number;
         /// </summary>
         public long RequestNumber { get; private set; }
 
         /// <summary>
-        /// Returns the statistics history.
+        /// Gets the statistics history.
         /// </summary>
         public static List<HttpServerStatisticItem> Statistics { get; } = [];
 

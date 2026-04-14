@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebSocket
         event EventHandler<ISocketContext> RemoveSocket;
 
         /// <summary>
-        /// Returns all registered websocket contexts.
+        /// Gets all registered websocket contexts.
         /// </summary>
         IEnumerable<ISocketContext> Sockets { get; }
 

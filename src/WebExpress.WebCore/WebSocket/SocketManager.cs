@@ -43,7 +43,7 @@ namespace WebExpress.WebCore.WebSocket
         public event EventHandler<ISocketContext> RemoveSocket;
 
         /// <summary>
-        /// Returns all socket contexts.
+        /// Gets all socket contexts.
         /// </summary>
         public IEnumerable<ISocketContext> Sockets => _dictionary.All;
 

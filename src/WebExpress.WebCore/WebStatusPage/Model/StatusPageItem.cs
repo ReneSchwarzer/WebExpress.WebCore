@@ -10,27 +10,27 @@ namespace WebExpress.WebCore.WebStatusPage.Model
     internal class StatusPageItem
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the associated application context.
+        /// Gets the associated application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns status page context.
+        /// Gets status page context.
         /// </summary>
         public StatusPageContext StatusPageContext { get; internal set; }
 
         /// <summary>
-        /// Returns the status code.
+        /// Gets the status code.
         /// </summary>
         public Type StatusResponse { get; internal set; }
 
         /// <summary>
-        /// Returns the type of status page.
+        /// Gets the type of status page.
         /// </summary>
         public Type StatusPageClass { get; internal set; }
 

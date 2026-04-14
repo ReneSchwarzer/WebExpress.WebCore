@@ -8,25 +8,25 @@ namespace WebExpress.WebCore.WebHtml.Parser
     public class HtmlToken
     {
         /// <summary>
-        /// Returns the type of this token.
+        /// Gets the type of this token.
         /// </summary>
         public HtmlTokenType Type { get; }
 
         /// <summary>
-        /// Returns the tag name for start, end, and self-closing tokens, or the
+        /// Gets the tag name for start, end, and self-closing tokens, or the
         /// doctype name for doctype tokens. Returns <c>null</c> for text, comment,
         /// and end-of-file tokens.
         /// </summary>
         public string TagName { get; }
 
         /// <summary>
-        /// Returns the raw text value for text and comment tokens. For start and
+        /// Gets the raw text value for text and comment tokens. For start and
         /// self-closing tokens this property is unused (<c>null</c>).
         /// </summary>
         public string Value { get; }
 
         /// <summary>
-        /// Returns the attributes associated with start and self-closing tokens.
+        /// Gets the attributes associated with start and self-closing tokens.
         /// The key is the attribute name (lower-case) and the value is the
         /// attribute value, or <c>null</c> for boolean (valueless) attributes.
         /// </summary>

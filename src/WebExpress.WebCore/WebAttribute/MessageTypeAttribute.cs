@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class MessageTypeAttribute : Attribute, ISocketAttribute
     {
         /// <summary>
-        /// Returns the message type code.
+        /// Gets the message type code.
         /// </summary>
         public SocketMessageType MessageType { get; }
 

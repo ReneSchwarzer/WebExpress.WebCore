@@ -6,12 +6,12 @@
     public class ParameterFile : Parameter
     {
         /// <summary>
-        /// Returns the content type.
+        /// Gets the content type.
         /// </summary>
         public string ContentType { get; internal set; }
 
         /// <summary>
-        /// Returns the data.
+        /// Gets the data.
         /// </summary>
         public byte[] Data { get; internal set; }
 

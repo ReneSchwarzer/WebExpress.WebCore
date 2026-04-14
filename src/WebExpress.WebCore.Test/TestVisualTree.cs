@@ -11,52 +11,52 @@ namespace WebExpress.WebCore.Test
     public class TestVisualTree : IVisualTree
     {
         /// <summary>
-        /// Returns the title of the html document.
+        /// Gets or sets the title of the html document.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns the favicons.
+        /// Gets the favicons.
         /// </summary>
         public List<Favicon> Favicons { get; } = [];
 
         /// <summary>
-        /// Returns the internal stylesheet.  
+        /// Gets the internal stylesheet.  
         /// </summary>
         public List<string> Styles { get; } = [];
 
         /// <summary>
-        /// Returns the links to the java script files to be used, which are inserted in the header.
+        /// Gets the links to the java script files to be used, which are inserted in the header.
         /// </summary>
         public List<string> HeaderScriptLinks { get; } = [];
 
         /// <summary>
-        /// Returns the links to the java script files to be used.
+        /// Gets the links to the java script files to be used.
         /// </summary>
         public List<string> ScriptLinks { get; } = [];
 
         /// <summary>
-        /// Returns the links to the java script files to be used, which are inserted in the header.
+        /// Gets the links to the java script files to be used, which are inserted in the header.
         /// </summary>
         public List<string> HeaderScripts { get; } = [];
 
         /// <summary>
-        /// Returns the links to the java script files to be used.
+        /// Gets the links to the java script files to be used.
         /// </summary>
         public IDictionary<string, string> Scripts { get; } = new Dictionary<string, string>();
 
         /// <summary>
-        /// Returns the links to the css files to be used.
+        /// Gets the links to the css files to be used.
         /// </summary>
         public List<string> CssLinks { get; } = [];
 
         /// <summary>
-        /// Returns the meta information.
+        /// Gets the meta information.
         /// </summary>
         public List<KeyValuePair<string, string>> Meta { get; } = [];
 
         /// <summary>
-        /// Returns or sets the content.
+        /// Gets or sets the content.
         /// </summary>
         public IHtmlNode Content { get; set; }
 

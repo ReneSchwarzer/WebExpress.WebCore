@@ -10,12 +10,12 @@
     public class IncludeFile
     {
         /// <summary>
-        /// Returns or sets the type to be included in the operation.
+        /// Gets or sets the type to be included in the operation.
         /// </summary>
         public TypeInclude Type { get; set; }
 
         /// <summary>
-        /// Returns or sets the name of the file, including its extension.
+        /// Gets or sets the name of the file, including its extension.
         /// </summary>
         public string FileName { get; set; }
     }

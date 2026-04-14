@@ -10,17 +10,17 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementSectionBody : HtmlElement, IHtmlElementSection
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the script elements.
+        /// Gets or sets the script elements.
         /// </summary>
         public List<string> Scripts { get; set; } = [];
 
         /// <summary>
-        /// Returns or sets the text/javascript.
+        /// Gets or sets the text/javascript.
         /// </summary>
         public List<string> ScriptLinks
         {
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the external scripts.
+        /// Gets or sets the external scripts.
         /// </summary>
         private List<HtmlElementScriptingScript> ElementScriptLinks { get; set; }
 

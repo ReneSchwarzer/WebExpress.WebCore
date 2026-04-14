@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebMessage
     public class RedirectException : Exception
     {
         /// <summary>
-        /// Returns or sets the redirection target.
+        /// Gets or sets the redirection target.
         /// </summary>
         public IUri Uri { get; set; }
 

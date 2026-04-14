@@ -11,37 +11,37 @@ namespace WebExpress.WebCore.WebStatusPage
     public class StatusPageContext : IStatusPageContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the associated application context.
+        /// Gets the associated application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the status id.
+        /// Gets the status id.
         /// </summary>
         public IComponentId StatusPageId { get; internal set; }
 
         /// <summary>
-        /// Returns the status code.
+        /// Gets the status code.
         /// </summary>
         public int StatusCode { get; internal set; }
 
         /// <summary>
-        /// Returns the status title.
+        /// Gets the status title.
         /// </summary>
         public string StatusTitle { get; internal set; }
 
         /// <summary>
-        /// Returns the status icon.
+        /// Gets the status icon.
         /// </summary>
         public IRoute StatusIcon { get; internal set; }
 
         /// <summary>
-        /// Returns the description of the current status.
+        /// Gets the description of the current status.
         /// </summary>
         public string StatusDescription { get; internal set; }
 

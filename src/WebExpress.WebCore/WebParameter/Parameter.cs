@@ -10,17 +10,17 @@ namespace WebExpress.WebCore.WebParameter
     public class Parameter : IParameterDynamic
     {
         /// <summary>
-        /// Returns the key of the parameter.
+        /// Gets the key of the parameter.
         /// </summary>
         public string Key { get; private set; }
 
         /// <summary>
-        /// Returns or sets the scope of the parameter.
+        /// Gets or sets the scope of the parameter.
         /// </summary>
         public ParameterScope Scope { get; set; }
 
         /// <summary>
-        /// Returns the value of the parameter.
+        /// Gets or sets the value of the parameter.
         /// </summary>
         public string Value { get; set; }
 

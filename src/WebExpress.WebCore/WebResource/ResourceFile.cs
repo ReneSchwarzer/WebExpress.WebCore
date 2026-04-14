@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebResource
     public class ResourceFile : ResourceBinary
     {
         /// <summary>
-        /// Protection in case of concurrency.
+        /// Gets the protection in case of concurrency.
         /// </summary>
         private object Gard { get; set; }
 
         /// <summary>
-        /// Returns the root directory.
+        /// Gets the root directory.
         /// </summary>
         public string RootDirectory { get; protected set; }
 

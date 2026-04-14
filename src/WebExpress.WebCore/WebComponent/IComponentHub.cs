@@ -41,138 +41,138 @@ namespace WebExpress.WebCore.WebComponent
         event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
-        /// Returns all registered components.
+        /// Gets all registered components.
         /// </summary>
         IEnumerable<IComponentManager> Managers { get; }
 
         /// <summary>
-        /// Returns the log manager.
+        /// Gets the log manager.
         /// </summary>
         /// <returns>The instance of the log manager.</returns>
         ILogManager LogManager { get; }
 
         /// <summary>
-        /// Returns the package manager.
+        /// Gets the package manager.
         /// </summary>
         /// <returns>The instance of the package manager.</returns>
         IPackageManager PackageManager { get; }
 
         /// <summary>
-        /// Returns the plugin manager.
+        /// Gets the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager.</returns>
         public IPluginManager PluginManager { get; }
 
         /// <summary>
-        /// Returns the application manager.
+        /// Gets the application manager.
         /// </summary>
         /// <returns>The instance of the application manager.</returns>
         IApplicationManager ApplicationManager { get; }
 
         /// <summary>
-        /// Returns the event manager.
+        /// Gets the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
         IEventManager EventManager { get; }
 
         /// <summary>
-        /// Returns the job manager.
+        /// Gets the job manager.
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         IJobManager JobManager { get; }
 
         /// <summary>
-        /// Returns the task manager.
+        /// Gets the task manager.
         /// </summary>
         /// <returns>The instance of the task manager.</returns>
         ITaskManager TaskManager { get; }
 
         /// <summary>
-        /// Returns the endpoint manager.
+        /// Gets the endpoint manager.
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
         IEndpointManager EndpointManager { get; }
 
         /// <summary>
-        /// Returns the asset manager.
+        /// Gets the asset manager.
         /// </summary>
         /// <returns>The instance of the asset manager.</returns>
         public IAssetManager AssetManager { get; }
 
         /// <summary>
-        /// Returns the resource manager.
+        /// Gets the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
         IResourceManager ResourceManager { get; }
 
         /// <summary>
-        /// Returns the include manager.
+        /// Gets the include manager.
         /// </summary>
         /// <returns>The instance of the include manager.</returns>
         IIncludeManager IncludeManager { get; }
 
         /// <summary>
-        /// Returns the page manager.
+        /// Gets the page manager.
         /// </summary>
         /// <returns>The instance of the page manager.</returns>
         IPageManager PageManager { get; }
 
         /// <summary>
-        /// Returns the setting page manager.
+        /// Gets the setting page manager.
         /// </summary>
         /// <returns>The instance of the setting page manager.</returns>
         ISettingPageManager SettingPageManager { get; }
 
         /// <summary>
-        /// Returns the rest api manager.
+        /// Gets the rest api manager.
         /// </summary>
         /// <returns>The instance of the rest api manager.</returns>
         IRestApiManager RestApiManager { get; }
 
         /// <summary>
-        /// Returns the sitemap manager.
+        /// Gets the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         ISitemapManager SitemapManager { get; }
 
         /// <summary>
-        /// Returns the fragment manager.
+        /// Gets the fragment manager.
         /// </summary>
         /// <returns>The instance of the fragment manager.</returns>
         IFragmentManager FragmentManager { get; }
 
         /// <summary>
-        /// Returns the status page manager.
+        /// Gets the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager.</returns>
         IStatusPageManager StatusPageManager { get; }
 
         /// <summary>
-        /// Returns the internationalization manager.
+        /// Gets the internationalization manager.
         /// </summary>
         /// <returns>The instance of the internationalization manager.</returns>
         IInternationalizationManager InternationalizationManager { get; }
 
         /// <summary>
-        /// Returns the identity manager.
+        /// Gets the identity manager.
         /// </summary>
         /// <returns>The instance of the identity manager.</returns>
         IIdentityManager IdentityManager { get; }
 
         /// <summary>
-        /// Returns the session manager.
+        /// Gets the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         ISessionManager SessionManager { get; }
 
         /// <summary>
-        /// Returns the socket manager.
+        /// Gets the socket manager.
         /// </summary>
         /// <returns>The instance of the socket manager.</returns>
         ISocketManager SocketManager { get; }
 
         /// <summary>
-        /// Returns the theme manager.
+        /// Gets the theme manager.
         /// </summary>
         /// <returns>The instance of the theme manager.</returns>
         IThemeManager ThemeManager { get; }

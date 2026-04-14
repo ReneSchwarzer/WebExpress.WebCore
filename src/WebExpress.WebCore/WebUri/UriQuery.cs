@@ -8,12 +8,12 @@ namespace WebExpress.WebCore.WebUri
     public class UriQuery : IUriQuery
     {
         /// <summary>
-        /// Returns the key.
+        /// Gets the key.
         /// </summary>
         public string Key { get; protected set; }
 
         /// <summary>
-        /// Returns the value.
+        /// Gets the value.
         /// </summary>
         public string Value { get; protected set; }
 

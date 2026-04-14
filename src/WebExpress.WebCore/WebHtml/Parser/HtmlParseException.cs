@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml.Parser
     public class HtmlParseException : Exception
     {
         /// <summary>
-        /// Returns the zero-based character position in the input at which the
+        /// Gets the zero-based character position in the input at which the
         /// error was detected, or <c>-1</c> if the position is unknown.
         /// </summary>
         public int Position { get; }

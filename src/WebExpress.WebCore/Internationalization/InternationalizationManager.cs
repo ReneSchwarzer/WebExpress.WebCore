@@ -18,17 +18,17 @@ namespace WebExpress.WebCore.Internationalization
         private readonly IComponentHub _componentHub;
 
         /// <summary>
-        /// Returns the default language.
+        /// Gets the default language.
         /// </summary>
         public static CultureInfo DefaultCulture { get; private set; } = CultureInfo.CurrentCulture;
 
         /// <summary>
-        /// Returns the directory by listing the internationalization key-value pairs.
+        /// Gets the directory by listing the internationalization key-value pairs.
         /// </summary>
         private static InternationalizationDictionary Dictionary { get; } = [];
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
+        /// Gets or sets the reference to the context of the host.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; private set; }
 

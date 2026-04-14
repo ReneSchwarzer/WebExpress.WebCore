@@ -15,32 +15,32 @@ namespace WebExpress.WebCore.WebPlugin.Model
         public PluginLoadContext PluginLoadContext { get; internal set; }
 
         /// <summary>
-        /// Returns the plugin class.
+        /// Gets the plugin class.
         /// </summary>
         public Type PluginClass { get; internal set; }
 
         /// <summary>
-        /// The context associated with the plugin.
+        /// Gets the context associated with the plugin.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// The plugin.
+        /// Gets the plugin.
         /// </summary>
         public IPlugin Plugin { get; internal set; }
 
         /// <summary>
-        /// The dependencies of the plugin.
+        /// Gets the dependencies of the plugin.
         /// </summary>
         public IEnumerable<string> Dependencies { get; internal set; } = [];
 
         /// <summary>
-        /// The types of applications that the plugin supports.
+        /// Gets the types of applications that the plugin supports.
         /// </summary>
         public IEnumerable<Type> ApplicationTypes { get; internal set; } = [];
 
         /// <summary>
-        /// Thread termination token.
+        /// Gets the thread termination token.
         /// </summary>
         public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
     }

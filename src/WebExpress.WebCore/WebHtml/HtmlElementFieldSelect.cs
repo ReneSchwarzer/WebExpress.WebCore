@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFieldSelect : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the name of the input field.
+        /// Gets or sets the name of the input field.
         /// </summary>
         public string Name
         {
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the identification name of the form element to which it is associated.
+        /// Gets or sets the identification name of the form element to which it is associated.
         /// </summary>
         public string Form
         {
@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the OnChange attribute.
+        /// Gets or sets the OnChange attribute.
         /// </summary>
         public string OnChange
         {

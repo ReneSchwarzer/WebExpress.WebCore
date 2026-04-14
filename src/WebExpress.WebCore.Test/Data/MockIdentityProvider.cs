@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.Test.Data
     public class MockIdentityProvider : IIdentityProvider
     {
         /// <summary>
-        /// Returns the collection of identities associated with the current principal.
+        /// Gets the collection of identities associated with the current principal.
         /// </summary>
         public List<IIdentity> Identities { get; } = [];
 
         /// <summary>
-        /// Returns the collection of identity groups associated with the current user or entity.
+        /// Gets the collection of identity groups associated with the current user or entity.
         /// </summary>
         public List<IIdentityGroup> Groups { get; } = [];
 

@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebPackage
         event EventHandler<PackageCatalogItem> RemovePackage;
 
         /// <summary>
-        /// Returns the catalog of installed packages.
+        /// Gets the catalog of installed packages.
         /// </summary>
         PackageCatalog Catalog { get; }
     }

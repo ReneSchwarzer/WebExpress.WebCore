@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebEvent
         public event EventHandler<IEventHandlerContext> RemoveEventHandler;
 
         /// <summary>
-        /// Returns the collection of events.
+        /// Gets the collection of events.
         /// </summary>
         public IEnumerable<IEventHandlerContext> EventHandlers => _dictionary.Values
             .SelectMany(x => x.Values)

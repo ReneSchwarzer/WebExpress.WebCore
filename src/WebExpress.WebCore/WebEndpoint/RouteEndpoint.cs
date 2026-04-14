@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebEndpoint
         public IEnumerable<IUriPathSegment> PathSegments { get; private set; } = [new UriPathSegmentRoot()];
 
         /// <summary>
-        /// Returns a string representation of the route.
+        /// Gets or sets a string representation of the route.
         /// </summary>
         public string Display { get; set; }
 

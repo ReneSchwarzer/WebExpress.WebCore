@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebEndpoint
     public interface IEndpointManager : IComponentManager
     {
         /// <summary>
-        /// Returns all endpoints contexts.
+        /// Gets all endpoints contexts.
         /// </summary>
         IEnumerable<IEndpointContext> Endpoints { get; }
 

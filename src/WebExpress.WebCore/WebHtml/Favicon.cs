@@ -6,12 +6,12 @@
     public class Favicon
     {
         /// <summary>
-        /// Returns or sets the uri.
+        /// Gets or sets the uri.
         /// </summary>
         public string Url { get; set; }
 
         /// <summary>
-        /// Returns or sets the media type.
+        /// Gets or sets the media type.
         /// </summary>
         public TypeFavicon Mediatype { get; set; }
 

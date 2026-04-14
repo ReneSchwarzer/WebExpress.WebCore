@@ -9,42 +9,42 @@ namespace WebExpress.WebCore.WebApplication
     public class ApplicationContext : IApplicationContext
     {
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets the context of the associated plugin.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the application id.
+        /// Gets the application id.
         /// </summary>
         public string ApplicationId { get; internal set; }
 
         /// <summary>
-        /// Returns the application name.
+        /// Gets the application name.
         /// </summary>
         public string ApplicationName { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the description.
+        /// Gets the description.
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the asset directory. This is mounted in the asset directory of the server.
+        /// Gets the asset directory. This is mounted in the asset directory of the server.
         /// </summary>
         public string AssetPath { get; internal set; }
 
         /// <summary>
-        /// Returns the data directory. This is mounted in the data directory of the server.
+        /// Gets the data directory. This is mounted in the data directory of the server.
         /// </summary>
         public string DataPath { get; internal set; }
 
         /// <summary>
-        /// Returns the context path. This is mounted in the route of the server.
+        /// Gets the context path. This is mounted in the route of the server.
         /// </summary>
         public IRoute Route { get; internal set; }
 
         /// <summary>
-        /// Returns the icon uri.
+        /// Gets the icon uri.
         /// </summary>
         public IRoute Icon { get; internal set; }
 

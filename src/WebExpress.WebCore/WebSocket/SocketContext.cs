@@ -16,32 +16,32 @@ namespace WebExpress.WebCore.WebSocket
     public class SocketContext : ISocketContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the resource to be active.
+        /// Gets the conditions that must be met for the resource to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; internal set; } = [];
 
         /// <summary>
-        /// Returns the endpoint id.
+        /// Gets the endpoint id.
         /// </summary>
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the name of the WebSocket subprotocol that is supported by the connection.
+        /// Gets the name of the WebSocket subprotocol that is supported by the connection.
         /// </summary>
         public string SupportedSubProtocol { get; internal set; }
 
         /// <summary> 
-        /// Returns the default WebSocket message type used by this endpoint when 
+        /// Gets or sets the default WebSocket message type used by this endpoint when 
         /// sending data. Implementations may choose <see cref="SocketMessageType.Text"/> 
         /// for JSON or human-readable content, or <see cref="SocketMessageType.Binary"/> 
         /// for binary payloads. 
@@ -59,27 +59,27 @@ namespace WebExpress.WebCore.WebSocket
         public bool RequiresAuthentication { get; set; }
 
         /// <summary>
-        /// Returns whether the resource is created once and reused each time it is called.
+        /// Gets whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; internal set; }
 
         /// <summary>
-        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// Gets whether all subpaths should be taken into sitemap.
         /// </summary>
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the internal routing path for the endpoint.
+        /// Gets the internal routing path for the endpoint.
         /// </summary>
         public IRoute Route { get; internal set; }
 
         /// <summary>
-        /// Returns the attributes associated with the page.
+        /// Gets the attributes associated with the page.
         /// </summary>
         public IEnumerable<Attribute> Attributes { get; internal set; }
 
         /// <summary>
-        /// Returns the collection of identity policies for the endpoint.
+        /// Gets the collection of identity policies for the endpoint.
         /// </summary>
         public IEnumerable<IIdentityPolicy> Policies { get; internal set; }
 

@@ -13,12 +13,12 @@ namespace WebExpress.WebCore.WebResource
     public class ResourceAsset : ResourceBinary
     {
         /// <summary>
-        /// Protection against concurrency.
+        /// Gets the protection against concurrency.
         /// </summary>
         private object Gard { get; set; }
 
         /// <summary>
-        /// Returns the root directory.
+        /// Gets the root directory.
         /// </summary>
         public string AssetDirectory { get; protected set; }
 

@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebJob
     public interface IJobManager : IComponentManager
     {
         /// <summary>
-        /// Returns all jobs contextes.
+        /// Gets all jobs contextes.
         /// </summary>
         IEnumerable<IJobContext> Jobs { get; }
 

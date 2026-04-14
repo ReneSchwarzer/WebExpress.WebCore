@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebSession.Model
     public class SessionPropertyParameter : SessionProperty
     {
         /// <summary>
-        /// Returns the parameters.
+        /// Gets the parameters.
         /// </summary>
         public Dictionary<string, Parameter> Params { get; } = [];
 

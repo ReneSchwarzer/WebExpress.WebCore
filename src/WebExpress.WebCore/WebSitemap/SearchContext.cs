@@ -9,17 +9,17 @@ namespace WebExpress.WebCore.WebSitemap
     public class SearchContext
     {
         /// <summary>
-        /// Returns the culture.
+        /// Gets the culture.
         /// </summary>
         public CultureInfo Culture { get; internal set; }
 
         /// <summary>
-        /// Returns the http context.
+        /// Gets the http context.
         /// </summary>
         public IHttpContext HttpContext { get; internal set; }
 
         /// <summary>
-        /// Returns the server context.
+        /// Gets the server context.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; internal set; }
     }

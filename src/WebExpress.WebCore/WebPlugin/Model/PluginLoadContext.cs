@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebPlugin.Model
     public class PluginLoadContext : AssemblyLoadContext
     {
         /// <summary>
-        /// Returns or set the resolver to resolve dependencies.
+        /// Gets or set the resolver to resolve dependencies.
         /// </summary>
         private AssemblyDependencyResolver Resolver { get; set; }
 

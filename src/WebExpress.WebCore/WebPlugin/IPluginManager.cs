@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebPlugin
         event EventHandler<IPluginContext> RemovePlugin;
 
         /// <summary>
-        /// Returns all plugins.
+        /// Gets all plugins.
         /// </summary>
         IEnumerable<IPluginContext> Plugins { get; }
 

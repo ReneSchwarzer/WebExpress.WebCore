@@ -10,17 +10,17 @@ namespace WebExpress.WebCore.WebAsset.Model
         private readonly IAssetManager _assetManager;
 
         /// <summary>
-        /// Returns or sets the type of asset.
+        /// Gets or sets the type of asset.
         /// </summary>
         public Type AssetClass { get; set; }
 
         /// <summary>
-        /// Returns or sets the instance of the asset, if the asset is cached, otherwise null.
+        /// Gets or sets the instance of the asset, if the asset is cached, otherwise null.
         /// </summary>
         public IAsset Instance { get; set; }
 
         /// <summary>
-        /// Returns the asset context.
+        /// Gets the asset context.
         /// </summary>
         public IAssetContext AssetContext { get; internal set; }
 

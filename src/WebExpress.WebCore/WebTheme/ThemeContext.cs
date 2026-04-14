@@ -11,42 +11,42 @@ namespace WebExpress.WebCore.WebTheme
     public class ThemeContext : IThemeContext
     {
         /// <summary>
-        /// Returns the theme id.
+        /// Gets the theme id.
         /// </summary>
         public IComponentId ThemeId { get; internal set; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the image associated with the theme.
+        /// Gets the image associated with the theme.
         /// </summary>
         public IRoute Image { get; internal set; }
 
         /// <summary>
-        /// Returns the name of the theme.
+        /// Gets the name of the theme.
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Returns the description of the theme.
+        /// Gets the description of the theme.
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the mode of the theme.
+        /// Gets the mode of the theme.
         /// </summary>
         public ThemeMode ThemeMode { get; internal set; }
 
         /// <summary>
-        /// Returns the route resource for the css theme style.
+        /// Gets the route resource for the css theme style.
         /// </summary>
         public IRoute ThemeStyle { get; internal set; }
     }

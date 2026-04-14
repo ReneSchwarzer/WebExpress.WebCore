@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebPlugin
         public event EventHandler<IPluginContext> RemovePlugin;
 
         /// <summary>
-        /// Returns all plugins.
+        /// Gets all plugins.
         /// </summary>
         public IEnumerable<IPluginContext> Plugins => _dictionary.Values.Select(x => x.PluginContext).ToList();
 

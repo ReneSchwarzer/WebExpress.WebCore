@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.Test
     public sealed class TestFragmentC : IFragment<TestRenderContext, TestVisualTree>
     {
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         public string Id => string.Empty;
 

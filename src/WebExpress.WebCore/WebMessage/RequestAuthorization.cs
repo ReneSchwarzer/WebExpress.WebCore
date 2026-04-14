@@ -16,27 +16,27 @@ namespace WebExpress.WebCore.WebMessage
         private static partial Regex AuthorizationRegex();
 
         /// <summary>
-        /// Returns or sets the authorization type (e.g., Basic, Bearer, ApiKey, Digest, Custom).
+        /// Gets or sets the authorization type (e.g., Basic, Bearer, ApiKey, Digest, Custom).
         /// </summary>
         public string Type { get; set; }
 
         /// <summary>
-        /// Returns or sets the login name for basic auth.
+        /// Gets or sets the login name for basic auth.
         /// </summary>
         public string Identification { get; set; }
 
         /// <summary>
-        /// Returns or sets the password for basic auth.
+        /// Gets or sets the password for basic auth.
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
-        /// Returns or sets the token for bearer or apikey auth.
+        /// Gets or sets the token for bearer or apikey auth.
         /// </summary>
         public string Token { get; set; }
 
         /// <summary>
-        /// Returns or sets the raw data for digest or custom auth.
+        /// Gets or sets the raw data for digest or custom auth.
         /// </summary>
         public string RawData { get; set; }
 

@@ -6,22 +6,22 @@
     public interface IResponse
     {
         /// <summary>
-        /// Returns the response header fields.
+        /// Gets the response header fields.
         /// </summary>
         ResponseHeaderFields Header { get; }
 
         /// <summary>
-        /// Returns or sets the response content.
+        /// Gets or sets the response content.
         /// </summary>
         object Content { get; set; }
 
         /// <summary>
-        /// Returns the status code of the response.
+        /// Gets the status code of the response.
         /// </summary>
         int Status { get; }
 
         /// <summary>
-        /// Returns or sets the reason phrase of the response.
+        /// Gets the reason phrase of the response.
         /// </summary>
         string Reason { get; }
     }

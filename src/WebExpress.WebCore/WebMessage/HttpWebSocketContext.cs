@@ -11,52 +11,52 @@ namespace WebExpress.WebCore.WebMessage
     public class HttpWebSocketContext : IHttpContext
     {
         /// <summary>
-        /// Returns the context of the web server.
+        /// Gets the context of the web server.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns the context id.
+        /// Gets the context id.
         /// </summary>
         public string Id { get; protected set; }
 
         /// <summary>
-        /// Returns the request associated with this context.
+        /// Gets the request associated with this context.
         /// </summary>
         public IRequest Request { get; protected set; }
 
         /// <summary>
-        /// Returns the ip address and port number of the server receiving the request.
+        /// Gets the ip address and port number of the server receiving the request.
         /// </summary>
         public EndPoint LocalEndPoint { get; protected set; }
 
         /// <summary>
-        /// Returns the ip address and port number of the client making the request.
+        /// Gets the ip address and port number of the client making the request.
         /// </summary>
         public EndPoint RemoteEndPoint { get; protected set; }
 
         /// <summary>
-        /// Returns the set of features for this context.
+        /// Gets the set of features for this context.
         /// </summary>
         public IFeatureCollection Features { get; protected set; }
 
         /// <summary>
-        /// Returns the encoding used by this context.
+        /// Gets the encoding used by this context.
         /// </summary>
         public Encoding Encoding { get; protected set; } = Encoding.Default;
 
         /// <summary>
-        /// Returns the URI associated with this context.
+        /// Gets the URI associated with this context.
         /// </summary>
         public Uri Uri { get; internal set; }
 
         /// <summary>
-        /// Returns the WebSocket key for this context.
+        /// Gets the WebSocket key for this context.
         /// </summary>
         public string WebSocketKey { get; protected set; }
 
         /// <summary>
-        /// Returns whether this WebSocket is secure (wss).
+        /// Gets whether this WebSocket is secure (wss).
         /// </summary>
         public bool IsSecureWebSocket { get; protected set; }
 

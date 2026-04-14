@@ -33,33 +33,15 @@ namespace WebExpress.WebCore.WebLog
     /// </code>
     public class Log : ILog
     {
-        /// <summary>
-        /// The directory where the log is created.
-        /// </summary>
+        private readonly Queue<LogItem> _queue = new();
         private string _path;
-
-        /// <summary>
-        /// The thread that takes care of the cyclic writing in the log file.
-        /// </summary>
         private Thread _workerThread;
-
-        /// <summary>
-        /// Constant that determines the further of the separator rows.
-        /// </summary>
-        private const int _SeparatorWidth = 260;
-
-        /// <summary>
-        /// End worker thread lifecycle.
-        /// </summary>
+        private const int _separatorWidth = 260;
         private bool _done = false;
-
-        /// <summary>
-        /// The width of the log entry output in the console.
-        /// </summary>
         private readonly int _width = 250;
 
         /// <summary>
-        /// Returns or sets the encoding.
+        /// Gets or sets the encoding.
         /// </summary>
         public Encoding Encoding { get; set; }
 
@@ -69,22 +51,22 @@ namespace WebExpress.WebCore.WebLog
         public bool DebugMode { get; private set; } = false;
 
         /// <summary>
-        /// Returns the file name of the log
+        /// Gets or sets the file name of the log
         /// </summary>
         public string Filename { get; set; }
 
         /// <summary>
-        /// Returns the number of exceptions.
+        /// Gets the number of exceptions.
         /// </summary>
         public int ExceptionCount { get; protected set; }
 
         /// <summary>
-        /// Returns the number of errors (errors + exceptions).
+        /// Gets the number of errors (errors + exceptions).
         /// </summary>
         public int ErrorCount { get; protected set; }
 
         /// <summary>
-        /// Returns the number of warnings.
+        /// Gets the number of warnings.
         /// </summary>
         public int WarningCount { get; protected set; }
 
@@ -94,29 +76,24 @@ namespace WebExpress.WebCore.WebLog
         public bool IsOpen => _workerThread is not null;
 
         /// <summary>
-        /// Returns the log mode.
+        /// Gets or sets the log mode.
         /// </summary>
         public LogMode LogMode { get; set; }
 
         /// <summary>
-        /// The default instance of the logger.
+        /// Gets the default instance of the logger.
         /// </summary>
         public static Log Current { get; } = new Log();
 
         /// <summary>
-        /// Set file name time patterns.
+        /// Gets or sets file name patterns.
         /// </summary>
         public string FilePattern { set; get; }
 
         /// <summary>
-        /// Time patternsspecifying log entries.
+        /// Gets or sets the time patternsspecifying log entries.
         /// </summary>
         public string TimePattern { set; get; }
-
-        /// <summary>
-        /// Unsaved entries queue.
-        /// </summary>
-        private readonly Queue<LogItem> _queue = new();
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -222,7 +199,7 @@ namespace WebExpress.WebCore.WebLog
                             break;
                     }
 
-                    Console.WriteLine(item.ToString().Length > _SeparatorWidth ? string.Concat(item.ToString().AsSpan(0, _SeparatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
+                    Console.WriteLine(item.ToString().Length > _separatorWidth ? string.Concat(item.ToString().AsSpan(0, _separatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
                     Console.ResetColor();
 
                     _queue.Enqueue(item);
@@ -244,7 +221,7 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="sepChar">The separator.</param>
         public void Separator(char sepChar)
         {
-            Add(LogLevel.Seperartor, "".PadRight(_SeparatorWidth, sepChar));
+            Add(LogLevel.Seperartor, "".PadRight(_separatorWidth, sepChar));
         }
 
         /// <summary>

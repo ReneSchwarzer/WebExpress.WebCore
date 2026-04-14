@@ -6,7 +6,7 @@
     public class HtmlElementMultimediaVideo : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Returns or sets the video uri.
+        /// Gets or sets the video uri.
         /// </summary>
         public string Src
         {

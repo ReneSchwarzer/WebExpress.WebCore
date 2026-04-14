@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementMetadataStyle : HtmlElement, IHtmlElementMetadata
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Code { get; set; }
 

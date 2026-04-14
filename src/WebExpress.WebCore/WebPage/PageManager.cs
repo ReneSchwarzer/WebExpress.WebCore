@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.WebPage
         public event EventHandler<IPageContext> RemovePage;
 
         /// <summary>
-        /// Returns all page contexts.
+        /// Gets all page contexts.
         /// </summary>
         public IEnumerable<IPageContext> Pages => _dictionary.All;
 

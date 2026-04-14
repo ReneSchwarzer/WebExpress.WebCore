@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormMeter : HtmlElement, IHtmlElementForm
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value
         {
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the lower limit of the scale.
+        /// Gets or sets the lower limit of the scale.
         /// </summary>
         public string Min
         {
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the upper limit of the scale.
+        /// Gets or sets the upper limit of the scale.
         /// </summary>
         public string Max
         {
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the upper limit of the "low" range of the scale.
+        /// Gets or sets the upper limit of the "low" range of the scale.
         /// </summary>
         public string Low
         {
@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the lower bound of the "high" range of the scale.
+        /// Gets or sets the lower bound of the "high" range of the scale.
         /// </summary>
         public string High
         {
@@ -63,7 +63,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the optimal value of the scale.
+        /// Gets or sets the optimal value of the scale.
         /// </summary>
         public string Optimum
         {

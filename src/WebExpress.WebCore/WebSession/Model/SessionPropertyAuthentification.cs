@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebSession.Model
     public class SessionPropertyAuthentification : SessionProperty
     {
         /// <summary>
-        /// Returns the identity.
+        /// Gets the identity.
         /// </summary>
         public IIdentity Identity { get; }
 

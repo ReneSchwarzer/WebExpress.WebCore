@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebRestApi
         public event EventHandler<IRestApiContext> RemoveRestApi;
 
         /// <summary>
-        /// Returns all rest api resource contexts.
+        /// Gets all rest api resource contexts.
         /// </summary>
         public IEnumerable<IRestApiContext> RestApis
         {

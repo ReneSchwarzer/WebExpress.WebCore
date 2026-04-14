@@ -6,7 +6,7 @@
     public interface IParameterStatic : IParameter
     {
         /// <summary>
-        /// Returns the key of the parameter.
+        /// Gets the key of the parameter.
         /// </summary>
         static abstract string Key { get; }
 

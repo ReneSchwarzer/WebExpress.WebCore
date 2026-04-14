@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebLog
         public event EventHandler<IPluginContext> RemoveLog;
 
         /// <summary>
-        /// Returns the default log.
+        /// Gets the default log.
         /// </summary>
         public ILog DefaultLog => _httpServerContext.Log;
 

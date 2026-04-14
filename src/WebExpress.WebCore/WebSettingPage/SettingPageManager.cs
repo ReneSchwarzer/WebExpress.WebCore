@@ -66,17 +66,17 @@ namespace WebExpress.WebCore.WebSettingPage
         public event EventHandler<ISettingGroupContext> RemoveSettingGroup;
 
         /// <summary>
-        /// Returns the collection of setting categories.
+        /// Gets the collection of setting categories.
         /// </summary>
         public IEnumerable<ISettingCategoryContext> SettingCategories => _categoryDictionary.All;
 
         /// <summary>
-        /// Returns the collection of setting groups.
+        /// Gets the collection of setting groups.
         /// </summary>
         public IEnumerable<ISettingGroupContext> SettingGroups => _groupDictionary.All;
 
         /// <summary>
-        /// Returns the collection of setting pages.
+        /// Gets the collection of setting pages.
         /// </summary>
         public IEnumerable<ISettingPageContext> SettingPages => _pageDictionary.All;
 

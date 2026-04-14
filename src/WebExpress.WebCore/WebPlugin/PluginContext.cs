@@ -10,47 +10,47 @@ namespace WebExpress.WebCore.WebPlugin
     public class PluginContext : IPluginContext
     {
         /// <summary>
-        /// The assembly that contains the plugin.
+        /// Gets the assembly that contains the plugin.
         /// </summary>
         public Assembly Assembly { get; internal set; }
 
         /// <summary>
-        /// Returns the plugin id.
+        /// Gets the plugin id.
         /// </summary>
         public IComponentId PluginId { get; internal set; }
 
         /// <summary>
-        /// Returns the name of the plugin.
+        /// Gets the name of the plugin.
         /// </summary>
         public string PluginName { get; internal set; }
 
         /// <summary>
-        /// Returns the manufacturer of the plugin.
+        /// Gets the manufacturer of the plugin.
         /// </summary>
         public string Manufacturer { get; internal set; }
 
         /// <summary>
         /// Returns the copyright information.
-        /// </summary>
+        /// </Gets>
         public string Copyright { get; internal set; }
 
         /// <summary>
-        /// Returns the description of the plugin.
+        /// Gets the description of the plugin.
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the version of the plugin.
+        /// Gets the version of the plugin.
         /// </summary>
         public string Version { get; internal set; }
 
         /// <summary>
-        /// Returns the license information.
+        /// Gets the license information.
         /// </summary>
         public string License { get; internal set; }
 
         /// <summary>
-        /// Returns the icon of the plugin.
+        /// Gets the icon of the plugin.
         /// </summary>
         public IRoute Icon { get; internal set; }
 

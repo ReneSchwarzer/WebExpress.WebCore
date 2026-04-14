@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebAttribute
         where TParameter : IParameterStatic, new()
     {
         /// <summary>
-        /// Returns or sets the display string.
+        /// Gets or sets the display string.
         /// </summary>
         private string Display { get; set; }
 

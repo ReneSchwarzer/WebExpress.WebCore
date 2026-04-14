@@ -10,22 +10,22 @@ namespace WebExpress.WebCore.WebJob
     public interface IJobContext : IContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Returns the job id. 
+        /// Gets the job id. 
         /// </summary>
         IComponentId JobId { get; }
 
         /// <summary>
-        /// Returns the cron-object.
+        /// Gets the cron-object.
         /// </summary>
         Cron Cron { get; }
     }

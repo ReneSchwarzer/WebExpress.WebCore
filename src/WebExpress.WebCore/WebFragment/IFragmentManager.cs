@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebHtml;
@@ -27,7 +25,7 @@ namespace WebExpress.WebCore.WebFragment
         event EventHandler<IFragmentContext> RemoveFragment;
 
         /// <summary>
-        /// Returns the collection of fragment contexts.
+        /// Gets the collection of fragment contexts.
         /// </summary>
         IEnumerable<IFragmentContext> Fragments { get; }
 

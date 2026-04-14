@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.WebUri
         }
 
         /// <summary>
-        /// Returns the display format.
+        /// Gets the display format.
         /// </summary>
         public Format DisplayFormat { get; private set; }
 

@@ -11,12 +11,12 @@ namespace WebExpress.WebCore.Test.WWW.Blog.Post.PostId
     public sealed class Index : IPage<VisualTree>
     {
         /// <summary>
-        /// Returns or sets the title of the page.
+        /// Gets or sets the title of the page.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns or sets the page context.
+        /// Gets or sets the page context.
         /// </summary>
         public IPageContext PageContext { get; private set; }
 

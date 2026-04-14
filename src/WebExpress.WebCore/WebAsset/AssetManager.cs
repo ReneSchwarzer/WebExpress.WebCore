@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebAsset
         public event EventHandler<IAssetContext> RemoveAsset;
 
         /// <summary>
-        /// Returns all asset contexts.
+        /// Gets all asset contexts.
         /// </summary>
         public IEnumerable<IAssetContext> Assets => _itemDictionary.All.Select(x => x.AssetContext);
 

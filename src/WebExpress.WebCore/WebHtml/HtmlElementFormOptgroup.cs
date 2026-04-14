@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormOptgroup : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the label.
+        /// Gets or sets the label.
         /// </summary>
         public string Label
         {

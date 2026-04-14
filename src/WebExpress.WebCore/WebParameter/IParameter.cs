@@ -6,12 +6,12 @@
     public interface IParameter
     {
         /// <summary>
-        /// Returns or sets the scope of the parameter.
+        /// Gets or sets the scope of the parameter.
         /// </summary>
         ParameterScope Scope { get; set; }
 
         /// <summary>
-        /// Returns the value of the parameter.
+        /// Gets or sets the value of the parameter.
         /// </summary>
         string Value { get; set; }
     }

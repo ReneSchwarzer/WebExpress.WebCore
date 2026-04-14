@@ -14,11 +14,11 @@ namespace WebExpress.WebCore.WebIdentity
     {
         /// <summary>
         /// Returns all permissions.
-        /// </summary>
+        /// </Gets>
         IEnumerable<IIdentityPermissionContext> Permissions { get; }
 
         /// <summary>
-        /// Returns all policies.
+        /// Gets all policies.
         /// </summary>
         IEnumerable<IIdentityPolicyContext> Policies { get; }
 

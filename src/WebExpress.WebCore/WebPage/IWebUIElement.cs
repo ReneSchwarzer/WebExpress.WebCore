@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebPage
         where TVisualTree : IVisualTree
     {
         /// <summary>
-        /// Returns the id.
+        /// Gets the id.
         /// </summary>
         string Id { get; }
 

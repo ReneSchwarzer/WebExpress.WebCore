@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.WebFragment
     public interface IFragmentContext : IContext
     {
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets the context of the associated plugin.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the application context.
+        /// Gets the application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
 
@@ -30,22 +30,22 @@ namespace WebExpress.WebCore.WebFragment
         IComponentId FragmentId { get; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the component to be active.
+        /// Gets the conditions that must be met for the component to be active.
         /// </summary>
         IEnumerable<ICondition> Conditions { get; }
 
         /// <summary>
-        /// Returns the collection of identity policies for the endpoint.
+        /// Gets the collection of identity policies for the endpoint.
         /// </summary>
         IEnumerable<IIdentityPolicy> Policies { get; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets the section.
         /// </summary>
         Type Section { get; }
 
         /// <summary>
-        /// Returns the scope.
+        /// Gets the scope.
         /// </summary>
         Type Scope { get; }
 

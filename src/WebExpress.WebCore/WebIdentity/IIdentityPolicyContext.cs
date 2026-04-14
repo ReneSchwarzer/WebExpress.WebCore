@@ -11,22 +11,22 @@ namespace WebExpress.WebCore.WebIdentity
     public interface IIdentityPolicyContext : IContext
     {
         /// <summary>
-        /// Returns the policy id.
+        /// Gets the policy id.
         /// </summary>
         IComponentId PolicyId { get; }
 
         /// <summary>
-        /// Returns the policy type.
+        /// Gets the policy type.
         /// </summary>
         Type Policy { get; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
     }

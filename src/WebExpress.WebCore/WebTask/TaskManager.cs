@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebTask
         public event EventHandler<TaskEventArgs> TaskChanged;
 
         /// <summary>
-        /// Returns the collection of tasks.
+        /// Gets the collection of tasks.
         /// </summary>
         public IEnumerable<ITask> Tasks => _dictionary.Values;
 

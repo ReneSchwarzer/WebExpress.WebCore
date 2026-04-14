@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebAsset.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<AssetItem>>> _dictionary = [];
 
         /// <summary>
-        /// Returns all asset items.
+        /// Gets all asset items.
         /// </summary>
         public IEnumerable<AssetItem> All => _dictionary.Values
             .SelectMany(x => x.Values)

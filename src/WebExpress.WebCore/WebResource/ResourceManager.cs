@@ -43,7 +43,7 @@ namespace WebExpress.WebCore.WebResource
         public event EventHandler<IResourceContext> RemoveResource;
 
         /// <summary>
-        /// Returns all resource contexts.
+        /// Gets all resource contexts.
         /// </summary>
         public IEnumerable<IResourceContext> Resources
         {

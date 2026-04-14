@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFieldButton : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns or sets the name of the input field.
+        /// Gets or sets the name of the input field.
         /// </summary>
         public string Name
         {
@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -28,12 +28,12 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets a value.
+        /// Gets or sets a value.
         /// </summary>
         public string Value
         {
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the button is disabled.
+        /// Gets or sets whether the button is disabled.
         /// </summary>
         public bool Disabled
         {
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the identification name of the form element to which it is associated.
+        /// Gets or sets the identification name of the form element to which it is associated.
         /// </summary>
         public string Form
         {
@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the type of button (button, submit, reset).
+        /// Gets or sets the type of button (button, submit, reset).
         /// </summary>
         public string Type
         {
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the tooltip.
+        /// Gets or sets the tooltip.
         /// </summary>
         public string Title
         {

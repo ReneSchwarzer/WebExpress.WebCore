@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<SettingGroupItem>>> _dict = new();
 
         /// <summary>
-        /// Returns the collection of setting groups.
+        /// Gets the collection of setting groups.
         /// </summary>
         public IEnumerable<ISettingGroupContext> All => _dict.Values
             .SelectMany(a => a.Values)

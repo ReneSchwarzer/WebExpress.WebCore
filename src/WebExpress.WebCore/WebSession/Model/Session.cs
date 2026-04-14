@@ -13,22 +13,22 @@ namespace WebExpress.WebCore.WebSession.Model
     public class Session
     {
         /// <summary>
-        /// Returns the session id.
+        /// Gets the session id.
         /// </summary>
         public Guid Id { get; private set; }
 
         /// <summary>
-        /// Returns the creation time.
+        /// Gets the creation time.
         /// </summary>
         public DateTime Created { get; private set; }
 
         /// <summary>
-        /// Returns or sets the time of the last access.
+        /// Gets or sets the time of the last access.
         /// </summary>
         public DateTime Updated { get; set; }
 
         /// <summary>
-        /// Returns or sets properties for the session.
+        /// Gets properties for the session.
         /// </summary>
         public Dictionary<Type, ISessionProperty> Properties { get; private set; }
 

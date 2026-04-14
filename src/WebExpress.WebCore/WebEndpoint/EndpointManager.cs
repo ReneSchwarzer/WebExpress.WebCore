@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebEndpoint
         public event EventHandler<IEndpointContext> RemoveEndpoint;
 
         /// <summary>
-        /// Returns all endpoints contexts.
+        /// Gets all endpoints contexts.
         /// </summary>
         public IEnumerable<IEndpointContext> Endpoints => _registrations.Values.SelectMany(x => x.EndpointsResolver());
 

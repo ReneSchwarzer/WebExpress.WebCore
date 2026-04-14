@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebPage
         event EventHandler<IPageContext> RemovePage;
 
         /// <summary>
-        /// Returns all pages contexts.
+        /// Gets all pages contexts.
         /// </summary>
         IEnumerable<IPageContext> Pages { get; }
 

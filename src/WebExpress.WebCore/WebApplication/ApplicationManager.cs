@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebApplication
         public event EventHandler<IApplicationContext> RemoveApplication;
 
         /// <summary>
-        /// Returns the stored applications.
+        /// Gets the stored applications.
         /// </summary>
         public IEnumerable<IApplicationContext> Applications => _dictionary.All;
 

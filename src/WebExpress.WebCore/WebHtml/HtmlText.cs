@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlText : IHtmlNode
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Value { get; set; }
 

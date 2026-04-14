@@ -19,22 +19,22 @@ namespace WebExpress.WebCore.WebTask
         event EventHandler<TaskEventArgs> Finish;
 
         /// <summary>
-        /// The id of the task.
+        /// Gets the id of the task.
         /// </summary>
         string Id { get; }
 
         /// <summary>
-        /// Returns the state in which the task is located.
+        /// Gets the state in which the task is located.
         /// </summary>
         TaskState State { get; }
 
         /// <summary>
-        /// Returns the progress of the task. The value range is from 0 to 100.
+        /// Gets or sets the progress of the task. The value range is from 0 to 100.
         /// </summary>
         int Progress { get; set; }
 
         /// <summary>
-        /// Returns or sets a message that provides information about the processing.
+        /// Gets or sets a message that provides information about the processing.
         /// </summary>
         string Message { get; set; }
 

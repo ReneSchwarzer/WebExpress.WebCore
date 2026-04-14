@@ -10,12 +10,12 @@ namespace WebExpress.WebCore.WebRestApi
     public interface IRestApiContext : IEndpointContext
     {
         /// <summary>
-        /// Returns the crud methods.
+        /// Gets the crud methods.
         /// </summary>
         IEnumerable<RequestMethod> Methods { get; }
 
         /// <summary>
-        /// Returns the version number of the rest api.
+        /// Gets the version number of the rest api.
         /// </summary>
         uint Version { get; }
     }

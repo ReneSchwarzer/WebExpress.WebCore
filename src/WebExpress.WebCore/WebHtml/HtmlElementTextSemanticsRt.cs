@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextSemanticsRt : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {

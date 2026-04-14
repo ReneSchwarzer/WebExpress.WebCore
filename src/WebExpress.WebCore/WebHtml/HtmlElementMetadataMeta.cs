@@ -8,12 +8,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementMetadataMeta : HtmlElement, IHtmlElementMetadata
     {
         /// <summary>
-        /// Returns or sets the attribute name.
+        /// Gets or sets the attribute name.
         /// </summary>
         public string Key { get; set; }
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value
         {

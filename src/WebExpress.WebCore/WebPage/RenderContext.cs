@@ -11,27 +11,27 @@ namespace WebExpress.WebCore.WebPage
     public class RenderContext : IRenderContext
     {
         /// <summary>
-        /// Returns the page context.
+        /// Gets the page context.
         /// </summary>
         public IPageContext PageContext { get; protected set; }
 
         /// <summary>
-        /// Returns the request.
+        /// Gets the request.
         /// </summary>
         public IRequest Request { get; protected set; }
 
         /// <summary>
-        /// The uri of the request.
+        /// Gets the uri of the request.
         /// </summary>
         public IUri Uri => Request?.Uri;
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets the culture.
         /// </summary>
         public CultureInfo Culture => Request?.Culture;
 
         /// <summary>
-        /// Returns the endpoint associated with the rendering context.
+        /// Gets the endpoint associated with the rendering context.
         /// </summary>
         public IEndpoint Endpoint { get; protected set; }
 

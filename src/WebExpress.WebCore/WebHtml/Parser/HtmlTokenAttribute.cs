@@ -6,18 +6,18 @@ namespace WebExpress.WebCore.WebHtml.Parser
     public class HtmlTokenAttribute
     {
         /// <summary>
-        /// Returns the attribute name (lower-cased).
+        /// Gets the attribute name (lower-cased).
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Returns the attribute value, or <c>null</c> if the attribute is boolean
+        /// Gets the attribute value, or <c>null</c> if the attribute is boolean
         /// (has no explicit value, e.g. <c>disabled</c>).
         /// </summary>
         public string Value { get; }
 
         /// <summary>
-        /// Returns a value indicating whether this is a boolean (valueless) attribute.
+        /// Gets a value indicating whether this is a boolean (valueless) attribute.
         /// </summary>
         public bool IsBoolean => Value is null;
 

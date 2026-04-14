@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementSectionFooter : HtmlElement, IHtmlElementSection
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {

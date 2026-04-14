@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementEmbeddedIframe : HtmlElement, IHtmlElementEmbedded
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 

@@ -10,17 +10,17 @@ namespace WebExpress.WebCore.Test
     public class TestRenderContext : IRenderContext
     {
         /// <summary>
-        /// Returns the endpoint associated with the rendering context.
+        /// Gets the endpoint associated with the rendering context.
         /// </summary>
         public IEndpoint Endpoint { get; protected set; }
 
         /// <summary>
-        /// Returns the page context.
+        /// Gets the page context.
         /// </summary>
         public IPageContext PageContext { get; protected set; }
 
         /// <summary>
-        /// Returns the request.
+        /// Gets the request.
         /// </summary>
         public IRequest Request { get; protected set; }
 

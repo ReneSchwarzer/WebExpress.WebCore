@@ -14,32 +14,32 @@ namespace WebExpress.WebCore.WebSocket.Model
     internal class SocketItem : IDisposable
     {
         /// <summary>
-        /// Returns the endpoint id.
+        /// Gets the endpoint id.
         /// </summary>
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the type of socket class.
+        /// Gets or sets the type of socket class.
         /// </summary>
         public Type SocketClass { get; set; }
 
         /// <summary>
-        /// Returns the name of the WebSocket subprotocol that is supported by the connection.
+        /// Gets or sets the name of the WebSocket subprotocol that is supported by the connection.
         /// </summary>
         public string SupportedSubProtocol { get; set; }
 
         /// <summary> 
-        /// Returns the default WebSocket message type used by this endpoint when 
+        /// Gets or sets the default WebSocket message type used by this endpoint when 
         /// sending data. Implementations may choose <see cref="SocketMessageType.Text"/> 
         /// for JSON or human-readable content, or <see cref="SocketMessageType.Binary"/> 
         /// for binary payloads. 
@@ -47,35 +47,35 @@ namespace WebExpress.WebCore.WebSocket.Model
         public SocketMessageType MessageType { get; set; }
 
         /// <summary>
-        /// Returns the maximum allowed message size in bytes, or null when the endpoint imposes no limit.
+        /// Gets or sets the maximum allowed message size in bytes, or null when the endpoint imposes no limit.
         /// servers and hosts may use this to protect against excessively large frames.
         /// </summary>
         public ulong? MaxMessageSize { get; set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the resource to be active.
+        /// Gets or sets the conditions that must be met for the resource to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; set; }
 
         /// <summary>
-        /// Returns whether the resource is created once and reused each time it is called.
+        /// Gets or sets whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache { get; set; }
 
         /// <summary>
-        /// Returns the attributes associated with the socket.
+        /// Gets the attributes associated with the socket.
         /// </summary>
         public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
-        /// Returns the socket context.
+        /// Gets the socket context.
         /// note: reuses ISocketContext to remain compatible with existing contexts;
         /// replace with a dedicated socket context type if one exists.
         /// </summary>
         public ISocketContext SocketContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the instance of the socket endpoint, if the endpoint is cached, otherwise null.
+        /// Gets or sets the instance of the socket endpoint, if the endpoint is cached, otherwise null.
         /// </summary>
         public ISocket Instance { get; set; }
 

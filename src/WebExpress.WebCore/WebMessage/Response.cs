@@ -9,22 +9,22 @@ namespace WebExpress.WebCore.WebMessage
     public abstract class Response : IResponse
     {
         /// <summary>
-        /// Returns the response header fields.
+        /// Gets the response header fields.
         /// </summary>
         public ResponseHeaderFields Header { get; } = new ResponseHeaderFields();
 
         /// <summary>
-        /// Returns or sets the response content.
+        /// Gets or sets the response content.
         /// </summary>
         public object Content { get; set; }
 
         /// <summary>
-        /// Returns the status code of the response.
+        /// Gets the status code of the response.
         /// </summary>
         public int Status => GetType().GetCustomAttribute<StatusCodeAttribute>().StatusCode;
 
         /// <summary>
-        /// Returns or sets the reason phrase of the response.
+        /// Gets the reason phrase of the response.
         /// </summary>
         public string Reason { get; protected set; }
 

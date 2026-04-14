@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebResource
     public abstract class Resource : IResource
     {
         /// <summary>
-        /// Returns the resource context where the resource exists.
+        /// Gets the resource context where the resource exists.
         /// </summary>
         public IResourceContext ResourceContext { get; private set; }
 

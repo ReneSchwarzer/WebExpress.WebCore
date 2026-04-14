@@ -21,17 +21,17 @@ namespace WebExpress.WebCore.WebSettingPage
         event EventHandler<ISettingPageContext> RemoveSettingPage;
 
         /// <summary>
-        /// Returns the collection of setting categories.
+        /// Gets the collection of setting categories.
         /// </summary>
         IEnumerable<ISettingCategoryContext> SettingCategories { get; }
 
         /// <summary>
-        /// Returns the collection of setting groups.
+        /// Gets the collection of setting groups.
         /// </summary>
         IEnumerable<ISettingGroupContext> SettingGroups { get; }
 
         /// <summary>
-        /// Returns the collection of setting pages.
+        /// Gets the collection of setting pages.
         /// </summary>
         IEnumerable<ISettingPageContext> SettingPages { get; }
 

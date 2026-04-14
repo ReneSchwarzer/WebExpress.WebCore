@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
         private readonly List<IHtmlNode> _elements = [];
 
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public IEnumerable<IHtmlNode> Elements => _elements;
 

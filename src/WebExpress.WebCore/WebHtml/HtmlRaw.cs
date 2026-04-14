@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlRaw : IHtmlNode
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Html { get; set; }
 

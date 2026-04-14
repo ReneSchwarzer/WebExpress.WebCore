@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlAttributeNoneValue : IHtmlAttribute
     {
         /// <summary>
-        /// Returns or sets the name. des Attributes
+        /// Gets or sets the name. des Attributes
         /// </summary>
         public string Name { get; set; }
 

@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class ContextPathAttribute : Attribute, IApplicationAttribute, IEndpointAttribute
     {
         /// <summary>
-        /// Returns the context path associated with the current instance.
+        /// Gets the context path associated with the current instance.
         /// </summary>
         public string ContextPath { get; }
 

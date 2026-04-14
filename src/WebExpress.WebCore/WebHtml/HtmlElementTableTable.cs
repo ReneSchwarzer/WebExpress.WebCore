@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTableTable : HtmlElement, IHtmlElementTable
     {
         /// <summary>
-        /// Returns or sets the columns.
+        /// Gets or sets the columns.
         /// </summary>
         public HtmlElementTableTr Columns { get; set; }
 
         /// <summary>
-        /// Returns or sets the rows.
+        /// Gets or sets the rows.
         /// </summary>
         public List<HtmlElementTableTr> Rows { get; private set; }
 

@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebPackage
         private CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Returns the catalog of installed packages.
+        /// Gets the catalog of installed packages.
         /// </summary>
         public PackageCatalog Catalog { get; } = new PackageCatalog();
 

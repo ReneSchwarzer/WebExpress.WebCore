@@ -11,27 +11,27 @@ namespace WebExpress.WebCore.WebSitemap.Model
     public class SitemapNode
     {
         /// <summary>
-        /// Returns the node path segment.
+        /// Gets the node path segment.
         /// </summary>
         public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
-        /// Returns the context of the endpoint.
+        /// Gets the context of the endpoint.
         /// </summary>
         public IEndpointContext EndpointContext { get; internal set; }
 
         /// <summary>
-        /// Returns the child nodes.
+        /// Gets the child nodes.
         /// </summary>
         public ICollection<SitemapNode> Children { get; private set; } = [];
 
         /// <summary>
-        /// Returns the parent node.
+        /// Gets the parent node.
         /// </summary>
         public SitemapNode Parent { get; internal set; }
 
         /// <summary>
-        /// returns the root.
+        /// Gets the root.
         /// </summary>
         public SitemapNode Root
         {
@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.WebSitemap.Model
         public bool IsLeaf => Children.Count == 0;
 
         /// <summary>
-        /// Returns the path.
+        /// Gets the path.
         /// </summary>
         /// <returns>The path.</returns>
         public ICollection<SitemapNode> Path

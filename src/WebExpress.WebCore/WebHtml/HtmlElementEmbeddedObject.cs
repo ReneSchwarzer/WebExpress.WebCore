@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementEmbeddedObject : HtmlElement, IHtmlElementEmbedded
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 

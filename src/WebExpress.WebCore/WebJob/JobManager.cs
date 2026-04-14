@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebJob
         public event EventHandler<IJobContext> RemoveJob;
 
         /// <summary>
-        /// Returns all job contextes.
+        /// Gets all job contextes.
         /// </summary>
         public IEnumerable<IJobContext> Jobs => _staticScheduleDictionary
             .SelectMany(x => x.Value)

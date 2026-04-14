@@ -11,27 +11,27 @@ namespace WebExpress.WebCore.WebIdentity
     public class IdentityPolicyContext : IIdentityPolicyContext
     {
         /// <summary>
-        /// Returns the policy id.
+        /// Gets the policy id.
         /// </summary>
         public IComponentId PolicyId { get; internal set; }
 
         /// <summary>
-        /// Returns the policy type.
+        /// Gets the policy type.
         /// </summary>
         public Type Policy { get; internal set; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// Gets a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()

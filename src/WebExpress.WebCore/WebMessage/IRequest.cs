@@ -15,77 +15,77 @@ namespace WebExpress.WebCore.WebMessage
     public interface IRequest
     {
         /// <summary>
-        /// Returns the context of the web server.
+        /// Gets the context of the web server.
         /// </summary>
         IHttpServerContext HttpServerContext { get; }
 
         /// <summary>
-        /// Returns the application context associated with the current component.
+        /// Gets the application context associated with the current component.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Returns the context information associated with the current endpoint.
+        /// Gets the context information associated with the current endpoint.
         /// </summary>
         IEndpointContext EndpointContext { get; }
 
         /// <summary>
-        /// Returns the request method (e.g. POST).
+        /// Gets the request method (e.g. POST).
         /// </summary>
         RequestMethod Method { get; }
 
         /// <summary>
-        /// Returns the uri.
+        /// Gets the uri.
         /// </summary>
         UriEndpoint Uri { get; internal set; }
 
         /// <summary>
-        /// Returns the session.
+        /// Gets the session.
         /// </summary>
         Session Session { get; }
 
         /// <summary>
-        /// Returns the http version.
+        /// Gets the http version.
         /// </summary>
         string Protocoll { get; }
 
         /// <summary>
-        /// Returns the options from the header.
+        /// Gets the options from the header.
         /// </summary>
         RequestHeaderFields Header { get; }
 
         /// <summary>
-        /// Returns the ip address and port number of the server to which the request is made.
+        /// Gets the ip address and port number of the server to which the request is made.
         /// </summary>
         EndPoint LocalEndPoint { get; }
 
         /// <summary>
-        /// Returns the ip address and port number of the client from which the request originated.
+        /// Gets the ip address and port number of the client from which the request originated.
         /// </summary>
         EndPoint RemoteEndPoint { get; }
 
         /// <summary>
-        /// Returns a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
+        /// Gets a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
         /// </summary>
         bool IsSecureConnection { get; }
 
         /// <summary>
-        /// Returns the schema. This can be http or https.
+        /// Gets the schema. This can be http or https.
         /// </summary>
         UriScheme Scheme { get; }
 
         /// <summary>
-        /// Returns the request identifier of the incoming http request.
+        /// Gets the request identifier of the incoming http request.
         /// </summary>
         string RequestTraceIdentifier { get; }
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets the culture.
         /// </summary>
         CultureInfo Culture { get; }
 
         /// <summary>
-        /// Returns the collection of parameters associated with the request.
+        /// Gets the collection of parameters associated with the request.
         /// </summary>
         IEnumerable<IParameter> Parameters { get; }
 

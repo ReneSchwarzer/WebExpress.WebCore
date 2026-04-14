@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class SettingSectionAttribute : Attribute, IEndpointAttribute, ISettingCategoryAttribute, ISettingGroupAttribute
     {
         /// <summary>
-        /// Returns the configuration section associated with the current settings.
+        /// Gets the configuration section associated with the current settings.
         /// </summary>
         public SettingSection Section { get; }
 

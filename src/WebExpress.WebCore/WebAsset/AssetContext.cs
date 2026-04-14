@@ -15,47 +15,47 @@ namespace WebExpress.WebCore.WebAsset
     public class AssetContext : IAssetContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the resource to be active.
+        /// Gets the conditions that must be met for the resource to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions => [];
 
         /// <summary>
-        /// Returns the resource id.
+        /// Gets the resource id.
         /// </summary>
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns whether the resource is created once and reused each time it is called.
+        /// Gets whether the resource is created once and reused each time it is called.
         /// </summary>
         public bool Cache => true;
 
         /// <summary>
-        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// Gets whether all subpaths should be taken into sitemap.
         /// </summary>
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the internal routing path for the endpoint.
+        /// Gets the internal routing path for the endpoint.
         /// </summary>
         public IRoute Route { get; internal set; }
 
         /// <summary>
-        /// Returns the attributes associated with the page.
+        /// Gets the attributes associated with the page.
         /// </summary>
         public IEnumerable<Attribute> Attributes => [];
 
         /// <summary>
-        /// Returns the collection of identity policies for the endpoint.
+        /// Gets the collection of identity policies for the endpoint.
         /// </summary>
         public IEnumerable<IIdentityPolicy> Policies => [];
 

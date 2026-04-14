@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.Test.WWW.Settings
     public sealed class TestSettingPageA : ISettingPage<VisualTree>
     {
         /// <summary>
-        /// Returns or sets the setting page context.
+        /// Gets or sets the setting page context.
         /// </summary>
         public ISettingPageContext PageContext { get; private set; }
 

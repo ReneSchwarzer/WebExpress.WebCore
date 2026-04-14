@@ -11,17 +11,17 @@ namespace WebExpress.WebCore.WebMessage
     public class HttpContext : IHttpContext
     {
         /// <summary>
-        /// The context of the web server.
+        /// Gets the context of the web server.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets the id.
         /// </summary>
         public string Id { get; protected set; }
 
         /// <summary>
-        /// Returns the request.
+        /// Gets the request.
         /// </summary>
         public IRequest Request { get; protected set; }
 
@@ -36,17 +36,17 @@ namespace WebExpress.WebCore.WebMessage
         public EndPoint RemoteEndPoint { get; protected set; }
 
         /// <summary>
-        /// Set of features.
+        /// Getsthe set of features.
         /// </summary>
         public IFeatureCollection Features { get; protected set; }
 
         /// <summary>
-        /// The encoding.
+        /// Gets the encoding.
         /// </summary>
         public Encoding Encoding { get; protected set; } = Encoding.Default;
 
         /// <summary>
-        /// Returns the uri.
+        /// Gets the uri.
         /// </summary>
         public Uri Uri { get; internal set; }
 

@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormProgress : HtmlElement, IHtmlElementForm
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value
         {

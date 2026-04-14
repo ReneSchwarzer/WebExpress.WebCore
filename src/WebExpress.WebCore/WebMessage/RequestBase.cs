@@ -22,72 +22,72 @@ namespace WebExpress.WebCore.WebMessage
         private readonly ParameterDictionary _param = [];
 
         /// <summary>
-        /// The context of the web server.
+        /// Gets the context of the web server.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns the application context associated with the current component.
+        /// Gets the application context associated with the current component.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the context information associated with the current endpoint.
+        /// Gets the context information associated with the current endpoint.
         /// </summary>
         public IEndpointContext EndpointContext { get; internal set; }
 
         /// <summary>
-        /// Returns the request method (e.g. POST).
+        /// Gets the request method (e.g. POST).
         /// </summary>
         public RequestMethod Method { get; private set; }
 
         /// <summary>
-        /// Returns the uri.
+        /// Gets or sets the uri.
         /// </summary>
         public UriEndpoint Uri { get; set; }
 
         /// <summary>
-        /// Returns the session.
+        /// Gets the session.
         /// </summary>
         public Session Session { get; private set; }
 
         /// <summary>
-        /// Returns the http version.
+        /// Gets the http version.
         /// </summary>
         public string Protocoll { get; private set; }
 
         /// <summary>
-        /// Returns the options from the header.
+        /// Gets the options from the header.
         /// </summary>
         public RequestHeaderFields Header { get; private set; }
 
         /// <summary>
-        /// Returns the ip address and port number of the server to which the request is made.
+        /// Gets the ip address and port number of the server to which the request is made.
         /// </summary>
         public EndPoint LocalEndPoint { get; private set; }
 
         /// <summary>
-        /// Returns the ip address and port number of the client from which the request originated.
+        /// Gets the ip address and port number of the client from which the request originated.
         /// </summary>
         public EndPoint RemoteEndPoint { get; private set; }
 
         /// <summary>
-        /// Returns a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
+        /// Gets a boolean value that indicates whether the tcp connection used to send the request uses the secure sockets layer (ssl) protocol.
         /// </summary>
         public bool IsSecureConnection { get; private set; }
 
         /// <summary>
-        /// Returns the shema. This can be http or https.
+        /// Gets the shema. This can be http or https.
         /// </summary>
         public UriScheme Scheme { get; private set; }
 
         /// <summary>
-        /// Returns the request identifier of the incoming http request.
+        /// Gets the request identifier of the incoming http request.
         /// </summary>
         public string RequestTraceIdentifier { get; private set; }
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets the culture.
         /// </summary>
         public CultureInfo Culture
         {
@@ -109,7 +109,7 @@ namespace WebExpress.WebCore.WebMessage
         }
 
         /// <summary>
-        /// Returns the collection of parameters associated with the request.
+        /// Gets the collection of parameters associated with the request.
         /// </summary>
         public IEnumerable<IParameter> Parameters => _param.Values;
 

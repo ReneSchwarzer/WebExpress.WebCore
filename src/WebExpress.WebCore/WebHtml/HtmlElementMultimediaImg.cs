@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementMultimediaImg : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Returns or sets the alternate text., wenn das Bild nicht angezeigt werden kann
+        /// Gets or sets the alternate text., wenn das Bild nicht angezeigt werden kann
         /// </summary>
         public string Alt
         {
@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the tooltip.
+        /// Gets or sets the tooltip.
         /// </summary>
         public string Title
         {
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the image uri.
+        /// Gets or sets the image uri.
         /// </summary>
         public string Src
         {
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Width
         {
@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Height
         {
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the target.
+        /// Gets or sets the target.
         /// </summary>
         public string Target
         {

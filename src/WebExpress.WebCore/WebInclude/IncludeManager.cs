@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebInclude
         public event EventHandler<IIncludeContext> RemoveInclude;
 
         /// <summary>
-        /// Returns all include contexts.
+        /// Gets all include contexts.
         /// </summary>
         public IEnumerable<IIncludeContext> Includes => _dictionary.Values
             .SelectMany(x => x.Values)

@@ -11,42 +11,42 @@ namespace WebExpress.WebCore.WebSettingPage
     public class SettingGroupContext : ISettingGroupContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the setting category context to which the setting group belongs.
+        /// Gets the setting category context to which the setting group belongs.
         /// </summary>
         public ISettingCategoryContext SettingCategory { get; internal set; }
 
         /// <summary>
-        /// Returns the group id.
+        /// Gets the group id.
         /// </summary>
         public IComponentId GroupId { get; internal set; }
 
         /// <summary>
-        /// Returns the icon.
+        /// Gets the icon.
         /// </summary>
         public IIcon Icon { get; internal set; }
 
         /// <summary>
-        /// Returns the name.
+        /// Gets the name.
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Returns the description.
+        /// Gets the description.
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets the section.
         /// </summary>
         public SettingSection Section { get; internal set; }
 

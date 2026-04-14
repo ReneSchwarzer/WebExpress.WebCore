@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebMessage
         private static partial Regex ContentRegex();
 
         /// <summary>
-        /// Returns the content.
+        /// Gets the content.
         /// </summary>
         public byte[] Content { get; private set; }
 

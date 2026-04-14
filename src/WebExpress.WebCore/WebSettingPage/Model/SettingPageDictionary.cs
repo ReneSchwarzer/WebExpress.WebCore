@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<SettingPageItem>>> _dict = [];
 
         /// <summary>
-        /// Returns the collection of setting pages.
+        /// Gets the collection of setting pages.
         /// </summary>
         public IEnumerable<ISettingPageContext> All => _dict.Values
             .SelectMany(a => a.Values)

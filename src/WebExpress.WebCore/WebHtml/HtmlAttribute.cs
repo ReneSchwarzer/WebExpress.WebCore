@@ -8,12 +8,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlAttribute : IHtmlAttribute
     {
         /// <summary>
-        /// Returns or sets the name of the attribute.
+        /// Gets or sets the name of the attribute.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value { get; set; }
 

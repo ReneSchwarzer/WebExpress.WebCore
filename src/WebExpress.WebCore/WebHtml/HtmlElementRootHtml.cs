@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementRootHtml : HtmlElement, IHtmlElementRoot
     {
         /// <summary>
-        /// Returns or sets the head.
+        /// Gets or sets the head.
         /// </summary>
         public HtmlElementMetadataHead Head { get; private set; }
 
         /// <summary>
-        /// Returns or sets the body.
+        /// Gets or sets the body.
         /// </summary>
         public HtmlElementSectionBody Body { get; private set; }
 

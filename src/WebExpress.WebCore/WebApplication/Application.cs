@@ -8,12 +8,12 @@ namespace WebExpress.WebCore.WebApplication
     public abstract class Application : IApplication
     {
         /// <summary>
-        /// Returns the context of the application.
+        /// Gets the context of the application.
         /// </summary>
         public IApplicationContext ApplicationContext { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Application"/> class.
+        /// Initializes a new instance of the class.
         /// </summary>
         public Application()
         {

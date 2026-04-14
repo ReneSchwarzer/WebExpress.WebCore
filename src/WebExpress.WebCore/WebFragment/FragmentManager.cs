@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebFragment
         public event EventHandler<IFragmentContext> RemoveFragment;
 
         /// <summary>
-        /// Returns the collection of fragment contexts.
+        /// Gets the collection of fragment contexts.
         /// </summary>
         public IEnumerable<IFragmentContext> Fragments => _dictionary.All;
 

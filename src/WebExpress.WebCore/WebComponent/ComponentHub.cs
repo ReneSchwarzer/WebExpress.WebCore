@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebComponent
         public event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
-        /// Returns all registered managers.
+        /// Gets all registered managers.
         /// </summary>
         public IEnumerable<IComponentManager> Managers => new IComponentManager[]
             {
@@ -98,133 +98,133 @@ namespace WebExpress.WebCore.WebComponent
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
         /// <summary>
-        /// Returns the log manager.
+        /// Gets the log manager.
         /// </summary>
         /// <returns>The instance of the log manager.</returns>
         public ILogManager LogManager => _logManager;
 
         /// <summary>
-        /// Returns the package manager.
+        /// Gets the package manager.
         /// </summary>
         /// <returns>The instance of the package manager.</returns>
         public IPackageManager PackageManager => _packageManager;
 
         /// <summary>
-        /// Returns the plugin manager.
+        /// Gets the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager.</returns>
         public IPluginManager PluginManager => _pluginManager;
 
         /// <summary>
-        /// Returns the application manager.
+        /// Gets the application manager.
         /// </summary>
         /// <returns>The instance of the application manager.</returns>
         public IApplicationManager ApplicationManager => _applicationManager;
 
         /// <summary>
-        /// Returns the event manager.
+        /// Gets the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
         public IEventManager EventManager => _eventManager;
 
         /// <summary>
-        /// Returns the job manager.
+        /// Gets the job manager.
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         public IJobManager JobManager => _jobManager;
 
         /// <summary>
-        /// Returns the task manager.
+        /// Gets the task manager.
         /// </summary>
         /// <returns>The instance of the task manager.</returns>
         public ITaskManager TaskManager => _taskManager;
 
         /// <summary>
-        /// Returns the endpoint manager.
+        /// Gets the endpoint manager.
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
         public IEndpointManager EndpointManager => _endpointManager;
 
         /// <summary>
-        /// Returns the asset manager.
+        /// Gets the asset manager.
         /// </summary>
         /// <returns>The instance of the asset manager.</returns>
         public IAssetManager AssetManager => _assetManager;
 
         /// <summary>
-        /// Returns the resource manager.
+        /// Gets the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
         public IResourceManager ResourceManager => _resourceManager;
 
         /// <summary>
-        /// Returns the include manager.
+        /// Gets the include manager.
         /// </summary>
         /// <returns>The instance of the include manager.</returns>
         public IIncludeManager IncludeManager => _includeManager;
 
         /// <summary>
-        /// Returns the page manager.
+        /// Gets the page manager.
         /// </summary>
         /// <returns>The instance of the page manager.</returns>
         public IPageManager PageManager => _pageManager;
 
         /// <summary>
-        /// Returns the setting page manager.
+        /// Gets the setting page manager.
         /// </summary>
         /// <returns>The instance of the setting page manager.</returns>
         public ISettingPageManager SettingPageManager => _settingPageManager;
 
         /// <summary>
-        /// Returns the rest api manager.
+        /// Gets the rest api manager.
         /// </summary>
         /// <returns>The instance of the rest api manager.</returns>
         public IRestApiManager RestApiManager => _restApiManager;
 
         /// <summary>
-        /// Returns the sitemap manager.
+        /// Gets the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         public ISitemapManager SitemapManager => _sitemapManager;
 
         /// <summary>
-        /// Returns the fragment manager.
+        /// Gets the fragment manager.
         /// </summary>
         /// <returns>The instance of the fragment manager.</returns>
         public IFragmentManager FragmentManager => _fragmentManager;
 
         /// <summary>
-        /// Returns the status page manager.
+        /// Gets the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager.</returns>
         public IStatusPageManager StatusPageManager => _statusPageManager;
 
         /// <summary>
-        /// Returns the internationalization manager.
+        /// Gets the internationalization manager.
         /// </summary>
         /// <returns>The instance of the internationalization manager.</returns>
         public IInternationalizationManager InternationalizationManager => _internationalizationManager;
 
         /// <summary>
-        /// Returns the identity manager.
+        /// Gets the identity manager.
         /// </summary>
         /// <returns>The instance of the identity manager.</returns>
         public IIdentityManager IdentityManager => _identityManager;
 
         /// <summary>
-        /// Returns the session manager.
+        /// Gets the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
-        /// Returns the socket manager.
+        /// Gets the socket manager.
         /// </summary>
         /// <returns>The instance of the socket manager.</returns>
         public ISocketManager SocketManager => _socketManager;
 
         /// <summary>
-        /// Returns the theme manager.
+        /// Gets the theme manager.
         /// </summary>
         /// <returns>The instance of the theme manager.</returns>
         public IThemeManager ThemeManager => _themeManager;

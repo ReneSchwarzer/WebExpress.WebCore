@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebIdentity
         private readonly Dictionary<IApplicationContext, List<IIdentityProvider>> _identityProviders = [];
 
         /// <summary>
-        /// Returns all permissions.
+        /// Gets all permissions.
         /// </summary>
         public IEnumerable<IIdentityPermissionContext> Permissions => _permissionDictionary.Values
             .SelectMany(x => x.Values)
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebIdentity
             .Select(x => x.PermissionContext);
 
         /// <summary>
-        /// Returns all policies.
+        /// Gets all policies.
         /// </summary>
         public IEnumerable<IIdentityPolicyContext> Policies => _policyDictionary.Values
             .SelectMany(x => x.Values)
