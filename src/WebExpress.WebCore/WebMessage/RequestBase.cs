@@ -5,6 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSession.Model;
 using WebExpress.WebCore.WebUri;
@@ -23,6 +25,16 @@ namespace WebExpress.WebCore.WebMessage
         /// The context of the web server.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
+
+        /// <summary>
+        /// Returns the application context associated with the current component.
+        /// </summary>
+        public IApplicationContext ApplicationContext { get; internal set; }
+
+        /// <summary>
+        /// Returns the context information associated with the current endpoint.
+        /// </summary>
+        public IEndpointContext EndpointContext { get; internal set; }
 
         /// <summary>
         /// Returns the request method (e.g. POST).

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSession.Model;
 using WebExpress.WebCore.WebUri;
@@ -13,9 +15,19 @@ namespace WebExpress.WebCore.WebMessage
     public interface IRequest
     {
         /// <summary>
-        /// The context of the web server.
+        /// Returns the context of the web server.
         /// </summary>
         IHttpServerContext HttpServerContext { get; }
+
+        /// <summary>
+        /// Returns the application context associated with the current component.
+        /// </summary>
+        IApplicationContext ApplicationContext { get; }
+
+        /// <summary>
+        /// Returns the context information associated with the current endpoint.
+        /// </summary>
+        IEndpointContext EndpointContext { get; }
 
         /// <summary>
         /// Returns the request method (e.g. POST).

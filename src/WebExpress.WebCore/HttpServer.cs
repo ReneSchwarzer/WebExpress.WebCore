@@ -596,7 +596,7 @@ namespace WebExpress.WebCore
                 HttpServerContext = HttpServerContext
             });
 
-            if (searchResult == null)
+            if (searchResult is null || searchResult.EndpointContext is null)
             {
                 var notFoundResponse = CreateStatusPage<ResponseNotFound>
                 (
@@ -607,6 +607,14 @@ namespace WebExpress.WebCore
                 await responseSender.SendAsync(httpContext, notFoundResponse);
 
                 return;
+            }
+
+            var applicationContext = searchResult.EndpointContext.ApplicationContext;
+
+            if (httpContext.Request is Request request)
+            {
+                request.ApplicationContext = applicationContext;
+                request.EndpointContext = searchResult.EndpointContext;
             }
 
             if (httpContext is HttpWebSocketContext)
@@ -629,7 +637,6 @@ namespace WebExpress.WebCore
             }
 
             var identity = _componentHub.IdentityManager.GetCurrentIdentity(httpContext.Request);
-            var applicationContext = searchResult.EndpointContext.ApplicationContext;
 
             // if access is granted
             if (_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
