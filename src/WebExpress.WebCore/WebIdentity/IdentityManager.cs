@@ -421,7 +421,7 @@ namespace WebExpress.WebCore.WebIdentity
             {
                 foreach (var provider in list)
                 {
-                    var response = provider.CreateForbiddenResponse(request, initiator, identity);
+                    var response = provider.CreateForbiddenPage(request, initiator, identity);
 
                     if (response is not null)
                     {

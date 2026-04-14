@@ -77,6 +77,6 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if this provider can handle the forbidden
         /// scenario; otherwise, <c>null</c>.
         /// </returns>
-        IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateForbiddenPage(IRequest request, IEndpointContext initiator, IIdentity identity);
     }
 }
