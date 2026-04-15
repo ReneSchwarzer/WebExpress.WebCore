@@ -105,7 +105,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="icon">The page icon.</param>
         /// <param name="scopes">The scope types.</param>
         /// <param name="domains">The domain types.</param>
-        public PageContext(IEndpointContext endpointContext, string title = null, IIcon icon = null, IEnumerable<Type> scopes = null, IEnumerable<Type> domains = null)
+        public PageContext(WebEndpoint.IEndpointContext endpointContext, string title = null, IIcon icon = null, IEnumerable<Type> scopes = null, IEnumerable<Type> domains = null)
         {
             PluginContext = endpointContext.PluginContext;
             ApplicationContext = endpointContext.ApplicationContext;

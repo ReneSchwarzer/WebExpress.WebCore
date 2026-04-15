@@ -153,10 +153,10 @@ namespace WebExpress.WebCore.Test.Manager
             var identity = MockIdentityFactory.GetIdentity(identityName);
 
             // act
-            var res = identityManager.Login(request, identity);
+            var res = identityManager.Login(identity, request);
 
             // validation
-            Assert.Equal(expected, res);
+            Assert.Equal(expected, res is not null);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace WebExpress.WebCore.Test.Manager
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
-            identityManager.Login(request, identity);
+            identityManager.Login(identity, request);
 
             // act
             identityManager.Logout(request);
@@ -197,7 +197,7 @@ namespace WebExpress.WebCore.Test.Manager
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
-            identityManager.Login(request, identity);
+            identityManager.Login(identity, request);
 
             // act
             var res = identityManager.GetCurrentIdentity(request);

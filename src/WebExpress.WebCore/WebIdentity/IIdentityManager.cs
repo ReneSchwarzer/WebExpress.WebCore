@@ -4,6 +4,8 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
+using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -13,8 +15,8 @@ namespace WebExpress.WebCore.WebIdentity
     public interface IIdentityManager : IComponentManager
     {
         /// <summary>
-        /// Returns all permissions.
-        /// </Gets>
+        /// Gets all permissions.
+        /// </summary>
         IEnumerable<IIdentityPermissionContext> Permissions { get; }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results and any
         /// relevant status information.
         /// </returns>
-        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null);
+        IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity = null);
 
         /// <summary>
         /// Creates a forbidden response page for the specified request when the authenticated
@@ -59,29 +61,15 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if a registered identity provider can handle the 
         /// forbidden scenario; otherwise, <c>null</c>.
         /// </returns>
-        IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity);
-
-        /// <summary>
-        /// Attempts to authenticate the specified request within the given application context.
-        /// </summary>
-        /// <param name="request">
-        /// The request to be authenticated. Must not be null.
-        /// </param>
-        /// <param name="applicationContext">
-        /// The application context in which the authentication is performed. Must not be null.
-        /// </param>
-        /// <returns>
-        /// An identity representing the authenticated user if authentication is successful; otherwise, null.
-        /// </returns>
-        IIdentity Authenticate(IRequest request, IApplicationContext applicationContext);
+        IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity);
 
         /// <summary>
         /// Login an identity.
         /// </summary>
-        /// <param name="request">The request.</param>
         /// <param name="identity">The identity.</param>
-        /// <returns>True if successful, false otherwise.</returns>
-        bool Login(IRequest request, IIdentity identity);
+        /// <param name="request">The request.</param>
+        /// <returns>The session of the logged-in identity, or null if the login process failed.</returns>
+        Session Login(IIdentity identity, IRequest request);
 
         /// <summary>
         /// Logout an identity.

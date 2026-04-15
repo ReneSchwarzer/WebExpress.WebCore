@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.Test
         /// <summary>
         /// Gets the page context.
         /// </summary>
-        public IPageContext PageContext { get; protected set; }
+        public WebPage.IPageContext PageContext { get; protected set; }
 
         /// <summary>
         /// Gets the request.
@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.Test
         /// <param name="endpoint">The endpoint associated with the rendering context.</param>
         /// <param name="pageContext">>The page context.</param>
         /// <param name="request">The request associated with the rendering context.</param>
-        public TestRenderContext(IEndpoint endpoint, IPageContext pageContext, IRequest request)
+        public TestRenderContext(IEndpoint endpoint, WebPage.IPageContext pageContext, IRequest request)
         {
             Endpoint = endpoint;
             PageContext = pageContext;

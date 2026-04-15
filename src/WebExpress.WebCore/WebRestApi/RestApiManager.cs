@@ -113,7 +113,7 @@ namespace WebExpress.WebCore.WebRestApi
                         switch (request.Method)
                         {
                             case RequestMethod.POST:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PostMethod is not null)
                                 {
                                     return (Response)(restApiItem.PostMethod
                                         .Invoke(restApi, [request])
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.PATCH:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PatchMethod is not null)
                                 {
                                     return (Response)(restApiItem.PatchMethod
                                         .Invoke(restApi, [request])
@@ -137,7 +137,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.PUT:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PutMethod is not null)
                                 {
                                     return (Response)(restApiItem.PutMethod
                                         .Invoke(restApi, [request])
@@ -145,7 +145,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.DELETE:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.DeleteMethod is not null)
                                 {
                                     return (Response)(restApiItem.DeleteMethod
                                         .Invoke(restApi, [request])

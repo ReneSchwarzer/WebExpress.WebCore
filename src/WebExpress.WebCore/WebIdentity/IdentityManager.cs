@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIdentity.Model;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSession.Model;
 
@@ -385,7 +386,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results 
         /// and any relevant status information.
         /// </returns>
-        public IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null)
+        public IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity = null)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
@@ -415,7 +416,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if a registered identity provider can handle the 
         /// forbidden scenario; otherwise, <c>null</c>.
         /// </returns>
-        public IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity)
+        public IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
@@ -435,47 +436,28 @@ namespace WebExpress.WebCore.WebIdentity
         }
 
         /// <summary>
-        /// Attempts to authenticate the specified request within the given application context.
-        /// </summary>
-        /// <param name="request">The request to be authenticated. Must not be null.</param>
-        /// <param name="applicationContext">The application context in which the authentication is performed. Must not be null.</param>
-        /// <returns>An identity representing the authenticated user if authentication is successful; otherwise, null.</returns>
-        public IIdentity Authenticate(IRequest request, IApplicationContext applicationContext)
-        {
-            if (_identityProviders.TryGetValue(applicationContext, out var list))
-            {
-                foreach (var provider in list)
-                {
-                    var identity = provider.Authenticate(request);
-
-                    if (identity is not null)
-                    {
-                        return identity;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Login an identity.
         /// </summary>
-        /// <param name="request">The request.</param>
         /// <param name="identity">The identity.</param>
-        /// <returns>True if successful, false otherwise.</returns>
-        public bool Login(IRequest request, IIdentity identity)
+        /// <param name="request">The request.</param>
+        /// <returns>The session of the logged-in identity, or null if the login process failed.</returns>
+        public Session Login(IIdentity identity, IRequest request)
         {
             if (identity is null)
             {
-                return false;
+                return null;
             }
 
             var session = _componentHub.SessionManager.GetSession(request);
             var authentification = session.GetOrCreateProperty<SessionPropertyAuthentification>(identity);
 
             // verify that the identity was correctly bound to the session
-            return authentification.Identity == identity;
+            if (authentification.Identity != identity)
+            {
+                return null;
+            }
+
+            return session;
         }
 
         /// <summary>
@@ -484,15 +466,6 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="request">The request.</param>
         public void Logout(IRequest request)
         {
-            // notify all registered identity providers so they can clear their own state
-            foreach (var list in _identityProviders.Values)
-            {
-                foreach (var provider in list)
-                {
-                    provider.Logout(request);
-                }
-            }
-
             var session = _componentHub.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
         }

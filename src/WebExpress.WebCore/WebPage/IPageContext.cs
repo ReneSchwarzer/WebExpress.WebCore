@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIcon;
 
 namespace WebExpress.WebCore.WebPage
@@ -8,7 +7,7 @@ namespace WebExpress.WebCore.WebPage
     /// <summary>
     /// Defines the context for a page, providing access to various related contexts and properties.
     /// </summary>
-    public interface IPageContext : IEndpointContext
+    public interface IPageContext : WebEndpoint.IEndpointContext
     {
         /// <summary>
         /// Gets the page title.

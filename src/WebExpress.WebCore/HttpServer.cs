@@ -23,6 +23,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebSocket;
@@ -495,8 +496,7 @@ namespace WebExpress.WebCore
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
             var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
             var applicationContext = applicationManager.Applications
-                   .Where(x => route.StartsWith(x.Route.ToString()))
-                   .FirstOrDefault();
+                .FirstOrDefault(x => route.StartsWith(x.Route.ToString()));
 
             if (searchResult != null)
             {
@@ -647,23 +647,16 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            // try to authenticate if no identity exists
-            if (identity is null)
-            {
-                identity = _componentHub.IdentityManager.Authenticate(httpContext.Request, applicationContext);
-                _componentHub.IdentityManager.Login(httpContext.Request, identity);
-            }
-
             // check again
             if (!_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
             {
                 // if the user is authenticated but lacks the required permissions, show the forbidden page
-                if (identity is not null)
+                if (identity is not null && searchResult.EndpointContext is IPageContext)
                 {
                     var forbiddenResponse = _componentHub.IdentityManager.CreateForbiddenResponse
                     (
                         httpContext.Request,
-                        searchResult.EndpointContext,
+                        searchResult.EndpointContext as IPageContext,
                         identity
                     );
 
@@ -672,19 +665,47 @@ namespace WebExpress.WebCore
                         await responseSender.SendAsync(httpContext, forbiddenResponse);
                         return;
                     }
+                    else
+                    {
+                        forbiddenResponse = CreateStatusPage<ResponseForbidden>
+                        (
+                            new StatusMessage("You do not have permission to access this resource.").Message,
+                            httpContext.Request,
+                            searchResult
+                        );
+
+                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        return;
+                    }
                 }
-
-                // if the user is not authenticated, show the login prompt
-                var loginResponse = _componentHub.IdentityManager.CreateAuthenticationPrompt
-                (
-                    httpContext.Request,
-                    searchResult.EndpointContext,
-                    identity
-                );
-
-                if (loginResponse is not null)
+                else if (identity is not null)
                 {
-                    await responseSender.SendAsync(httpContext, loginResponse);
+                    var forbiddenResponse = new ResponseForbidden(new StatusMessage("You do not have permission to access this resource."));
+
+                    await responseSender.SendAsync(httpContext, forbiddenResponse);
+                    return;
+                }
+                else if (searchResult.EndpointContext is IPageContext pageContext)
+                {
+                    // if the user is not authenticated, show the login prompt
+                    var loginResponse = _componentHub.IdentityManager.CreateAuthenticationPrompt
+                    (
+                        httpContext.Request,
+                        searchResult.EndpointContext as IPageContext,
+                        identity
+                    );
+
+                    if (loginResponse is not null)
+                    {
+                        await responseSender.SendAsync(httpContext, loginResponse);
+                        return;
+                    }
+                }
+                else
+                {
+                    var unauthorizedResponse = new ResponseUnauthorized(new StatusMessage("Authentication required. Provide a valid access token."));
+
+                    await responseSender.SendAsync(httpContext, unauthorizedResponse);
                     return;
                 }
             }

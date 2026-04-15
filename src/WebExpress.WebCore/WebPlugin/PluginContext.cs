@@ -30,8 +30,8 @@ namespace WebExpress.WebCore.WebPlugin
         public string Manufacturer { get; internal set; }
 
         /// <summary>
-        /// Returns the copyright information.
-        /// </Gets>
+        /// Gets the copyright information.
+        /// </summary>
         public string Copyright { get; internal set; }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -21,26 +21,6 @@ namespace WebExpress.WebCore.WebIdentity
         IEnumerable<IIdentityGroup> GetGroups();
 
         /// <summary>
-        /// Authenticates the specified request and returns the associated identity.
-        /// </summary>
-        /// <param name="request">
-        /// The request to authenticate. Cannot be null.
-        /// </param>
-        /// <returns>
-        /// An identity representing the authenticated user if authentication is successful; otherwise, null.
-        /// </returns>
-        IIdentity Authenticate(IRequest request);
-
-        /// <summary>
-        /// Logs out the specified request by clearing any authentication state
-        /// managed by this identity provider.
-        /// </summary>
-        /// <param name="request">
-        /// The request whose authentication state should be cleared. Cannot be null.
-        /// </param>
-        void Logout(IRequest request);
-
-        /// <summary>
         /// Displays a login dialog using the specified request and identity information.
         /// </summary>
         /// <param name="request">
@@ -57,7 +37,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results and any
         /// relevant status information.
         /// </returns>
-        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity);
 
         /// <summary>
         /// Creates a forbidden response page for the specified request when the authenticated
@@ -77,6 +57,6 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if this provider can handle the forbidden
         /// scenario; otherwise, <c>null</c>.
         /// </returns>
-        IResponse CreateForbiddenPage(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateForbiddenPage(IRequest request, IPageContext initiator, IIdentity identity);
     }
 }
