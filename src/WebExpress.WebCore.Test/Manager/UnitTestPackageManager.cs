@@ -1,5 +1,6 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Reflection;
+using System.Security.Cryptography;
 using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPackage;
@@ -245,6 +246,199 @@ namespace WebExpress.WebCore.Test.Manager
                 File.Delete(dummyFile);
                 Directory.Delete(packagePath, true);
             }
+        }
+
+        /// <summary>
+        /// Tests package validation with extension/type checks.
+        /// </summary>
+        [Fact]
+        public void ValidatePackageRejectsInvalidExtension()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+            var dummyFile = Path.Combine(packagePath, "dummy.zip");
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                File.WriteAllText(dummyFile, "not-a-package");
+
+                // act
+                var validation = packageManager.ValidatePackage(dummyFile);
+
+                // validation
+                Assert.False(validation.IsValid);
+                Assert.Contains(validation.Messages, x => x.Contains("extension", StringComparison.OrdinalIgnoreCase));
+            }
+            finally
+            {
+                if (File.Exists(dummyFile))
+                {
+                    File.Delete(dummyFile);
+                }
+
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests a complete package lifecycle using explicit package manager operations.
+        /// </summary>
+        [Fact]
+        public void PackageLifecycleInstallDeactivateActivateUninstall()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+            var packageFile = Path.Combine(packagePath, "lifecycle.1.0.0.wxp");
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                CreatePackageArchive(packageFile, "lifecycle", "1.0.0");
+
+                // act + validation (install active)
+                var install = packageManager.InstallPackage(packageFile, true);
+                Assert.True(install.Success);
+                Assert.Equal(PackageCatalogeItemState.Active, packageManager.GetPackage("lifecycle")?.State);
+
+                // act + validation (deactivate)
+                var deactivate = packageManager.DeactivatePackage("lifecycle");
+                Assert.True(deactivate.Success);
+                Assert.Equal(PackageCatalogeItemState.Disable, packageManager.GetPackage("lifecycle")?.State);
+
+                // act + validation (activate)
+                var activate = packageManager.ActivatePackage("lifecycle");
+                Assert.True(activate.Success);
+                Assert.Equal(PackageCatalogeItemState.Active, packageManager.GetPackage("lifecycle")?.State);
+
+                // act + validation (uninstall)
+                var uninstall = packageManager.UninstallPackage("lifecycle");
+                Assert.True(uninstall.Success);
+                Assert.Null(packageManager.GetPackage("lifecycle"));
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests that update fails when uploaded package id does not match the requested package id.
+        /// </summary>
+        [Fact]
+        public void UpdatePackageRejectsMismatchedId()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+            var packageFile = Path.Combine(packagePath, "other.1.0.0.wxp");
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                CreatePackageArchive(packageFile, "other", "1.0.0");
+
+                // act
+                var result = packageManager.UpdatePackage("expected", packageFile);
+
+                // validation
+                Assert.False(result.Success);
+                Assert.Contains("does not match", result.Message, StringComparison.OrdinalIgnoreCase);
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests package SHA-256 verification support.
+        /// </summary>
+        [Fact]
+        public void ValidatePackageWithSha256()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+            var packageFile = Path.Combine(packagePath, "signed.1.0.0.wxp");
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                CreatePackageArchive(packageFile, "signed", "1.0.0");
+                var expectedHash = ComputeSha256(packageFile);
+
+                // act
+                var valid = packageManager.ValidatePackage(packageFile, expectedSha256: expectedHash);
+                var invalid = packageManager.ValidatePackage(packageFile, expectedSha256: "deadbeef");
+
+                // validation
+                Assert.True(valid.IsValid);
+                Assert.False(invalid.IsValid);
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a simple package archive for tests.
+        /// </summary>
+        /// <param name="file">The package file path.</param>
+        /// <param name="id">The package id.</param>
+        /// <param name="version">The package version.</param>
+        private static void CreatePackageArchive(string file, string id, string version)
+        {
+            using var zip = ZipFile.Open(file, ZipArchiveMode.Create);
+            var specEntry = zip.CreateEntry($"{id}.spec");
+            using (var writer = new StreamWriter(specEntry.Open()))
+            {
+                writer.Write($@"
+                    <package>
+                        <id>{id}</id>
+                        <version>{version}</version>
+                        <title>{id}-title</title>
+                        <authors>UnitTest</authors>
+                    </package>");
+            }
+
+            // add minimal lib folder marker to resemble package layout
+            zip.CreateEntry("lib/");
+        }
+
+        /// <summary>
+        /// Computes SHA-256 for a test file.
+        /// </summary>
+        /// <param name="file">The file path.</param>
+        /// <returns>The sha-256 hash as lowercase hex.</returns>
+        private static string ComputeSha256(string file)
+        {
+            using var stream = File.OpenRead(file);
+            var hash = SHA256.HashData(stream);
+            return Convert.ToHexString(hash).ToLowerInvariant();
         }
     }
 }
