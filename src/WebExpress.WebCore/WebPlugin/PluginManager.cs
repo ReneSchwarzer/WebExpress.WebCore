@@ -521,6 +521,33 @@ namespace WebExpress.WebCore.WebPlugin
                 .Where(x => x is not null) ?? [];
         }
 
+        /// <summary>
+        /// Gets runtime metadata for all known plugins, including dependency and status information.
+        /// </summary>
+        /// <returns>A list of plugin runtime metadata entries.</returns>
+        public IEnumerable<PluginRuntimeInfo> GetPluginRuntimeInfos()
+        {
+            var active = _dictionary.Values
+                .Where(x => x?.PluginContext is not null)
+                .Select(x => new PluginRuntimeInfo()
+                {
+                    PluginContext = x.PluginContext,
+                    Dependencies = x.Dependencies ?? [],
+                    State = PluginRuntimeState.Active
+                });
+
+            var waiting = _unfulfilledDependencies.Values
+                .Where(x => x?.PluginContext is not null)
+                .Select(x => new PluginRuntimeInfo()
+                {
+                    PluginContext = x.PluginContext,
+                    Dependencies = x.Dependencies ?? [],
+                    State = PluginRuntimeState.WaitingForDependencies
+                });
+
+            return [.. active.Concat(waiting)];
+        }
+
 
         /// <summary>
         /// Returns a plugin item based on the context.

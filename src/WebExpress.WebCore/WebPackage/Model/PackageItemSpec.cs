@@ -81,6 +81,12 @@ namespace WebExpress.WebCore.WebPackage.Model
         public string[] Plugins { get; set; }
 
         /// <summary>
+        /// Gets or sets the package dependencies.
+        /// </summary>
+        [XmlElement("dependency", IsNullable = true)]
+        public string[] Dependencies { get; set; }
+
+        /// <summary>
         /// Gets or sets the artifacts.
         /// </summary>
         [XmlElement("artifact", IsNullable = true)]

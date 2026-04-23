@@ -214,6 +214,7 @@ namespace WebExpress.WebCore.WebPackage
                 Description = package?.Description,
                 Tags = package?.Tags,
                 Plugins = package?.Plugins?.Select(x => $"{zipBinarys}/{SanitizeFileNameComponent(Path.GetFileName(x))}").ToArray(),
+                Dependencies = package?.Dependencies,
             };
 
             serializer.Serialize(zipStream, newPackage);

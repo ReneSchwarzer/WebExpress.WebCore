@@ -1,6 +1,7 @@
-﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebPlugin.Model;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -252,6 +253,25 @@ namespace WebExpress.WebCore.Test.Manager
             {
                 Assert.True(typeof(IContext).IsAssignableFrom(plugin.GetType()), $"Plugin context {plugin.GetType().Name} does not implement IContext.");
             }
+        }
+
+        /// <summary>
+        /// Tests runtime plugin metadata retrieval.
+        /// </summary>
+        [Fact]
+        public void GetPluginRuntimeInfos()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var pluginManager = componentHub.PluginManager;
+
+            // act
+            var infos = pluginManager.GetPluginRuntimeInfos().ToList();
+
+            // validation
+            Assert.NotEmpty(infos);
+            Assert.Contains(infos, x => x.PluginContext.PluginId.ToString() == "webexpress.webcore.test");
+            Assert.All(infos, x => Assert.Equal(PluginRuntimeState.Active, x.State));
         }
     }
 }

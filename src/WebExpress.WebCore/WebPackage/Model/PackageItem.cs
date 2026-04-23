@@ -63,6 +63,11 @@ namespace WebExpress.WebCore.WebPackage.Model
         public IEnumerable<string> PluginSources { get; set; }
 
         /// <summary>
+        /// Gets or sets the package dependencies.
+        /// </summary>
+        public IEnumerable<string> Dependencies { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         internal PackageItem()
