@@ -404,10 +404,29 @@ namespace WebExpress.WebCore.WebPage
                         attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
                         var iconType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (iconType != null)
+                        if (iconType is not null)
                         {
+                            // read Theme property directly from the attribute instance
+                            var themeValue = (attribute as dynamic)?.Theme;
+
+                            if (themeValue is not null)
+                            {
+                                // force Type[] instead of dynamic[]
+                                var themeType = (Type)themeValue.GetType();
+
+                                // look for a constructor on the icon type that accepts the theme type
+                                var ctorWithTheme = iconType.GetConstructor([themeType]);
+                                if (ctorWithTheme is not null)
+                                {
+                                    icon ??= ctorWithTheme.Invoke(new object[] { themeValue }) as IIcon;
+                                    continue;
+                                }
+                            }
+
+                            // fallback: parameterless constructor
                             icon ??= Activator.CreateInstance(iconType) as IIcon;
                         }
+
                         continue;
                     }
 
