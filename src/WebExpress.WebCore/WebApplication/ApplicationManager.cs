@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebApplication.Model;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 
@@ -90,6 +91,7 @@ namespace WebExpress.WebCore.WebApplication
                 var contextPath = string.Empty;
                 var assetPath = "./";
                 var dataPath = "./";
+                var iconTheme = TypeIconTheme.Default;
 
                 // determining attributes
                 foreach (var customAttribute in type.CustomAttributes
@@ -119,6 +121,10 @@ namespace WebExpress.WebCore.WebApplication
                     {
                         dataPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
+                    else if (customAttribute.AttributeType == typeof(IconThemeAttribute))
+                    {
+                        iconTheme = Enum.Parse<TypeIconTheme>(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
+                    }
                 }
 
                 // creating application context
@@ -131,6 +137,7 @@ namespace WebExpress.WebCore.WebApplication
                     AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
                     Icon = RouteEndpoint.Combine(_httpServerContext.Route, contextPath, icon),
+                    IconTheme = iconTheme,
                     Route = RouteEndpoint.Combine(_httpServerContext.Route, contextPath)
                 };
 

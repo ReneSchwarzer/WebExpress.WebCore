@@ -1,5 +1,4 @@
 ﻿using WebExpress.WebCore.WebAttribute;
-using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.Test.WWW
@@ -7,7 +6,7 @@ namespace WebExpress.WebCore.Test.WWW
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
-    [WebIcon<TestIconTool>(TypeIconTheme.Light)]
+    [WebIcon<TestIconTool>]
     [Title("webindex:home.label")]
     public sealed class Index : IPage<VisualTree>
     {

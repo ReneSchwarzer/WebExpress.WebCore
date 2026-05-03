@@ -321,7 +321,7 @@ namespace WebExpress.WebCore.WebPage
             {
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var icon = default(IIcon);
+                var icon = default(Type);
                 var title = pageType.Name;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
@@ -403,30 +403,7 @@ namespace WebExpress.WebCore.WebPage
                     if (attributeType.IsGenericType &&
                         attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        var iconType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (iconType is not null)
-                        {
-                            // read Theme property directly from the attribute instance
-                            var themeValue = (attribute as dynamic)?.Theme;
-
-                            if (themeValue is not null)
-                            {
-                                // force Type[] instead of dynamic[]
-                                var themeType = (Type)themeValue.GetType();
-
-                                // look for a constructor on the icon type that accepts the theme type
-                                var ctorWithTheme = iconType.GetConstructor([themeType]);
-                                if (ctorWithTheme is not null)
-                                {
-                                    icon ??= ctorWithTheme.Invoke(new object[] { themeValue }) as IIcon;
-                                    continue;
-                                }
-                            }
-
-                            // fallback: parameterless constructor
-                            icon ??= Activator.CreateInstance(iconType) as IIcon;
-                        }
-
+                        icon = attributeType.GetGenericArguments().FirstOrDefault();
                         continue;
                     }
 
@@ -485,7 +462,7 @@ namespace WebExpress.WebCore.WebPage
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         PageTitle = title,
-                        PageIcon = icon,
+                        PageIcon = GetIcon(icon, applicationContext),
                         Route = routePath,
                         Scopes = scopes,
                         Domains = domains,
@@ -620,6 +597,41 @@ namespace WebExpress.WebCore.WebPage
         private void OnRemoveApplication(object sender, IApplicationContext e)
         {
             Remove(e);
+        }
+
+        /// <summary>
+        /// Creates an instance of an icon of the specified type, optionally using theme information if available.
+        /// </summary>
+        /// <param name="iconType">
+        /// The type of the icon to instantiate. Must implement the IIcon interface.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context used for resolving dependencies or additional information required for
+        /// icon creation.
+        /// </param>
+        /// <returns>
+        /// An instance of IIcon created from the specified type. Returns null if the icon cannot be instantiated.
+        /// </returns>
+        private static IIcon GetIcon(Type iconType, IApplicationContext applicationContext)
+        {
+            if (iconType is not null)
+            {
+                // read Theme property directly from the attribute instance
+                var themeValue = applicationContext.IconTheme;
+                var themeType = (Type)themeValue.GetType();
+
+                // look for a constructor on the icon type that accepts the theme type
+                var ctorWithTheme = iconType.GetConstructor([themeType]);
+                if (ctorWithTheme is not null)
+                {
+                    return ctorWithTheme.Invoke([themeValue]) as IIcon;
+                }
+
+                // fallback: parameterless constructor
+                return Activator.CreateInstance(iconType) as IIcon;
+            }
+
+            return null;
         }
 
         /// <summary>
