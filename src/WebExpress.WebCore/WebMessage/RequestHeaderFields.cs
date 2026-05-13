@@ -131,7 +131,7 @@ namespace WebExpress.WebCore.WebMessage
                     if (eqIndex < 0) { return null; }
                     return new Cookie(c[..eqIndex].Trim(), c[(eqIndex + 1)..].Trim());
                 })
-                .Where(c => c != null);
+                .Where(c => c is not null);
 
             Authorization = RequestAuthorization.Parse(requestFeature.Headers.Authorization);
         }

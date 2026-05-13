@@ -500,7 +500,7 @@ namespace WebExpress.WebCore.WebRestApi
                         && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (conditionType != null)
+                        if (conditionType is not null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
                         }
@@ -514,7 +514,7 @@ namespace WebExpress.WebCore.WebRestApi
                         && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
                     {
                         var policyType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (policyType != null)
+                        if (policyType is not null)
                         {
                             policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
                         }

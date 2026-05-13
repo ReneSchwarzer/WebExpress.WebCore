@@ -103,7 +103,7 @@ namespace WebExpress.WebCore.WebSession.Model
                         (
                             x => parameters.FirstOrDefault
                             (
-                                y => y != null &&
+                                y => y is not null &&
                                 (
                                     y.GetType() == x.ParameterType ||
                                     x.ParameterType.IsAssignableFrom(y.GetType()) ||

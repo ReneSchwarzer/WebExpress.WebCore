@@ -121,7 +121,7 @@ namespace WebExpress.WebCore
         /// </summary>
         public void Start()
         {
-            if (HttpServerContext != null && HttpServerContext.Log != null)
+            if (HttpServerContext is not null && HttpServerContext.Log != null)
             {
                 HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
@@ -299,7 +299,7 @@ namespace WebExpress.WebCore
                 // execute resource
                 request.AddParameter(searchResult.Uri.Parameters.Select(x => new Parameter(x.Key, x.Value, ParameterScope.Url)));
 
-                if (searchResult.EndpointContext != null)
+                if (searchResult.EndpointContext is not null)
                 {
                     response = WebEx.ComponentHub.EndpointManager.HandleRequest(request, searchResult.EndpointContext);
 
@@ -317,7 +317,7 @@ namespace WebExpress.WebCore
                     (
                         !response.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
                         !request.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
-                        request.Session != null
+                        request.Session is not null
                     )
                     {
                         var cookie = new Cookie("session", request.Session.Id.ToString()) { Expires = DateTime.MaxValue };
@@ -410,7 +410,7 @@ namespace WebExpress.WebCore
         {
             var now = DateTime.Now;
             var minute = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
-            var isError = response != null && response.Status >= 400;
+            var isError = response is not null && response.Status >= 400;
 
             // calculate memory usage in MB
             var memUsage = _currentProcess.WorkingSet64 / (1024.0 * 1024.0);
@@ -441,7 +441,7 @@ namespace WebExpress.WebCore
 
                 var current = Statistics.LastOrDefault();
 
-                if (current != null && current.Timestamp == minute)
+                if (current is not null && current.Timestamp == minute)
                 {
                     current.Requests++;
                     if (isError)
@@ -498,7 +498,7 @@ namespace WebExpress.WebCore
             var applicationContext = applicationManager.Applications
                 .FirstOrDefault(x => route.StartsWith(x.Route.ToString()));
 
-            if (searchResult != null)
+            if (searchResult is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (
@@ -509,7 +509,7 @@ namespace WebExpress.WebCore
                 );
             }
 
-            if (applicationContext != null)
+            if (applicationContext is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (

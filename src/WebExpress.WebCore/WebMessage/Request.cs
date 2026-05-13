@@ -220,9 +220,9 @@ namespace WebExpress.WebCore.WebMessage
                     last = new Parameter(match.Groups[1].Value, match.Groups[2].Value, ParameterScope.Parameter);
                     AddParameter(last);
                 }
-                else if (last != null)
+                else
                 {
-                    last.Value += "\r\n" + trimmed;
+                    last?.Value += "\r\n" + trimmed;
                 }
             }
 
