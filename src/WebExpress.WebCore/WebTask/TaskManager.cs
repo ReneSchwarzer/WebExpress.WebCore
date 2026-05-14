@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebTask
             var task = ComponentActivator.CreateInstance<Task>(_httpServerContext, _componentHub, [id, args]);
 
             // register events for the newly created task
-            task.ProgressChanged += OnTaskChanged;
+            SubscribeTaskEvents(task);
 
             _dictionary.Add(key, task);
 
@@ -126,7 +126,7 @@ namespace WebExpress.WebCore.WebTask
             var task = ComponentActivator.CreateInstance<TTask>(_httpServerContext, _componentHub, [id, args]);
 
             // register events for the newly created task
-            task.ProgressChanged += OnTaskChanged;
+            SubscribeTaskEvents(task);
 
             _dictionary.Add(key, task);
 
@@ -151,7 +151,7 @@ namespace WebExpress.WebCore.WebTask
             if (_dictionary.TryGetValue(key, out var storedTask) && storedTask is Task t)
             {
                 // unregister events to prevent memory leaks
-                t.ProgressChanged -= OnTaskChanged;
+                UnsubscribeTaskEvents(t);
             }
 
             _dictionary.Remove(key);
@@ -173,6 +173,32 @@ namespace WebExpress.WebCore.WebTask
         private void OnTaskChanged(object sender, TaskEventArgs e)
         {
             TaskChanged?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// Subscribes the manager to every task event relevant to downstream
+        /// consumers (progress, message, start, finish) so a single
+        /// <see cref="TaskChanged"/> notification covers the complete task
+        /// lifecycle.
+        /// </summary>
+        private void SubscribeTaskEvents(Task task)
+        {
+            task.ProgressChanged += OnTaskChanged;
+            task.MessageChanged += OnTaskChanged;
+            task.Process += OnTaskChanged;
+            task.Finish += OnTaskChanged;
+        }
+
+        /// <summary>
+        /// Removes every task event subscription registered by
+        /// <see cref="SubscribeTaskEvents"/>.
+        /// </summary>
+        private void UnsubscribeTaskEvents(Task task)
+        {
+            task.ProgressChanged -= OnTaskChanged;
+            task.MessageChanged -= OnTaskChanged;
+            task.Process -= OnTaskChanged;
+            task.Finish -= OnTaskChanged;
         }
     }
 }
