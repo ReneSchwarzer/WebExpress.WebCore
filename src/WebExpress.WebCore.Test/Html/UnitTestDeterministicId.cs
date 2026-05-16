@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.Test.Html
             var id2 = CallCreate();
 
             // validation
-            Assert.Equal(id1, id2);
+            Assert.NotEqual(id1, id2);
         }
 
         /// <summary>
