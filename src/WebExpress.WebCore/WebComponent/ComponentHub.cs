@@ -293,9 +293,9 @@ namespace WebExpress.WebCore.WebComponent
             }
             else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
             {
-                _httpServerContext.Log.Warning
+                _httpServerContext.Log?.Warning
                 (
-                    _internationalizationManager.Translate
+                    _internationalizationManager?.Translate
                     (
                         "webexpress.webcore:componentmanager.wrongtype",
                         componentType?.FullName, typeof(IComponentManager).FullName
@@ -311,7 +311,9 @@ namespace WebExpress.WebCore.WebComponent
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                Console.WriteLine($"Component creation failed: {componentType.FullName}");
+                Console.WriteLine(ex.InnerException?.Message);
+                _httpServerContext.Log?.Exception(ex);
             }
 
             return null;
