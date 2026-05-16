@@ -285,17 +285,17 @@ namespace WebExpress.WebCore.WebComponent
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
-                _internationalizationManager.Translate("webexpress.webcore:componentmanager.initialization")
+                _internationalizationManager?.Translate("webexpress.webcore:componentmanager.initialization")
             );
 
-            _pluginManager.AddPlugin += (sender, pluginContext) =>
+            _pluginManager?.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            PluginManager.RemovePlugin += (sender, pluginContext) =>
+            PluginManager?.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
