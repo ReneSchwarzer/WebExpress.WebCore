@@ -291,7 +291,10 @@ namespace WebExpress.WebCore
                 $"{request?.Method} {request?.Uri} {request?.Protocoll}"
             ));
 
-            var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
+            var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments)
+            {
+                BasePath = searchResult.Uri.BasePath
+            };
             request.Uri = resourceUri;
 
             try
