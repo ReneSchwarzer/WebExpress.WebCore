@@ -174,6 +174,7 @@ namespace WebExpress.WebCore.WebMessage
                 dataLength -= GetTrailingLineBreakLength(Content, nextBoundary);
                 if (dataLength < 0)
                 {
+                    // Defensive fallback for malformed parts where boundary follows unexpectedly early.
                     dataLength = 0;
                 }
 
