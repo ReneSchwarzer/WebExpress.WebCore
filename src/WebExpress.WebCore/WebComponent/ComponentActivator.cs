@@ -144,35 +144,48 @@ namespace WebExpress.WebCore.WebComponent
         public static TComponentManager CreateInstance<TComponentManager>(Type componentType, IHttpServerContext httpServerContext, IComponentHub componentHub, params object[] advancedParameters)
             where TComponentManager : class, IComponentManager
         {
-            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-            var constructors = componentType?.GetConstructors(flags);
-
-            if (constructors is not null)
+            try
             {
-                foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
+                var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+                var constructors = componentType?.GetConstructors(flags);
+
+                if (constructors is not null)
                 {
-                    // injection
-                    var parameters = constructor.GetParameters();
-                    var properties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-                    var parameterValues = parameters.Select(parameter =>
-                        parameter.ParameterType == typeof(IComponentHub) ? componentHub :
-                        parameter.ParameterType == typeof(IHttpServerContext) ? httpServerContext :
-                        properties.Where(x => x.PropertyType == parameter.ParameterType)
-                                  .FirstOrDefault()?
-                                  .GetValue(componentHub) ??
-                        advancedParameters.Where(x => x.GetType() == parameter.ParameterType)
-                                  .FirstOrDefault() ?? null
-                    ).ToArray();
-
-                    if (constructor.Invoke(parameterValues) is TComponentManager component)
+                    foreach (var constructor in constructors.OrderByDescending(x => x.GetParameters().Length))
                     {
-                        return component;
+                        // injection
+                        var parameters = constructor.GetParameters();
+                        var properties = componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                        var parameterValues = parameters.Select(parameter =>
+                            parameter.ParameterType == typeof(IComponentHub)
+                                ? componentHub
+                                : parameter.ParameterType == typeof(IHttpServerContext)
+                                    ? httpServerContext
+                                    : properties.FirstOrDefault(x => x.PropertyType == parameter.ParameterType)?
+                                        .GetValue(componentHub)
+                                            ?? advancedParameters.FirstOrDefault(x => x.GetType() == parameter.ParameterType)
+                                                ?? null
+                        ).ToArray();
+
+                        if (constructor?.Invoke(parameterValues) is TComponentManager component)
+                        {
+                            return component;
+                        }
                     }
                 }
+
+                return Activator.CreateInstance(componentType) as TComponentManager;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"CreateInstance failed: {componentType.FullName} with {httpServerContext}");
+                Console.WriteLine(ex.InnerException?.Message);
+                httpServerContext?.Log?.Exception(ex);
             }
 
-            return Activator.CreateInstance(componentType) as TComponentManager;
+            return null;
         }
 
         /// <summary>
