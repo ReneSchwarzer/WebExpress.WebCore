@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var socketManager = componentHub.SocketManager as SocketManager;
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager?.GetPlugin(typeof(TestPlugin));
 
             // act
             socketManager.Remove(plugin);

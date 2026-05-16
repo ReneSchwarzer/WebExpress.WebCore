@@ -76,8 +76,8 @@ namespace WebExpress.WebCore.WebRestApi
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
@@ -377,7 +377,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <param name="applicationContext">The context of the application whose rest apis are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
             {
                 lock (_guard)
                 {
@@ -729,8 +729,8 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 

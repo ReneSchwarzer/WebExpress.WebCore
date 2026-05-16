@@ -41,8 +41,8 @@ namespace WebExpress.WebCore.WebLog
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
 
             _httpServerContext.Log?.Debug
             (
@@ -110,8 +110,8 @@ namespace WebExpress.WebCore.WebLog
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
 
             GC.SuppressFinalize(this);
         }

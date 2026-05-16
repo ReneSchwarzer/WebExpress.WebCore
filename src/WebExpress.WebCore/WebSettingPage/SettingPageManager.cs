@@ -91,8 +91,8 @@ namespace WebExpress.WebCore.WebSettingPage
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
@@ -245,7 +245,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 return;
             }
 
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
             {
                 RegisterCategory(pluginContext, new[] { applicationContext });
                 RegisterGroup(pluginContext, new[] { applicationContext });
@@ -898,8 +898,8 @@ namespace WebExpress.WebCore.WebSettingPage
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 

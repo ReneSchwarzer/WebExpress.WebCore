@@ -53,8 +53,8 @@ namespace WebExpress.WebCore.WebFragment
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="applicationContext">The context of the application whose fragments are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -518,8 +518,8 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 

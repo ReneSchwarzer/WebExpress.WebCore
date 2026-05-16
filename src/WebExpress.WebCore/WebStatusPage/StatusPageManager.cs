@@ -77,8 +77,8 @@ namespace WebExpress.WebCore.WebStatusPage
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
@@ -113,7 +113,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="applicationContext">The context of the application whose status pages are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
             {
                 bool already;
                 lock (_guard)
@@ -601,8 +601,8 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 

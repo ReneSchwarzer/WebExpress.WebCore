@@ -41,12 +41,12 @@ namespace WebExpress.WebCore.Internationalization
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager?.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            _componentHub.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentHub.PluginManager?.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };

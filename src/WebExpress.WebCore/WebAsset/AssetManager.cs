@@ -47,8 +47,8 @@ namespace WebExpress.WebCore.WebAsset
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
@@ -112,7 +112,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_itemDictionary.ContainsApplication(pluginContext, applicationContext))
                 {
@@ -297,8 +297,8 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
             _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }

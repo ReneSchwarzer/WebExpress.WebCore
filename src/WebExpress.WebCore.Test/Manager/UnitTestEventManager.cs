@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var eventManager = componentHub.EventManager as EventManager;
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager?.GetPlugin(typeof(TestPlugin));
 
             // act
             eventManager.Remove(plugin);
