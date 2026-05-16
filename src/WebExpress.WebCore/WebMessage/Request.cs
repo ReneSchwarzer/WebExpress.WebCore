@@ -143,10 +143,11 @@ namespace WebExpress.WebCore.WebMessage
                 bool isFinal = StartsWith(Content, endBoundaryBytes, start);
 
                 // move to header start
-                int headerStart = start + boundaryBytes.Length + 2; // skip CRLF
+                int headerStart = start + boundaryBytes.Length + GetLineBreakLength(Content, start + boundaryBytes.Length);
 
                 // find header end (empty line)
-                int headerEnd = IndexOf(Content, Encoding.UTF8.GetBytes("\r\n\r\n"), headerStart);
+                int headerSeparatorLength;
+                int headerEnd = FindHeaderEnd(Content, headerStart, out headerSeparatorLength);
                 if (headerEnd < 0)
                 {
                     break;
@@ -160,7 +161,7 @@ namespace WebExpress.WebCore.WebMessage
                 var contentType = ExtractContentType(headerText);
 
                 // content start
-                int dataStart = headerEnd + 4;
+                int dataStart = headerEnd + headerSeparatorLength;
 
                 // find next boundary to determine data length
                 int nextBoundary = IndexOf(Content, boundaryBytes, dataStart);
@@ -169,7 +170,12 @@ namespace WebExpress.WebCore.WebMessage
                     break;
                 }
 
-                int dataLength = nextBoundary - dataStart - 2; // remove trailing CRLF
+                int dataLength = nextBoundary - dataStart;
+                dataLength -= GetTrailingLineBreakLength(Content, nextBoundary);
+                if (dataLength < 0)
+                {
+                    dataLength = 0;
+                }
 
                 if (string.IsNullOrEmpty(filename))
                 {
@@ -279,6 +285,72 @@ namespace WebExpress.WebCore.WebMessage
                 }
             }
             return -1;
+        }
+
+        /// <summary>
+        /// Finds the end of multipart headers and returns the separator length.
+        /// Supports both CRLF and LF line endings.
+        /// </summary>
+        private static int FindHeaderEnd(byte[] content, int headerStart, out int separatorLength)
+        {
+            var crlfSeparator = Encoding.UTF8.GetBytes("\r\n\r\n");
+            var lfSeparator = Encoding.UTF8.GetBytes("\n\n");
+
+            var crlfEnd = IndexOf(content, crlfSeparator, headerStart);
+            var lfEnd = IndexOf(content, lfSeparator, headerStart);
+
+            if (crlfEnd >= 0 && (lfEnd < 0 || crlfEnd <= lfEnd))
+            {
+                separatorLength = crlfSeparator.Length;
+                return crlfEnd;
+            }
+
+            if (lfEnd >= 0)
+            {
+                separatorLength = lfSeparator.Length;
+                return lfEnd;
+            }
+
+            separatorLength = 0;
+            return -1;
+        }
+
+        /// <summary>
+        /// Returns the line break length at the specified offset.
+        /// Supports CRLF and LF.
+        /// </summary>
+        private static int GetLineBreakLength(byte[] content, int offset)
+        {
+            if (offset + 1 < content.Length && content[offset] == (byte)'\r' && content[offset + 1] == (byte)'\n')
+            {
+                return 2;
+            }
+
+            if (offset < content.Length && content[offset] == (byte)'\n')
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Returns the line break length directly before the specified offset.
+        /// Supports CRLF and LF.
+        /// </summary>
+        private static int GetTrailingLineBreakLength(byte[] content, int offset)
+        {
+            if (offset >= 2 && content[offset - 2] == (byte)'\r' && content[offset - 1] == (byte)'\n')
+            {
+                return 2;
+            }
+
+            if (offset >= 1 && content[offset - 1] == (byte)'\n')
+            {
+                return 1;
+            }
+
+            return 0;
         }
 
         /// <summary>
