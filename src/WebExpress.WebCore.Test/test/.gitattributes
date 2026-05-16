@@ -1,0 +1,4 @@
+# HTTP wire-format fixtures must keep their exact bytes (CRLF + possibly
+# binary payloads such as embedded PNGs); never apply line-ending conversion.
+*.post binary
+*.get  binary
