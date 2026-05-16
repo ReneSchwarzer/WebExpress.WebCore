@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Test.Fixture
             (
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
-                [typeof(HttpServerContext)],
+                [typeof(IHttpServerContext)],
                 null
             );
 
