@@ -57,7 +57,7 @@ namespace WebExpress.WebCore.WebEvent
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -174,7 +174,7 @@ namespace WebExpress.WebCore.WebEvent
 
                 if (eventType == default)
                 {
-                    _httpServerContext.Log.Debug
+                    _httpServerContext.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -206,7 +206,7 @@ namespace WebExpress.WebCore.WebEvent
                     {
                         OnAddEventHandler(eventHandlerContext);
 
-                        _httpServerContext.Log.Debug
+                        _httpServerContext.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -218,7 +218,7 @@ namespace WebExpress.WebCore.WebEvent
                     }
                     else
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -362,7 +362,7 @@ namespace WebExpress.WebCore.WebEvent
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

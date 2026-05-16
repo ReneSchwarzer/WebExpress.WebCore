@@ -233,28 +233,28 @@ namespace WebExpress.WebCore
             _componentHub = ComponentActivator.CreateInstance<ComponentHub>(_httpServer.HttpServerContext);
 
             // start logging
-            _httpServer.HttpServerContext.Log.Begin(config.Log);
+            _httpServer.HttpServerContext.Log?.Begin(config.Log);
 
             // log program start
-            _httpServer.HttpServerContext.Log.Separator('/');
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.startup"));
-            _httpServer.HttpServerContext.Log.Info(message: "".PadRight(80, '-'));
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.version"), args: Version);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.arguments"), args: args);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.workingdirectory"), args: Environment.CurrentDirectory);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.packagebase"), args: config.PackageBase);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.assetbase"), args: config.AssetBase);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.database"), args: config.DataBase);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.configuration"), args: Path.GetFileName(configFile));
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.logdirectory"), args: Path.GetDirectoryName(_httpServer.HttpServerContext.Log.Filename));
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.log"), args: Path.GetFileName(_httpServer.HttpServerContext.Log.Filename));
+            _httpServer.HttpServerContext.Log?.Separator('/');
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.startup"));
+            _httpServer.HttpServerContext.Log?.Info(message: "".PadRight(80, '-'));
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.version"), args: Version);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.arguments"), args: args);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.workingdirectory"), args: Environment.CurrentDirectory);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.packagebase"), args: config.PackageBase);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.assetbase"), args: config.AssetBase);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.database"), args: config.DataBase);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.configurationdirectory"), args: Path.GetDirectoryName(configFile));
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.configuration"), args: Path.GetFileName(configFile));
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.logdirectory"), args: Path.GetDirectoryName(_httpServer.HttpServerContext.Log?.Filename));
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.log"), args: Path.GetFileName(_httpServer.HttpServerContext.Log?.Filename));
             foreach (var v in config.Endpoints)
             {
-                _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.uri"), args: v.Uri);
+                _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.uri"), args: v.Uri);
             }
 
-            _httpServer.HttpServerContext.Log.Separator('=');
+            _httpServer.HttpServerContext.Log?.Separator('=');
 
             if (!Directory.Exists(config.PackageBase))
             {
@@ -298,17 +298,17 @@ namespace WebExpress.WebCore
             Exit?.Invoke(this, EventArgs.Empty);
 
             // end of program log
-            _httpServer.HttpServerContext.Log.Separator('=');
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.errors"), args: _httpServer.HttpServerContext.Log.ErrorCount);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.warnings"), args: _httpServer.HttpServerContext.Log.WarningCount);
-            _httpServer.HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:app.done"));
-            _httpServer.HttpServerContext.Log.Separator('/');
+            _httpServer.HttpServerContext.Log?.Separator('=');
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.errors"), args: _httpServer.HttpServerContext.Log?.ErrorCount);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.warnings"), args: _httpServer.HttpServerContext.Log?.WarningCount);
+            _httpServer.HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:app.done"));
+            _httpServer.HttpServerContext.Log?.Separator('/');
 
             // Stop running
             (_componentHub as ComponentHub).ShutDown();
 
             // stop logging
-            _httpServer.HttpServerContext.Log.Close();
+            _httpServer.HttpServerContext.Log?.Close();
         }
 
         /// <summary>

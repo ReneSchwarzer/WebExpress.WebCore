@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebAsset
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:assetmanager.initialization")
             );
@@ -177,7 +177,7 @@ namespace WebExpress.WebCore.WebAsset
                         if (_itemDictionary.AddAssetItem(pluginContext, applicationContext, assetItem))
                         {
                             OnAddAsset(assetContext);
-                            _httpServerContext?.Log.Debug(
+                            _httpServerContext?.Log?.Debug(
                                 I18N.Translate(
                                     "webexpress.webcore:assetmanager.addresource",
                                     id,

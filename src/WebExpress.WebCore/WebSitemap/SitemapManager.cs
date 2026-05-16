@@ -43,7 +43,7 @@ namespace WebExpress.WebCore.WebSitemap
             _serverUri = new UriEndpoint(_httpServerContext.Endpoints.FirstOrDefault(e => e.Uri.StartsWith("https"))?.ToString()
                 ?? _httpServerContext.Endpoints.FirstOrDefault()?.ToString() ?? "");
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:sitemapmanager.initialization")
             );
@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var newSiteMapNode = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:sitemapmanager.refresh")
             );
@@ -529,7 +529,7 @@ namespace WebExpress.WebCore.WebSitemap
                 list.Add(node);
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

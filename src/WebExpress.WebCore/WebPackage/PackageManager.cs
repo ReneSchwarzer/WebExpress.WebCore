@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebPackage
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.initialization")
             );
@@ -94,7 +94,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 package.Metadata = packagesFromFile?.Metadata;
 
-                _httpServerContext.Log.Debug
+                _httpServerContext.Log?.Debug
                 (
                     I18N.Translate("webexpress.webcore:packagemanager.existing", package.File)
                 );
@@ -141,7 +141,7 @@ namespace WebExpress.WebCore.WebPackage
         {
             lock (_scanLock)
             {
-                _httpServerContext.Log.Debug
+                _httpServerContext.Log?.Debug
                 (
                     I18N.Translate
                     (
@@ -200,7 +200,7 @@ namespace WebExpress.WebCore.WebPackage
                     // raise event for added package
                     OnAddPackage(packagesFromFile);
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -228,7 +228,7 @@ namespace WebExpress.WebCore.WebPackage
                     if (existing.State == PackageCatalogeItemState.Disable)
                     {
                         existing.Metadata = fromFile.Metadata;
-                        _httpServerContext.Log.Debug($"package '{package}' metadata updated while disabled");
+                        _httpServerContext.Log?.Debug($"package '{package}' metadata updated while disabled");
                     }
                     else
                     {
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.WebPackage
                         RegisterPackage(existing);
                         BootPackage(existing);
 
-                        _httpServerContext.Log.Debug($"package '{package}' updated and reloaded");
+                        _httpServerContext.Log?.Debug($"package '{package}' updated and reloaded");
                     }
                 }
 
@@ -271,7 +271,7 @@ namespace WebExpress.WebCore.WebPackage
                     // remove package from catalog
                     Catalog.Packages.Remove(existing);
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -423,7 +423,7 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext.Log?.Exception(ex);
                 result.Messages.Add("The package archive is invalid or corrupted.");
             }
 
@@ -475,7 +475,7 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext.Log?.Exception(ex);
                 return PackageOperationResult.Failed("The package upload failed.");
             }
             finally
@@ -701,7 +701,7 @@ namespace WebExpress.WebCore.WebPackage
                         .FirstOrDefault(x => Path.GetExtension(x.FullName).Equals(".spec", StringComparison.OrdinalIgnoreCase));
                     if (specEntry is null)
                     {
-                        _httpServerContext.Log.Warning($"package spec was not found in '{file}'");
+                        _httpServerContext.Log?.Warning($"package spec was not found in '{file}'");
                         return null;
                     }
 
@@ -711,10 +711,10 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext.Log?.Exception(ex);
             }
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -766,7 +766,7 @@ namespace WebExpress.WebCore.WebPackage
             writer.Formatting = Formatting.Indented;
             serializer.Serialize(writer, Catalog, new XmlSerializerNamespaces([new XmlQualifiedName("", "")]));
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.save")
             );
@@ -803,7 +803,7 @@ namespace WebExpress.WebCore.WebPackage
 
                     if (normalized.Contains("../", StringComparison.Ordinal) || normalized.StartsWith("..", StringComparison.Ordinal))
                     {
-                        _httpServerContext.Log.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        _httpServerContext.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
                         continue;
                     }
 
@@ -812,7 +812,7 @@ namespace WebExpress.WebCore.WebPackage
                         || targetFilePath.Equals(extractedPathFull, StringComparison.OrdinalIgnoreCase);
                     if (!isInExtractedPath)
                     {
-                        _httpServerContext.Log.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        _httpServerContext.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
                         continue;
                     }
 
@@ -936,7 +936,7 @@ namespace WebExpress.WebCore.WebPackage
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -1039,7 +1039,7 @@ namespace WebExpress.WebCore.WebPackage
             catch (Exception ex)
             {
                 // keep running even if cleanup fails
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext.Log?.Exception(ex);
             }
         }
 

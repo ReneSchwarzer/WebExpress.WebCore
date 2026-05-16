@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebInclude
             _componentHub.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:includemanager.initialization")
             );
@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebInclude
                     {
                         OnAddInclude(includeItem.IncludeContext);
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.addinclude",
                                 id,
@@ -216,7 +216,7 @@ namespace WebExpress.WebCore.WebInclude
                 {
                     OnRemoveInclude(includeItem.IncludeContext);
 
-                    _httpServerContext?.Log.Debug(
+                    _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.removeinclude",
                                 includeItem.IncludeId,
@@ -251,7 +251,7 @@ namespace WebExpress.WebCore.WebInclude
                         OnRemoveInclude(includeItem.IncludeContext);
                         includeItem.Dispose();
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.removeinclude",
                                 includeItem.IncludeId,

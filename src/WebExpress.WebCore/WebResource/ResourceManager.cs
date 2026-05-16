@@ -119,7 +119,7 @@ namespace WebExpress.WebCore.WebResource
 
             _componentHub.EndpointManager.Register<ResourceContext>(endpointtRegistration);
 
-            _httpServerContext.Log.Debug(
+            _httpServerContext.Log?.Debug(
                 I18N.Translate("webexpress.webcore:resourcemanager.initialization")
             );
         }
@@ -298,7 +298,7 @@ namespace WebExpress.WebCore.WebResource
                     {
                         OnAddResource(resourceItem.ResourceContext);
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:resourcemanager.addresource",
                                 id,

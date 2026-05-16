@@ -117,7 +117,7 @@ namespace WebExpress.WebCore.WebResource
                         break;
                 }
 
-                request.HttpServerContext.Log.Debug(I18N.Translate
+                request.HttpServerContext.Log?.Debug(I18N.Translate
                     (
                         "webexpress.webcore:resource.file",
                         request.RemoteEndPoint, request.Uri

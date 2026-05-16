@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
             _componentHub.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
 
-            _httpServerContext.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
+            _httpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingCategory(settingCategoryContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.category", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.category", id, applicationContext.ApplicationId));
                     }
                 }
             }
@@ -381,7 +381,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
                 if (category == default)
                 {
-                    _httpServerContext?.Log.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nocategory", id));
+                    _httpServerContext?.Log?.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nocategory", id));
                 }
 
                 // assign the group to existing applications
@@ -417,7 +417,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingGroup(settingGroupContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.group", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.group", id, applicationContext.ApplicationId));
                     }
                 }
             }
@@ -544,7 +544,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
                 if (group == default)
                 {
-                    _httpServerContext?.Log.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nogroup", id));
+                    _httpServerContext?.Log?.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nogroup", id));
                 }
 
                 foreach
@@ -641,7 +641,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingPage(settingPageItem.SettingPageContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.page", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.page", id, applicationContext.ApplicationId));
                     }
                 }
             }

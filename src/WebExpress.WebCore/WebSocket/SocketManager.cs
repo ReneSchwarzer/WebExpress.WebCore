@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.WebSocket
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:socketmanager.initialization")
             );
@@ -441,7 +441,7 @@ namespace WebExpress.WebCore.WebSocket
                     {
                         OnAddSocket(socketItem.SocketContext);
 
-                        _httpServerContext?.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -471,7 +471,7 @@ namespace WebExpress.WebCore.WebSocket
             {
                 OnRemoveSocket(socketContext);
 
-                _httpServerContext?.Log.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
@@ -501,7 +501,7 @@ namespace WebExpress.WebCore.WebSocket
             {
                 OnRemoveSocket(socketContext);
 
-                _httpServerContext?.Log.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (

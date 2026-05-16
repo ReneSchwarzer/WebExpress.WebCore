@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.Test.Schedule
             var cron = new Cron(context, "*", "*", "*", "a");
 
             // act
-            Assert.Equal(1, context.Log.WarningCount);
+            Assert.Equal(1, context.Log?.WarningCount);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace WebExpress.WebCore.Test.Schedule
             var cron = new Cron(context, "99", "*", "*", "*");
 
             // act
-            Assert.Equal(1, context.Log.WarningCount);
+            Assert.Equal(1, context.Log?.WarningCount);
         }
 
         /// <summary>

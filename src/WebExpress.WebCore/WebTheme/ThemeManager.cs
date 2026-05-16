@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebTheme
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:thememanager.initialization")
             );
@@ -214,7 +214,7 @@ namespace WebExpress.WebCore.WebTheme
                     if (_itemDictionary.AddThemeItem(pluginContext, applicationContext, themeItem))
                     {
                         OnAddTheme(themeContext);
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:thememanager.addtheme",
                                 id,
@@ -334,7 +334,7 @@ namespace WebExpress.WebCore.WebTheme
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

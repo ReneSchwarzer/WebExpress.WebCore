@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebEndpoint
         {
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:endpointmanager.initialization")
             );

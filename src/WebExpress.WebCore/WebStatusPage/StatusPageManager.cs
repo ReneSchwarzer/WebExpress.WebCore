@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.WebStatusPage
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:statuspagemanager.initialization")
             );
@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     var statusCodeAttr = statusResponse?.GetCustomAttribute<StatusCodeAttribute>();
                     if (statusCodeAttr is null || statusCodeAttr.StatusCode == 0)
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -227,7 +227,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     {
                         OnAddStatusPage(statusPageContext);
 
-                        _httpServerContext.Log.Debug
+                        _httpServerContext.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -239,7 +239,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     }
                     else
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -593,7 +593,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

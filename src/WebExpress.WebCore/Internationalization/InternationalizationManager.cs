@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.Internationalization
             HttpServerContext = httpServerContext;
             DefaultCulture = HttpServerContext.Culture;
 
-            HttpServerContext.Log.Debug
+            HttpServerContext.Log?.Debug
             (
                 Translate("webexpress.webcore:internationalizationmanager.initialization")
             );
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.Internationalization
             var pluginId = pluginContext.PluginId;
             Register(pluginContext.Assembly, pluginId.ToString());
 
-            HttpServerContext.Log.Debug
+            HttpServerContext.Log?.Debug
             (
                 Translate("webexpress.webcore:internationalizationmanager.register", pluginId)
             );

@@ -122,7 +122,7 @@ namespace WebExpress.WebCore.WebAsset
                     break;
             }
 
-            _httpServerContext.Log.Debug(I18N.Translate
+            _httpServerContext.Log?.Debug(I18N.Translate
             (
                 "webexpress.webcore:asset.file",
                 request.RemoteEndPoint, request.Uri

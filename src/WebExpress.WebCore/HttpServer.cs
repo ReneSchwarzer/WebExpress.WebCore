@@ -123,12 +123,12 @@ namespace WebExpress.WebCore
         {
             if (HttpServerContext is not null && HttpServerContext.Log != null)
             {
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
+                HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
 
             if (!HttpListener.IsSupported)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
+                HttpServerContext.Log?.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
             }
 
             var logger = new LogFactory();
@@ -176,7 +176,7 @@ namespace WebExpress.WebCore
             Kestrel = new KestrelServer(serverOptions, transport, logger);
             Kestrel.StartAsync(this, ServerTokenSource.Token);
 
-            HttpServerContext.Log.Info(message: I18N.Translate
+            HttpServerContext.Log?.Info(message: I18N.Translate
             (
                 "webexpress.webcore:httpserver.start"),
                 args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]
@@ -203,7 +203,7 @@ namespace WebExpress.WebCore
                     .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
+                HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
 
                 foreach (var ipAddress in addressList)
                 {
@@ -226,8 +226,8 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
+                HttpServerContext.Log?.Exception(ex);
             }
         }
 
@@ -239,7 +239,7 @@ namespace WebExpress.WebCore
         private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint)
         {
             serverOptions.Value.Listen(endPoint);
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace WebExpress.WebCore
                 configure.UseHttps(cert);
             });
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -282,8 +282,8 @@ namespace WebExpress.WebCore
             var request = context.Request;
             var response = default(IResponse);
 
-            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
-            HttpServerContext.Log.Info(I18N.Translate
+            HttpServerContext.Log?.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
+            HttpServerContext.Log?.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request",
                 context.RemoteEndPoint,
@@ -372,7 +372,7 @@ namespace WebExpress.WebCore
                 }
                 else
                 {
-                    HttpServerContext.Log.Exception(ex);
+                    HttpServerContext.Log?.Exception(ex);
 
                     var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
                             $"<h5>Source</h5>{ex.Source}<br/><br/>" +
@@ -392,7 +392,7 @@ namespace WebExpress.WebCore
 
             UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
 
-            HttpServerContext.Log.Info(I18N.Translate
+            HttpServerContext.Log?.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request.done",
                 context?.RemoteEndPoint,
@@ -766,7 +766,7 @@ namespace WebExpress.WebCore
             }
             catch (SocketException ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Exception(ex);
 
                 // return 500 when socket error 
                 var response = new ResponseInternalServerError(new StatusMessage("A transport-level socket error occurred during WebSocket communication."));
@@ -775,7 +775,7 @@ namespace WebExpress.WebCore
             catch (Exception ex)
             {
                 // log unhandled exceptions during websocket processing
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Exception(ex);
 
                 // return 500 when handshake did not succeed and no websocket established
                 var response = new ResponseInternalServerError(new StatusMessage("An unexpected server error occurred during WebSocket processing."));

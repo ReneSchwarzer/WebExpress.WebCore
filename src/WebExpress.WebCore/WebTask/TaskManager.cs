@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebTask
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
