@@ -238,29 +238,50 @@ namespace WebExpress.WebCore.WebComponent
             _httpServerContext = httpServerContext;
 
             // order is relevant
-            _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager;
-            _packageManager = CreateInstance(typeof(PackageManager)) as PackageManager;
-
-            _logManager = CreateInstance(typeof(LogManager)) as LogManager;
-            _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
-            _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
-            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
-            _fragmentManager = CreateInstance(typeof(FragmentManager)) as FragmentManager;
-            _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
-            _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager;
-            _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
-            _includeManager = CreateInstance(typeof(IncludeManager)) as IncludeManager;
-            _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
-            _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager;
-            _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
-            _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
-            _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
-            _jobManager = CreateInstance(typeof(JobManager)) as JobManager;
-            _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
-            _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
-            _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
-            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager;
-            _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager;
+            _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager
+                ?? throw new InvalidOperationException("Failed to create PluginManager.");
+            _packageManager = CreateInstance(typeof(PackageManager)) as PackageManager
+                ?? throw new InvalidOperationException("Failed to create PackageManager.");
+            _logManager = CreateInstance(typeof(LogManager)) as LogManager
+                ?? throw new InvalidOperationException("Failed to create LogManager.");
+            _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager
+                ?? throw new InvalidOperationException("Failed to create InternationalizationManager.");
+            _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager
+                ?? throw new InvalidOperationException("Failed to create ApplicationManager.");
+            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager
+                ?? throw new InvalidOperationException("Failed to create SitemapManager.");
+            _fragmentManager = CreateInstance(typeof(FragmentManager)) as FragmentManager
+                ?? throw new InvalidOperationException("Failed to create FragmentManager.");
+            _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager
+                ?? throw new InvalidOperationException("Failed to create EndpointManager.");
+            _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager
+                ?? throw new InvalidOperationException("Failed to create AssetManager.");
+            _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager
+                ?? throw new InvalidOperationException("Failed to create ResourceManager.");
+            _includeManager = CreateInstance(typeof(IncludeManager)) as IncludeManager
+                ?? throw new InvalidOperationException("Failed to create IncludeManager.");
+            _pageManager = CreateInstance(typeof(PageManager)) as PageManager
+                ?? throw new InvalidOperationException("Failed to create PageManager.");
+            _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager
+                ?? throw new InvalidOperationException("Failed to create SettingPageManager.");
+            _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager
+                ?? throw new InvalidOperationException("Failed to create RestApiManager.");
+            _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager
+                ?? throw new InvalidOperationException("Failed to create StatusPageManager.");
+            _eventManager = CreateInstance(typeof(EventManager)) as EventManager
+                ?? throw new InvalidOperationException("Failed to create EventManager.");
+            _jobManager = CreateInstance(typeof(JobManager)) as JobManager
+                ?? throw new InvalidOperationException("Failed to create JobManager.");
+            _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager
+                ?? throw new InvalidOperationException("Failed to create SessionManager.");
+            _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager
+                ?? throw new InvalidOperationException("Failed to create TaskManager.");
+            _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager
+                ?? throw new InvalidOperationException("Failed to create IdentityManager.");
+            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager
+                ?? throw new InvalidOperationException("Failed to create SocketManager.");
+            _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager
+                ?? throw new InvalidOperationException("Failed to create ThemeManager.");
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
 
