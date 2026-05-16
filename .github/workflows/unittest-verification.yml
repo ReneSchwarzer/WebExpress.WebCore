@@ -23,10 +23,21 @@ jobs:
           dotnet-version: 10.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./WebExpress.WebCore.sln
 
       - name: Build project
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build ./WebExpress.WebCore.sln --no-restore --configuration Release
 
       - name: Run xUnit tests
-        run: dotnet test --no-build --configuration Release --logger "trx"
+        id: tests
+        continue-on-error: true
+        run: dotnet test ./WebExpress.WebCore.Test/WebExpress.WebCore.Test.csproj --no-build --configuration Release
+
+      - name: Print test logs on failure
+        if: steps.tests.outcome == 'failure'
+        run: |
+          find ./WebExpress.WebCore.Test/bin/Release -type f -path "*/TestResults/*.log" -print -exec tail -n 200 {} \;
+
+      - name: Fail workflow when tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
