@@ -172,7 +172,7 @@ namespace WebExpress.WebCore.WebRestApi
 
             _componentHub?.EndpointManager.Register<RestApiContext>(endpointtRegistration);
 
-            _httpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:restapimanager.initialization"));
+            _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:restapimanager.initialization"));
         }
 
         /// <summary>

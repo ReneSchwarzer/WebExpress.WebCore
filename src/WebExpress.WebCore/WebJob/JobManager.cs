@@ -61,7 +61,7 @@ namespace WebExpress.WebCore.WebJob
             _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -157,7 +157,7 @@ namespace WebExpress.WebCore.WebJob
                         {
                             OnAddJob(jobContext);
 
-                            _httpServerContext.Log?.Debug
+                            _httpServerContext?.Log?.Debug
                             (
                                 I18N.Translate
                                 (
@@ -169,7 +169,7 @@ namespace WebExpress.WebCore.WebJob
                         }
                         else
                         {
-                            _httpServerContext.Log?.Debug
+                            _httpServerContext?.Log?.Debug
                             (
                                 I18N.Translate
                                 (
@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.WebJob
                     }
                     else
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -347,7 +347,7 @@ namespace WebExpress.WebCore.WebJob
                 {
                     if (scheduleItemValue.JobContext.Cron.Matching(_clock))
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -367,7 +367,7 @@ namespace WebExpress.WebCore.WebJob
                 {
                     if (scheduleItemValue.JobContext.Cron.Matching(_clock))
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (

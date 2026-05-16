@@ -77,7 +77,7 @@ namespace WebExpress.WebCore.WebSocket
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:socketmanager.initialization")
             );

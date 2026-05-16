@@ -164,7 +164,7 @@ namespace WebExpress.WebCore.WebPage
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:pagemanager.initialization")
             );

@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.WebTheme
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:thememanager.initialization")
             );
@@ -320,7 +320,7 @@ namespace WebExpress.WebCore.WebTheme
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:thememanager.titel")
@@ -334,7 +334,7 @@ namespace WebExpress.WebCore.WebTheme
                 );
             }
 
-            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

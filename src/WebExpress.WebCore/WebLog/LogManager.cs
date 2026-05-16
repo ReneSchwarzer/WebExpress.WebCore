@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebLog
         /// <summary>
         /// Gets the default log.
         /// </summary>
-        public ILog DefaultLog => _httpServerContext.Log;
+        public ILog DefaultLog => _httpServerContext?.Log;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebLog
             _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
             _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:logmanager.initialization")
             );

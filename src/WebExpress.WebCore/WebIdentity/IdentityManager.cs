@@ -62,7 +62,7 @@ namespace WebExpress.WebCore.WebIdentity
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -160,7 +160,7 @@ namespace WebExpress.WebCore.WebIdentity
                         new IdentityPermissionItem(_componentHub, _httpServerContext, pluginContext, applicationContext, permissionType, permissionContext, policyTypes)
                     ))
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -172,7 +172,7 @@ namespace WebExpress.WebCore.WebIdentity
                     }
                     else
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -234,7 +234,7 @@ namespace WebExpress.WebCore.WebIdentity
                         new IdentityPolicyItem(_componentHub, _httpServerContext, pluginContext, applicationContext, policyType, policyContext, permissionTypes)
                     ))
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -246,7 +246,7 @@ namespace WebExpress.WebCore.WebIdentity
                     }
                     else
                     {
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (

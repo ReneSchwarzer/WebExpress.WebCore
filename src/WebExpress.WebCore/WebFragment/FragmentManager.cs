@@ -58,7 +58,7 @@ namespace WebExpress.WebCore.WebFragment
             _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:fragmentmanager.initialization")
             );
@@ -167,7 +167,7 @@ namespace WebExpress.WebCore.WebFragment
                 // check section
                 if (sections.Count == 0)
                 {
-                    _httpServerContext.Log?.Warning(I18N.Translate
+                    _httpServerContext?.Log?.Warning(I18N.Translate
                     (
                         "webexpress.webcore:fragmentmanager.error.section"
                     ));
@@ -495,7 +495,7 @@ namespace WebExpress.WebCore.WebFragment
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:fragmentmanager.titel")
@@ -510,7 +510,7 @@ namespace WebExpress.WebCore.WebFragment
                 );
             }
 
-            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

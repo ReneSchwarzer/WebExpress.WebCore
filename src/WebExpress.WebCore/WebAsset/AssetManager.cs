@@ -86,7 +86,7 @@ namespace WebExpress.WebCore.WebAsset
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:assetmanager.initialization")
             );

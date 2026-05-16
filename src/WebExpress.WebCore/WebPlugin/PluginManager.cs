@@ -52,7 +52,7 @@ namespace WebExpress.WebCore.WebPlugin
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:pluginmanager.initialization")
             );
@@ -76,7 +76,7 @@ namespace WebExpress.WebCore.WebPlugin
                     if (assembly is not null)
                     {
                         assemblies.Add(assembly);
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -128,7 +128,7 @@ namespace WebExpress.WebCore.WebPlugin
                 if (assembly is not null)
                 {
                     assemblies.Add(assembly);
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -216,7 +216,7 @@ namespace WebExpress.WebCore.WebPlugin
                                 ApplicationTypes = [typeof(IApplication)]
                             });
 
-                            _httpServerContext.Log?.Debug
+                            _httpServerContext?.Log?.Debug
                             (
                                 I18N.Translate("webexpress.webcore:pluginmanager.created", id)
                             );
@@ -228,7 +228,7 @@ namespace WebExpress.WebCore.WebPlugin
                     }
                     else
                     {
-                        _httpServerContext.Log?.Warning
+                        _httpServerContext?.Log?.Warning
                         (
                             I18N.Translate("webexpress.webcore:pluginmanager.duplicate", id)
                         );
@@ -278,7 +278,7 @@ namespace WebExpress.WebCore.WebPlugin
                     if (plugins.Count > 0)
                     {
                         // to many plugins, only one per assembly
-                        _httpServerContext.Log?.Warning
+                        _httpServerContext?.Log?.Warning
                         (
                             I18N.Translate("webexpress.webcore:pluginmanager.tomany", type.FullName)
                         );
@@ -289,7 +289,7 @@ namespace WebExpress.WebCore.WebPlugin
                     if (applicationTypes.Count == 0)
                     {
                         // no application specified
-                        _httpServerContext.Log?.Warning
+                        _httpServerContext?.Log?.Warning
                         (
                             I18N.Translate("webexpress.webcore:pluginmanager.applicationless", id)
                         );
@@ -334,7 +334,7 @@ namespace WebExpress.WebCore.WebPlugin
                             ApplicationTypes = applicationTypes
                         });
 
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate("webexpress.webcore:pluginmanager.created", id)
                         );
@@ -345,7 +345,7 @@ namespace WebExpress.WebCore.WebPlugin
                     }
                     else
                     {
-                        _httpServerContext.Log?.Warning
+                        _httpServerContext?.Log?.Warning
                         (
                             I18N.Translate("webexpress.webcore:pluginmanager.duplicate", id)
                         );
@@ -356,7 +356,7 @@ namespace WebExpress.WebCore.WebPlugin
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
 
             return plugins;
@@ -408,7 +408,7 @@ namespace WebExpress.WebCore.WebPlugin
 
                         OnAddPlugin(unfulfilledDependencies.Value.PluginContext);
 
-                        _httpServerContext.Log?.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -437,7 +437,7 @@ namespace WebExpress.WebCore.WebPlugin
                 // dependency was not fulfilled
                 hasUnfulfilledDependencies = true;
 
-                _httpServerContext.Log?.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
@@ -560,7 +560,7 @@ namespace WebExpress.WebCore.WebPlugin
 
             if (pluginId is null || !_dictionary.TryGetValue(pluginId, out PluginItem value))
             {
-                _httpServerContext.Log?.Warning
+                _httpServerContext?.Log?.Warning
                 (
                     I18N.Translate
                     (
@@ -597,7 +597,7 @@ namespace WebExpress.WebCore.WebPlugin
             // run plugin concurrently
             Task.Run(() =>
             {
-                _httpServerContext.Log?.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
@@ -608,7 +608,7 @@ namespace WebExpress.WebCore.WebPlugin
 
                 pluginItem.Plugin.Run();
 
-                _httpServerContext.Log?.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
@@ -680,9 +680,9 @@ namespace WebExpress.WebCore.WebPlugin
         /// </summary>
         private void Log()
         {
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>();
-            _httpServerContext.Log?.Info
+            _httpServerContext?.Log?.Info
             (
                 I18N.Translate
                 (
@@ -726,7 +726,7 @@ namespace WebExpress.WebCore.WebPlugin
 
             foreach (var item in list)
             {
-                _httpServerContext.Log?.Info(string.Join(Environment.NewLine, item));
+                _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, item));
             }
         }
 

@@ -314,7 +314,7 @@ namespace WebExpress.WebCore.WebComponent
             }
             else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
             {
-                _httpServerContext.Log?.Warning
+                _httpServerContext?.Log?.Warning
                 (
                     _internationalizationManager?.Translate
                     (
@@ -334,7 +334,7 @@ namespace WebExpress.WebCore.WebComponent
             {
                 Console.WriteLine($"Component creation failed: {componentType.FullName}");
                 Console.WriteLine(ex.InnerException?.Message);
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
 
             return null;
@@ -406,7 +406,7 @@ namespace WebExpress.WebCore.WebComponent
                         ComponentInstance = componentInstance
                     });
 
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.register", id)
                     );
@@ -416,7 +416,7 @@ namespace WebExpress.WebCore.WebComponent
                 }
                 else
                 {
-                    _httpServerContext.Log?.Warning
+                    _httpServerContext?.Log?.Warning
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.duplicate", id)
                     );
@@ -463,7 +463,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public void Execute()
         {
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.execute")
             );
@@ -477,7 +477,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public void ShutDown()
         {
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.shutdown")
             );
@@ -526,7 +526,7 @@ namespace WebExpress.WebCore.WebComponent
                     // raise the RemoveComponent event for each item
                     OnRemoveComponent(componentItem.ComponentInstance);
 
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.remove")
                     );
@@ -564,7 +564,7 @@ namespace WebExpress.WebCore.WebComponent
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var output = new List<string>
             {
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.component")
@@ -579,7 +579,7 @@ namespace WebExpress.WebCore.WebComponent
                 );
             }
 
-            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, output));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, output));
             _lastCounter = Managers.Count();
         }
 

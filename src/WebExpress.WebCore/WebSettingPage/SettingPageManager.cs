@@ -205,7 +205,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
             _componentHub?.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
 
-            _httpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
+            _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
         }
 
         /// <summary>

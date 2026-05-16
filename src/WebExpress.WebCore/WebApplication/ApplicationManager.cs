@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebApplication
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
@@ -134,11 +134,11 @@ namespace WebExpress.WebCore.WebApplication
                     ApplicationId = id,
                     ApplicationName = name,
                     Description = description,
-                    AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
-                    DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
-                    Icon = RouteEndpoint.Combine(_httpServerContext.Route, contextPath, icon),
+                    AssetPath = Path.Combine(_httpServerContext?.AssetPath, assetPath),
+                    DataPath = Path.Combine(_httpServerContext?.DataPath, dataPath),
+                    Icon = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath, icon),
                     IconTheme = iconTheme,
-                    Route = RouteEndpoint.Combine(_httpServerContext.Route, contextPath)
+                    Route = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath)
                 };
 
                 // create application
@@ -157,7 +157,7 @@ namespace WebExpress.WebCore.WebApplication
                     Application = applicationInstance
                 }))
                 {
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate("webexpress.webcore:applicationmanager.register", id)
                     );
@@ -167,7 +167,7 @@ namespace WebExpress.WebCore.WebApplication
                 }
                 else
                 {
-                    _httpServerContext.Log?.Warning
+                    _httpServerContext?.Log?.Warning
                     (
                         I18N.Translate("webexpress.webcore:applicationmanager.duplicate", id)
                     );
@@ -284,7 +284,7 @@ namespace WebExpress.WebCore.WebApplication
             }
             else if (!_dictionary.Contains(pluginContext))
             {
-                _httpServerContext.Log?.Warning
+                _httpServerContext?.Log?.Warning
                 (
                     I18N.Translate
                     (
@@ -303,7 +303,7 @@ namespace WebExpress.WebCore.WebApplication
                 // Run the application concurrently
                 Task.Run(() =>
                 {
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -313,7 +313,7 @@ namespace WebExpress.WebCore.WebApplication
 
                     applicationItem.Application.Run();
 
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -387,7 +387,7 @@ namespace WebExpress.WebCore.WebApplication
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:applicationmanager.titel")
@@ -402,7 +402,7 @@ namespace WebExpress.WebCore.WebApplication
                 );
             }
 
-            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

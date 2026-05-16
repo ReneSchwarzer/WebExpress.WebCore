@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebPackage
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.initialization")
             );
@@ -90,11 +90,11 @@ namespace WebExpress.WebCore.WebPackage
 
             foreach (var package in Catalog.Packages)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package.File));
+                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package.File));
 
                 package.Metadata = packagesFromFile?.Metadata;
 
-                _httpServerContext.Log?.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate("webexpress.webcore:packagemanager.existing", package.File)
                 );
@@ -141,17 +141,17 @@ namespace WebExpress.WebCore.WebPackage
         {
             lock (_scanLock)
             {
-                _httpServerContext.Log?.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
                         "webexpress.webcore:packagemanager.scan",
-                        _httpServerContext.PackagePath
+                        _httpServerContext?.PackagePath
                     )
                 );
 
                 // determine all WebExpress packages from the file system
-                var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
+                var packageFiles = Directory.GetFiles(_httpServerContext?.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
 
                 // all packages that are not yet installed
                 var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x is not null).Select(x => x.File)).ToList();
@@ -163,7 +163,7 @@ namespace WebExpress.WebCore.WebPackage
                 var changedPackages = new List<string>();
                 foreach (var existing in Catalog.Packages.Where(x => x is not null))
                 {
-                    var fullPath = Path.Combine(_httpServerContext.PackagePath, existing.File);
+                    var fullPath = Path.Combine(_httpServerContext?.PackagePath, existing.File);
                     if (!File.Exists(fullPath))
                     {
                         continue;
@@ -183,7 +183,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 foreach (var package in newPackages)
                 {
-                    var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package));
                     if (packagesFromFile is null)
                     {
                         continue;
@@ -200,7 +200,7 @@ namespace WebExpress.WebCore.WebPackage
                     // raise event for added package
                     OnAddPackage(packagesFromFile);
 
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -218,7 +218,7 @@ namespace WebExpress.WebCore.WebPackage
                         continue;
                     }
 
-                    var fromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    var fromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package));
                     if (fromFile is null)
                     {
                         continue;
@@ -228,7 +228,7 @@ namespace WebExpress.WebCore.WebPackage
                     if (existing.State == PackageCatalogeItemState.Disable)
                     {
                         existing.Metadata = fromFile.Metadata;
-                        _httpServerContext.Log?.Debug($"package '{package}' metadata updated while disabled");
+                        _httpServerContext?.Log?.Debug($"package '{package}' metadata updated while disabled");
                     }
                     else
                     {
@@ -247,7 +247,7 @@ namespace WebExpress.WebCore.WebPackage
                         RegisterPackage(existing);
                         BootPackage(existing);
 
-                        _httpServerContext.Log?.Debug($"package '{package}' updated and reloaded");
+                        _httpServerContext?.Log?.Debug($"package '{package}' updated and reloaded");
                     }
                 }
 
@@ -271,7 +271,7 @@ namespace WebExpress.WebCore.WebPackage
                     // remove package from catalog
                     Catalog.Packages.Remove(existing);
 
-                    _httpServerContext.Log?.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -423,7 +423,7 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
                 result.Messages.Add("The package archive is invalid or corrupted.");
             }
 
@@ -458,8 +458,8 @@ namespace WebExpress.WebCore.WebPackage
                 return PackageOperationResult.Failed("The upload file extension must be '.wxp'.");
             }
 
-            var tmpFile = Path.Combine(_httpServerContext.PackagePath, $"{Guid.NewGuid()}.{safeFileName}");
-            Directory.CreateDirectory(_httpServerContext.PackagePath);
+            var tmpFile = Path.Combine(_httpServerContext?.PackagePath, $"{Guid.NewGuid()}.{safeFileName}");
+            Directory.CreateDirectory(_httpServerContext?.PackagePath);
 
             try
             {
@@ -468,14 +468,14 @@ namespace WebExpress.WebCore.WebPackage
                     CopyStream(packageStream, fileStream, maxPackageBytes);
                 }
 
-                var targetFile = Path.Combine(_httpServerContext.PackagePath, safeFileName);
+                var targetFile = Path.Combine(_httpServerContext?.PackagePath, safeFileName);
                 File.Copy(tmpFile, targetFile, true);
 
                 return InstallPackage(targetFile, activate, maxPackageBytes, expectedSha256);
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
                 return PackageOperationResult.Failed("The package upload failed.");
             }
             finally
@@ -507,8 +507,8 @@ namespace WebExpress.WebCore.WebPackage
 
                 var package = validation.Package;
                 var safeFile = Path.GetFileName(packageFile);
-                var targetFile = Path.Combine(_httpServerContext.PackagePath, safeFile);
-                Directory.CreateDirectory(_httpServerContext.PackagePath);
+                var targetFile = Path.Combine(_httpServerContext?.PackagePath, safeFile);
+                Directory.CreateDirectory(_httpServerContext?.PackagePath);
 
                 if (!Path.GetFullPath(packageFile).Equals(Path.GetFullPath(targetFile), StringComparison.OrdinalIgnoreCase))
                 {
@@ -528,7 +528,7 @@ namespace WebExpress.WebCore.WebPackage
                 }
                 else
                 {
-                    var oldPackageFile = Path.Combine(_httpServerContext.PackagePath, existing.File);
+                    var oldPackageFile = Path.Combine(_httpServerContext?.PackagePath, existing.File);
                     DeactivateAndUnregisterPackage(existing);
                     RemoveExtractedDirectory(existing);
 
@@ -668,7 +668,7 @@ namespace WebExpress.WebCore.WebPackage
                 DeactivateAndUnregisterPackage(package);
                 RemoveExtractedDirectory(package);
 
-                var packageFile = Path.Combine(_httpServerContext.PackagePath, package.File);
+                var packageFile = Path.Combine(_httpServerContext?.PackagePath, package.File);
                 if (File.Exists(packageFile))
                 {
                     File.Delete(packageFile);
@@ -701,7 +701,7 @@ namespace WebExpress.WebCore.WebPackage
                         .FirstOrDefault(x => Path.GetExtension(x.FullName).Equals(".spec", StringComparison.OrdinalIgnoreCase));
                     if (specEntry is null)
                     {
-                        _httpServerContext.Log?.Warning($"package spec was not found in '{file}'");
+                        _httpServerContext?.Log?.Warning($"package spec was not found in '{file}'");
                         return null;
                     }
 
@@ -711,10 +711,10 @@ namespace WebExpress.WebCore.WebPackage
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -731,7 +731,7 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void LoadCatalog()
         {
-            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext?.PackagePath, "catalog.xml");
             if (File.Exists(catalogeFile))
             {
                 using var catalog = new StreamReader(catalogeFile);
@@ -757,7 +757,7 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void SaveCatalog()
         {
-            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext?.PackagePath, "catalog.xml");
 
             using var fs = new FileStream(catalogeFile, FileMode.Create);
             using var writer = new XmlTextWriter(fs, Encoding.Unicode);
@@ -766,7 +766,7 @@ namespace WebExpress.WebCore.WebPackage
             writer.Formatting = Formatting.Indented;
             serializer.Serialize(writer, Catalog, new XmlSerializerNamespaces([new XmlQualifiedName("", "")]));
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.save")
             );
@@ -778,13 +778,13 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void ExtractPackage(PackageCatalogItem package)
         {
-            var packageFile = Path.Combine(_httpServerContext.PackagePath, package?.File);
+            var packageFile = Path.Combine(_httpServerContext?.PackagePath, package?.File);
 
             if (File.Exists(packageFile))
             {
                 using var zip = ZipFile.Open(packageFile, ZipArchiveMode.Read);
 
-                var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+                var extractedPath = Path.Combine(_httpServerContext?.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
                 var extractedPathFull = Path.GetFullPath(extractedPath);
 
                 if (!Directory.Exists(extractedPath))
@@ -803,7 +803,7 @@ namespace WebExpress.WebCore.WebPackage
 
                     if (normalized.Contains("../", StringComparison.Ordinal) || normalized.StartsWith("..", StringComparison.Ordinal))
                     {
-                        _httpServerContext.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        _httpServerContext?.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
                         continue;
                     }
 
@@ -812,7 +812,7 @@ namespace WebExpress.WebCore.WebPackage
                         || targetFilePath.Equals(extractedPathFull, StringComparison.OrdinalIgnoreCase);
                     if (!isInExtractedPath)
                     {
-                        _httpServerContext.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        _httpServerContext?.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
                         continue;
                     }
 
@@ -875,7 +875,7 @@ namespace WebExpress.WebCore.WebPackage
         {
             return Path.GetFullPath(Path.Combine
             (
-                _httpServerContext.PackagePath,
+                _httpServerContext?.PackagePath,
                 Path.GetFileNameWithoutExtension(package?.File), plugin, GetTFM(), $"{Path.GetFileName(plugin)}.dll"
             ));
         }
@@ -922,7 +922,7 @@ namespace WebExpress.WebCore.WebPackage
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:packagemanager.titel")
@@ -936,7 +936,7 @@ namespace WebExpress.WebCore.WebPackage
                 );
             }
 
-            _httpServerContext.Log?.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -1028,7 +1028,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void RemoveExtractedDirectory(PackageCatalogItem package)
         {
-            var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+            var extractedPath = Path.Combine(_httpServerContext?.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
             try
             {
                 if (Directory.Exists(extractedPath))
@@ -1039,7 +1039,7 @@ namespace WebExpress.WebCore.WebPackage
             catch (Exception ex)
             {
                 // keep running even if cleanup fails
-                _httpServerContext.Log?.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
         }
 

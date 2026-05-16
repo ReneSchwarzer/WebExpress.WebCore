@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebInclude
             _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
             _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _httpServerContext.Log?.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:includemanager.initialization")
             );
