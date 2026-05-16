@@ -51,10 +51,10 @@ namespace WebExpress.WebCore.WebInclude
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext.Log?.Debug
             (
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebInclude
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.WebInclude
                 return;
             }
 
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
                 {
@@ -360,10 +360,10 @@ namespace WebExpress.WebCore.WebInclude
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }
     }
 }

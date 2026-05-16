@@ -55,10 +55,10 @@ namespace WebExpress.WebCore.WebIdentity
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext = httpServerContext;
 
@@ -82,7 +82,7 @@ namespace WebExpress.WebCore.WebIdentity
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="applicationContext">The context of the application whose jobs are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_permissionDictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
                 {
@@ -448,7 +448,7 @@ namespace WebExpress.WebCore.WebIdentity
                 return null;
             }
 
-            var session = _componentHub.SessionManager.GetSession(request);
+            var session = _componentHub?.SessionManager.GetSession(request);
             var authentification = session.GetOrCreateProperty<SessionPropertyAuthentification>(identity);
 
             // verify that the identity was correctly bound to the session
@@ -466,7 +466,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <param name="request">The request.</param>
         public void Logout(IRequest request)
         {
-            var session = _componentHub.SessionManager.GetSession(request);
+            var session = _componentHub?.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
         }
 
@@ -477,7 +477,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>The current signed-in identity.</returns>
         public IIdentity GetCurrentIdentity(IRequest request)
         {
-            var session = _componentHub.SessionManager.GetSession(request);
+            var session = _componentHub?.SessionManager.GetSession(request);
             var authentification = session.GetProperty<SessionPropertyAuthentification>();
 
             return authentification?.Identity;

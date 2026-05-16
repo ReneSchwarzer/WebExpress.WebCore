@@ -54,10 +54,10 @@ namespace WebExpress.WebCore.WebPage
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -111,7 +111,7 @@ namespace WebExpress.WebCore.WebPage
                         {
                             // injection
                             var parameters = constructor.GetParameters();
-                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var hubProperties = _componentHub?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
                             var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 .Where(x => x.PropertyType == typeof(IComponentId))
                                 .FirstOrDefault();
@@ -160,7 +160,7 @@ namespace WebExpress.WebCore.WebPage
             AddPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemovePage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<PageContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<PageContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 
@@ -286,7 +286,7 @@ namespace WebExpress.WebCore.WebPage
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="applicationContext">The context of the application whose pages are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -473,7 +473,7 @@ namespace WebExpress.WebCore.WebPage
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
-                    var pageItem = new PageItem(_componentHub.EndpointManager)
+                    var pageItem = new PageItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -639,10 +639,10 @@ namespace WebExpress.WebCore.WebPage
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

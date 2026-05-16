@@ -91,10 +91,10 @@ namespace WebExpress.WebCore.WebSettingPage
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -156,7 +156,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         {
                             // injection
                             var parameters = constructor.GetParameters();
-                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var hubProperties = _componentHub?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
                             var contextIdProperty = pageContext?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 .Where(x => x.PropertyType == typeof(IComponentId))
                                 .FirstOrDefault();
@@ -203,7 +203,7 @@ namespace WebExpress.WebCore.WebSettingPage
             AddSettingPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveSettingPage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
 
             _httpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
         }
@@ -229,9 +229,9 @@ namespace WebExpress.WebCore.WebSettingPage
                 return;
             }
 
-            RegisterCategory(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
-            RegisterGroup(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
-            RegisterPage(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            RegisterCategory(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
+            RegisterGroup(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
+            RegisterPage(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 return;
             }
 
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 RegisterCategory(pluginContext, new[] { applicationContext });
                 RegisterGroup(pluginContext, new[] { applicationContext });
@@ -623,7 +623,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     };
 
                     // create meta information of the setting page
-                    var settingPageItem = new SettingPageItem(_componentHub.EndpointManager)
+                    var settingPageItem = new SettingPageItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -898,10 +898,10 @@ namespace WebExpress.WebCore.WebSettingPage
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

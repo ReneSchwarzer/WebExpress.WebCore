@@ -639,7 +639,7 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            var identity = _componentHub.IdentityManager.GetCurrentIdentity(httpContext.Request);
+            var identity = _componentHub?.IdentityManager.GetCurrentIdentity(httpContext.Request);
 
             // if access is granted
             if (_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
@@ -656,7 +656,7 @@ namespace WebExpress.WebCore
                 // if the user is authenticated but lacks the required permissions, show the forbidden page
                 if (identity is not null && searchResult.EndpointContext is IPageContext)
                 {
-                    var forbiddenResponse = _componentHub.IdentityManager.CreateForbiddenResponse
+                    var forbiddenResponse = _componentHub?.IdentityManager.CreateForbiddenResponse
                     (
                         httpContext.Request,
                         searchResult.EndpointContext as IPageContext,
@@ -691,7 +691,7 @@ namespace WebExpress.WebCore
                 else if (searchResult.EndpointContext is IPageContext pageContext)
                 {
                     // if the user is not authenticated, show the login prompt
-                    var loginResponse = _componentHub.IdentityManager.CreateAuthenticationPrompt
+                    var loginResponse = _componentHub?.IdentityManager.CreateAuthenticationPrompt
                     (
                         httpContext.Request,
                         searchResult.EndpointContext as IPageContext,

@@ -50,10 +50,10 @@ namespace WebExpress.WebCore.WebEvent
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext = httpServerContext;
 
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.WebEvent
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <param name="applicationContext">The context of the application whose jobs are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
                 {
@@ -370,10 +370,10 @@ namespace WebExpress.WebCore.WebEvent
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

@@ -76,10 +76,10 @@ namespace WebExpress.WebCore.WebRestApi
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -170,7 +170,7 @@ namespace WebExpress.WebCore.WebRestApi
             AddRestApi += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveRestApi += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<RestApiContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<RestApiContext>(endpointtRegistration);
 
             _httpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:restapimanager.initialization"));
         }
@@ -367,7 +367,7 @@ namespace WebExpress.WebCore.WebRestApi
                     return;
                 }
 
-                Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+                Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
             }
         }
 
@@ -377,7 +377,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <param name="applicationContext">The context of the application whose rest apis are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 lock (_guard)
                 {
@@ -567,7 +567,7 @@ namespace WebExpress.WebCore.WebRestApi
                         Methods = methods.Distinct()
                     };
 
-                    var restApiItem = new RestApiItem(_componentHub.EndpointManager)
+                    var restApiItem = new RestApiItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(restApiType.FullName),
                         PluginContext = pluginContext,
@@ -729,10 +729,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

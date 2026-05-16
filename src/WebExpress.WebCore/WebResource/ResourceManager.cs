@@ -72,10 +72,10 @@ namespace WebExpress.WebCore.WebResource
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -117,7 +117,7 @@ namespace WebExpress.WebCore.WebResource
                 endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
             };
 
-            _componentHub.EndpointManager.Register<ResourceContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<ResourceContext>(endpointtRegistration);
 
             _httpServerContext.Log?.Debug(
                 I18N.Translate("webexpress.webcore:resourcemanager.initialization")
@@ -138,7 +138,7 @@ namespace WebExpress.WebCore.WebResource
                 }
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 bool shouldContinue = false;
 
@@ -274,7 +274,7 @@ namespace WebExpress.WebCore.WebResource
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
-                    var resourceItem = new ResourceItem(_componentHub.ResourceManager)
+                    var resourceItem = new ResourceItem(_componentHub?.ResourceManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -620,10 +620,10 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

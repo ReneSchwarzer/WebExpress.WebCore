@@ -62,7 +62,7 @@ namespace WebExpress.WebCore.WebSitemap
             );
 
             // applications
-            var applications = _componentHub.ApplicationManager.Applications
+            var applications = _componentHub?.ApplicationManager.Applications
                 .Select(x => new
                 {
                     ApplicationContext = x,
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // endpoints
-            var endpoints = _componentHub.EndpointManager.Endpoints
+            var endpoints = _componentHub?.EndpointManager.Endpoints
                 .Where(x => x.Route is not null)
                 .Select(x => new
                 {
@@ -164,7 +164,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
         public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params IParameter[] parameters)
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
+            var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
             var node = _root.GetPreOrder()
                 .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.WebSitemap
         public IUri GetUri<TEnpoint>(IEndpointContext endpointContext)
             where TEnpoint : IEndpoint
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
+            var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()

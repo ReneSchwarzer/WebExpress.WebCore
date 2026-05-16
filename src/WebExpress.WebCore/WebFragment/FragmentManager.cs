@@ -53,10 +53,10 @@ namespace WebExpress.WebCore.WebFragment
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext.Log?.Debug
             (
@@ -75,7 +75,7 @@ namespace WebExpress.WebCore.WebFragment
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="applicationContext">The context of the application whose fragments are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.WebFragment
                 }
 
                 // assign the fragment to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in _componentHub?.ApplicationManager.GetApplications(pluginContext))
                 {
                     // assign section
                     foreach (var section in sections)
@@ -518,10 +518,10 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

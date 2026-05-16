@@ -84,7 +84,7 @@ namespace WebExpress.WebCore.WebPackage
             _pluginManager.Register();
 
             // boot default elements 
-            _componentHub.BootComponent(_pluginManager.Plugins);
+            _componentHub?.BootComponent(_pluginManager.Plugins);
 
             LoadCatalog();
 
@@ -111,7 +111,7 @@ namespace WebExpress.WebCore.WebPackage
             SaveCatalog();
 
             // build sitemap
-            _componentHub.SitemapManager.Refresh();
+            _componentHub?.SitemapManager.Refresh();
 
             Task.Factory.StartNew(() =>
             {
@@ -284,7 +284,7 @@ namespace WebExpress.WebCore.WebPackage
                 if (newPackages.Count != 0 || removePackages.Count != 0 || changedPackages.Count != 0)
                 {
                     // build sitemap
-                    _componentHub.SitemapManager.Refresh();
+                    _componentHub?.SitemapManager.Refresh();
 
                     // save the catalog
                     SaveCatalog();
@@ -545,7 +545,7 @@ namespace WebExpress.WebCore.WebPackage
                 {
                     existing.State = PackageCatalogeItemState.Disable;
                     SaveCatalog();
-                    _componentHub.SitemapManager.Refresh();
+                    _componentHub?.SitemapManager.Refresh();
                     return PackageOperationResult.Ok($"Package '{existing.Id}' installed (disabled).", existing);
                 }
 
@@ -593,7 +593,7 @@ namespace WebExpress.WebCore.WebPackage
                 package.State = PackageCatalogeItemState.Active;
 
                 SaveCatalog();
-                _componentHub.SitemapManager.Refresh();
+                _componentHub?.SitemapManager.Refresh();
 
                 return PackageOperationResult.Ok($"Package '{packageId}' activated.", package);
             }
@@ -619,7 +619,7 @@ namespace WebExpress.WebCore.WebPackage
                 package.State = PackageCatalogeItemState.Disable;
 
                 SaveCatalog();
-                _componentHub.SitemapManager.Refresh();
+                _componentHub?.SitemapManager.Refresh();
 
                 return PackageOperationResult.Ok($"Package '{packageId}' deactivated.", package);
             }
@@ -678,7 +678,7 @@ namespace WebExpress.WebCore.WebPackage
                 OnRemovePackage(package);
 
                 SaveCatalog();
-                _componentHub.SitemapManager.Refresh();
+                _componentHub?.SitemapManager.Refresh();
 
                 return PackageOperationResult.Ok($"Package '{packageId}' uninstalled.", package);
             }
@@ -861,7 +861,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void BootPackage(PackageCatalogItem package)
         {
-            _componentHub.BootComponent(package.Plugins);
+            _componentHub?.BootComponent(package.Plugins);
         }
 
         /// <summary>
@@ -1014,7 +1014,7 @@ namespace WebExpress.WebCore.WebPackage
             // shut down components associated to each plugin and remove the plugin
             foreach (var pluginContext in package.Plugins.ToList())
             {
-                _componentHub.ShutDownComponent(pluginContext);
+                _componentHub?.ShutDownComponent(pluginContext);
                 _pluginManager.Remove(pluginContext);
             }
 

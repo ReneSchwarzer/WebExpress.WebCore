@@ -494,7 +494,7 @@ namespace WebExpress.WebCore.WebPlugin
         {
             return _dictionary.Values
                 .Where(x => x.ApplicationTypes is not null)
-                .Where(x => x.ApplicationTypes.Select(x => _componentHub.ApplicationManager.GetApplications(x))
+                .Where(x => x.ApplicationTypes.Select(x => _componentHub?.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
                 .Where(x => x.ApplicationId == applicationContext.ApplicationId)
                 .Any())
@@ -516,7 +516,7 @@ namespace WebExpress.WebCore.WebPlugin
             }
 
             return pluginItem.ApplicationTypes?
-                .Select(x => _componentHub.ApplicationManager.GetApplications(x))
+                .Select(x => _componentHub?.ApplicationManager.GetApplications(x))
                 .SelectMany(x => x)
                 .Where(x => x is not null) ?? [];
         }

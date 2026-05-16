@@ -57,10 +57,10 @@ namespace WebExpress.WebCore.WebSocket
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager?.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointRegistration = new EndpointRegistration()
             {
@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebSocket
             AddSocket += (sender, e) => endpointRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveSocket += (sender, e) => endpointRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<SocketContext>(endpointRegistration);
+            _componentHub?.EndpointManager.Register<SocketContext>(endpointRegistration);
 
             _httpServerContext = httpServerContext;
 
@@ -270,7 +270,7 @@ namespace WebExpress.WebCore.WebSocket
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -279,7 +279,7 @@ namespace WebExpress.WebCore.WebSocket
         /// <param name="applicationContext">The context of the application whose sockets are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager?.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -422,7 +422,7 @@ namespace WebExpress.WebCore.WebSocket
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
-                    var socketItem = new SocketItem(_componentHub.EndpointManager)
+                    var socketItem = new SocketItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -589,10 +589,10 @@ namespace WebExpress.WebCore.WebSocket
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager?.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager?.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }
