@@ -182,6 +182,7 @@ namespace WebExpress.WebCore.WebComponent
             {
                 Console.WriteLine($"CreateInstance failed: {componentType.FullName} with {httpServerContext}");
                 Console.WriteLine(ex.InnerException?.Message);
+                Console.WriteLine(ex.InnerException);
                 httpServerContext?.Log?.Exception(ex);
             }
 
