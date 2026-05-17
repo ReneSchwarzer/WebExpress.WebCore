@@ -241,10 +241,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void Info(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Info, message, $"{className}.{instance}", line, file);
+                Add(LogLevel.Info, message, $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -257,10 +264,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void Info(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Info, string.Format(message, args), $"{className}.{instance}", line, file);
+                Add(LogLevel.Info, string.Format(message, args), $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -272,11 +286,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void Warning(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Warning, message, $"{className}.{instance}", line, file);
-
+                Add(LogLevel.Warning, message, $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             WarningCount++;
         }
 
@@ -290,11 +310,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void Warning(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Warning, string.Format(message, args), $"{className}.{instance}", line, file);
-
+                Add(LogLevel.Warning, string.Format(message, args), $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             WarningCount++;
         }
 
@@ -307,11 +333,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void Error(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Error, message, $"{className}.{instance}", line, file);
-
+                Add(LogLevel.Error, message, $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             ErrorCount++;
         }
 
@@ -325,11 +357,17 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void Error(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.Error, string.Format(message, args), $"{className}.{instance}", line, file);
-
+                Add(LogLevel.Error, string.Format(message, args), $"{className}.{instance}", line, file);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             ErrorCount++;
         }
 
@@ -342,11 +380,18 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void FatalError(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace()?.GetFrame(1).GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace()?.GetFrame(1).GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.FatalError, message, $"{className}.{instance}", line, file);
+                Add(LogLevel.FatalError, message, $"{className}.{instance}", line, file);
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             ErrorCount++;
         }
 
@@ -360,36 +405,50 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void FatalError(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
+            try
+            {
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-            Add(LogLevel.FatalError, string.Format(message, args), $"{className}.{instance}", line, file);
+                Add(LogLevel.FatalError, string.Format(message, args), $"{className}.{instance}", line, file);
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
             ErrorCount++;
         }
 
         /// <summary>
         /// Logs an exception message.
         /// </summary>
-        /// <param name="ex">The exception</param>
+        /// <param name="exception">The exception</param>
         /// <param name="instance">>Method/ function that wants to log.</param>
         /// <param name="line">The line number.</param>
         /// <param name="file">The source file.</param>
-        public void Exception(Exception ex, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
+        public void Exception(Exception exception, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
-
-            lock (_queue)
+            try
             {
-                Add(LogLevel.Exception, ex?.Message.Trim(), $"{className}.{instance}", line, file);
-                Add(LogLevel.Exception, ex?.StackTrace is not null
-                    ? ex?.StackTrace.Trim()
-                    : ex?.Message.Trim(), $"{className}.{instance}", line, file);
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
 
-                ExceptionCount++;
-                ErrorCount++;
+                lock (_queue)
+                {
+                    Add(LogLevel.Exception, exception?.Message.Trim(), $"{className}.{instance}", line, file);
+                    Add(LogLevel.Exception, exception?.StackTrace is not null
+                        ? exception?.StackTrace.Trim()
+                        : exception?.Message.Trim(), $"{className}.{instance}", line, file);
+
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
+            }
+            ExceptionCount++;
+            ErrorCount++;
         }
 
         /// <summary>
@@ -401,12 +460,19 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void Debug(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
-
-            if (DebugMode)
+            try
             {
-                Add(LogLevel.Debug, message, $"{className}.{instance}", line, file);
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
+
+                if (DebugMode)
+                {
+                    Add(LogLevel.Debug, message, $"{className}.{instance}", line, file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
             }
         }
 
