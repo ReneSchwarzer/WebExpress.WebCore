@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormTextarea : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns or sets the name of the input field.
+        /// Gets or sets the name of the input field.
         /// </summary>
         public string Name
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the value. des Eingabefeldes
+        /// Gets or sets the value. des Eingabefeldes
         /// </summary>
         public string Value
         {
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the number of rows displayed.
+        /// Gets or sets the number of rows displayed.
         /// </summary>
         public string Rows
         {
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the number of columns displayed.
+        /// Gets or sets the number of columns displayed.
         /// </summary>
         public string Cols
         {
@@ -45,7 +45,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the text should be wrapped.
+        /// Gets or sets whether the text should be wrapped.
         /// Possible values are: hard, soft.
         /// </summary>
         public string Wrap
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the field is read-only.
+        /// Gets or sets whether the field is read-only.
         /// </summary>
         public string Readonly
         {
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the minimum length.
+        /// Gets or sets the minimum length.
         /// </summary>
         public string MinLength
         {
@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the maximum length.
+        /// Gets or sets the maximum length.
         /// </summary>
         public string MaxLength
         {
@@ -82,7 +82,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether inputs are enforced.
+        /// Gets or sets whether inputs are enforced.
         /// </summary>
         public bool Required
         {
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a placeholder text.
+        /// Gets or sets a placeholder text.
         /// </summary>
         public string Placeholder
         {
@@ -100,7 +100,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a search pattern that checks the content.
+        /// Gets or sets a search pattern that checks the content.
         /// </summary>
         public string Pattern
         {
@@ -109,7 +109,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the identification name of the form element to which it is associated.
+        /// Gets or sets the identification name of the form element to which it is associated.
         /// </summary>
         public string Form
         {

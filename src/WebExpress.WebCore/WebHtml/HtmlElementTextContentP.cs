@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextContentP : HtmlElement, IHtmlElementTextContent
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {

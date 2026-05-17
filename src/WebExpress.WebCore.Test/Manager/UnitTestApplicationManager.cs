@@ -40,7 +40,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var applicationManager = componentHub.ApplicationManager as ApplicationManager;
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager?.GetPlugin(typeof(TestPlugin));
 
             // act
             applicationManager.Remove(plugin);
@@ -166,6 +166,34 @@ namespace WebExpress.WebCore.Test.Manager
 
             // act
             AssertExtensions.EqualWithPlaceholders(dataPath, application.DataPath);
+        }
+
+        /// <summary>
+        /// Tests that the default theme declared via <c>[Theme&lt;TestThemeA&gt;]</c>
+        /// resolves through the lazy <c>ApplicationContext.DefaultTheme</c>
+        /// once the ThemeManager has registered the matching theme.
+        /// </summary>
+        [Theory]
+        [InlineData(typeof(TestApplicationA), typeof(TestThemeA), "webexpress.webcore.test.testthemea")]
+        [InlineData(typeof(TestApplicationB), null, null)]
+        [InlineData(typeof(TestApplicationC), null, null)]
+        public void DefaultTheme(Type applicationType, Type expectedThemeType, string expectedThemeId)
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var application = componentHub.ApplicationManager.GetApplications(applicationType).FirstOrDefault();
+
+            // act
+            var theme = application?.DefaultTheme;
+
+            // validation
+            if (expectedThemeType is null)
+            {
+                Assert.Null(theme);
+                return;
+            }
+            Assert.NotNull(theme);
+            Assert.Equal(expectedThemeId, theme.ThemeId?.ToString());
         }
 
         /// <summary>

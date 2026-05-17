@@ -10,27 +10,27 @@ namespace WebExpress.WebCore.Test.Data
         private readonly List<IIdentityGroup> _groups = new();
 
         /// <summary>
-        /// Returns or sets the id of the user.
+        /// Gets the id of the user.
         /// </summary>
         public Guid Id { get; }
 
         /// <summary>
-        /// Returns or sets the name of the user.
+        /// Gets the name of the user.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// Returns or sets the email of the user.
+        /// Gets the email of the user.
         /// </summary>
         public string Email { get; }
 
         /// <summary>
-        /// Returns the hash of the password.
+        /// Gets the hash of the password.
         /// </summary>
         public string PasswordHash { get; }
 
         /// <summary>
-        /// Returns the groups associated with the user.
+        /// Gets the groups associated with the user.
         /// </summary>
         public IEnumerable<IIdentityGroup> Groups => _groups;
 

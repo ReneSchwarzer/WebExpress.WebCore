@@ -12,7 +12,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class MethodAttribute : Attribute, IEndpointAttribute
     {
         /// <summary>
-        /// Returns the CRUD (Create, Read, Update, Delete) operation or request
+        /// Gets the CRUD (Create, Read, Update, Delete) operation or request
         /// method associated with the decorated endpoint method.
         /// </summary>
         public RequestMethod RequestMethod { get; private set; }

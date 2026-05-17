@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextContentOl : HtmlElement, IHtmlElementTextContent
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<HtmlElementTextContentLi> Elements => base.Elements
             .Where(x => x is HtmlElementTextContentLi)

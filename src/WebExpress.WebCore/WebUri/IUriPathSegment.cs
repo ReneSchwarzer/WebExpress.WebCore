@@ -6,17 +6,17 @@ namespace WebExpress.WebCore.WebUri
     public interface IUriPathSegment
     {
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets the id.
         /// </summary>
         string Id { get; }
 
         /// <summary>
-        /// Returns the value.
+        /// Gets the value.
         /// </summary>
         string Value { get; }
 
         /// <summary>
-        /// Returns the tag.
+        /// Gets the tag.
         /// </summary>
         object Tag { get; }
 
@@ -26,7 +26,7 @@ namespace WebExpress.WebCore.WebUri
         bool IsEmpty { get; }
 
         /// <summary>
-        /// Returns a value indicating whether the item is hidden.
+        /// Gets a value indicating whether the item is hidden.
         /// </summary>
         /// <remarks>
         /// This property can be used to determine if the item should be displayed in user
@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebUri
         bool IsHidden { get; set; }
 
         /// <summary>
-        /// Returns the URI to which the user is redirected.
+        /// Gets the URI to which the user is redirected.
         /// </summary>
         IUri Uri { get; set; }
 

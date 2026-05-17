@@ -11,6 +11,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebPlugin;
@@ -47,7 +48,7 @@ namespace WebExpress.WebCore.WebRestApi
         public event EventHandler<IRestApiContext> RemoveRestApi;
 
         /// <summary>
-        /// Returns all rest api resource contexts.
+        /// Gets all rest api resource contexts.
         /// </summary>
         public IEnumerable<IRestApiContext> RestApis
         {
@@ -75,10 +76,10 @@ namespace WebExpress.WebCore.WebRestApi
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -112,7 +113,7 @@ namespace WebExpress.WebCore.WebRestApi
                         switch (request.Method)
                         {
                             case RequestMethod.POST:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PostMethod is not null)
                                 {
                                     return (Response)(restApiItem.PostMethod
                                         .Invoke(restApi, [request])
@@ -128,7 +129,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.PATCH:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PatchMethod is not null)
                                 {
                                     return (Response)(restApiItem.PatchMethod
                                         .Invoke(restApi, [request])
@@ -136,7 +137,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.PUT:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.PutMethod is not null)
                                 {
                                     return (Response)(restApiItem.PutMethod
                                         .Invoke(restApi, [request])
@@ -144,7 +145,7 @@ namespace WebExpress.WebCore.WebRestApi
                                 }
                                 break;
                             case RequestMethod.DELETE:
-                                if (restApiItem.GetMethod is not null)
+                                if (restApiItem.DeleteMethod is not null)
                                 {
                                     return (Response)(restApiItem.DeleteMethod
                                         .Invoke(restApi, [request])
@@ -169,9 +170,9 @@ namespace WebExpress.WebCore.WebRestApi
             AddRestApi += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveRestApi += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<RestApiContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<RestApiContext>(endpointtRegistration);
 
-            _httpServerContext.Log.Debug(I18N.Translate("webexpress.webcore:restapimanager.initialization"));
+            _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:restapimanager.initialization"));
         }
 
         /// <summary>
@@ -366,7 +367,7 @@ namespace WebExpress.WebCore.WebRestApi
                     return;
                 }
 
-                Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+                Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
             }
         }
 
@@ -376,7 +377,7 @@ namespace WebExpress.WebCore.WebRestApi
         /// <param name="applicationContext">The context of the application whose rest apis are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 lock (_guard)
                 {
@@ -414,6 +415,7 @@ namespace WebExpress.WebCore.WebRestApi
                 var match = ApiVersionRegex().Match(id);
                 var versionSegment = match.Success ? match.Groups[0].Value.Replace(".", "") : "";
                 var version = match.Success && uint.TryParse(match.Groups[1].Value, out var result) ? result : 1u;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = restApiType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -498,11 +500,24 @@ namespace WebExpress.WebCore.WebRestApi
                         && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (conditionType != null)
+                        if (conditionType is not null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
                         }
 
+                        continue;
+                    }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType is not null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
+                        }
                         continue;
                     }
 
@@ -548,10 +563,11 @@ namespace WebExpress.WebCore.WebRestApi
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes),
                         Version = version,
+                        Policies = policies,
                         Methods = methods.Distinct()
                     };
 
-                    var restApiItem = new RestApiItem(_componentHub.EndpointManager)
+                    var restApiItem = new RestApiItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(restApiType.FullName),
                         PluginContext = pluginContext,
@@ -582,7 +598,7 @@ namespace WebExpress.WebCore.WebRestApi
                     {
                         OnAddRestApi(restApiItem.RestApiContext);
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:restapimanager.addrestapi",
                                 id,
@@ -713,10 +729,10 @@ namespace WebExpress.WebCore.WebRestApi
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

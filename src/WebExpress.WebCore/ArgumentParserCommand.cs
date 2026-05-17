@@ -26,7 +26,7 @@
         public string ParameterDescription { get; set; }
 
         /// <summary>
-        /// Returns or sets whether the command is mandatory.
+        /// Gets or sets whether the command is mandatory.
         /// </summary>
         public bool Mandatory { get; set; } = false;
     }

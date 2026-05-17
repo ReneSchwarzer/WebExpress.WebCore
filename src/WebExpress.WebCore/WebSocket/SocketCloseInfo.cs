@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebSocket
     public class SocketCloseInfo
     {
         /// <summary>
-        /// Returns the status that indicates the reason the socket was closed.
+        /// Gets the status that indicates the reason the socket was closed.
         /// </summary>
         public WebSocketCloseStatus Status { get; }
 
         /// <summary>
-        /// Returns the description associated with this instance.
+        /// Gets the description associated with this instance.
         /// </summary>
         public string Description { get; }
 

@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebMessage
     public class HttpExceptionContext : HttpContext
     {
         /// <summary>
-        /// Returns or sets an error message if the context could not be created.
+        /// Gets or sets an error message if the context could not be created.
         /// </summary>
         public Exception Exception { get; private set; }
 

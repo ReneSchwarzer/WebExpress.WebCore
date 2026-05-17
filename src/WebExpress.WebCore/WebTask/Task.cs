@@ -34,27 +34,27 @@ namespace WebExpress.WebCore.WebTask
         public event EventHandler<TaskEventArgs> MessageChanged;
 
         /// <summary>
-        /// Returns the id of the task.
+        /// Gets the id of the task.
         /// </summary>
         public string Id { get; private set; }
 
         /// <summary>
-        /// Returns the state in which the task is located.
+        /// Gets the state in which the task is located.
         /// </summary>
         public TaskState State { get; protected set; } = TaskState.Created;
 
         /// <summary>
-        /// The arguments.
+        /// Gets the arguments.
         /// </summary>
         public ICollection<object> Arguments { get; private set; }
 
         /// <summary>
-        /// Thread termination of the task.
+        /// Gets the thread termination of the task.
         /// </summary>
         private CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Retiurns the progress of the task. The value range is from 0 to 100.
+        /// Gets the progress of the task. The value range is from 0 to 100.
         /// </summary>
         public int Progress
         {
@@ -72,7 +72,7 @@ namespace WebExpress.WebCore.WebTask
         }
 
         /// <summary>
-        /// Returns or sets a message that provides information about the processing.
+        /// Gets or sets a message that provides information about the processing.
         /// </summary>
         public string Message
         {

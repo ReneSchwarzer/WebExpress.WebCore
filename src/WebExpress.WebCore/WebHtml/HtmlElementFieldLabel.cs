@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFieldLabel : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns or sets the name of the input field.
+        /// Gets or sets the name of the input field.
         /// </summary>
         public string For
         {
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {

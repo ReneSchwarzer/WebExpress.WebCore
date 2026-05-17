@@ -8,7 +8,7 @@ namespace WebExpress.WebCore
     public interface IHost
     {
         /// <summary>
-        /// Returns the context of the host.
+        /// Gets the context of the host.
         /// </summary>
         IHttpServerContext HttpServerContext { get; }
 

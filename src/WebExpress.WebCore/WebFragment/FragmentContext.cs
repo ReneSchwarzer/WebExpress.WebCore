@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebFragment
@@ -14,12 +15,12 @@ namespace WebExpress.WebCore.WebFragment
     public class FragmentContext : IFragmentContext
     {
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets the context of the associated plugin.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the application context.
+        /// Gets the application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
@@ -29,9 +30,14 @@ namespace WebExpress.WebCore.WebFragment
         public IComponentId FragmentId { get; internal set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the component to be active.
+        /// Gets the conditions that must be met for the component to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; internal set; } = [];
+
+        /// <summary>
+        /// Gets the collection of identity policies for the endpoint.
+        /// </summary>
+        public IEnumerable<IIdentityPolicy> Policies { get; internal set; } = [];
 
         /// <summary>
         /// Determines whether the component is created once and reused on each execution.
@@ -39,12 +45,12 @@ namespace WebExpress.WebCore.WebFragment
         public bool Cache { get; internal set; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets the section.
         /// </summary>
         public Type Section { get; internal set; }
 
         /// <summary>
-        /// Returns the scope.
+        /// Gets the scope.
         /// </summary>
         public Type Scope { get; internal set; }
 

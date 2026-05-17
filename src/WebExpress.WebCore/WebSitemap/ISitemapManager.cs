@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebSitemap
     public interface ISitemapManager : IComponentManager
     {
         /// <summary>
-        /// Returns the side map.
+        /// Gets the side map.
         /// </summary>
         IEnumerable<IEndpointContext> SiteMap { get; }
 

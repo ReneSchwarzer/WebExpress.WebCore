@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager?.GetPlugin(typeof(TestPlugin));
             var apiManager = componentHub.RestApiManager as RestApiManager;
 
             // act

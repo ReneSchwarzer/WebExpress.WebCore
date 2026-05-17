@@ -9,17 +9,17 @@ namespace WebExpress.WebCore.WebUri
     public class UriPathSegmentConstant : IUriPathSegmentConstant
     {
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         public string Id => Value?.ToLower();
 
         /// <summary>
-        /// Returns or sets the path text.
+        /// Gets or sets the path text.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// Returns or sets the tag.
+        /// Gets or sets the tag.
         /// </summary>
         public object Tag { get; set; }
 
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsEmpty => string.IsNullOrWhiteSpace(Value) || Value.Equals("/");
 
         /// <summary>
-        /// Returns or sets a value indicating whether the item is hidden.
+        /// Gets or sets a value indicating whether the item is hidden.
         /// </summary>
         /// <remarks>
         /// This property can be used to determine if the item should be displayed in user
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsHidden { get; set; }
 
         /// <summary>
-        /// Returns or sets the URI to which the user is redirected.
+        /// Gets or sets the URI to which the user is redirected.
         /// </summary>
         public IUri Uri { get; set; }
 

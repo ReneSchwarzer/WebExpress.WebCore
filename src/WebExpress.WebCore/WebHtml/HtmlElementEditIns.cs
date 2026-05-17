@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementEditIns : HtmlElement, IHtmlElementEdit
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the uri of a source that triggered the change (e.g. a ticket number in a bugtrack system).
+        /// Gets or sets the uri of a source that triggered the change (e.g. a ticket number in a bugtrack system).
         /// </summary>
         public string Cite
         {
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the indexes the date and time when the text was modified..
+        /// Gets or sets the indexes the date and time when the text was modified..
         /// If the value cannot be recognized as a date with an optional time, this element has no relation to time.
         /// </summary>
         public string DateTime

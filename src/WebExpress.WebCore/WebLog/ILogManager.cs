@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebLog
         event EventHandler<IPluginContext> RemoveLog;
 
         /// <summary>
-        /// Returns the default log.
+        /// Gets the default log.
         /// </summary>
         ILog DefaultLog { get; }
     }

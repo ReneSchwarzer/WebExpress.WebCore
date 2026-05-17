@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.WebComponent
         public event EventHandler<IComponentManager> RemoveComponent;
 
         /// <summary>
-        /// Returns all registered managers.
+        /// Gets all registered managers.
         /// </summary>
         public IEnumerable<IComponentManager> Managers => new IComponentManager[]
             {
@@ -98,133 +98,133 @@ namespace WebExpress.WebCore.WebComponent
             }.Concat(_dictionary.Values.SelectMany(x => x).Select(x => x.ComponentInstance));
 
         /// <summary>
-        /// Returns the log manager.
+        /// Gets the log manager.
         /// </summary>
         /// <returns>The instance of the log manager.</returns>
         public ILogManager LogManager => _logManager;
 
         /// <summary>
-        /// Returns the package manager.
+        /// Gets the package manager.
         /// </summary>
         /// <returns>The instance of the package manager.</returns>
         public IPackageManager PackageManager => _packageManager;
 
         /// <summary>
-        /// Returns the plugin manager.
+        /// Gets the plugin manager.
         /// </summary>
         /// <returns>The instance of the plugin manager.</returns>
         public IPluginManager PluginManager => _pluginManager;
 
         /// <summary>
-        /// Returns the application manager.
+        /// Gets the application manager.
         /// </summary>
         /// <returns>The instance of the application manager.</returns>
         public IApplicationManager ApplicationManager => _applicationManager;
 
         /// <summary>
-        /// Returns the event manager.
+        /// Gets the event manager.
         /// </summary>
         /// <returns>The instance of the event manager.</returns>
         public IEventManager EventManager => _eventManager;
 
         /// <summary>
-        /// Returns the job manager.
+        /// Gets the job manager.
         /// </summary>
         /// <returns>The instance of the job manager.</returns>
         public IJobManager JobManager => _jobManager;
 
         /// <summary>
-        /// Returns the task manager.
+        /// Gets the task manager.
         /// </summary>
         /// <returns>The instance of the task manager.</returns>
         public ITaskManager TaskManager => _taskManager;
 
         /// <summary>
-        /// Returns the endpoint manager.
+        /// Gets the endpoint manager.
         /// </summary>
         /// <returns>The instance of the endpoint manager.</returns>
         public IEndpointManager EndpointManager => _endpointManager;
 
         /// <summary>
-        /// Returns the asset manager.
+        /// Gets the asset manager.
         /// </summary>
         /// <returns>The instance of the asset manager.</returns>
         public IAssetManager AssetManager => _assetManager;
 
         /// <summary>
-        /// Returns the resource manager.
+        /// Gets the resource manager.
         /// </summary>
         /// <returns>The instance of the resource manager.</returns>
         public IResourceManager ResourceManager => _resourceManager;
 
         /// <summary>
-        /// Returns the include manager.
+        /// Gets the include manager.
         /// </summary>
         /// <returns>The instance of the include manager.</returns>
         public IIncludeManager IncludeManager => _includeManager;
 
         /// <summary>
-        /// Returns the page manager.
+        /// Gets the page manager.
         /// </summary>
         /// <returns>The instance of the page manager.</returns>
         public IPageManager PageManager => _pageManager;
 
         /// <summary>
-        /// Returns the setting page manager.
+        /// Gets the setting page manager.
         /// </summary>
         /// <returns>The instance of the setting page manager.</returns>
         public ISettingPageManager SettingPageManager => _settingPageManager;
 
         /// <summary>
-        /// Returns the rest api manager.
+        /// Gets the rest api manager.
         /// </summary>
         /// <returns>The instance of the rest api manager.</returns>
         public IRestApiManager RestApiManager => _restApiManager;
 
         /// <summary>
-        /// Returns the sitemap manager.
+        /// Gets the sitemap manager.
         /// </summary>
         /// <returns>The instance of the sitemap manager.</returns>
         public ISitemapManager SitemapManager => _sitemapManager;
 
         /// <summary>
-        /// Returns the fragment manager.
+        /// Gets the fragment manager.
         /// </summary>
         /// <returns>The instance of the fragment manager.</returns>
         public IFragmentManager FragmentManager => _fragmentManager;
 
         /// <summary>
-        /// Returns the status page manager.
+        /// Gets the status page manager.
         /// </summary>
         /// <returns>The instance of the status page manager.</returns>
         public IStatusPageManager StatusPageManager => _statusPageManager;
 
         /// <summary>
-        /// Returns the internationalization manager.
+        /// Gets the internationalization manager.
         /// </summary>
         /// <returns>The instance of the internationalization manager.</returns>
         public IInternationalizationManager InternationalizationManager => _internationalizationManager;
 
         /// <summary>
-        /// Returns the identity manager.
+        /// Gets the identity manager.
         /// </summary>
         /// <returns>The instance of the identity manager.</returns>
         public IIdentityManager IdentityManager => _identityManager;
 
         /// <summary>
-        /// Returns the session manager.
+        /// Gets the session manager.
         /// </summary>
         /// <returns>The instance of the session manager.</returns>
         public ISessionManager SessionManager => _sessionManager;
 
         /// <summary>
-        /// Returns the socket manager.
+        /// Gets the socket manager.
         /// </summary>
         /// <returns>The instance of the socket manager.</returns>
         public ISocketManager SocketManager => _socketManager;
 
         /// <summary>
-        /// Returns the theme manager.
+        /// Gets the theme manager.
         /// </summary>
         /// <returns>The instance of the theme manager.</returns>
         public IThemeManager ThemeManager => _themeManager;
@@ -238,43 +238,64 @@ namespace WebExpress.WebCore.WebComponent
             _httpServerContext = httpServerContext;
 
             // order is relevant
-            _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager;
-            _packageManager = CreateInstance(typeof(PackageManager)) as PackageManager;
-
-            _logManager = CreateInstance(typeof(LogManager)) as LogManager;
-            _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager;
-            _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager;
-            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager;
-            _fragmentManager = CreateInstance(typeof(FragmentManager)) as FragmentManager;
-            _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager;
-            _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager;
-            _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager;
-            _includeManager = CreateInstance(typeof(IncludeManager)) as IncludeManager;
-            _pageManager = CreateInstance(typeof(PageManager)) as PageManager;
-            _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager;
-            _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager;
-            _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager;
-            _eventManager = CreateInstance(typeof(EventManager)) as EventManager;
-            _jobManager = CreateInstance(typeof(JobManager)) as JobManager;
-            _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager;
-            _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager;
-            _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager;
-            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager;
-            _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager;
+            _pluginManager = CreateInstance(typeof(PluginManager)) as PluginManager
+                ?? throw new InvalidOperationException("Failed to create PluginManager.");
+            _packageManager = CreateInstance(typeof(PackageManager)) as PackageManager
+                ?? throw new InvalidOperationException("Failed to create PackageManager.");
+            _logManager = CreateInstance(typeof(LogManager)) as LogManager
+                ?? throw new InvalidOperationException("Failed to create LogManager.");
+            _internationalizationManager = CreateInstance(typeof(InternationalizationManager)) as InternationalizationManager
+                ?? throw new InvalidOperationException("Failed to create InternationalizationManager.");
+            _applicationManager = CreateInstance(typeof(ApplicationManager)) as ApplicationManager
+                ?? throw new InvalidOperationException("Failed to create ApplicationManager.");
+            _sitemapManager = CreateInstance(typeof(SitemapManager)) as SitemapManager
+                ?? throw new InvalidOperationException("Failed to create SitemapManager.");
+            _fragmentManager = CreateInstance(typeof(FragmentManager)) as FragmentManager
+                ?? throw new InvalidOperationException("Failed to create FragmentManager.");
+            _endpointManager = CreateInstance(typeof(EndpointManager)) as EndpointManager
+                ?? throw new InvalidOperationException("Failed to create EndpointManager.");
+            _assetManager = CreateInstance(typeof(AssetManager)) as AssetManager
+                ?? throw new InvalidOperationException("Failed to create AssetManager.");
+            _resourceManager = CreateInstance(typeof(ResourceManager)) as ResourceManager
+                ?? throw new InvalidOperationException("Failed to create ResourceManager.");
+            _includeManager = CreateInstance(typeof(IncludeManager)) as IncludeManager
+                ?? throw new InvalidOperationException("Failed to create IncludeManager.");
+            _pageManager = CreateInstance(typeof(PageManager)) as PageManager
+                ?? throw new InvalidOperationException("Failed to create PageManager.");
+            _settingPageManager = CreateInstance(typeof(SettingPageManager)) as SettingPageManager
+                ?? throw new InvalidOperationException("Failed to create SettingPageManager.");
+            _restApiManager = CreateInstance(typeof(RestApiManager)) as RestApiManager
+                ?? throw new InvalidOperationException("Failed to create RestApiManager.");
+            _statusPageManager = CreateInstance(typeof(StatusPageManager)) as StatusPageManager
+                ?? throw new InvalidOperationException("Failed to create StatusPageManager.");
+            _eventManager = CreateInstance(typeof(EventManager)) as EventManager
+                ?? throw new InvalidOperationException("Failed to create EventManager.");
+            _jobManager = CreateInstance(typeof(JobManager)) as JobManager
+                ?? throw new InvalidOperationException("Failed to create JobManager.");
+            _sessionManager = CreateInstance(typeof(SessionManager)) as SessionManager
+                ?? throw new InvalidOperationException("Failed to create SessionManager.");
+            _taskManager = CreateInstance(typeof(TaskManager)) as TaskManager
+                ?? throw new InvalidOperationException("Failed to create TaskManager.");
+            _identityManager = CreateInstance(typeof(IdentityManager)) as IdentityManager
+                ?? throw new InvalidOperationException("Failed to create IdentityManager.");
+            _socketManager = CreateInstance(typeof(SocketManager)) as SocketManager
+                ?? throw new InvalidOperationException("Failed to create SocketManager.");
+            _themeManager = CreateInstance(typeof(ThemeManager)) as ThemeManager
+                ?? throw new InvalidOperationException("Failed to create ThemeManager.");
 
             _internationalizationManager.Register(typeof(HttpServer).Assembly, typeof(HttpServer).Assembly.GetName().Name?.ToLower());
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
-                _internationalizationManager.Translate("webexpress.webcore:componentmanager.initialization")
+                _internationalizationManager?.Translate("webexpress.webcore:componentmanager.initialization")
             );
 
-            _pluginManager.AddPlugin += (sender, pluginContext) =>
+            _pluginManager?.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            PluginManager.RemovePlugin += (sender, pluginContext) =>
+            PluginManager?.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
@@ -293,9 +314,9 @@ namespace WebExpress.WebCore.WebComponent
             }
             else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
             {
-                _httpServerContext.Log.Warning
+                _httpServerContext?.Log?.Warning
                 (
-                    _internationalizationManager.Translate
+                    _internationalizationManager?.Translate
                     (
                         "webexpress.webcore:componentmanager.wrongtype",
                         componentType?.FullName, typeof(IComponentManager).FullName
@@ -311,7 +332,9 @@ namespace WebExpress.WebCore.WebComponent
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                Console.WriteLine($"Component creation failed: {componentType.FullName}");
+                Console.WriteLine(ex.InnerException?.Message);
+                _httpServerContext?.Log?.Exception(ex);
             }
 
             return null;
@@ -383,7 +406,7 @@ namespace WebExpress.WebCore.WebComponent
                         ComponentInstance = componentInstance
                     });
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.register", id)
                     );
@@ -393,7 +416,7 @@ namespace WebExpress.WebCore.WebComponent
                 }
                 else
                 {
-                    _httpServerContext.Log.Warning
+                    _httpServerContext?.Log?.Warning
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.duplicate", id)
                     );
@@ -440,7 +463,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public void Execute()
         {
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.execute")
             );
@@ -454,7 +477,7 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         public void ShutDown()
         {
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.shutdown")
             );
@@ -503,7 +526,7 @@ namespace WebExpress.WebCore.WebComponent
                     // raise the RemoveComponent event for each item
                     OnRemoveComponent(componentItem.ComponentInstance);
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         _internationalizationManager.Translate("webexpress.webcore:componentmanager.remove")
                     );
@@ -541,7 +564,7 @@ namespace WebExpress.WebCore.WebComponent
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var output = new List<string>
             {
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.component")
@@ -556,7 +579,7 @@ namespace WebExpress.WebCore.WebComponent
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, output));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, output));
             _lastCounter = Managers.Count();
         }
 

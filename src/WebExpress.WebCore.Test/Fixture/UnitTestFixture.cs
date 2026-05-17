@@ -60,7 +60,7 @@ namespace WebExpress.WebCore.Test.Fixture
             (
                 BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
                 null,
-                [typeof(HttpServerContext)],
+                [typeof(IHttpServerContext)],
                 null
             );
 
@@ -140,11 +140,35 @@ namespace WebExpress.WebCore.Test.Fixture
         {
             var ctorRequest = typeof(Request).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, [typeof(IFeatureCollection), typeof(RequestHeaderFields), typeof(IHttpServerContext)], null);
             var featureCollection = new FeatureCollection();
-            var firstLine = content.Split('\n').FirstOrDefault();
+            var firstLine = content.Split('\n').FirstOrDefault()?.TrimEnd('\r') ?? "";
             var lines = content.Split(_separator, StringSplitOptions.None);
             var filteredLines = lines.Skip(1).TakeWhile(line => !string.IsNullOrWhiteSpace(line));
-            var pos = content.Length > 0 ? content.IndexOf(filteredLines.LastOrDefault() ?? "") + filteredLines.LastOrDefault()?.Length ?? 0 + 4 : 0;
-            var innerContent = pos < content.Length ? content[pos..] : "";
+
+            // locate the headers/body boundary in a line-ending-agnostic way: the
+            // first occurrence of two consecutive line breaks (any combination of
+            // \r\n, \n, \r) marks the end of the header section.
+            var headerEnd = -1;
+            var separatorLength = 0;
+            foreach (var sep in new[] { "\r\n\r\n", "\n\n", "\r\r" })
+            {
+                var idx = content.IndexOf(sep, StringComparison.Ordinal);
+                if (idx >= 0 && (headerEnd < 0 || idx < headerEnd))
+                {
+                    headerEnd = idx;
+                    separatorLength = sep.Length;
+                }
+            }
+
+            var innerContent = headerEnd >= 0 ? content[(headerEnd + separatorLength)..] : "";
+
+            // HTTP wire format requires CRLF; normalize text-only bodies that
+            // were checked out with LF only so the production multipart /
+            // urlencoded parsers find their boundaries.
+            if (innerContent.Length > 0 && !innerContent.Contains("\r\n"))
+            {
+                innerContent = innerContent.Replace("\n", "\r\n");
+            }
+
             var contentBytes = Encoding.UTF8.GetBytes(innerContent);
 
             var requestFeature = new HttpRequestFeature

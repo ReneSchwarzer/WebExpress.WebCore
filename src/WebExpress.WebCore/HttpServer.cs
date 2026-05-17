@@ -19,9 +19,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebExpress.WebCore.Config;
 using WebExpress.WebCore.Internationalization;
+using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
 using WebExpress.WebCore.WebSitemap;
 using WebExpress.WebCore.WebSocket;
@@ -35,6 +37,8 @@ namespace WebExpress.WebCore
     /// </summary>
     public class HttpServer : IHost, IHttpApplication<IHttpContext>
     {
+        private static readonly IComponentHub _componentHub = WebEx.ComponentHub;
+
         /// <summary>
         /// Event is triggered after the web server is started.
         /// </summary>
@@ -46,37 +50,37 @@ namespace WebExpress.WebCore
         private KestrelServer Kestrel { get; set; }
 
         /// <summary>
-        /// Server thread termination.
+        /// Gets the server thread termination.
         /// </summary>
         private CancellationTokenSource ServerTokenSource { get; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Returns or sets the configuration.
+        /// Gets or sets the configuration.
         /// </summary>
         public HttpServerConfig Config { get; set; }
 
         /// <summary>
-        /// Returns or sets the context.
+        /// Gets the context.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; protected set; }
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets or sets the culture.
         /// </summary>
         public CultureInfo Culture { get; set; }
 
         /// <summary>
-        /// Returns the execution time of the web server.
+        /// Gets the execution time of the web server.
         /// </summary>
         public static DateTime ExecutionTime { get; } = DateTime.Now;
 
         /// <summary>
-        /// Returns the request number;
+        /// Gets the request number;
         /// </summary>
         public long RequestNumber { get; private set; }
 
         /// <summary>
-        /// Returns the statistics history.
+        /// Gets the statistics history.
         /// </summary>
         public static List<HttpServerStatisticItem> Statistics { get; } = [];
 
@@ -94,7 +98,7 @@ namespace WebExpress.WebCore
         /// Initializes a new instance of the class.
         /// </summary>
         /// <param name="context">The server context.</param>
-        public HttpServer(HttpServerContext context)
+        public HttpServer(IHttpServerContext context)
         {
             HttpServerContext = new HttpServerContext
             (
@@ -117,14 +121,14 @@ namespace WebExpress.WebCore
         /// </summary>
         public void Start()
         {
-            if (HttpServerContext != null && HttpServerContext.Log != null)
+            if (HttpServerContext is not null && HttpServerContext.Log != null)
             {
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
+                HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.run"));
             }
 
             if (!HttpListener.IsSupported)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
+                HttpServerContext.Log?.Error(message: I18N.Translate("webexpress.webcore:httpserver.notsupported"));
             }
 
             var logger = new LogFactory();
@@ -172,7 +176,7 @@ namespace WebExpress.WebCore
             Kestrel = new KestrelServer(serverOptions, transport, logger);
             Kestrel.StartAsync(this, ServerTokenSource.Token);
 
-            HttpServerContext.Log.Info(message: I18N.Translate
+            HttpServerContext.Log?.Info(message: I18N.Translate
             (
                 "webexpress.webcore:httpserver.start"),
                 args: [ExecutionTime.ToShortDateString(), ExecutionTime.ToLongTimeString()]
@@ -199,7 +203,7 @@ namespace WebExpress.WebCore
                     .Union(asterisk ? Dns.GetHostEntry("localhost").AddressList : [])
                     .Where(x => x.AddressFamily == AddressFamily.InterNetwork || x.AddressFamily == AddressFamily.InterNetworkV6);
 
-                HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
+                HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.endpoint"), args: endPoint.Uri);
 
                 foreach (var ipAddress in addressList)
                 {
@@ -222,8 +226,8 @@ namespace WebExpress.WebCore
             }
             catch (Exception ex)
             {
-                HttpServerContext.Log.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Error(message: I18N.Translate("webexpress.webcore:httpserver.listen.exeption"), args: endPoint);
+                HttpServerContext.Log?.Exception(ex);
             }
         }
 
@@ -235,7 +239,7 @@ namespace WebExpress.WebCore
         private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint)
         {
             serverOptions.Value.Listen(endPoint);
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -253,7 +257,7 @@ namespace WebExpress.WebCore
                 configure.UseHttps(cert);
             });
 
-            HttpServerContext.Log.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
+            HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
         /// <summary>
@@ -278,8 +282,8 @@ namespace WebExpress.WebCore
             var request = context.Request;
             var response = default(IResponse);
 
-            HttpServerContext.Log.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
-            HttpServerContext.Log.Info(I18N.Translate
+            HttpServerContext.Log?.Debug(message: I18N.Translate("webexpress.webcore:httpserver.connected"), args: context.RemoteEndPoint);
+            HttpServerContext.Log?.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request",
                 context.RemoteEndPoint,
@@ -287,7 +291,10 @@ namespace WebExpress.WebCore
                 $"{request?.Method} {request?.Uri} {request?.Protocoll}"
             ));
 
-            var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments);
+            var resourceUri = new UriEndpoint(request.Uri, searchResult.Uri.PathSegments)
+            {
+                BasePath = searchResult.Uri.BasePath
+            };
             request.Uri = resourceUri;
 
             try
@@ -295,7 +302,7 @@ namespace WebExpress.WebCore
                 // execute resource
                 request.AddParameter(searchResult.Uri.Parameters.Select(x => new Parameter(x.Key, x.Value, ParameterScope.Url)));
 
-                if (searchResult.EndpointContext != null)
+                if (searchResult.EndpointContext is not null)
                 {
                     response = WebEx.ComponentHub.EndpointManager.HandleRequest(request, searchResult.EndpointContext);
 
@@ -313,7 +320,7 @@ namespace WebExpress.WebCore
                     (
                         !response.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
                         !request.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
-                        request.Session != null
+                        request.Session is not null
                     )
                     {
                         var cookie = new Cookie("session", request.Session.Id.ToString()) { Expires = DateTime.MaxValue };
@@ -365,7 +372,7 @@ namespace WebExpress.WebCore
                 }
                 else
                 {
-                    HttpServerContext.Log.Exception(ex);
+                    HttpServerContext.Log?.Exception(ex);
 
                     var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
                             $"<h5>Source</h5>{ex.Source}<br/><br/>" +
@@ -385,7 +392,7 @@ namespace WebExpress.WebCore
 
             UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
 
-            HttpServerContext.Log.Info(I18N.Translate
+            HttpServerContext.Log?.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request.done",
                 context?.RemoteEndPoint,
@@ -406,7 +413,7 @@ namespace WebExpress.WebCore
         {
             var now = DateTime.Now;
             var minute = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
-            var isError = response != null && response.Status >= 400;
+            var isError = response is not null && response.Status >= 400;
 
             // calculate memory usage in MB
             var memUsage = _currentProcess.WorkingSet64 / (1024.0 * 1024.0);
@@ -437,7 +444,7 @@ namespace WebExpress.WebCore
 
                 var current = Statistics.LastOrDefault();
 
-                if (current != null && current.Timestamp == minute)
+                if (current is not null && current.Timestamp == minute)
                 {
                     current.Requests++;
                     if (isError)
@@ -484,17 +491,17 @@ namespace WebExpress.WebCore
         /// <param name="request">The request.</param>
         /// <param name="searchResult">The plugin by searching the status page or null.</param>
         /// <returns>The response.</returns>
-        private static Response CreateStatusPage<T>(string message, IRequest request, SearchResult searchResult = null) where T : Response, new()
+        private static IResponse CreateStatusPage<TResponse>(string message, IRequest request, SearchResult searchResult = null)
+            where TResponse : Response, new()
         {
-            var response = new T() as Response;
+            var response = new TResponse() as Response;
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
             var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
             var applicationContext = applicationManager.Applications
-                   .Where(x => route.StartsWith(x.Route.ToString()))
-                   .FirstOrDefault();
+                .FirstOrDefault(x => route.StartsWith(x.Route.ToString()));
 
-            if (searchResult != null)
+            if (searchResult is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (
@@ -505,7 +512,7 @@ namespace WebExpress.WebCore
                 );
             }
 
-            if (applicationContext != null)
+            if (applicationContext is not null)
             {
                 return statusPageManager.CreateStatusResponse
                 (
@@ -592,7 +599,7 @@ namespace WebExpress.WebCore
                 HttpServerContext = HttpServerContext
             });
 
-            if (searchResult == null)
+            if (searchResult is null || searchResult.EndpointContext is null)
             {
                 var notFoundResponse = CreateStatusPage<ResponseNotFound>
                 (
@@ -605,6 +612,14 @@ namespace WebExpress.WebCore
                 return;
             }
 
+            var applicationContext = searchResult.EndpointContext.ApplicationContext;
+
+            if (httpContext.Request is Request request)
+            {
+                request.ApplicationContext = applicationContext;
+                request.EndpointContext = searchResult.EndpointContext;
+            }
+
             if (httpContext is HttpWebSocketContext)
             {
                 // try to obtain websocket context and optional handler
@@ -615,9 +630,94 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            var response = HandleClient(httpContext, searchResult);
+            // no policies
+            if (!searchResult.EndpointContext.Policies?.Any() ?? false)
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
 
-            await responseSender.SendAsync(httpContext, response);
+                return;
+            }
+
+            var identity = _componentHub?.IdentityManager.GetCurrentIdentity(httpContext.Request);
+
+            // if access is granted
+            if (_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
+
+                return;
+            }
+
+            // check again
+            if (!_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
+            {
+                // if the user is authenticated but lacks the required permissions, show the forbidden page
+                if (identity is not null && searchResult.EndpointContext is IPageContext)
+                {
+                    var forbiddenResponse = _componentHub?.IdentityManager.CreateForbiddenResponse
+                    (
+                        httpContext.Request,
+                        searchResult.EndpointContext as IPageContext,
+                        identity
+                    );
+
+                    if (forbiddenResponse is not null)
+                    {
+                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        return;
+                    }
+                    else
+                    {
+                        forbiddenResponse = CreateStatusPage<ResponseForbidden>
+                        (
+                            new StatusMessage("You do not have permission to access this resource.").Message,
+                            httpContext.Request,
+                            searchResult
+                        );
+
+                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        return;
+                    }
+                }
+                else if (identity is not null)
+                {
+                    var forbiddenResponse = new ResponseForbidden(new StatusMessage("You do not have permission to access this resource."));
+
+                    await responseSender.SendAsync(httpContext, forbiddenResponse);
+                    return;
+                }
+                else if (searchResult.EndpointContext is IPageContext pageContext)
+                {
+                    // if the user is not authenticated, show the login prompt
+                    var loginResponse = _componentHub?.IdentityManager.CreateAuthenticationPrompt
+                    (
+                        httpContext.Request,
+                        searchResult.EndpointContext as IPageContext,
+                        identity
+                    );
+
+                    if (loginResponse is not null)
+                    {
+                        await responseSender.SendAsync(httpContext, loginResponse);
+                        return;
+                    }
+                }
+                else
+                {
+                    var unauthorizedResponse = new ResponseUnauthorized(new StatusMessage("Authentication required. Provide a valid access token."));
+
+                    await responseSender.SendAsync(httpContext, unauthorizedResponse);
+                    return;
+                }
+            }
+
+            // access is granted
+            {
+                var response = HandleClient(httpContext, searchResult);
+                await responseSender.SendAsync(httpContext, response);
+            }
         }
 
         /// <summary>
@@ -666,7 +766,7 @@ namespace WebExpress.WebCore
             }
             catch (SocketException ex)
             {
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Exception(ex);
 
                 // return 500 when socket error 
                 var response = new ResponseInternalServerError(new StatusMessage("A transport-level socket error occurred during WebSocket communication."));
@@ -675,7 +775,7 @@ namespace WebExpress.WebCore
             catch (Exception ex)
             {
                 // log unhandled exceptions during websocket processing
-                HttpServerContext.Log.Exception(ex);
+                HttpServerContext.Log?.Exception(ex);
 
                 // return 500 when handshake did not succeed and no websocket established
                 var response = new ResponseInternalServerError(new StatusMessage("An unexpected server error occurred during WebSocket processing."));

@@ -14,32 +14,32 @@ namespace WebExpress.WebCore.WebJob
     public class Cron
     {
         /// <summary>
-        /// Returns or sets the reference to the context of the host
+        /// Gets or sets the reference to the context of the host
         /// </summary>
         private static IHttpServerContext Context { get; set; }
 
         /// <summary>
-        /// Returns the minute 0-59 or * for any. Comma seperated values or ranges (-) are also possible.
+        /// Gets the minute 0-59 or * for any. Comma seperated values or ranges (-) are also possible.
         /// </summary>
         public IEnumerable<int> Minute { get; private set; }
 
         /// <summary>
-        /// Returns the hour 0-23 or * for any. Comma seperated values or ranges (-) are also possible.
+        /// Gets the hour 0-23 or * for any. Comma seperated values or ranges (-) are also possible.
         /// </summary>
         public IEnumerable<int> Hour { get; private set; }
 
         /// <summary>
-        /// Returns the day 1-31 or * for any. Comma seperated values or ranges (-) are also possible.
+        /// Gets the day 1-31 or * for any. Comma seperated values or ranges (-) are also possible.
         /// </summary>
         public IEnumerable<int> Day { get; private set; }
 
         /// <summary>
-        /// Returns the month 1-12 or * for any. Comma seperated values or ranges (-) are also possible.
+        /// Gets the month 1-12 or * for any. Comma seperated values or ranges (-) are also possible.
         /// </summary>
         public IEnumerable<int> Month { get; private set; }
 
         /// <summary>
-        /// Returns the day of the week 0-6 (Sunday-Saturday) or * for any. Comma seperated values or ranges (-) are also possible.
+        /// Gets the day of the week 0-6 (Sunday-Saturday) or * for any. Comma seperated values or ranges (-) are also possible.
         /// </summary>
         public IEnumerable<int> Weekday { get; private set; }
 
@@ -111,7 +111,7 @@ namespace WebExpress.WebCore.WebJob
                     }
                     else
                     {
-                        Context.Log.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.range"), args: value);
+                        Context.Log?.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.range"), args: value);
                     }
                 }
                 else if (range.Length == 1)
@@ -124,17 +124,17 @@ namespace WebExpress.WebCore.WebJob
                         }
                         else
                         {
-                            Context.Log.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.range"), args: result);
+                            Context.Log?.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.range"), args: result);
                         }
                     }
                     else
                     {
-                        Context.Log.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.parseerror"), args: value);
+                        Context.Log?.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.parseerror"), args: value);
                     }
                 }
                 else
                 {
-                    Context.Log.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.parseerror"), args: value);
+                    Context.Log?.Warning(message: I18N.Translate("webexpress.webcore:schedulermanager.cron.parseerror"), args: value);
                 }
             }
 

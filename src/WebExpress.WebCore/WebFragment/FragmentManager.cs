@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebFragment.Model;
 using WebExpress.WebCore.WebHtml;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -37,7 +38,7 @@ namespace WebExpress.WebCore.WebFragment
         public event EventHandler<IFragmentContext> RemoveFragment;
 
         /// <summary>
-        /// Returns the collection of fragment contexts.
+        /// Gets the collection of fragment contexts.
         /// </summary>
         public IEnumerable<IFragmentContext> Fragments => _dictionary.All;
 
@@ -52,12 +53,12 @@ namespace WebExpress.WebCore.WebFragment
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:fragmentmanager.initialization")
             );
@@ -74,7 +75,7 @@ namespace WebExpress.WebCore.WebFragment
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -83,7 +84,7 @@ namespace WebExpress.WebCore.WebFragment
         /// <param name="applicationContext">The context of the application whose fragments are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -111,6 +112,7 @@ namespace WebExpress.WebCore.WebFragment
                 var scopes = new List<Type>();
                 var sections = new List<Type>();
                 var conditions = new List<ICondition>();
+                var policies = new List<IIdentityPolicy>();
                 var cache = false;
                 var order = 0;
 
@@ -129,6 +131,11 @@ namespace WebExpress.WebCore.WebFragment
                     {
                         var condition = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
                         conditions.Add(Activator.CreateInstance(condition) as ICondition);
+                    }
+                    else if (customAttribute.AttributeType.Name == typeof(PolicyAttribute<>).Name && customAttribute.AttributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policy = customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                        policies.Add(Activator.CreateInstance(policy) as IIdentityPolicy);
                     }
                     else if (customAttribute.AttributeType == typeof(CacheAttribute))
                     {
@@ -160,7 +167,7 @@ namespace WebExpress.WebCore.WebFragment
                 // check section
                 if (sections.Count == 0)
                 {
-                    _httpServerContext.Log.Warning(I18N.Translate
+                    _httpServerContext?.Log?.Warning(I18N.Translate
                     (
                         "webexpress.webcore:fragmentmanager.error.section"
                     ));
@@ -175,7 +182,7 @@ namespace WebExpress.WebCore.WebFragment
                 }
 
                 // assign the fragment to existing applications
-                foreach (var applicationContext in _componentHub.ApplicationManager.GetApplications(pluginContext))
+                foreach (var applicationContext in _componentHub?.ApplicationManager.GetApplications(pluginContext))
                 {
                     // assign section
                     foreach (var section in sections)
@@ -191,7 +198,8 @@ namespace WebExpress.WebCore.WebFragment
                                 Cache = cache,
                                 Section = section,
                                 Scope = scope,
-                                Conditions = conditions
+                                Conditions = conditions,
+                                Policies = policies
                             };
 
                             var fragmentItem = new FragmentItem(_componentHub, _httpServerContext)
@@ -211,7 +219,7 @@ namespace WebExpress.WebCore.WebFragment
                             {
                                 OnAddFragment(fragmentContext);
 
-                                _httpServerContext?.Log.Debug
+                                _httpServerContext?.Log?.Debug
                                 (
                                     I18N.Translate
                                     (
@@ -487,7 +495,7 @@ namespace WebExpress.WebCore.WebFragment
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:fragmentmanager.titel")
@@ -502,7 +510,7 @@ namespace WebExpress.WebCore.WebFragment
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -510,10 +518,10 @@ namespace WebExpress.WebCore.WebFragment
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

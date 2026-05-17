@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.Test
     public sealed class TestStatusPage400 : IStatusPage<VisualTree>
     {
         /// <summary>
-        /// Returns or sets the status message.
+        /// Gets or sets the status message.
         /// </summary>
         public string StatusMessage { get; private set; }
 

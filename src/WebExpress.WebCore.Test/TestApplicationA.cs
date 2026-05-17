@@ -1,4 +1,4 @@
-﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 
 namespace WebExpress.WebCore.Test
@@ -13,6 +13,7 @@ namespace WebExpress.WebCore.Test
     [AssetPath("/asseta")]
     [DataPath("/dataa")]
     [Dependency("webexpress.webui")]
+    [Theme<TestThemeA>]
     public sealed class TestApplicationA : IApplication
     {
         /// <summary>

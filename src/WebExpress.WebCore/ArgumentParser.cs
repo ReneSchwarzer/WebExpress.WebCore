@@ -10,17 +10,17 @@ namespace WebExpress.WebCore
     public class ArgumentParser
     {
         /// <summary>
-        /// The singelton.
+        /// Gets or sets the singelton.
         /// </summary>
         private static ArgumentParser m_this = null;
 
         /// <summary>
-        /// Enumeration of all registered commands.
+        /// Gets or sets the enumeration of all registered commands.
         /// </summary>
         private List<ArgumentParserCommand> Commands { get; set; }
 
         /// <summary>
-        /// Returns the current ArgumentParser object.
+        /// Gets the current ArgumentParser object.
         /// </summary>
         public static ArgumentParser Current
         {

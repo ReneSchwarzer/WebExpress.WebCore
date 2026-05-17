@@ -8,6 +8,7 @@ namespace WebExpress.WebCore.Test.WWW.Api._1_
     /// <summary>
     /// A dummy class for testing purposes.
     /// </summary>
+    [Policy<TestIdentityPolicyA>]
     public sealed class TestRestApiA : IRestApi
     {
         /// <summary>

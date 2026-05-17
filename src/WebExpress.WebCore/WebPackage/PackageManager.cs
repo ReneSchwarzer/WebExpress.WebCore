@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace WebExpress.WebCore.WebPackage
         private CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
 
         /// <summary>
-        /// Returns the catalog of installed packages.
+        /// Gets the catalog of installed packages.
         /// </summary>
         public PackageCatalog Catalog { get; } = new PackageCatalog();
 
@@ -68,7 +69,7 @@ namespace WebExpress.WebCore.WebPackage
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.initialization")
             );
@@ -83,17 +84,17 @@ namespace WebExpress.WebCore.WebPackage
             _pluginManager.Register();
 
             // boot default elements 
-            _componentHub.BootComponent(_pluginManager.Plugins);
+            _componentHub?.BootComponent(_pluginManager.Plugins);
 
             LoadCatalog();
 
             foreach (var package in Catalog.Packages)
             {
-                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package.File));
+                var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package.File));
 
                 package.Metadata = packagesFromFile?.Metadata;
 
-                _httpServerContext.Log.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate("webexpress.webcore:packagemanager.existing", package.File)
                 );
@@ -110,7 +111,7 @@ namespace WebExpress.WebCore.WebPackage
             SaveCatalog();
 
             // build sitemap
-            _componentHub.SitemapManager.Refresh();
+            _componentHub?.SitemapManager.Refresh();
 
             Task.Factory.StartNew(() =>
             {
@@ -140,17 +141,17 @@ namespace WebExpress.WebCore.WebPackage
         {
             lock (_scanLock)
             {
-                _httpServerContext.Log.Debug
+                _httpServerContext?.Log?.Debug
                 (
                     I18N.Translate
                     (
                         "webexpress.webcore:packagemanager.scan",
-                        _httpServerContext.PackagePath
+                        _httpServerContext?.PackagePath
                     )
                 );
 
                 // determine all WebExpress packages from the file system
-                var packageFiles = Directory.GetFiles(_httpServerContext.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
+                var packageFiles = Directory.GetFiles(_httpServerContext?.PackagePath, "*.wxp").Select(x => Path.GetFileName(x)).ToList();
 
                 // all packages that are not yet installed
                 var newPackages = packageFiles.Except(Catalog.Packages.Where(x => x is not null).Select(x => x.File)).ToList();
@@ -162,7 +163,7 @@ namespace WebExpress.WebCore.WebPackage
                 var changedPackages = new List<string>();
                 foreach (var existing in Catalog.Packages.Where(x => x is not null))
                 {
-                    var fullPath = Path.Combine(_httpServerContext.PackagePath, existing.File);
+                    var fullPath = Path.Combine(_httpServerContext?.PackagePath, existing.File);
                     if (!File.Exists(fullPath))
                     {
                         continue;
@@ -182,7 +183,7 @@ namespace WebExpress.WebCore.WebPackage
 
                 foreach (var package in newPackages)
                 {
-                    var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    var packagesFromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package));
                     if (packagesFromFile is null)
                     {
                         continue;
@@ -199,7 +200,7 @@ namespace WebExpress.WebCore.WebPackage
                     // raise event for added package
                     OnAddPackage(packagesFromFile);
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -217,7 +218,7 @@ namespace WebExpress.WebCore.WebPackage
                         continue;
                     }
 
-                    var fromFile = LoadPackage(Path.Combine(_httpServerContext.PackagePath, package));
+                    var fromFile = LoadPackage(Path.Combine(_httpServerContext?.PackagePath, package));
                     if (fromFile is null)
                     {
                         continue;
@@ -227,7 +228,7 @@ namespace WebExpress.WebCore.WebPackage
                     if (existing.State == PackageCatalogeItemState.Disable)
                     {
                         existing.Metadata = fromFile.Metadata;
-                        _httpServerContext.Log.Debug($"package '{package}' metadata updated while disabled");
+                        _httpServerContext?.Log?.Debug($"package '{package}' metadata updated while disabled");
                     }
                     else
                     {
@@ -246,7 +247,7 @@ namespace WebExpress.WebCore.WebPackage
                         RegisterPackage(existing);
                         BootPackage(existing);
 
-                        _httpServerContext.Log.Debug($"package '{package}' updated and reloaded");
+                        _httpServerContext?.Log?.Debug($"package '{package}' updated and reloaded");
                     }
                 }
 
@@ -270,7 +271,7 @@ namespace WebExpress.WebCore.WebPackage
                     // remove package from catalog
                     Catalog.Packages.Remove(existing);
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -283,11 +284,403 @@ namespace WebExpress.WebCore.WebPackage
                 if (newPackages.Count != 0 || removePackages.Count != 0 || changedPackages.Count != 0)
                 {
                     // build sitemap
-                    _componentHub.SitemapManager.Refresh();
+                    _componentHub?.SitemapManager.Refresh();
 
                     // save the catalog
                     SaveCatalog();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Returns all package entries from the package catalog.
+        /// </summary>
+        /// <returns>An enumerable collection with all package entries.</returns>
+        public IEnumerable<PackageCatalogItem> GetPackages()
+        {
+            lock (_scanLock)
+            {
+                return [.. Catalog.Packages.Where(x => x is not null)];
+            }
+        }
+
+        /// <summary>
+        /// Returns a package by id.
+        /// </summary>
+        /// <param name="packageId">The package id.</param>
+        /// <returns>The package or null.</returns>
+        public PackageCatalogItem GetPackage(string packageId)
+        {
+            if (string.IsNullOrWhiteSpace(packageId))
+            {
+                return null;
+            }
+
+            lock (_scanLock)
+            {
+                return Catalog.Packages
+                    .FirstOrDefault(x => x is not null && x.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
+        /// <summary>
+        /// Validates a package file.
+        /// </summary>
+        /// <param name="packageFile">The package file path.</param>
+        /// <param name="maxPackageBytes">Optional max allowed package size in bytes. 0 disables the limit check.</param>
+        /// <param name="expectedSha256">Optional expected SHA-256 hash in hex format.</param>
+        /// <returns>The validation result.</returns>
+        public PackageValidationResult ValidatePackage(string packageFile, long maxPackageBytes = 0, string expectedSha256 = null)
+        {
+            var result = new PackageValidationResult();
+
+            if (string.IsNullOrWhiteSpace(packageFile))
+            {
+                result.Messages.Add("The package path is empty.");
+                return result;
+            }
+
+            if (!File.Exists(packageFile))
+            {
+                result.Messages.Add("The package file does not exist.");
+                return result;
+            }
+
+            if (!Path.GetExtension(packageFile).Equals(".wxp", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Messages.Add("The package file extension must be '.wxp'.");
+                return result;
+            }
+
+            if (maxPackageBytes > 0)
+            {
+                var fileInfo = new FileInfo(packageFile);
+                if (fileInfo.Length > maxPackageBytes)
+                {
+                    result.Messages.Add($"The package size exceeds the allowed limit ({maxPackageBytes} bytes).");
+                    return result;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(expectedSha256))
+            {
+                var hash = ComputeSha256(packageFile);
+                if (!hash.Equals(expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Messages.Add("The package signature/hash verification failed.");
+                    return result;
+                }
+            }
+
+            try
+            {
+                using var zip = ZipFile.OpenRead(packageFile);
+                var specEntry = zip.Entries.FirstOrDefault(x => Path.GetExtension(x.FullName).Equals(".spec", StringComparison.OrdinalIgnoreCase));
+                if (specEntry is null)
+                {
+                    result.Messages.Add("The package does not contain a .spec file.");
+                    return result;
+                }
+
+                var spec = ReadSpec(specEntry);
+                if (spec is null)
+                {
+                    result.Messages.Add("The package specification could not be read.");
+                    return result;
+                }
+
+                if (string.IsNullOrWhiteSpace(spec.Id))
+                {
+                    result.Messages.Add("The package id is missing in the .spec file.");
+                }
+
+                if (string.IsNullOrWhiteSpace(spec.Version))
+                {
+                    result.Messages.Add("The package version is missing in the .spec file.");
+                }
+
+                foreach (var plugin in spec.Plugins ?? [])
+                {
+                    if (string.IsNullOrWhiteSpace(plugin))
+                    {
+                        result.Messages.Add("A plugin entry in the .spec file is empty.");
+                        continue;
+                    }
+
+                    if (Path.IsPathRooted(plugin))
+                    {
+                        result.Messages.Add($"The plugin entry '{plugin}' must be a relative path.");
+                    }
+
+                    var normalized = plugin.Replace('\\', '/');
+                    if (normalized.Contains("..", StringComparison.Ordinal))
+                    {
+                        result.Messages.Add($"The plugin entry '{plugin}' contains invalid traversal segments.");
+                    }
+                }
+
+                result.Package = CreateCatalogItem(packageFile, spec);
+            }
+            catch (Exception ex)
+            {
+                _httpServerContext?.Log?.Exception(ex);
+                result.Messages.Add("The package archive is invalid or corrupted.");
+            }
+
+            result.IsValid = result.Messages.Count == 0;
+            return result;
+        }
+
+        /// <summary>
+        /// Uploads and installs a package from a stream.
+        /// </summary>
+        /// <param name="packageStream">The package stream.</param>
+        /// <param name="fileName">The package file name.</param>
+        /// <param name="activate">True to activate directly after install; false to keep it disabled.</param>
+        /// <param name="maxPackageBytes">Optional max allowed package size in bytes. 0 disables the limit check.</param>
+        /// <param name="expectedSha256">Optional expected SHA-256 hash in hex format.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult UploadPackage(Stream packageStream, string fileName, bool activate = true, long maxPackageBytes = 0, string expectedSha256 = null)
+        {
+            if (packageStream is null)
+            {
+                return PackageOperationResult.Failed("The upload stream is null.");
+            }
+
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                return PackageOperationResult.Failed("The upload file name is empty.");
+            }
+
+            var safeFileName = Path.GetFileName(fileName);
+            if (!safeFileName.EndsWith(".wxp", StringComparison.OrdinalIgnoreCase))
+            {
+                return PackageOperationResult.Failed("The upload file extension must be '.wxp'.");
+            }
+
+            var tmpFile = Path.Combine(_httpServerContext?.PackagePath, $"{Guid.NewGuid()}.{safeFileName}");
+            Directory.CreateDirectory(_httpServerContext?.PackagePath);
+
+            try
+            {
+                using (var fileStream = new FileStream(tmpFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    CopyStream(packageStream, fileStream, maxPackageBytes);
+                }
+
+                var targetFile = Path.Combine(_httpServerContext?.PackagePath, safeFileName);
+                File.Copy(tmpFile, targetFile, true);
+
+                return InstallPackage(targetFile, activate, maxPackageBytes, expectedSha256);
+            }
+            catch (Exception ex)
+            {
+                _httpServerContext?.Log?.Exception(ex);
+                return PackageOperationResult.Failed("The package upload failed.");
+            }
+            finally
+            {
+                if (File.Exists(tmpFile))
+                {
+                    File.Delete(tmpFile);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Installs a package from a file.
+        /// </summary>
+        /// <param name="packageFile">The package file path.</param>
+        /// <param name="activate">True to activate directly after install; false to keep it disabled.</param>
+        /// <param name="maxPackageBytes">Optional max allowed package size in bytes. 0 disables the limit check.</param>
+        /// <param name="expectedSha256">Optional expected SHA-256 hash in hex format.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult InstallPackage(string packageFile, bool activate = true, long maxPackageBytes = 0, string expectedSha256 = null)
+        {
+            lock (_scanLock)
+            {
+                var validation = ValidatePackage(packageFile, maxPackageBytes, expectedSha256);
+                if (!validation.IsValid)
+                {
+                    return PackageOperationResult.Failed(string.Join(" ", validation.Messages));
+                }
+
+                var package = validation.Package;
+                var safeFile = Path.GetFileName(packageFile);
+                var targetFile = Path.Combine(_httpServerContext?.PackagePath, safeFile);
+                Directory.CreateDirectory(_httpServerContext?.PackagePath);
+
+                if (!Path.GetFullPath(packageFile).Equals(Path.GetFullPath(targetFile), StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Copy(packageFile, targetFile, true);
+                }
+
+                package.File = safeFile;
+
+                var existing = Catalog.Packages
+                    .FirstOrDefault(x => x is not null && x.Id.Equals(package.Id, StringComparison.OrdinalIgnoreCase));
+
+                if (existing is null)
+                {
+                    Catalog.Packages.Add(package);
+                    existing = package;
+                    OnAddPackage(existing);
+                }
+                else
+                {
+                    var oldPackageFile = Path.Combine(_httpServerContext?.PackagePath, existing.File);
+                    DeactivateAndUnregisterPackage(existing);
+                    RemoveExtractedDirectory(existing);
+
+                    existing.File = package.File;
+                    existing.Metadata = package.Metadata;
+
+                    if (!oldPackageFile.Equals(targetFile, StringComparison.OrdinalIgnoreCase) && File.Exists(oldPackageFile))
+                    {
+                        File.Delete(oldPackageFile);
+                    }
+                }
+
+                if (!activate)
+                {
+                    existing.State = PackageCatalogeItemState.Disable;
+                    SaveCatalog();
+                    _componentHub?.SitemapManager.Refresh();
+                    return PackageOperationResult.Ok($"Package '{existing.Id}' installed (disabled).", existing);
+                }
+
+                var activateResult = ActivatePackage(existing.Id);
+                return activateResult.Success
+                    ? PackageOperationResult.Ok($"Package '{existing.Id}' installed and activated.", existing)
+                    : activateResult;
+            }
+        }
+
+        /// <summary>
+        /// Activates a package.
+        /// </summary>
+        /// <param name="packageId">The package id.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult ActivatePackage(string packageId)
+        {
+            lock (_scanLock)
+            {
+                var package = GetPackage(packageId);
+                if (package is null)
+                {
+                    return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
+                }
+
+                if (package.State == PackageCatalogeItemState.Active)
+                {
+                    return PackageOperationResult.Ok($"Package '{packageId}' is already active.", package);
+                }
+
+                var missingDependencies = GetUnfulfilledPackageDependencies(package).ToList();
+                if (missingDependencies.Count > 0)
+                {
+                    package.State = PackageCatalogeItemState.Disable;
+                    SaveCatalog();
+                    return PackageOperationResult.Failed($"Package '{packageId}' has missing dependencies: {string.Join(", ", missingDependencies)}", package);
+                }
+
+                DeactivateAndUnregisterPackage(package);
+                RemoveExtractedDirectory(package);
+
+                ExtractPackage(package);
+                RegisterPackage(package);
+                BootPackage(package);
+                package.State = PackageCatalogeItemState.Active;
+
+                SaveCatalog();
+                _componentHub?.SitemapManager.Refresh();
+
+                return PackageOperationResult.Ok($"Package '{packageId}' activated.", package);
+            }
+        }
+
+        /// <summary>
+        /// Deactivates a package.
+        /// </summary>
+        /// <param name="packageId">The package id.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult DeactivatePackage(string packageId)
+        {
+            lock (_scanLock)
+            {
+                var package = GetPackage(packageId);
+                if (package is null)
+                {
+                    return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
+                }
+
+                DeactivateAndUnregisterPackage(package);
+                RemoveExtractedDirectory(package);
+                package.State = PackageCatalogeItemState.Disable;
+
+                SaveCatalog();
+                _componentHub?.SitemapManager.Refresh();
+
+                return PackageOperationResult.Ok($"Package '{packageId}' deactivated.", package);
+            }
+        }
+
+        /// <summary>
+        /// Updates a package from a file path.
+        /// </summary>
+        /// <param name="packageId">The package id.</param>
+        /// <param name="packageFile">The package file path.</param>
+        /// <param name="activate">True to activate directly after update; false to keep it disabled.</param>
+        /// <param name="maxPackageBytes">Optional max allowed package size in bytes. 0 disables the limit check.</param>
+        /// <param name="expectedSha256">Optional expected SHA-256 hash in hex format.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult UpdatePackage(string packageId, string packageFile, bool activate = true, long maxPackageBytes = 0, string expectedSha256 = null)
+        {
+            var validation = ValidatePackage(packageFile, maxPackageBytes, expectedSha256);
+            if (!validation.IsValid)
+            {
+                return PackageOperationResult.Failed(string.Join(" ", validation.Messages));
+            }
+
+            if (validation.Package is null || !validation.Package.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase))
+            {
+                return PackageOperationResult.Failed($"The uploaded package id does not match '{packageId}'.");
+            }
+
+            return InstallPackage(packageFile, activate, maxPackageBytes, expectedSha256);
+        }
+
+        /// <summary>
+        /// Uninstalls and removes a package.
+        /// </summary>
+        /// <param name="packageId">The package id.</param>
+        /// <returns>The operation result.</returns>
+        public PackageOperationResult UninstallPackage(string packageId)
+        {
+            lock (_scanLock)
+            {
+                var package = GetPackage(packageId);
+                if (package is null)
+                {
+                    return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
+                }
+
+                DeactivateAndUnregisterPackage(package);
+                RemoveExtractedDirectory(package);
+
+                var packageFile = Path.Combine(_httpServerContext?.PackagePath, package.File);
+                if (File.Exists(packageFile))
+                {
+                    File.Delete(packageFile);
+                }
+
+                Catalog.Packages.Remove(package);
+                OnRemovePackage(package);
+
+                SaveCatalog();
+                _componentHub?.SitemapManager.Refresh();
+
+                return PackageOperationResult.Ok($"Package '{packageId}' uninstalled.", package);
             }
         }
 
@@ -304,48 +697,24 @@ namespace WebExpress.WebCore.WebPackage
                 {
                     using var zip = ZipFile.Open(file, ZipArchiveMode.Read);
 
-                    var specEntry = zip.Entries.Where(x => Path.GetExtension(x.FullName) == ".spec").FirstOrDefault();
+                    var specEntry = zip.Entries
+                        .FirstOrDefault(x => Path.GetExtension(x.FullName).Equals(".spec", StringComparison.OrdinalIgnoreCase));
                     if (specEntry is null)
                     {
-                        _httpServerContext.Log.Warning($"package spec was not found in '{file}'");
+                        _httpServerContext?.Log?.Warning($"package spec was not found in '{file}'");
                         return null;
                     }
 
-                    var serializer = new XmlSerializer(typeof(PackageItemSpec));
-                    PackageItemSpec spec;
-                    using (var stream = specEntry.Open())
-                    {
-                        spec = (PackageItemSpec)serializer.Deserialize(stream);
-                    }
-
-                    return new PackageCatalogItem()
-                    {
-                        Id = spec.Id,
-                        File = Path.GetFileName(file),
-                        State = PackageCatalogeItemState.Available,
-                        Metadata = new PackageItem()
-                        {
-                            FileName = Path.GetFileName(file),
-                            Id = spec.Id,
-                            Version = spec.Version,
-                            Title = spec.Title,
-                            Authors = spec.Authors,
-                            License = spec.License,
-                            Icon = spec.Icon,
-                            Readme = spec.Readme,
-                            Description = spec.Description,
-                            Tags = spec.Tags,
-                            PluginSources = spec.Plugins
-                        }
-                    };
+                    var spec = ReadSpec(specEntry);
+                    return CreateCatalogItem(file, spec);
                 }
             }
             catch (Exception ex)
             {
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -362,7 +731,7 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void LoadCatalog()
         {
-            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext?.PackagePath, "catalog.xml");
             if (File.Exists(catalogeFile))
             {
                 using var catalog = new StreamReader(catalogeFile);
@@ -388,7 +757,7 @@ namespace WebExpress.WebCore.WebPackage
         /// </summary>
         private void SaveCatalog()
         {
-            var catalogeFile = Path.Combine(_httpServerContext.PackagePath, "catalog.xml");
+            var catalogeFile = Path.Combine(_httpServerContext?.PackagePath, "catalog.xml");
 
             using var fs = new FileStream(catalogeFile, FileMode.Create);
             using var writer = new XmlTextWriter(fs, Encoding.Unicode);
@@ -397,7 +766,7 @@ namespace WebExpress.WebCore.WebPackage
             writer.Formatting = Formatting.Indented;
             serializer.Serialize(writer, Catalog, new XmlSerializerNamespaces([new XmlQualifiedName("", "")]));
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:packagemanager.save")
             );
@@ -409,25 +778,48 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void ExtractPackage(PackageCatalogItem package)
         {
-            var packageFile = Path.Combine(_httpServerContext.PackagePath, package?.File);
+            var packageFile = Path.Combine(_httpServerContext?.PackagePath, package?.File);
 
             if (File.Exists(packageFile))
             {
                 using var zip = ZipFile.Open(packageFile, ZipArchiveMode.Read);
 
-                var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+                var extractedPath = Path.Combine(_httpServerContext?.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+                var extractedPathFull = Path.GetFullPath(extractedPath);
 
                 if (!Directory.Exists(extractedPath))
                 {
                     Directory.CreateDirectory(extractedPath);
                 }
 
-                foreach (var entry in zip.Entries.Where(x => Path.GetDirectoryName(x.FullName).StartsWith("lib", StringComparison.OrdinalIgnoreCase)))
+                foreach (var entry in zip.Entries)
                 {
+                    var normalized = (entry.FullName ?? string.Empty).Replace('\\', '/').TrimStart('/');
+
+                    if (!normalized.StartsWith("lib/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (normalized.Contains("../", StringComparison.Ordinal) || normalized.StartsWith("..", StringComparison.Ordinal))
+                    {
+                        _httpServerContext?.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        continue;
+                    }
+
+                    var targetFilePath = Path.GetFullPath(Path.Combine(extractedPath, normalized));
+                    var isInExtractedPath = targetFilePath.StartsWith(extractedPathFull + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+                        || targetFilePath.Equals(extractedPathFull, StringComparison.OrdinalIgnoreCase);
+                    if (!isInExtractedPath)
+                    {
+                        _httpServerContext?.Log?.Warning($"Unsafe package entry '{entry.FullName}' ignored.");
+                        continue;
+                    }
+
                     // directory entries in the zip have an empty Name
                     if (string.IsNullOrEmpty(entry.Name))
                     {
-                        var dirPath = Path.Combine(extractedPath, entry.FullName);
+                        var dirPath = targetFilePath;
                         if (!Directory.Exists(dirPath))
                         {
                             Directory.CreateDirectory(dirPath);
@@ -436,7 +828,6 @@ namespace WebExpress.WebCore.WebPackage
                         continue;
                     }
 
-                    var targetFilePath = Path.Combine(extractedPath, entry.FullName);
                     var targetDir = Path.GetDirectoryName(targetFilePath);
 
                     if (!Directory.Exists(targetDir))
@@ -444,10 +835,7 @@ namespace WebExpress.WebCore.WebPackage
                         Directory.CreateDirectory(targetDir);
                     }
 
-                    if (!File.Exists(targetFilePath))
-                    {
-                        entry.ExtractToFile(targetFilePath);
-                    }
+                    entry.ExtractToFile(targetFilePath, true);
                 }
             }
         }
@@ -473,7 +861,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void BootPackage(PackageCatalogItem package)
         {
-            _componentHub.BootComponent(package.Plugins);
+            _componentHub?.BootComponent(package.Plugins);
         }
 
         /// <summary>
@@ -487,7 +875,7 @@ namespace WebExpress.WebCore.WebPackage
         {
             return Path.GetFullPath(Path.Combine
             (
-                _httpServerContext.PackagePath,
+                _httpServerContext?.PackagePath,
                 Path.GetFileNameWithoutExtension(package?.File), plugin, GetTFM(), $"{Path.GetFileName(plugin)}.dll"
             ));
         }
@@ -534,7 +922,7 @@ namespace WebExpress.WebCore.WebPackage
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:packagemanager.titel")
@@ -548,7 +936,7 @@ namespace WebExpress.WebCore.WebPackage
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -592,6 +980,22 @@ namespace WebExpress.WebCore.WebPackage
                 }
             }
 
+            var dependenciesA = (existing.Metadata.Dependencies ?? []).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToArray();
+            var dependenciesB = (fromFile.Metadata.Dependencies ?? []).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToArray();
+
+            if (dependenciesA.Length != dependenciesB.Length)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < dependenciesA.Length; i++)
+            {
+                if (!string.Equals(dependenciesA[i], dependenciesB[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -610,7 +1014,7 @@ namespace WebExpress.WebCore.WebPackage
             // shut down components associated to each plugin and remove the plugin
             foreach (var pluginContext in package.Plugins.ToList())
             {
-                _componentHub.ShutDownComponent(pluginContext);
+                _componentHub?.ShutDownComponent(pluginContext);
                 _pluginManager.Remove(pluginContext);
             }
 
@@ -624,7 +1028,7 @@ namespace WebExpress.WebCore.WebPackage
         /// <param name="package">The package.</param>
         private void RemoveExtractedDirectory(PackageCatalogItem package)
         {
-            var extractedPath = Path.Combine(_httpServerContext.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
+            var extractedPath = Path.Combine(_httpServerContext?.PackagePath, Path.GetFileNameWithoutExtension(package?.File));
             try
             {
                 if (Directory.Exists(extractedPath))
@@ -635,8 +1039,237 @@ namespace WebExpress.WebCore.WebPackage
             catch (Exception ex)
             {
                 // keep running even if cleanup fails
-                _httpServerContext.Log.Exception(ex);
+                _httpServerContext?.Log?.Exception(ex);
             }
+        }
+
+        /// <summary>
+        /// Reads and deserializes the package specification from an archive entry.
+        /// </summary>
+        /// <param name="specEntry">The spec archive entry.</param>
+        /// <returns>The deserialized package spec.</returns>
+        private static PackageItemSpec ReadSpec(ZipArchiveEntry specEntry)
+        {
+            var serializer = new XmlSerializer(typeof(PackageItemSpec));
+            using var stream = specEntry.Open();
+            using var xmlReader = XmlReader.Create(stream, new XmlReaderSettings()
+            {
+                DtdProcessing = DtdProcessing.Prohibit,
+                XmlResolver = null
+            });
+
+            return (PackageItemSpec)serializer.Deserialize(xmlReader);
+        }
+
+        /// <summary>
+        /// Creates a package catalog item from a package specification.
+        /// </summary>
+        /// <param name="file">The package file path.</param>
+        /// <param name="spec">The package specification.</param>
+        /// <returns>The package catalog item.</returns>
+        private static PackageCatalogItem CreateCatalogItem(string file, PackageItemSpec spec)
+        {
+            if (spec is null)
+            {
+                return null;
+            }
+
+            return new PackageCatalogItem()
+            {
+                Id = spec.Id,
+                File = Path.GetFileName(file),
+                State = PackageCatalogeItemState.Available,
+                Metadata = new PackageItem()
+                {
+                    FileName = Path.GetFileName(file),
+                    Id = spec.Id,
+                    Version = spec.Version,
+                    Title = spec.Title,
+                    Authors = spec.Authors,
+                    License = spec.License,
+                    Icon = spec.Icon,
+                    Readme = spec.Readme,
+                    Description = spec.Description,
+                    Tags = spec.Tags,
+                    PluginSources = spec.Plugins ?? [],
+                    Dependencies = spec.Dependencies ?? []
+                }
+            };
+        }
+
+        /// <summary>
+        /// Copies an input stream to an output stream while optionally enforcing a maximum number of bytes.
+        /// </summary>
+        /// <param name="source">The source stream.</param>
+        /// <param name="target">The target stream.</param>
+        /// <param name="maxBytes">The maximum allowed bytes. 0 disables the size check.</param>
+        private static void CopyStream(Stream source, Stream target, long maxBytes)
+        {
+            long totalBytes = 0;
+            var buffer = new byte[81920];
+            int read;
+
+            while ((read = source.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                totalBytes += read;
+                if (maxBytes > 0 && totalBytes > maxBytes)
+                {
+                    throw new InvalidOperationException($"The uploaded package exceeds the allowed size ({maxBytes} bytes).");
+                }
+
+                target.Write(buffer, 0, read);
+            }
+        }
+
+        /// <summary>
+        /// Computes the SHA-256 hash for a file.
+        /// </summary>
+        /// <param name="file">The file path.</param>
+        /// <returns>The SHA-256 hash as lowercase hex string.</returns>
+        private static string ComputeSha256(string file)
+        {
+            using var stream = File.OpenRead(file);
+            var hash = SHA256.HashData(stream);
+            return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Returns unfulfilled dependency expressions for a package.
+        /// </summary>
+        /// <param name="package">The package to evaluate.</param>
+        /// <returns>The unfulfilled dependency list.</returns>
+        private IEnumerable<string> GetUnfulfilledPackageDependencies(PackageCatalogItem package)
+        {
+            var dependencies = package?.Metadata?.Dependencies ?? [];
+            var missing = new List<string>();
+
+            foreach (var dependency in dependencies.Where(x => !string.IsNullOrWhiteSpace(x)))
+            {
+                if (!TryParseDependency(dependency, out string id, out string op, out string requiredVersion))
+                {
+                    missing.Add(dependency);
+                    continue;
+                }
+
+                var dependencyPackage = Catalog.Packages
+                    .FirstOrDefault(x => x is not null && x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+
+                if (dependencyPackage is null || dependencyPackage.State == PackageCatalogeItemState.Disable)
+                {
+                    missing.Add(dependency);
+                    continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(op))
+                {
+                    var currentVersion = dependencyPackage.Metadata?.Version;
+                    if (!IsVersionConstraintSatisfied(currentVersion, op, requiredVersion))
+                    {
+                        missing.Add(dependency);
+                    }
+                }
+            }
+
+            return missing;
+        }
+
+        /// <summary>
+        /// Parses a dependency expression.
+        /// </summary>
+        /// <param name="expression">The dependency expression (e.g. "pkg>=1.0.0").</param>
+        /// <param name="id">The dependency id.</param>
+        /// <param name="op">The comparison operator.</param>
+        /// <param name="version">The version constraint.</param>
+        /// <returns>True if parsing was successful; otherwise false.</returns>
+        private static bool TryParseDependency(string expression, out string id, out string op, out string version)
+        {
+            id = null;
+            op = null;
+            version = null;
+
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                return false;
+            }
+
+            var value = expression.Trim();
+            var operators = new[] { ">=", "<=", "==", "=", ">", "<" };
+            var index = -1;
+            var selectedOperator = string.Empty;
+
+            foreach (var candidate in operators)
+            {
+                index = value.IndexOf(candidate, StringComparison.Ordinal);
+                if (index > 0)
+                {
+                    selectedOperator = candidate;
+                    break;
+                }
+            }
+
+            if (index < 0)
+            {
+                id = value;
+                return !string.IsNullOrWhiteSpace(id);
+            }
+
+            id = value[..index].Trim();
+            op = selectedOperator;
+            version = value[(index + selectedOperator.Length)..].Trim();
+
+            return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(op) && !string.IsNullOrWhiteSpace(version);
+        }
+
+        /// <summary>
+        /// Evaluates whether a version satisfies a version constraint.
+        /// </summary>
+        /// <param name="currentVersion">The current version.</param>
+        /// <param name="op">The operator.</param>
+        /// <param name="requiredVersion">The required version.</param>
+        /// <returns>True if the constraint is satisfied; otherwise false.</returns>
+        private static bool IsVersionConstraintSatisfied(string currentVersion, string op, string requiredVersion)
+        {
+            if (!TryParseVersion(currentVersion, out var current) || !TryParseVersion(requiredVersion, out var required))
+            {
+                return false;
+            }
+
+            var compare = current.CompareTo(required);
+
+            return op switch
+            {
+                ">" => compare > 0,
+                ">=" => compare >= 0,
+                "<" => compare < 0,
+                "<=" => compare <= 0,
+                "=" => compare == 0,
+                "==" => compare == 0,
+                _ => false
+            };
+        }
+
+        /// <summary>
+        /// Parses a version string with support for prerelease/build suffixes.
+        /// </summary>
+        /// <param name="value">The version string.</param>
+        /// <param name="version">The parsed version.</param>
+        /// <returns>True if parsing succeeded; otherwise false.</returns>
+        private static bool TryParseVersion(string value, out Version version)
+        {
+            version = null;
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            var normalized = value.Trim();
+            var suffixIndex = normalized.IndexOfAny(['-', '+']);
+            if (suffixIndex >= 0)
+            {
+                normalized = normalized[..suffixIndex];
+            }
+
+            return Version.TryParse(normalized, out version);
         }
 
         /// <summary>

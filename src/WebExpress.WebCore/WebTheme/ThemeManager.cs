@@ -7,6 +7,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebLog;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebTheme.Model;
@@ -33,7 +34,7 @@ namespace WebExpress.WebCore.WebTheme
         public event EventHandler<IThemeContext> RemoveTheme;
 
         /// <summary>
-        /// Returns the collection of themes.
+        /// Gets the collection of themes.
         /// </summary>
         public IEnumerable<IThemeContext> Themes => _itemDictionary.All.Select(x => x.ThemeContext);
 
@@ -47,14 +48,14 @@ namespace WebExpress.WebCore.WebTheme
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:thememanager.initialization")
             );
@@ -109,7 +110,7 @@ namespace WebExpress.WebCore.WebTheme
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace WebExpress.WebCore.WebTheme
         /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_itemDictionary.ContainsApplication(pluginContext, applicationContext))
                 {
@@ -156,6 +157,7 @@ namespace WebExpress.WebCore.WebTheme
                 var description = default(string);
                 var mode = ThemeMode.Light;
                 var style = default(string);
+                var iconTheme = TypeIconTheme.Default;
 
                 foreach (var customAttribute in themeType.CustomAttributes
                     .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IThemeAttribute))))
@@ -187,6 +189,17 @@ namespace WebExpress.WebCore.WebTheme
                     {
                         style ??= customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
+                    else if (customAttribute.AttributeType == typeof(IconThemeAttribute))
+                    {
+                        try
+                        {
+                            iconTheme = Enum.Parse<TypeIconTheme>(customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString());
+                        }
+                        catch
+                        {
+                            iconTheme = TypeIconTheme.Default;
+                        }
+                    }
                 }
 
                 // assign the theme to existing applications
@@ -202,6 +215,7 @@ namespace WebExpress.WebCore.WebTheme
                         Image = image is not null ? RouteEndpoint.Combine(applicationContext.Route, image) : null,
                         ThemeMode = mode,
                         ThemeStyle = style is not null ? RouteEndpoint.Combine(applicationContext.Route, style) : null,
+                        IconTheme = iconTheme,
                     };
 
                     var themeItem = new ThemeItem()
@@ -214,7 +228,7 @@ namespace WebExpress.WebCore.WebTheme
                     if (_itemDictionary.AddThemeItem(pluginContext, applicationContext, themeItem))
                     {
                         OnAddTheme(themeContext);
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:thememanager.addtheme",
                                 id,
@@ -320,7 +334,7 @@ namespace WebExpress.WebCore.WebTheme
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:thememanager.titel")
@@ -334,7 +348,7 @@ namespace WebExpress.WebCore.WebTheme
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -342,10 +356,10 @@ namespace WebExpress.WebCore.WebTheme
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

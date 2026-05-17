@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlComment : IHtmlNode
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text { get; set; }
 

@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebAttribute
         private string Expression { get; set; }
 
         /// <summary>
-        /// Returns or sets the tag.
+        /// Gets or sets the tag.
         /// </summary>
         private string Tag { get; set; }
 

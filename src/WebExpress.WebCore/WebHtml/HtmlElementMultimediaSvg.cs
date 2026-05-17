@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementMultimediaSvg : HtmlElement, IHtmlElementMultimedia
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Width
         {
@@ -23,7 +23,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Height
         {
@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the target.
+        /// Gets or sets the target.
         /// </summary>
         public string Target
         {

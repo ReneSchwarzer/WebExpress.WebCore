@@ -9,17 +9,17 @@ namespace WebExpress.WebCore.WebUri
     public interface IUriPathSegmentVariable : IUriPathSegment
     {
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         new string Value { get; set; }
 
         /// <summary>
-        /// Returns the variable name.
+        /// Gets the variable name.
         /// </summary>
         string VariableName { get; }
 
         /// <summary>
-        /// Returns the regex expression.
+        /// Gets the regex expression.
         /// </summary>
         string Expression { get; }
 

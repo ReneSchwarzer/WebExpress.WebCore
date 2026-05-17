@@ -6,7 +6,7 @@
     public abstract class Plugin : IPlugin
     {
         /// <summary>
-        /// Returns the context of the plugin.
+        /// Gets the context of the plugin.
         /// </summary>
         public IPluginContext PluginContext { get; private set; }
 

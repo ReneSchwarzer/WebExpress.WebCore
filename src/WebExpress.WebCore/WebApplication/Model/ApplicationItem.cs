@@ -9,22 +9,22 @@ namespace WebExpress.WebCore.WebApplication.Model
     internal class ApplicationItem
     {
         /// <summary>
-        /// The context associated with the application.
+        /// Gets the context associated with the application.
         /// </summary>
         public IApplicationContext ApplicationContext { get; set; }
 
         /// <summary>
-        /// Returns the application class.
+        /// Gets the application class.
         /// </summary>
         public Type ApplicationClass { get; internal set; }
 
         /// <summary>
-        /// The application.
+        /// Gets the application.
         /// </summary>
         public IApplication Application { get; set; }
 
         /// <summary>
-        /// Thread termination token.
+        /// Gets the thread termination token.
         /// </summary>
         public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
     }

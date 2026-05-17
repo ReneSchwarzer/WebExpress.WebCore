@@ -11,31 +11,31 @@ namespace WebExpress.WebCore.WebPackage.Model
     public class PackageCatalogItem
     {
         /// <summary>
-        /// Returns or sets Returns or sets the id.
+        /// Gets or sets Returns or sets the id.
         /// </summary>
         [XmlAttribute("id")]
         public string Id { get; set; }
 
         /// <summary>
-        /// Returns or sets the filename.
+        /// Gets or sets the filename.
         /// </summary>
         [XmlAttribute("file")]
         public string File { get; set; }
 
         /// <summary>
-        /// Returns or sets the state.
+        /// Gets or sets the state.
         /// </summary>
         [XmlAttribute("state")]
         public PackageCatalogeItemState State { get; set; }
 
         /// <summary>
-        /// Returns the plugins belonging to the package.
+        /// Gets the plugins belonging to the package.
         /// </summary>
         [XmlIgnore]
         public List<IPluginContext> Plugins { get; internal set; } = [];
 
         /// <summary>
-        /// Returns the meta information about the package.
+        /// Gets or sets the meta information about the package.
         /// </summary>
         [XmlIgnore]
         public PackageItem Metadata { get; set; }

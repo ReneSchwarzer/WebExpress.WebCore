@@ -7,7 +7,7 @@
     public class TitleAttribute : System.Attribute, IPageAttribute, ISettingPageAttribute, IStatusPageAttribute
     {
         /// <summary>
-        /// Returns the title associated with the current instance.
+        /// Gets the title associated with the current instance.
         /// </summary>
         public string Title { get; }
 

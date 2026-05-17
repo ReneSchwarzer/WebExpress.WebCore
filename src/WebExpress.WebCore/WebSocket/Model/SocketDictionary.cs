@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebSocket.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, SocketItem>>> _dict = new Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, SocketItem>>>();
 
         /// <summary>
-        /// Returns all socket contexts.
+        /// Gets all socket contexts.
         /// </summary>
         public IEnumerable<ISocketContext> All => _dict.Values
             .SelectMany(x => x.Values)

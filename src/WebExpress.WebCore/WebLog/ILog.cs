@@ -30,7 +30,7 @@ namespace WebExpress.WebCore.WebLog
     public interface ILog : ILogger
     {
         /// <summary>
-        /// Returns or sets the encoding.
+        /// Gets or sets the encoding.
         /// </summary>
         public Encoding Encoding { get; set; }
 
@@ -40,22 +40,22 @@ namespace WebExpress.WebCore.WebLog
         public bool DebugMode { get; }
 
         /// <summary>
-        /// Returns the file name of the log
+        /// Gets or sets the file name of the log
         /// </summary>
         public string Filename { get; set; }
 
         /// <summary>
-        /// Returns the number of exceptions.
+        /// Gets the number of exceptions.
         /// </summary>
         public int ExceptionCount { get; }
 
         /// <summary>
-        /// Returns the number of errors (errors + exceptions).
+        /// Gets the number of errors (errors + exceptions).
         /// </summary>
         public int ErrorCount { get; }
 
         /// <summary>
-        /// Returns the number of warnings.
+        /// Gets the number of warnings.
         /// </summary>
         public int WarningCount { get; }
 
@@ -65,22 +65,22 @@ namespace WebExpress.WebCore.WebLog
         public bool IsOpen { get; }
 
         /// <summary>
-        /// Returns the log mode.
+        /// Gets or sets the log mode.
         /// </summary>
         public LogMode LogMode { get; set; }
 
         /// <summary>
-        /// The default instance of the logger.
+        /// Gets the default instance of the logger.
         /// </summary>
         public static ILog Current { get; }
 
         /// <summary>
-        /// Set file name time patterns.
+        /// Gets or sets the file name patterns.
         /// </summary>
         public string FilePattern { set; get; }
 
         /// <summary>
-        /// Time patternsspecifying log entries.
+        /// Gets or sets the time patternsspecifying log entries.
         /// </summary>
         public string TimePattern { set; get; }
 

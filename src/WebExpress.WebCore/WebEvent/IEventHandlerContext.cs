@@ -10,22 +10,22 @@ namespace WebExpress.WebCore.WebEvent
     public interface IEventHandlerContext : IContext
     {
         /// <summary>
-        /// Returns the event id.
+        /// Gets the event id.
         /// </summary>
         IComponentId EventId { get; }
 
         /// <summary>
-        /// Returns the event handler id.
+        /// Gets the event handler id.
         /// </summary>
         string EventHandlerId { get; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
     }

@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class SegmentAttribute : Attribute, IEndpointAttribute, ISegmentAttribute
     {
         /// <summary>
-        /// Returns or set the segment of the uri path.
+        /// Gets or set the segment of the uri path.
         /// </summary>
         private string Segment { get; set; }
 

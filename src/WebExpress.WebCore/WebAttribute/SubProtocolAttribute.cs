@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.WebSockets;
 
 namespace WebExpress.WebCore.WebAttribute
 {
@@ -10,7 +9,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class SubProtocolAttribute : Attribute, ISocketAttribute
     {
         /// <summary>
-        /// Returns the sub protocol.
+        /// Gets the sub protocol.
         /// </summary>
         public string SubProtocol { get; }
 

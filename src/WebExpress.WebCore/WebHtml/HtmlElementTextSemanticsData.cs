@@ -10,12 +10,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextSemanticsData : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value
         {

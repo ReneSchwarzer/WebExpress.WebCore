@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebApplication
         public event EventHandler<IApplicationContext> RemoveApplication;
 
         /// <summary>
-        /// Returns the stored applications.
+        /// Gets the stored applications.
         /// </summary>
         public IEnumerable<IApplicationContext> Applications => _dictionary.All;
 
@@ -50,12 +50,12 @@ namespace WebExpress.WebCore.WebApplication
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:applicationmanager.initialization")
             );
@@ -90,6 +90,7 @@ namespace WebExpress.WebCore.WebApplication
                 var contextPath = string.Empty;
                 var assetPath = "./";
                 var dataPath = "./";
+                Type defaultThemeType = null;
 
                 // determining attributes
                 foreach (var customAttribute in type.CustomAttributes
@@ -119,6 +120,12 @@ namespace WebExpress.WebCore.WebApplication
                     {
                         dataPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
+                    else if (customAttribute.AttributeType.IsGenericType &&
+                        customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(ThemeAttribute<>))
+                    {
+                        // [Theme<TTheme>] declares the application's default theme.
+                        defaultThemeType ??= customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    }
                 }
 
                 // creating application context
@@ -128,10 +135,11 @@ namespace WebExpress.WebCore.WebApplication
                     ApplicationId = id,
                     ApplicationName = name,
                     Description = description,
-                    AssetPath = Path.Combine(_httpServerContext.AssetPath, assetPath),
-                    DataPath = Path.Combine(_httpServerContext.DataPath, dataPath),
-                    Icon = RouteEndpoint.Combine(_httpServerContext.Route, contextPath, icon),
-                    Route = RouteEndpoint.Combine(_httpServerContext.Route, contextPath)
+                    AssetPath = Path.Combine(_httpServerContext?.AssetPath, assetPath),
+                    DataPath = Path.Combine(_httpServerContext?.DataPath, dataPath),
+                    Icon = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath, icon),
+                    Route = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath),
+                    DefaultThemeType = defaultThemeType
                 };
 
                 // create application
@@ -150,7 +158,7 @@ namespace WebExpress.WebCore.WebApplication
                     Application = applicationInstance
                 }))
                 {
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate("webexpress.webcore:applicationmanager.register", id)
                     );
@@ -160,7 +168,7 @@ namespace WebExpress.WebCore.WebApplication
                 }
                 else
                 {
-                    _httpServerContext.Log.Warning
+                    _httpServerContext?.Log?.Warning
                     (
                         I18N.Translate("webexpress.webcore:applicationmanager.duplicate", id)
                     );
@@ -277,7 +285,7 @@ namespace WebExpress.WebCore.WebApplication
             }
             else if (!_dictionary.Contains(pluginContext))
             {
-                _httpServerContext.Log.Warning
+                _httpServerContext?.Log?.Warning
                 (
                     I18N.Translate
                     (
@@ -296,7 +304,7 @@ namespace WebExpress.WebCore.WebApplication
                 // Run the application concurrently
                 Task.Run(() =>
                 {
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -306,7 +314,7 @@ namespace WebExpress.WebCore.WebApplication
 
                     applicationItem.Application.Run();
 
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -380,7 +388,7 @@ namespace WebExpress.WebCore.WebApplication
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:applicationmanager.titel")
@@ -395,7 +403,7 @@ namespace WebExpress.WebCore.WebApplication
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -403,8 +411,8 @@ namespace WebExpress.WebCore.WebApplication
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
         }
     }
 }

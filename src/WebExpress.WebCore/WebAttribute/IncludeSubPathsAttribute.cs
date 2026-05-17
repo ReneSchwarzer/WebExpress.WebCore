@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebAttribute
     public class IncludeSubPathsAttribute : Attribute, IEndpointAttribute
     {
         /// <summary>
-        /// Returns a value indicating whether subpaths are included in the operation.
+        /// Gets a value indicating whether subpaths are included in the operation.
         /// </summary>
         public bool IncludeSubPaths { get; }
 

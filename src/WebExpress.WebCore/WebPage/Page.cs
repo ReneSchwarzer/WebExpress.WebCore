@@ -11,12 +11,12 @@ namespace WebExpress.WebCore.WebPage
         where TVisualTree : IVisualTree, new()
     {
         /// <summary>
-        /// Returns or sets the page title.
+        /// Gets or sets the page title.
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns the page context.
+        /// Gets the page context.
         /// </summary>
         public IPageContext PageContext { get; private set; }
 

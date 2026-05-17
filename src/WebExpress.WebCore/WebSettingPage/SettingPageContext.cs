@@ -9,22 +9,22 @@ namespace WebExpress.WebCore.WebSettingPage
     public class SettingPageContext : PageContext, ISettingPageContext
     {
         /// <summary>
-        /// Returns the setting category context to which the setting page belongs.
+        /// Gets the setting category context to which the setting page belongs.
         /// </summary>
         public ISettingCategoryContext SettingCategory => SettingGroup?.SettingCategory;
 
         /// <summary>
-        /// Returns the group context to which the setting page belongs.
+        /// Gets the group context to which the setting page belongs.
         /// </summary>
         public ISettingGroupContext SettingGroup { get; internal set; }
 
         /// <summary>  
-        /// Returns the section of the setting page.  
+        /// Gets the section of the setting page.  
         /// </summary>  
         public SettingSection Section { get; internal set; }
 
         /// <summary>
-        /// Returns a value indicating whether the page should be displayed or hidden.
+        /// Gets a value indicating whether the page should be displayed or hidden.
         /// </summary>
         public bool Hide { get; internal set; }
 

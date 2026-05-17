@@ -11,37 +11,37 @@ namespace WebExpress.WebCore.WebSettingPage
     public class SettingCategoryContext : ISettingCategoryContext
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the category id.
+        /// Gets the category id.
         /// </summary>
         public IComponentId CategoryId { get; internal set; }
 
         /// <summary>
-        /// Returns the icon.
+        /// Gets the icon.
         /// </summary>
         public IIcon Icon { get; internal set; }
 
         /// <summary>
-        /// Returns the name.
+        /// Gets the name.
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Returns the description.
+        /// Gets the description.
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets the section.
         /// </summary>
         public SettingSection Section { get; internal set; }
 

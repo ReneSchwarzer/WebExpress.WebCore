@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormOption : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a value.
+        /// Gets or sets a value.
         /// </summary>
         public string Value
         {
@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the field is selected.
+        /// Gets or sets whether the field is selected.
         /// </summary>
         public bool Selected
         {
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a value indicating whether the option is disabled.
+        /// Gets or sets a value indicating whether the option is disabled.
         /// </summary>
         public bool Disabled
         {

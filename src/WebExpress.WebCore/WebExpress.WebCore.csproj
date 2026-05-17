@@ -3,8 +3,8 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<Title>WebExpress.WebCore</Title>
-		<Version>0.0.10.0</Version>
-		<AssemblyVersion>0.0.10.0</AssemblyVersion>
+		<Version>0.0.11.0</Version>
+		<AssemblyVersion>0.0.11.0</AssemblyVersion>
 		<TargetFramework>net10.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
 		<RepositoryUrl>https://github.com/webexpress-framework/WebExpress.git</RepositoryUrl>
@@ -14,7 +14,7 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Description>Core library of the WebExpress web server.</Description>
-		<PackageVersion>0.0.10-alpha</PackageVersion>
+		<PackageVersion>0.0.11-alpha</PackageVersion>
 		<PackageProjectUrl>https://github.com/webexpress-framework/WebExpress</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -48,6 +48,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="WebPermissions\" />
 	</ItemGroup>
 
 </Project>

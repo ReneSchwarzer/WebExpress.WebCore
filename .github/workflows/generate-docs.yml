@@ -28,7 +28,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 9.x
+        dotnet-version: 10.x
 
     - name: Install DocFX
       run: dotnet tool install -g docfx
@@ -48,6 +48,11 @@ jobs:
         cd docs 
         docfx metadata
         docfx build
+
+    - name: Validate generated documentation output
+      run: |
+        test -f docs/_site/index.html
+        test -f docs/_site/api/toc.json
 
     - name: Generate API toc.yaml
       run: |

@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebAsset
         public event EventHandler<IAssetContext> RemoveAsset;
 
         /// <summary>
-        /// Returns all asset contexts.
+        /// Gets all asset contexts.
         /// </summary>
         public IEnumerable<IAssetContext> Assets => _itemDictionary.All.Select(x => x.AssetContext);
 
@@ -47,10 +47,10 @@ namespace WebExpress.WebCore.WebAsset
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -82,11 +82,11 @@ namespace WebExpress.WebCore.WebAsset
             AddAsset += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveAsset += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<AssetContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<AssetContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:assetmanager.initialization")
             );
@@ -103,7 +103,7 @@ namespace WebExpress.WebCore.WebAsset
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace WebExpress.WebCore.WebAsset
         /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_itemDictionary.ContainsApplication(pluginContext, applicationContext))
                 {
@@ -160,7 +160,7 @@ namespace WebExpress.WebCore.WebAsset
                             IncludeSubPaths = false
                         };
 
-                        var assetItem = new AssetItem(_componentHub.AssetManager)
+                        var assetItem = new AssetItem(_componentHub?.AssetManager)
                         {
                             AssetClass = typeof(Asset),
                             AssetContext = assetContext,
@@ -177,7 +177,7 @@ namespace WebExpress.WebCore.WebAsset
                         if (_itemDictionary.AddAssetItem(pluginContext, applicationContext, assetItem))
                         {
                             OnAddAsset(assetContext);
-                            _httpServerContext?.Log.Debug(
+                            _httpServerContext?.Log?.Debug(
                                 I18N.Translate(
                                     "webexpress.webcore:assetmanager.addresource",
                                     id,
@@ -297,10 +297,10 @@ namespace WebExpress.WebCore.WebAsset
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }
     }
 }

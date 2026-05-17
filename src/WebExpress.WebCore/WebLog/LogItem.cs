@@ -60,28 +60,27 @@ namespace WebExpress.WebCore.WebLog
         }
 
         /// <summary>
-        /// Returns the level of the entry.
+        /// Gets the level of the entry.
         /// </summary>
         public LogLevel Level => m_level;
 
         /// <summary>
-        /// Returns the instance (location).
+        /// Gets the instance (location).
         /// </summary>
         public string Instance => m_instance;
 
         /// <summary>
-        /// Returns the message.
+        /// Gets the message.
         /// </summary>
         public string Message => m_message;
 
         /// <summary>
-        /// Returns the timestamp.
+        /// Gets the timestamp.
         /// </summary>
         public DateTime Timestamp => m_timestamp;
 
-
         /// <summary>
-        /// Returns the or set the time patterns for log entries.
+        /// Gets or set the time patterns for log entries.
         /// </summary>
         public string TimePattern { set; get; }
     };

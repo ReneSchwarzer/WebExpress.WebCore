@@ -1,5 +1,4 @@
-﻿using System.Security;
-using WebExpress.WebCore.Test.Data;
+﻿using WebExpress.WebCore.Test.Data;
 using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebIdentity;
@@ -21,7 +20,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // act
+            // act & validation
             Assert.Equal(9, componentHub.IdentityManager.Permissions.Count());
             Assert.Equal(6, componentHub.IdentityManager.Policies.Count());
         }
@@ -34,12 +33,13 @@ namespace WebExpress.WebCore.Test.Manager
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
-            var plugin = componentHub.PluginManager.GetPlugin(typeof(TestPlugin));
+            var plugin = componentHub.PluginManager?.GetPlugin(typeof(TestPlugin));
             var identityManager = componentHub.IdentityManager as IdentityManager;
 
             // act
             identityManager.Remove(plugin);
 
+            // validation
             Assert.Empty(componentHub.IdentityManager.Permissions);
             Assert.Empty(componentHub.IdentityManager.Policies);
         }
@@ -53,7 +53,7 @@ namespace WebExpress.WebCore.Test.Manager
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
 
-            // act
+            // act & validation
             Assert.True(typeof(IComponentManager).IsAssignableFrom(componentHub.IdentityManager.GetType()));
         }
 
@@ -81,6 +81,7 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             var access = identityManager.CheckAccess(applicationContext, identity, permission);
 
+            // validation
             Assert.Equal(expected, access);
         }
 
@@ -108,6 +109,7 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             var access = identityManager.CheckAccess(applicationContext, group, permission);
 
+            // validation
             Assert.Equal(expected, access);
         }
 
@@ -131,6 +133,7 @@ namespace WebExpress.WebCore.Test.Manager
             // act
             var access = identityManager.CheckAccess(applicationContext, policy, permission);
 
+            // validation
             Assert.Equal(expected, access);
         }
 
@@ -138,47 +141,44 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the Login function of the identity manager.
         /// </summary>
         [Theory]
-        [InlineData("Alice", "abc", true)]
-        [InlineData("Alice", "123", false)]
-        public void Login(string identityName, string password, bool expected)
+        [InlineData(null, false)]
+        [InlineData("Alice", true)]
+        [InlineData("Bob", true)]
+        public void Login(string identityName, bool expected)
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
-            var securePassword = new SecureString();
-            password.ToList().ForEach(x => securePassword.AppendChar(x));
-            securePassword.MakeReadOnly();
 
             // act
-            var res = identityManager.Login(request, identity, securePassword);
+            var res = identityManager.Login(identity, request);
 
-            Assert.Equal(expected, res);
+            // validation
+            Assert.Equal(expected, res is not null);
         }
 
         /// <summary>
         /// Test the Login function of the identity manager.
         /// </summary>
         [Theory]
-        [InlineData("Alice", "abc")]
-        [InlineData("Bob", "abc")]
-        [InlineData("Charlie", "abc")]
-        public void Logout(string identityName, string password)
+        [InlineData("Alice")]
+        [InlineData("Bob")]
+        [InlineData("Charlie")]
+        public void Logout(string identityName)
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
-            var securePassword = new SecureString();
-            password.ToList().ForEach(x => securePassword.AppendChar(x));
-            securePassword.MakeReadOnly();
-            identityManager.Login(request, identity, securePassword);
+            identityManager.Login(identity, request);
 
             // act
             identityManager.Logout(request);
 
+            // validation
             var res = identityManager.GetCurrentIdentity(request);
             Assert.Null(res);
         }
@@ -187,25 +187,99 @@ namespace WebExpress.WebCore.Test.Manager
         /// Test the GetCurrentIdentity function of the identity manager.
         /// </summary>
         [Theory]
-        [InlineData("Alice", "abc")]
-        [InlineData("Bob", "abc")]
-        [InlineData("Charlie", "abc")]
-        public void GetCurrentIdentity(string identityName, string password)
+        [InlineData("Alice")]
+        [InlineData("Bob")]
+        [InlineData("Charlie")]
+        public void GetCurrentIdentity(string identityName)
         {
             // arrange
             var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
             var identityManager = componentHub.IdentityManager as IdentityManager;
             var request = UnitTestFixture.CreateRequestMock();
             var identity = MockIdentityFactory.GetIdentity(identityName);
-            var securePassword = new SecureString();
-            password.ToList().ForEach(x => securePassword.AppendChar(x));
-            securePassword.MakeReadOnly();
-            identityManager.Login(request, identity, securePassword);
+            identityManager.Login(identity, request);
 
             // act
             var res = identityManager.GetCurrentIdentity(request);
 
+            // validation
             Assert.Equal(identity, res);
+        }
+
+        /// <summary>
+        /// Test that the IIdentityGroup interface has the Id and Name properties.
+        /// </summary>
+        [Fact]
+        public void IIdentityGroupHasIdAndName()
+        {
+            // arrange
+            var group = MockIdentityFactory.GetIdentityGroup("Admins");
+
+            // act & validation
+            Assert.NotNull(group);
+            Assert.IsType<IIdentityGroup>(group, exactMatch: false);
+            Assert.NotEqual(Guid.Empty, group.Id);
+            Assert.Equal("Admins", group.Name);
+        }
+
+        /// <summary>
+        /// Tests that an identity provider can be registered and that its identities
+        /// are returned by the IdentityManager for the given application context.
+        /// </summary>
+        [Fact]
+        public void RegisterIdentityProvider()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var applicationContext = componentHub.ApplicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
+            var provider = new MockIdentityProvider();
+            var identity = MockIdentityFactory.GetIdentity("alice@example.com");
+
+            provider.Identities.Add(identity);
+
+            // act
+            identityManager.RegisterIdentityProvider(provider, applicationContext);
+            var identities = identityManager.GetIdentities(applicationContext).ToList();
+
+            // validation
+            Assert.Contains(identity, identities);
+            Assert.Single(identities);
+        }
+
+        /// <summary>
+        /// Tests that an identity provider can be unregistered and that its identities
+        /// are no longer returned by the IdentityManager for the given application context.
+        /// </summary>
+        [Fact]
+        public void UnregisterIdentityProvider()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var applicationContext = componentHub.ApplicationManager
+                .GetApplications(typeof(TestApplicationA))
+                .FirstOrDefault();
+
+            var provider = new MockIdentityProvider();
+            var identity = MockIdentityFactory.GetIdentity("alice@example.com");
+
+            provider.Identities.Add(identity);
+
+            identityManager.RegisterIdentityProvider(provider, applicationContext);
+
+            var identitiesBefore = identityManager.GetIdentities(applicationContext).ToList();
+            Assert.Contains(identity, identitiesBefore);
+            Assert.Single(identitiesBefore);
+
+            // act
+            var removed = identityManager.UnregisterIdentityProvider(provider, applicationContext);
+            var identitiesAfter = identityManager.GetIdentities(applicationContext).ToList();
+
+            // validation
+            Assert.True(removed);
+            Assert.DoesNotContain(identity, identitiesAfter);
+            Assert.Empty(identitiesAfter);
         }
     }
 }

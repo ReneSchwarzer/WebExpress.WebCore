@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebInclude
         public event EventHandler<IIncludeContext> RemoveInclude;
 
         /// <summary>
-        /// Returns all include contexts.
+        /// Gets all include contexts.
         /// </summary>
         public IEnumerable<IIncludeContext> Includes => _dictionary.Values
             .SelectMany(x => x.Values)
@@ -51,12 +51,12 @@ namespace WebExpress.WebCore.WebInclude
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:includemanager.initialization")
             );
@@ -78,7 +78,7 @@ namespace WebExpress.WebCore.WebInclude
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.WebInclude
                 return;
             }
 
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
                 {
@@ -186,7 +186,7 @@ namespace WebExpress.WebCore.WebInclude
                     {
                         OnAddInclude(includeItem.IncludeContext);
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.addinclude",
                                 id,
@@ -216,7 +216,7 @@ namespace WebExpress.WebCore.WebInclude
                 {
                     OnRemoveInclude(includeItem.IncludeContext);
 
-                    _httpServerContext?.Log.Debug(
+                    _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.removeinclude",
                                 includeItem.IncludeId,
@@ -251,7 +251,7 @@ namespace WebExpress.WebCore.WebInclude
                         OnRemoveInclude(includeItem.IncludeContext);
                         includeItem.Dispose();
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:includemanager.removeinclude",
                                 includeItem.IncludeId,
@@ -360,10 +360,10 @@ namespace WebExpress.WebCore.WebInclude
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
         }
     }
 }

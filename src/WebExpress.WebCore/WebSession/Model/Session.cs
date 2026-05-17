@@ -13,22 +13,22 @@ namespace WebExpress.WebCore.WebSession.Model
     public class Session
     {
         /// <summary>
-        /// Returns the session id.
+        /// Gets the session id.
         /// </summary>
         public Guid Id { get; private set; }
 
         /// <summary>
-        /// Returns the creation time.
+        /// Gets the creation time.
         /// </summary>
         public DateTime Created { get; private set; }
 
         /// <summary>
-        /// Returns or sets the time of the last access.
+        /// Gets or sets the time of the last access.
         /// </summary>
         public DateTime Updated { get; set; }
 
         /// <summary>
-        /// Returns or sets properties for the session.
+        /// Gets properties for the session.
         /// </summary>
         public Dictionary<Type, ISessionProperty> Properties { get; private set; }
 
@@ -50,7 +50,7 @@ namespace WebExpress.WebCore.WebSession.Model
             Created = DateTime.Now;
             Updated = DateTime.Now;
 
-            Properties = new Dictionary<Type, ISessionProperty>();
+            Properties = [];
         }
 
         /// <summary>
@@ -74,17 +74,20 @@ namespace WebExpress.WebCore.WebSession.Model
         /// <summary>
         /// Returns a property if it already exists. Otherwise, a new property will be created.
         /// </summary>
-        /// <typeparam name="T">The type of the property.</typeparam>
-        /// <param name="parameters">The parameters to pass to the constructor of the property if it needs to be created.</param>
+        /// <typeparam name="TSessionProperty">The type of the property.</typeparam>
+        /// <param name="parameters">
+        /// The parameters to pass to the constructor of the property if it needs to be created.
+        /// </param>
         /// <returns>The property or null if it cannot be created.</returns>
-        public T GetOrCreateProperty<T>(params object[] parameters) where T : class, ISessionProperty
+        public TSessionProperty GetOrCreateProperty<TSessionProperty>(params object[] parameters)
+            where TSessionProperty : class, ISessionProperty
         {
-            var type = typeof(T);
+            var type = typeof(TSessionProperty);
             lock (Properties)
             {
-                if (Properties.ContainsKey(typeof(T)))
+                if (Properties.ContainsKey(typeof(TSessionProperty)))
                 {
-                    return Properties[type] as T;
+                    return Properties[type] as TSessionProperty;
                 }
 
                 var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -98,15 +101,18 @@ namespace WebExpress.WebCore.WebSession.Model
                         var constructorParameters = constructor.GetParameters();
                         var parameterValues = constructorParameters.Select
                         (
-                            x => parameters.Where
+                            x => parameters.FirstOrDefault
                             (
-                                y => y.GetType() == x.ParameterType ||
-                                x.ParameterType.IsAssignableFrom(y.GetType()) ||
-                                y.GetType().IsSubclassOf(x.ParameterType)
-                            ).FirstOrDefault() ?? null
+                                y => y is not null &&
+                                (
+                                    y.GetType() == x.ParameterType ||
+                                    x.ParameterType.IsAssignableFrom(y.GetType()) ||
+                                    y.GetType().IsSubclassOf(x.ParameterType)
+                                )
+                            ) ?? null
                         ).ToArray();
 
-                        if (constructor.Invoke(parameterValues) is T injectionProperty)
+                        if (constructor.Invoke(parameterValues) is TSessionProperty injectionProperty)
                         {
                             SetProperty(injectionProperty);
 
@@ -115,7 +121,7 @@ namespace WebExpress.WebCore.WebSession.Model
                     }
                 }
 
-                var property = Activator.CreateInstance<T>();
+                var property = Activator.CreateInstance<TSessionProperty>();
                 SetProperty(property);
 
                 return property;

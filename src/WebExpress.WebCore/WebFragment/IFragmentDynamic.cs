@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebFragment
     public interface IFragmentDynamic
     {
         /// <summary>
-        /// Returns the context of the fragment.
+        /// Gets the context of the fragment.
         /// </summary>
         IFragmentContext Context { get; }
 

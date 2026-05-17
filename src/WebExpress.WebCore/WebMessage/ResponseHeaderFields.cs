@@ -10,52 +10,52 @@ namespace WebExpress.WebCore.WebMessage
     public class ResponseHeaderFields
     {
         /// <summary>
-        /// Returns or sets the content length.
+        /// Gets or sets the content length.
         /// </summary>
         public int ContentLength { get; set; }
 
         /// <summary>
-        /// Returns or sets the content type.
+        /// Gets or sets the content type.
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// Returns or sets the content language.
+        /// Gets or sets the content language.
         /// </summary>
         public string ContentLanguage { get; set; }
 
         /// <summary>
-        /// Returns or sets the cache control directives (see RFC 7234).
+        /// Gets or sets the cache control directives (see RFC 7234).
         /// </summary>
         public string CacheControl { get; set; }
 
         /// <summary>
-        /// Returns or sets the content disposition.
+        /// Gets or sets the content disposition.
         /// </summary>
         public string ContentDisposition { get; set; }
 
         /// <summary>
-        /// Returns or sets a value indicating whether basic authentication (as per RFC 2617) is required.
+        /// Gets or sets a value indicating whether basic authentication (as per RFC 2617) is required.
         /// </summary>
         public bool WWWAuthenticate { get; set; }
 
         /// <summary>
-        /// Returns or sets the location.
+        /// Gets or sets the location.
         /// </summary>
         public string Location { get; set; }
 
         /// <summary>
-        /// Returns the custom headers.
+        /// Gets the custom headers.
         /// </summary>
         public IDictionary<string, string> CustomHeader { get; private set; }
 
         /// <summary>
-        /// Returns the cookies.
+        /// Gets the cookies.
         /// </summary>
         public CookieCollection Cookies { get; } = [];
 
         /// <summary>
-        /// Returns or sets the Upgrade header (for protocol upgrade responses, e.g. "websocket").
+        /// Gets or sets the Upgrade header (for protocol upgrade responses, e.g. "websocket").
         /// </summary>
         public string Upgrade { get; set; }
 
@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.WebMessage
         public string Connection { get; set; }
 
         /// <summary>
-        /// Returns or sets the value of the Sec-WebSocket-Accept header used in 
+        /// Gets or sets the value of the Sec-WebSocket-Accept header used in 
         /// the WebSocket handshake response.
         /// </summary>
         public string SecWebSocketAccept { get; set; }

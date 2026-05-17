@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebEndpoint
@@ -13,22 +14,22 @@ namespace WebExpress.WebCore.WebEndpoint
     public interface IEndpointContext : IContext
     {
         /// <summary>
-        /// Returns the endpoint id.
+        /// Gets the endpoint id.
         /// </summary>
         IComponentId EndpointId { get; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Provides the conditions that must be met for the resource to be active.
+        /// Gets the conditions that must be met for the resource to be active.
         /// </summary>
         IEnumerable<ICondition> Conditions { get; }
 
@@ -38,18 +39,23 @@ namespace WebExpress.WebCore.WebEndpoint
         bool Cache { get; }
 
         /// <summary>
-        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// Gets whether all subpaths should be taken into sitemap.
         /// </summary>
         bool IncludeSubPaths { get; }
 
         /// <summary>
-        /// Returns the internal routing path for the endpoint.
+        /// Gets the internal routing path for the endpoint.
         /// </summary>
         IRoute Route { get; }
 
         /// <summary>
-        /// Returns the attributes associated with the page.
+        /// Gets the attributes associated with the endpoint.
         /// </summary>
         IEnumerable<Attribute> Attributes { get; }
+
+        /// <summary>
+        /// Gets the collection of identity policies for the endpoint.
+        /// </summary>
+        IEnumerable<IIdentityPolicy> Policies { get; }
     }
 }

@@ -11,42 +11,42 @@ namespace WebExpress.WebCore.WebMessage
     public interface IHttpContext
     {
         /// <summary>
-        /// Returns the context of the web server.
+        /// Gets the context of the web server.
         /// </summary>
         IHttpServerContext HttpServerContext { get; }
 
         /// <summary>
-        /// Returns the context id.
+        /// Gets the context id.
         /// </summary>
         string Id { get; }
 
         /// <summary>
-        /// Returns the request data.
+        /// Gets the request data.
         /// </summary>
         IRequest Request { get; }
 
         /// <summary>
-        /// Returns the ip address and port number of the server that receives the request.
+        /// Gets the ip address and port number of the server that receives the request.
         /// </summary>
         EndPoint LocalEndPoint { get; }
 
         /// <summary>
-        /// Returns the ip address and port number of the client where the request originated.
+        /// Gets the ip address and port number of the client where the request originated.
         /// </summary>
         EndPoint RemoteEndPoint { get; }
 
         /// <summary>
-        /// Returns the set of features.
+        /// Gets the set of features.
         /// </summary>
         IFeatureCollection Features { get; }
 
         /// <summary>
-        /// Returns the encoding used.
+        /// Gets the encoding used.
         /// </summary>
         Encoding Encoding { get; }
 
         /// <summary>
-        /// Returns the URI.
+        /// Gets the URI.
         /// </summary>
         Uri Uri { get; }
     }

@@ -6,7 +6,7 @@
     public interface IParameterDynamic : IParameter
     {
         /// <summary>
-        /// Returns the key of the parameter.
+        /// Gets the key of the parameter.
         /// </summary>
         string Key { get; }
     }

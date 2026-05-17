@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFormForm : HtmlElement, IHtmlElementForm
     {
         /// <summary>
-        /// Returns or sets the name of the form.
+        /// Gets or sets the name of the form.
         /// </summary>
         public string Name
         {
@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the character encoding.
+        /// Gets or sets the character encoding.
         /// </summary>
         public string AcceptCharset
         {
@@ -28,7 +28,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the character encoding.
+        /// Gets or sets the character encoding.
         /// </summary>
         public TypeEnctype Enctype
         {
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the method post or get.
+        /// Gets or sets the method post or get.
         /// </summary>
         public string Method
         {
@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the uri.
+        /// Gets or sets the uri.
         /// </summary>
         public string Action
         {
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the target window.
+        /// Gets or sets the target window.
         /// </summary>
         public string Target
         {
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 

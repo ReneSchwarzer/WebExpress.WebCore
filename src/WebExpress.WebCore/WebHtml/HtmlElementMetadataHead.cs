@@ -20,7 +20,7 @@ namespace WebExpress.WebCore.WebHtml
         private IEnumerable<HtmlElementMetadataMeta> _elementMeta = [];
 
         /// <summary>
-        /// Returns or sets the title.
+        /// Gets or sets the title.
         /// </summary>
         public string Title
         {
@@ -29,7 +29,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the base.
+        /// Gets or sets the base.
         /// </summary>
         public string Base
         {
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the favicon.
+        /// Gets or sets the favicon.
         /// </summary>
         public IEnumerable<Favicon> Favicons
         {
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the internal stylesheet.
+        /// Gets or sets the internal stylesheet.
         /// </summary>
         public IEnumerable<string> Styles
         {
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the scripts.
+        /// Gets or sets the scripts.
         /// </summary>
         public IEnumerable<string> Scripts
         {
@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the text/javascript.
+        /// Gets or sets the text/javascript.
         /// </summary>
         public IEnumerable<string> ScriptLinks
         {
@@ -90,7 +90,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the internal stylesheet.
+        /// Gets or sets the internal stylesheet.
         /// </summary>
         public IEnumerable<string> CssLinks
         {
@@ -107,7 +107,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the metadata.
+        /// Gets or sets the metadata.
         /// </summary>
         public IEnumerable<KeyValuePair<string, string>> Meta
         {

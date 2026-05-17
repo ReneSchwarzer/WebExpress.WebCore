@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebPage.Model;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebScope;
@@ -39,7 +40,7 @@ namespace WebExpress.WebCore.WebPage
         public event EventHandler<IPageContext> RemovePage;
 
         /// <summary>
-        /// Returns all page contexts.
+        /// Gets all page contexts.
         /// </summary>
         public IEnumerable<IPageContext> Pages => _dictionary.All;
 
@@ -53,10 +54,10 @@ namespace WebExpress.WebCore.WebPage
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -110,7 +111,7 @@ namespace WebExpress.WebCore.WebPage
                         {
                             // injection
                             var parameters = constructor.GetParameters();
-                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var hubProperties = _componentHub?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
                             var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 .Where(x => x.PropertyType == typeof(IComponentId))
                                 .FirstOrDefault();
@@ -159,11 +160,11 @@ namespace WebExpress.WebCore.WebPage
             AddPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemovePage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<PageContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<PageContext>(endpointtRegistration);
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:pagemanager.initialization")
             );
@@ -285,7 +286,7 @@ namespace WebExpress.WebCore.WebPage
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -294,7 +295,7 @@ namespace WebExpress.WebCore.WebPage
         /// <param name="applicationContext">The context of the application whose pages are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.Contains(pluginContext, applicationContext))
                 {
@@ -320,13 +321,14 @@ namespace WebExpress.WebCore.WebPage
             {
                 var id = pageType.FullName?.ToLower();
                 var segment = default(ISegmentAttribute);
-                var icon = default(IIcon);
+                var icon = default(Type);
                 var title = pageType.Name;
                 var includeSubPaths = false;
                 var scopes = new List<Type>();
                 var conditions = new List<ICondition>();
                 var cache = false;
                 var domains = new List<Type>();
+                var policies = new List<IIdentityPolicy>();
                 var attributes = pageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                     !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -360,9 +362,22 @@ namespace WebExpress.WebCore.WebPage
                         && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (conditionType != null)
+                        if (conditionType is not null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
+                    }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType is not null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
                         }
                         continue;
                     }
@@ -388,11 +403,7 @@ namespace WebExpress.WebCore.WebPage
                     if (attributeType.IsGenericType &&
                         attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        var iconType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (iconType != null)
-                        {
-                            icon ??= Activator.CreateInstance(iconType) as IIcon;
-                        }
+                        icon = attributeType.GetGenericArguments().FirstOrDefault();
                         continue;
                     }
 
@@ -409,7 +420,7 @@ namespace WebExpress.WebCore.WebPage
                         attributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
                         var scopeType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (scopeType != null)
+                        if (scopeType is not null)
                         {
                             scopes.Add(scopeType);
                         }
@@ -422,7 +433,7 @@ namespace WebExpress.WebCore.WebPage
                         attributeType.Namespace == typeof(DomainAttribute<>).Namespace)
                     {
                         var domainType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (domainType != null)
+                        if (domainType is not null)
                         {
                             domains.Add(domainType);
                         }
@@ -451,17 +462,18 @@ namespace WebExpress.WebCore.WebPage
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         PageTitle = title,
-                        PageIcon = icon,
+                        PageIcon = GetIcon(icon, applicationContext, _componentHub),
                         Route = routePath,
                         Scopes = scopes,
                         Domains = domains,
                         Cache = cache,
                         Conditions = conditions,
+                        Policies = policies,
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
-                    var pageItem = new PageItem(_componentHub.EndpointManager)
+                    var pageItem = new PageItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -480,7 +492,7 @@ namespace WebExpress.WebCore.WebPage
                     {
                         OnAddPage(pageItem.PageContext);
 
-                        _httpServerContext?.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -588,14 +600,57 @@ namespace WebExpress.WebCore.WebPage
         }
 
         /// <summary>
+        /// Creates an instance of an icon of the specified type, optionally using theme information if available.
+        /// </summary>
+        /// <param name="iconType">
+        /// The type of the icon to instantiate. Must implement the IIcon interface.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context used for resolving dependencies or additional information required for
+        /// icon creation.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub used to discover the active theme so the icon
+        /// is constructed with the matching <c>TypeIconTheme</c> when the
+        /// icon type ships theme-specific variants.
+        /// </param>
+        /// <returns>
+        /// An instance of IIcon created from the specified type. Returns null if the icon cannot be instantiated.
+        /// </returns>
+        private static IIcon GetIcon(Type iconType, IApplicationContext applicationContext, IComponentHub componentHub)
+        {
+            if (iconType is not null)
+            {
+                // resolve theme from the first theme registered for this application -
+                // falls back to TypeIconTheme.Default when no theme is registered.
+                var themeValue = componentHub?.ThemeManager?.Themes
+                    ?.FirstOrDefault(t => t.ApplicationContext == applicationContext)?.IconTheme
+                    ?? TypeIconTheme.Default;
+                var themeType = themeValue.GetType();
+
+                // look for a constructor on the icon type that accepts the theme type
+                var ctorWithTheme = iconType.GetConstructor([themeType]);
+                if (ctorWithTheme is not null)
+                {
+                    return ctorWithTheme.Invoke([themeValue]) as IIcon;
+                }
+
+                // fallback: parameterless constructor
+                return Activator.CreateInstance(iconType) as IIcon;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

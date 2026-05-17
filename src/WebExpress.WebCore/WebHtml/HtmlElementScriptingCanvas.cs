@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementScriptingCanvas : HtmlElement, IHtmlElementScripting
     {
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Width
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         public int Height
         {

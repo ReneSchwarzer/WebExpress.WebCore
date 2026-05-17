@@ -13,12 +13,12 @@ namespace WebExpress.WebCore.WebRestApi
     public interface IRestApiValidationResult
     {
         /// <summary>
-        /// Returns a read-only collection of errors encountered during the API operation.
+        /// Gets a read-only collection of errors encountered during the API operation.
         /// </summary>
         IEnumerable<RestApiError> Errors { get; }
 
         /// <summary>
-        /// Returns a value indicating whether the current state is valid.
+        /// Gets a value indicating whether the current state is valid.
         /// </summary>
         /// <remarks>The state is considered valid if there are no errors present.</remarks>
         bool IsValid { get; }

@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebTask
         event EventHandler<TaskEventArgs> TaskChanged;
 
         /// <summary>
-        /// Returns the collection of tasks.
+        /// Gets the collection of tasks.
         /// </summary>
         IEnumerable<ITask> Tasks { get; }
 

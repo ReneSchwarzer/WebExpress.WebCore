@@ -18,17 +18,17 @@ namespace WebExpress.WebCore.Internationalization
         private readonly IComponentHub _componentHub;
 
         /// <summary>
-        /// Returns the default language.
+        /// Gets the default language.
         /// </summary>
         public static CultureInfo DefaultCulture { get; private set; } = CultureInfo.CurrentCulture;
 
         /// <summary>
-        /// Returns the directory by listing the internationalization key-value pairs.
+        /// Gets the directory by listing the internationalization key-value pairs.
         /// </summary>
         private static InternationalizationDictionary Dictionary { get; } = [];
 
         /// <summary>
-        /// Returns or sets the reference to the context of the host.
+        /// Gets or sets the reference to the context of the host.
         /// </summary>
         public IHttpServerContext HttpServerContext { get; private set; }
 
@@ -41,12 +41,12 @@ namespace WebExpress.WebCore.Internationalization
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += (sender, pluginContext) =>
+            _componentHub?.PluginManager?.AddPlugin += (sender, pluginContext) =>
             {
                 Register(pluginContext);
             };
 
-            _componentHub.PluginManager.RemovePlugin += (sender, pluginContext) =>
+            _componentHub?.PluginManager?.RemovePlugin += (sender, pluginContext) =>
             {
                 Remove(pluginContext);
             };
@@ -54,7 +54,7 @@ namespace WebExpress.WebCore.Internationalization
             HttpServerContext = httpServerContext;
             DefaultCulture = HttpServerContext.Culture;
 
-            HttpServerContext.Log.Debug
+            HttpServerContext.Log?.Debug
             (
                 Translate("webexpress.webcore:internationalizationmanager.initialization")
             );
@@ -69,7 +69,7 @@ namespace WebExpress.WebCore.Internationalization
             var pluginId = pluginContext.PluginId;
             Register(pluginContext.Assembly, pluginId.ToString());
 
-            HttpServerContext.Log.Debug
+            HttpServerContext.Log?.Debug
             (
                 Translate("webexpress.webcore:internationalizationmanager.register", pluginId)
             );

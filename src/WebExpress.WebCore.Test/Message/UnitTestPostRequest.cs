@@ -1,145 +1,155 @@
-﻿namespace WebExpress.WebCore.Test.Message
+﻿using WebExpress.WebCore.Test.Fixture;
+using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebParameter;
+
+namespace WebExpress.WebCore.Test.Message
 {
+    /// <summary>
+    /// Unit tests for parsing HTTP POST requests.
+    /// </summary>
+    [Collection("NonParallelTests")]
     public class UnitTestPostRequest : UnitTestRequest
     {
-        //[Fact]
-        //public void Post_TextPlain()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeTextPlain.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var param = request?.GetParameter("submit_manufactor")?.Value;
+        /// <summary>
+        /// Tests parsing of a POST request with <c>text/plain</c> payload.
+        /// </summary>
+        [Fact]
+        public void TextPlain()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeTextPlain.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //       param is not null && param == "1"
-        //    );
-        //}
+            Assert.Equal("1", request?.GetParameter("submit_manufactor")?.Value);
+        }
 
-        //[Fact]
-        //public void Post_TextPlain_Umlaut()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeTextPlain_Umlaut.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var a = request?.GetParameter("a")?.Value;
-        //    var b = request?.GetParameter("b")?.Value;
-        //    var s = request?.GetParameter("submit_")?.Value;
+        /// <summary>
+        /// Tests parsing of a POST request with <c>text/plain</c> payload containing umlauts.
+        /// </summary>
+        [Fact]
+        public void TextPlainWithUmlaut()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeTextPlain_Umlaut.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //       a is not null && a == "ä" &&
-        //       b is not null && b == "ö ü" &&
-        //       s is not null && s == "1"
-        //    );
-        //}
+            Assert.Equal("ä", request?.GetParameter("a")?.Value);
+            Assert.Equal("ö ü", request?.GetParameter("b")?.Value);
+            Assert.Equal("1", request?.GetParameter("submit_")?.Value);
+        }
 
-        //[Fact]
-        //public void Post_Urlencoded()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeXwwwFormUrlencoded.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var param = request?.GetParameter("submit_manufactor")?.Value;
+        /// <summary>
+        /// Tests parsing of a POST request with <c>application/x-www-form-urlencoded</c> payload.
+        /// </summary>
+        [Fact]
+        public void Urlencoded()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeXwwwFormUrlencoded.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //       param != null && param == "1"
-        //    );
-        //}
+            Assert.Equal("1", request?.GetParameter("submit_manufactor")?.Value?.Trim());
+        }
 
-        //[Fact]
-        //public void Post_Urlencoded_Umlaut()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeXwwwFormUrlencoded_Umlaut.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var a = request?.GetParameter("a")?.Value;
-        //    var b = request?.GetParameter("b")?.Value;
-        //    var s = request?.GetParameter("submit_")?.Value;
+        /// <summary>
+        /// Tests parsing of a URL-encoded POST request containing umlauts.
+        /// </summary>
+        [Fact]
+        public void UrlencodedWithUmlaut()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeXwwwFormUrlencoded_umlaut.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //       a != null && a == "ä" &&
-        //       b != null && b == "ö ü" &&
-        //       s != null && s == "1",
-        //       "Fehler in der Funktion Post_Urlencoded_Umlaut"
-        //    );
-        //}
+            Assert.Equal("ä", GetParameterValue(request, "a"));
+            Assert.Equal("ö ü", GetParameterValue(request, "b"));
+            Assert.Equal("1", GetParameterValue(request, "submit_")?.Trim());
+        }
 
-        //[Fact]
-        //public void Post_Multipart1()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeMultipartFormData1.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var param = request?.GetParameter("submit_manufactor")?.Value;
 
-        //    Assert.True
-        //    (
-        //       param != null && param == "1"
-        //    );
-        //}
+        [Fact]
+        public void Multipart1()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeMultipartFormData1.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //[Fact]
-        //public void Post_Multipart2()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeMultipartFormData2.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var param = request?.GetParameter("submit_manufactor")?.Value;
+            Assert.Equal("1", request?.GetParameter("submit_manufactor")?.Value);
+        }
 
-        //    var file = request?.GetParameter("image") as ParameterFile;
+        /// <summary>
+        /// Tests parsing of a multipart POST request including a file upload.
+        /// </summary>
+        [Fact]
+        public void Multipart2()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeMultipartFormData2.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    var temp = Path.Combine(Path.GetTempPath(), file.Value);
-        //    File.WriteAllBytes(temp, file.Data);
+            Assert.Equal("1", request?.GetParameter("submit_manufactor")?.Value);
 
-        //    Assert.True
-        //    (
-        //        file.Data.Length == 47788 &&
-        //        param != null && param == "1"
-        //    );
-        //}
+            var file = request?.GetParameter("image") as ParameterFile;
+            Assert.NotNull(file);
+            Assert.Equal("Unbenannt.png", file.Value);
+            Assert.Equal("image/png", file.ContentType);
+            Assert.True((file.Data?.Length ?? 0) > 0);
+        }
 
-        //[Fact]
-        //public void Post_Multipart3()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeMultipartFormData3.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var param = request?.GetParameter("submit_del")?.Value;
+        /// <summary>
+        /// Tests parsing of a multipart POST request for delete submit action.
+        /// </summary>
+        [Fact]
+        public void Multipart3()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeMultipartFormData3.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //        param != null && param == "1"
-        //    );
-        //}
+            Assert.Equal("1", request?.GetParameter("submit_del")?.Value);
+        }
 
-        //[Fact]
-        //public void Post_Multipart4()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeMultipartFormData4.post"), FileMode.Open));
-        //    var contextFeatures = Prepare(reader, RequestMethod.POST, "");
-        //    var request = new WebMessage.Request(contextFeatures, null, null);
-        //    var param = request?.GetParameter("submit-formular-inventory")?.Value;
+        /// <summary>
+        /// Tests parsing of a multipart POST request with hyphenated field names.
+        /// </summary>
+        [Fact]
+        public void Multipart4()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeMultipartFormData4.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //        param != null && param == "1"
-        //    );
-        //}
+            Assert.Equal("1", request?.GetParameter("submit-formular-inventory")?.Value);
+        }
 
-        //[Fact]
-        //public void Post_Multipart_Umlaut()
-        //{
-        //    using var reader = new BinaryReader(new FileStream(Path.Combine("test", "contentTypeMultipartFormData_Umlaut.post"), FileMode.Open));
-        //    var request = Request.Create(reader, "127.0.0.1");
-        //    var a = request?.GetParameter("a")?.Value;
-        //    var b = request?.GetParameter("b")?.Value;
-        //    var s = request?.GetParameter("submit_")?.Value;
+        /// <summary>
+        /// Tests parsing of a multipart POST request containing umlauts.
+        /// </summary>
+        [Fact]
+        public void MultipartWithUmlaut()
+        {
+            var content = UnitTestFixture.GetEmbeddedResource("contentTypeMultipartFormData_Umlaut.post");
+            var request = UnitTestFixture.CreateRequestMock(content);
 
-        //    Assert.True
-        //    (
-        //        a != null && a == "ä" &&
-        //        b != null && b == "ö ü" &&
-        //        s != null && s == "1",
-        //        "Fehler in der Funktion Post_Multipart_Umlaut"
-        //    );
-        //}
+            Assert.Equal("ä", request?.GetParameter("a")?.Value);
+            Assert.Equal("ö ü", request?.GetParameter("b")?.Value);
+            Assert.Equal("1", request?.GetParameter("submit_")?.Value);
+        }
 
+        /// <summary>
+        /// Retrieves the value of a parameter from the request using the 
+        /// specified key.
+        /// </summary>
+        /// <param name="request">
+        /// The request from which the parameter value should be retrieved.
+        /// </param>
+        /// <param name="key">
+        /// The key of the parameter.
+        /// </param>
+        /// <returns>
+        /// The parameter value, or <see langword="null"/> if no parameter with 
+        /// the specified key is found.
+        /// </returns>
+        private static string GetParameterValue(IRequest request, string key)
+        {
+            return request?.GetParameter(key)?.Value
+                ?? request?.Parameters?
+                    .OfType<Parameter>()
+                    .FirstOrDefault(x => string.Equals(x.Key?.Trim('\r', '\n', '\uFEFF'), key, StringComparison.OrdinalIgnoreCase))?
+                    .Value;
+        }
 
     }
 }

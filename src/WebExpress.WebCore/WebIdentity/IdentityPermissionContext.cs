@@ -11,22 +11,22 @@ namespace WebExpress.WebCore.WebIdentity
     public class IdentityPermissionContext : IIdentityPermissionContext
     {
         /// <summary>
-        /// Returns the permission id.
+        /// Gets the permission id.
         /// </summary>
         public IComponentId PermissionId { get; internal set; }
 
         /// <summary>
-        /// Returns the permission.
+        /// Gets the permission.
         /// </summary>
         public Type Permission { get; internal set; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 

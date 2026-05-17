@@ -8,12 +8,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementScriptingScript : HtmlElement, IHtmlElementScripting
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Code { get; set; }
 
         /// <summary>
-        /// Returns or sets the scripting language.
+        /// Gets or sets the scripting language.
         /// </summary>
         public string Language
         {
@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the media type.
+        /// Gets or sets the media type.
         /// </summary>
         public string Type
         {
@@ -31,7 +31,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the link to the script file.
+        /// Gets or sets the link to the script file.
         /// </summary>
         public string Src
         {

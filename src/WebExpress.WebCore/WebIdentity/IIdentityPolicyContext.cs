@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebApplication;
+﻿using System;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPlugin;
 
@@ -10,17 +11,22 @@ namespace WebExpress.WebCore.WebIdentity
     public interface IIdentityPolicyContext : IContext
     {
         /// <summary>
-        /// Returns the policy id.
+        /// Gets the policy id.
         /// </summary>
         IComponentId PolicyId { get; }
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the policy type.
+        /// </summary>
+        Type Policy { get; }
+
+        /// <summary>
+        /// Gets the associated plugin context.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
     }

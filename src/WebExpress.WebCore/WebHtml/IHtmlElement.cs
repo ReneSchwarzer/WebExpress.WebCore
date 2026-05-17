@@ -8,37 +8,37 @@ namespace WebExpress.WebCore.WebHtml
     public interface IHtmlElement : IHtmlNode
     {
         /// <summary>
-        /// Returns or sets the attributes.
+        /// Gets or sets the attributes.
         /// </summary>
         IEnumerable<IHtmlAttribute> Attributes { get; }
 
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         IEnumerable<IHtmlNode> Elements { get; }
 
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// Returns or sets the css class.
+        /// Gets or sets the css class.
         /// </summary>
         public string Class { get; set; }
 
         /// <summary>
-        /// Returns or sets the css style.
+        /// Gets or sets the css style.
         /// </summary>
         public string Style { get; set; }
 
         /// <summary>
-        /// Returns or sets the role.
+        /// Gets or sets the role.
         /// </summary>
         public string Role { get; set; }
 
         /// <summary>
-        /// Returns or sets the theme.
+        /// Gets or sets the theme.
         /// </summary>
         string DataTheme { get; set; }
 

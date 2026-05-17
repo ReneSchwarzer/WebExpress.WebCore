@@ -12,52 +12,52 @@ namespace WebExpress.WebCore
     public interface IHttpServerContext
     {
         /// <summary>
-        /// Returns the route of the web server.
+        /// Gets the route of the web server.
         /// </summary>
         IRoute Route { get; }
 
         /// <summary>
-        /// Returns the endpoints to which the web server responds.
+        /// Gets the endpoints to which the web server responds.
         /// </summary>
         ICollection<EndpointConfig> Endpoints { get; }
 
         /// <summary>
-        /// Returns the version of the http(s) server.
+        /// Gets the version of the http(s) server.
         /// </summary>
         string Version { get; }
 
         /// <summary>
-        /// Returns the package home directory.
+        /// Gets the package home directory.
         /// </summary>
         string PackagePath { get; }
 
         /// <summary>
-        /// Returns the asset home directory.
+        /// Gets the asset home directory.
         /// </summary>
         string AssetPath { get; }
 
         /// <summary>
-        /// Returns the data home directory.
+        /// Gets the data home directory.
         /// </summary>
         string DataPath { get; }
 
         /// <summary>
-        /// Returns the configuration directory.
+        /// Gets the configuration directory.
         /// </summary>
         string ConfigPath { get; }
 
         /// <summary>
-        /// Returns the culture.
+        /// Gets the culture.
         /// </summary>
         CultureInfo Culture { get; }
 
         /// <summary>
-        /// Returns the log for writing status messages to the console and to a log file.
+        /// Gets the log for writing status messages to the console and to a log file.
         /// </summary>
         ILog Log { get; }
 
         /// <summary>
-        /// Returns the host.
+        /// Gets the host.
         /// </summary>
         IHost Host { get; }
     }

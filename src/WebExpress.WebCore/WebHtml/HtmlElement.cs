@@ -14,22 +14,22 @@ namespace WebExpress.WebCore.WebHtml
         private readonly List<IHtmlAttribute> _attributes = [];
 
         /// <summary>
-        /// Returns or sets the name of the element.
+        /// Gets or sets the name of the element.
         /// </summary>
         protected string ElementName { get; set; }
 
         /// <summary>
-        /// Returns or sets the attributes.
+        /// Gets the attributes.
         /// </summary>
         public IEnumerable<IHtmlAttribute> Attributes => _attributes;
 
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public IEnumerable<IHtmlNode> Elements => _elements;
 
         /// <summary>
-        /// Returns or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         public string Id
         {
@@ -38,7 +38,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the css class.
+        /// Gets or sets the css class.
         /// </summary>
         public string Class
         {
@@ -47,7 +47,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the css style.
+        /// Gets or sets the css style.
         /// </summary>
         public string Style
         {
@@ -56,7 +56,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the role.
+        /// Gets or sets the role.
         /// </summary>
         public string Role
         {
@@ -65,7 +65,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the html5 data attribute.
+        /// Gets or sets the html5 data attribute.
         /// </summary>
         public string DataToggle
         {
@@ -74,7 +74,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the html5 data attribute.
+        /// Gets or sets the html5 data attribute.
         /// </summary>
         public string DataProvide
         {
@@ -83,7 +83,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the theme.
+        /// Gets or sets the theme.
         /// </summary>
         public string DataTheme
         {
@@ -92,7 +92,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the on click attribute.
+        /// Gets or sets the on click attribute.
         /// </summary>
         public string OnClick
         {

@@ -13,7 +13,7 @@ namespace WebExpress.WebCore.WebApplication.Model
         private readonly Dictionary<IPluginContext, Dictionary<string, ApplicationItem>> _dict = [];
 
         /// <summary>
-        /// Returns all application contexts from the dictionary.
+        /// Gets all application contexts from the dictionary.
         /// </summary>
         public IEnumerable<IApplicationContext> All => _dict
             .Values.SelectMany(x => x.Values)

@@ -23,42 +23,42 @@ namespace WebExpress.WebCore.WebFragment.Model
         private static readonly Dictionary<Type, Delegate> _delegateCache = [];
 
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets or sets the context of the associated plugin.
         /// </summary>
         public IPluginContext PluginContext { get; set; }
 
         /// <summary>
-        /// Returns the application context.
+        /// Gets or sets the application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; set; }
 
         /// <summary>
-        /// Returns the fragment context.
+        /// Gets or sets the fragment context.
         /// </summary>
         public IFragmentContext FragmentContext { get; set; }
 
         /// <summary>
-        /// The type of fragment.
+        /// Gets or sets the type of fragment.
         /// </summary>
         public Type FragmentClass { get; set; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets or sets the section.
         /// </summary>
         public Type Section { get; set; }
 
         /// <summary>
-        /// Returns the scope.
+        /// Gets or sets the scope.
         /// </summary>
         public Type Scope { get; set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the component to be active.
+        /// Gets or sets the conditions that must be met for the component to be active.
         /// </summary>
         public ICollection<ICondition> Conditions { get; set; }
 
         /// <summary>
-        /// The order of the fragment.
+        /// Gets or sets the order of the fragment.
         /// </summary>
         public int Order { get; set; }
 

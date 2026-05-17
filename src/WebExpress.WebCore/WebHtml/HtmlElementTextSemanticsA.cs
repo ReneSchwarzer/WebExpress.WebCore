@@ -10,12 +10,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextSemanticsA : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Returns the elements.
+        /// Gets the elements.
         /// </summary>
         public new IEnumerable<IHtmlNode> Elements => base.Elements;
 
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the alternate text.
+        /// Gets or sets the alternate text.
         /// </summary>
         public string Alt
         {
@@ -33,7 +33,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the tooltip.
+        /// Gets or sets the tooltip.
         /// </summary>
         public string Title
         {
@@ -42,7 +42,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the destination uri.
+        /// Gets or sets the destination uri.
         /// </summary>
         public string Href
         {
@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the target.
+        /// Gets or sets the target.
         /// </summary>
         public TypeTarget Target
         {

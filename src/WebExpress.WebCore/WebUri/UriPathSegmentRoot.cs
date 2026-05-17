@@ -10,32 +10,32 @@ namespace WebExpress.WebCore.WebUri
     public class UriPathSegmentRoot : IUriPathSegment
     {
         /// <summary>
-        /// Returns the ID of the segment.
+        /// Gets the ID of the segment.
         /// </summary>
         public string Id => "ROOT";
 
         /// <summary>
-        /// Returns or sets the path text.
+        /// Gets or sets the path text.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// Returns or sets the display text.
+        /// Gets or sets the display text.
         /// </summary>
         public string Display { get; set; }
 
         /// <summary>
-        /// Returns or sets the tag.
+        /// Gets or sets the tag.
         /// </summary>
         public object Tag { get; set; }
 
         /// <summary>
-        /// Returns a value indicating whether the path segment is empty.
+        /// Gets a value indicating whether the path segment is empty.
         /// </summary>
         public bool IsEmpty => false;
 
         /// <summary>
-        /// Returns or sets a value indicating whether the item is hidden.
+        /// Gets or sets a value indicating whether the item is hidden.
         /// </summary>
         /// <remarks>
         /// This property can be used to determine if the item should be displayed in user
@@ -44,7 +44,7 @@ namespace WebExpress.WebCore.WebUri
         public bool IsHidden { get; set; }
 
         /// <summary>
-        /// Returns or sets the URI to which the user is redirected.
+        /// Gets or sets the URI to which the user is redirected.
         /// </summary>
         public IUri Uri { get; set; }
 

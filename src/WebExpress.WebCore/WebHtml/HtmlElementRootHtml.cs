@@ -9,12 +9,12 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementRootHtml : HtmlElement, IHtmlElementRoot
     {
         /// <summary>
-        /// Returns or sets the head.
+        /// Gets or sets the head.
         /// </summary>
         public HtmlElementMetadataHead Head { get; private set; }
 
         /// <summary>
-        /// Returns or sets the body.
+        /// Gets or sets the body.
         /// </summary>
         public HtmlElementSectionBody Body { get; private set; }
 
@@ -29,15 +29,23 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Convert to a string using a StringBuilder.
+        /// Convert to a string using a StringBuilder. Renders the opening tag
+        /// together with any attributes added through
+        /// <c>AddUserAttribute</c> / class / style / data-bs-theme, then
+        /// emits the head, body and closing tag.
         /// </summary>
         /// <param name="builder">The string builder.</param>
         /// <param name="deep">The call depth.</param>
         public override void ToString(StringBuilder builder, int deep)
         {
-            builder.Append("<");
+            builder.Append('<');
             builder.Append(ElementName);
-            builder.Append(">");
+            foreach (var attribute in Attributes)
+            {
+                builder.Append(' ');
+                attribute.ToString(builder, 0);
+            }
+            builder.Append('>');
 
             Head.ToString(builder, deep + 1);
             Body.ToString(builder, deep + 1);

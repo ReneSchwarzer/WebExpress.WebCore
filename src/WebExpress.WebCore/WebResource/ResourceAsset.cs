@@ -13,12 +13,12 @@ namespace WebExpress.WebCore.WebResource
     public class ResourceAsset : ResourceBinary
     {
         /// <summary>
-        /// Protection against concurrency.
+        /// Gets the protection against concurrency.
         /// </summary>
         private object Gard { get; set; }
 
         /// <summary>
-        /// Returns the root directory.
+        /// Gets the root directory.
         /// </summary>
         public string AssetDirectory { get; protected set; }
 
@@ -117,7 +117,7 @@ namespace WebExpress.WebCore.WebResource
                         break;
                 }
 
-                request.HttpServerContext.Log.Debug(I18N.Translate
+                request.HttpServerContext.Log?.Debug(I18N.Translate
                     (
                         "webexpress.webcore:resource.file",
                         request.RemoteEndPoint, request.Uri

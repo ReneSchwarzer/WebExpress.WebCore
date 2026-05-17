@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebAttribute
         where TParameter : IParameterStatic, new()
     {
         /// <summary>
-        /// Returns or sets the display format.
+        /// Gets or sets the display format.
         /// </summary>
         private UriPathSegmentVariableGuid<TParameter>.Format DisplayFormat { get; set; }
 

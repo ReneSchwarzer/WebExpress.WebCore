@@ -6,7 +6,7 @@
     public class HtmlElementMetadataBase : HtmlElement, IHtmlElementMetadata
     {
         /// <summary>
-        /// Returns or sets the destination uri.
+        /// Gets or sets the destination uri.
         /// </summary>
         public string Href
         {

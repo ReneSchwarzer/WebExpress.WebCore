@@ -37,23 +37,23 @@ namespace WebExpress.WebCore.WebMessage
             Add("Referer", header.Referer);
 
             // accept headers
-            if (header.Accept != null)
+            if (header.Accept is not null)
                 Add("Accept", string.Join(", ", header.Accept));
 
             Add("Accept-Encoding", header.AcceptEncoding);
 
-            if (header.AcceptLanguage != null)
+            if (header.AcceptLanguage is not null)
                 Add("Accept-Language", string.Join(", ", header.AcceptLanguage));
 
             // cookies
-            if (header.Cookies != null)
+            if (header.Cookies is not null)
             {
                 var cookieString = string.Join("; ", header.Cookies.Select(c => $"{c.Name}={c.Value}"));
                 Add("Cookie", cookieString);
             }
 
             // authorization
-            if (header.Authorization != null)
+            if (header.Authorization is not null)
                 Add("Authorization", header.Authorization.ToString());
 
             // websocket-specific headers

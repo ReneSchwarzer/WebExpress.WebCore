@@ -10,17 +10,17 @@ namespace WebExpress.WebCore.Test.Data
         private readonly List<string> _roles = [];
 
         /// <summary>
-        /// Returns or sets the id of the group.
+        /// Gets or sets the id of the group.
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Returns or sets the name of the group.
+        /// Gets or sets the name of the group.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Returns the roles associated with the group.
+        /// Gets the roles associated with the group.
         /// </summary>
         public IEnumerable<string> Policies => _roles;
 

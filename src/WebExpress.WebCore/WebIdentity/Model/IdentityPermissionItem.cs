@@ -14,32 +14,32 @@ namespace WebExpress.WebCore.WebIdentity.Model
         private readonly IComponentHub _componentHub;
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; private set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; private set; }
 
         /// <summary>
-        /// Returns the policies associated with the permission.
+        /// Gets the policies associated with the permission.
         /// </summary>
         public IEnumerable<Type> Policies { get; private set; }
 
         /// <summary>
-        /// Returns or sets the permission context.
+        /// Gets the permission context.
         /// </summary>
         public IIdentityPermissionContext PermissionContext { get; private set; }
 
         /// <summary>
-        /// Returns or sets the permission class.
+        /// Gets the permission class.
         /// </summary>
         public Type PermissionClass { get; private set; }
 
         /// <summary>
-        /// Returns the permission instance.
+        /// Gets the permission instance.
         /// </summary>
         public IIdentityPermission Instance { get; }
 

@@ -14,7 +14,7 @@ namespace WebExpress.WebCore.WebSettingPage.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<SettingCategoryItem>>> _dict = [];
 
         /// <summary>
-        /// Returns the collection of setting categories.
+        /// Gets the collection of setting categories.
         /// </summary>
         public IEnumerable<ISettingCategoryContext> All => _dict.Values
             .SelectMany(a => a.Values)

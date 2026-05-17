@@ -10,42 +10,42 @@ namespace WebExpress.WebCore.WebSettingPage.Model
     public class SettingGroupItem : IDisposable
     {
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets the context of the associated plugin.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the application context.
+        /// Gets the application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns the setting group context.
+        /// Gets the setting group context.
         /// </summary>
         public ISettingGroupContext SettingGroupContext { get; internal set; }
 
         /// <summary>
-        /// Returns the class type of the setting group.
+        /// Gets the class type of the setting group.
         /// </summary>
         public Type SettingGroupClass { get; internal set; }
 
         /// <summary>
-        /// Returns the human-readable name or a internationalization key of the group.
+        /// Gets the human-readable name or a internationalization key of the group.
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// Returns the human-readable description or a internationalization key of the group. 
+        /// Gets the human-readable description or a internationalization key of the group. 
         /// </summary>
         public string Description { get; internal set; }
 
         /// <summary>
-        /// Returns the setting category.
+        /// Gets the setting category.
         /// </summary>
         public Type Category { get; internal set; }
 
         /// <summary>
-        /// Returns the section.
+        /// Gets the section.
         /// </summary>
         public SettingSection Section { get; internal set; }
 

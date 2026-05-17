@@ -10,10 +10,10 @@ namespace WebExpress.WebCore.WebTheme.Model
     /// </summary>
     internal class ThemeItemDictionary
     {
-        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<ThemeItem>>> _dictionary = new();
+        private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, List<ThemeItem>>> _dictionary = [];
 
         /// <summary>
-        /// Returns all theme items.
+        /// Gets all theme items.
         /// </summary>
         public IEnumerable<ThemeItem> All => _dictionary.Values
             .SelectMany(x => x.Values)

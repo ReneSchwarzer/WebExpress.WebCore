@@ -1,5 +1,4 @@
-﻿using WebExpress.WebCore.WebIcon;
-using WebExpress.WebCore.WebPage;
+﻿using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebSettingPage
 {
@@ -10,22 +9,22 @@ namespace WebExpress.WebCore.WebSettingPage
     public interface ISettingPageContext : IPageContext
     {
         /// <summary>
-        /// Returns the setting category context to which the setting page belongs.
+        /// Gets the setting category context to which the setting page belongs.
         /// </summary>
         ISettingCategoryContext SettingCategory { get; }
 
         /// <summary>
-        /// Returns the group context to which the setting page belongs.
+        /// Gets the group context to which the setting page belongs.
         /// </summary>
         ISettingGroupContext SettingGroup { get; }
 
         /// <summary>
-        /// Returns the section to which the setting page belongs.
+        /// Gets the section to which the setting page belongs.
         /// </summary>
         SettingSection Section { get; }
 
         /// <summary>
-        /// Returns a value indicating whether the page should be displayed or hidden.
+        /// Gets a value indicating whether the page should be displayed or hidden.
         /// </summary>
         bool Hide { get; }
     }

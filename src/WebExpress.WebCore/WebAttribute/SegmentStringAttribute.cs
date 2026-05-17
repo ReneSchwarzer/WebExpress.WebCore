@@ -15,7 +15,7 @@ namespace WebExpress.WebCore.WebAttribute
         where TParameter : IParameterStatic, new()
     {
         /// <summary>
-        /// Returns or sets the tag.
+        /// Gets or sets the tag.
         /// </summary>
         private string Tag { get; set; }
 

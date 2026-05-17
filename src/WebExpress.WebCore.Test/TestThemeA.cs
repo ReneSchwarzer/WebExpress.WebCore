@@ -1,4 +1,5 @@
 ﻿using WebExpress.WebCore.WebAttribute;
+using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebTheme;
 
 namespace WebExpress.WebCore.Test
@@ -11,10 +12,11 @@ namespace WebExpress.WebCore.Test
     [Image("webexpress.webcore.test.testthemea.png")]
     [ThemeMode(ThemeMode.Dark)]
     [ThemeStyle("/asserts/css/themea.css")]
+    [IconTheme(TypeIconTheme.Light)]
     public sealed class TestThemeA : ITheme
     {
         /// <summary>
-        /// Returns the text color for the theme.
+        /// Gets the text color for the theme.
         /// </summary>
         /// <value>
         /// A string representing the text color in hexadecimal format.

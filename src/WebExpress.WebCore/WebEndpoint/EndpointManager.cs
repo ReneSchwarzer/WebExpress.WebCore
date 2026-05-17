@@ -35,7 +35,7 @@ namespace WebExpress.WebCore.WebEndpoint
         public event EventHandler<IEndpointContext> RemoveEndpoint;
 
         /// <summary>
-        /// Returns all endpoints contexts.
+        /// Gets all endpoints contexts.
         /// </summary>
         public IEnumerable<IEndpointContext> Endpoints => _registrations.Values.SelectMany(x => x.EndpointsResolver());
 
@@ -48,7 +48,7 @@ namespace WebExpress.WebCore.WebEndpoint
         {
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:endpointmanager.initialization")
             );

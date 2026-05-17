@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebEvent
     public interface IEventManager : IComponentManager
     {
         /// <summary>
-        /// Returns the collection of events.
+        /// Gets the collection of events.
         /// </summary>
         IEnumerable<IEventHandlerContext> EventHandlers { get; }
 

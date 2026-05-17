@@ -8,17 +8,17 @@ namespace WebExpress.WebCore.WebTheme.Model
     public class ThemeItem : IDisposable
     {
         /// <summary>
-        /// Returns or sets the type of theme.
+        /// Gets or sets the type of theme.
         /// </summary>
         public Type ThemeClass { get; set; }
 
         /// <summary>
-        /// Returns or sets the instance of the theme.
+        /// Gets or sets the instance of the theme.
         /// </summary>
         public ITheme Instance { get; set; }
 
         /// <summary>
-        /// Returns the theme context.
+        /// Gets the theme context.
         /// </summary>
         public IThemeContext ThemeContext { get; internal set; }
 

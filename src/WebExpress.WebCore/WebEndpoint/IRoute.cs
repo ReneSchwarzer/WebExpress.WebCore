@@ -18,12 +18,12 @@ namespace WebExpress.WebCore.WebEndpoint
     public interface IRoute
     {
         /// <summary>
-        /// The segments of the route (e.g., /over/there).
+        /// Gets the segments of the route (e.g., /over/there).
         /// </summary>
         IEnumerable<IUriPathSegment> PathSegments { get; }
 
         /// <summary>
-        /// Returns a string representation of the route.
+        /// Gets a string representation of the route.
         /// </summary>
         string Display { get; }
 

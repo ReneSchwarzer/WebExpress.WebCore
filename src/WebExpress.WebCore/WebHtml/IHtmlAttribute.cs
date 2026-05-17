@@ -6,7 +6,7 @@
     public interface IHtmlAttribute : IHtml
     {
         /// <summary>
-        /// Returns or sets the attribute name.
+        /// Gets or sets the attribute name.
         /// </summary>
         string Name { get; set; }
 

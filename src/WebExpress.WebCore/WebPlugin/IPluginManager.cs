@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
+using WebExpress.WebCore.WebPlugin.Model;
 
 namespace WebExpress.WebCore.WebPlugin
 {
@@ -21,7 +22,7 @@ namespace WebExpress.WebCore.WebPlugin
         event EventHandler<IPluginContext> RemovePlugin;
 
         /// <summary>
-        /// Returns all plugins.
+        /// Gets all plugins.
         /// </summary>
         IEnumerable<IPluginContext> Plugins { get; }
 
@@ -52,5 +53,11 @@ namespace WebExpress.WebCore.WebPlugin
         /// <param name="pluginContext">The context of the plugin.</param>
         /// <returns>A collection of ApplicationContext instances.</returns>
         IEnumerable<IApplicationContext> GetAssociatedApplications(IPluginContext pluginContext);
+
+        /// <summary>
+        /// Gets runtime metadata for all known plugins, including dependency and status information.
+        /// </summary>
+        /// <returns>A list of plugin runtime metadata entries.</returns>
+        IEnumerable<PluginRuntimeInfo> GetPluginRuntimeInfos();
     }
 }

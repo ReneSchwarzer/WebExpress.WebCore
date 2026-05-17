@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebTheme
         event EventHandler<IThemeContext> RemoveTheme;
 
         /// <summary>
-        /// Returns the collection of themes.
+        /// Gets the collection of themes.
         /// </summary>
         IEnumerable<IThemeContext> Themes { get; }
 

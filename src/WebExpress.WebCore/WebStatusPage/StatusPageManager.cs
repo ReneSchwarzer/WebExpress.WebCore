@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebStatusPage
         public event EventHandler<IStatusPageContext> RemoveStatusPage;
 
         /// <summary>
-        /// Returns all status pages.
+        /// Gets all status pages.
         /// </summary>
         public IEnumerable<IStatusPageContext> StatusPages
         {
@@ -77,14 +77,14 @@ namespace WebExpress.WebCore.WebStatusPage
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:statuspagemanager.initialization")
             );
@@ -104,7 +104,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 }
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace WebExpress.WebCore.WebStatusPage
         /// <param name="applicationContext">The context of the application whose status pages are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 bool already;
                 lock (_guard)
@@ -182,7 +182,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     var statusCodeAttr = statusResponse?.GetCustomAttribute<StatusCodeAttribute>();
                     if (statusCodeAttr is null || statusCodeAttr.StatusCode == 0)
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -227,7 +227,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     {
                         OnAddStatusPage(statusPageContext);
 
-                        _httpServerContext.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -239,7 +239,7 @@ namespace WebExpress.WebCore.WebStatusPage
                     }
                     else
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -415,7 +415,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 {
                     // injection
                     var parameters = constructor.GetParameters();
-                    var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var hubProperties = _componentHub?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
                     var contextIdProperty = pageContext.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                         .Where(x => x.PropertyType == typeof(IComponentId))
                         .FirstOrDefault();
@@ -579,7 +579,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:statuspagemanager.titel")
@@ -593,7 +593,7 @@ namespace WebExpress.WebCore.WebStatusPage
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -601,10 +601,10 @@ namespace WebExpress.WebCore.WebStatusPage
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

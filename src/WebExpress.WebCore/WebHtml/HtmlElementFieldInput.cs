@@ -9,7 +9,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementFieldInput : HtmlElement, IHtmlElementFormItem
     {
         /// <summary>
-        /// Returns or sets the name of the input field.
+        /// Gets or sets the name of the input field.
         /// </summary>
         public string Name
         {
@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         public string Type
         {
@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the value.
+        /// Gets or sets the value.
         /// </summary>
         public string Value
         {
@@ -36,7 +36,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the character length for text, search, tel, url, email, or password.
+        /// Gets or sets the character length for text, search, tel, url, email, or password.
         /// If no value is specified, the default value of 20 is used.
         /// </summary>
         public string Size
@@ -46,7 +46,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the field is read-only.
+        /// Gets or sets whether the field is read-only.
         /// </summary>
         public string Readonly
         {
@@ -55,7 +55,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether the input field can be used.
+        /// Gets or sets whether the input field can be used.
         /// </summary>
         public bool Disabled
         {
@@ -64,7 +64,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the minimum value.
+        /// Gets or sets the minimum value.
         /// </summary>
         public string Min
         {
@@ -73,7 +73,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the maximum value.
+        /// Gets or sets the maximum value.
         /// </summary>
         public string Max
         {
@@ -82,7 +82,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the increment for numeric, date, or time indications. 
+        /// Gets or sets the increment for numeric, date, or time indications. 
         /// </summary>
         public string Step
         {
@@ -91,7 +91,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the list (datalist).
+        /// Gets or sets the list (datalist).
         /// </summary>
         public string List
         {
@@ -100,7 +100,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether multiple entries of file uploads and email inputs are possible.
+        /// Gets or sets whether multiple entries of file uploads and email inputs are possible.
         /// </summary>
         public string Multiple
         {
@@ -109,7 +109,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the minimum length.
+        /// Gets or sets the minimum length.
         /// </summary>
         public string MinLength
         {
@@ -118,7 +118,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the maximum length.
+        /// Gets or sets the maximum length.
         /// </summary>
         public string MaxLength
         {
@@ -127,7 +127,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether inputs are enforced.
+        /// Gets or sets whether inputs are enforced.
         /// </summary>
         public bool Required
         {
@@ -136,7 +136,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets whether a selection is made (only for radio and check).
+        /// Gets or sets whether a selection is made (only for radio and check).
         /// </summary>
         public bool Checked
         {
@@ -145,7 +145,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a search pattern that checks the content.
+        /// Gets or sets a search pattern that checks the content.
         /// </summary>
         public string Pattern
         {
@@ -154,7 +154,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets a placeholder text.
+        /// Gets or sets a placeholder text.
         /// </summary>
         public string Placeholder
         {
@@ -172,7 +172,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the identification name of the form element to which it is associated.
+        /// Gets or sets the identification name of the form element to which it is associated.
         /// </summary>
         public string Form
         {

@@ -6,7 +6,7 @@
     public class HtmlElementMetadataLink : HtmlElement, IHtmlElementMetadata
     {
         /// <summary>
-        /// Returns or sets the uri.
+        /// Gets or sets the uri.
         /// </summary>
         public string Href
         {
@@ -15,7 +15,7 @@
         }
 
         /// <summary>
-        /// Returns or sets the rel.
+        /// Gets or sets the rel.
         /// </summary>
         public string Rel
         {
@@ -24,7 +24,7 @@
         }
 
         /// <summary>
-        /// Returns or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         public string Type
         {

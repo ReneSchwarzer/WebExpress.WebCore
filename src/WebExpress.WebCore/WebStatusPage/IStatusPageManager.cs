@@ -22,7 +22,7 @@ namespace WebExpress.WebCore.WebStatusPage
         event EventHandler<IStatusPageContext> RemoveStatusPage;
 
         /// <summary>
-        /// Returns all status pages.
+        /// Gets all status pages.
         /// </summary>
         IEnumerable<IStatusPageContext> StatusPages { get; }
 

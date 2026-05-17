@@ -21,7 +21,7 @@ namespace WebExpress.WebCore.WebInclude
         event EventHandler<IIncludeContext> RemoveInclude;
 
         /// <summary>
-        /// Returns all include contexts.
+        /// Gets all include contexts.
         /// </summary>
         IEnumerable<IIncludeContext> Includes { get; }
 

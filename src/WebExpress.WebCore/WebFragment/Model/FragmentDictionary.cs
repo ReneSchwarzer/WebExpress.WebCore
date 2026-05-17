@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebFragment.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, Dictionary<Type, List<FragmentItem>>>>> _dict = [];
 
         /// <summary>
-        /// Returns all fragment contexts from the dictionary.
+        /// Gets all fragment contexts from the dictionary.
         /// </summary>
         public IEnumerable<IFragmentContext> All => _dict.Values
             .SelectMany(x => x.Values)

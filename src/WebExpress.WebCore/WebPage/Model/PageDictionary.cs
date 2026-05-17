@@ -16,7 +16,7 @@ namespace WebExpress.WebCore.WebPage.Model
         private readonly Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, PageItem>>> _dict = [];
 
         /// <summary>
-        /// Returns all page contexts.
+        /// Gets all page contexts.
         /// </summary>
         public IEnumerable<IPageContext> All => _dict.Values
             .SelectMany(x => x.Values)

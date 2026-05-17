@@ -16,12 +16,12 @@ namespace WebExpress.WebCore.WebRestApi
         private readonly List<RestApiError> _errors = [];
 
         /// <summary>
-        /// Returns a read-only collection of errors encountered during the API operation.
+        /// Gets a read-only collection of errors encountered during the API operation.
         /// </summary>
         public IEnumerable<RestApiError> Errors => _errors.AsReadOnly();
 
         /// <summary>
-        /// Returns a value indicating whether the current state is valid.
+        /// Gets a value indicating whether the current state is valid.
         /// </summary>
         /// <remarks>The state is considered valid if there are no errors present.</remarks>
         public bool IsValid => _errors.Count == 0;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -8,7 +9,17 @@ namespace WebExpress.WebCore.WebIdentity
     public interface IIdentityGroup
     {
         /// <summary>
-        /// Returns the policies associated with the group.
+        /// Gets the id of the group.
+        /// </summary>
+        Guid Id { get; }
+
+        /// <summary>
+        /// Gets the name of the group.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the policies associated with the group.
         /// </summary>
         IEnumerable<string> Policies { get; }
     }

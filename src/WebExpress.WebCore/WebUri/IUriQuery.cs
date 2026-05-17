@@ -6,12 +6,12 @@ namespace WebExpress.WebCore.WebUri
     public interface IUriQuery
     {
         /// <summary>
-        /// Returns the key.
+        /// Gets the key.
         /// </summary>
         string Key { get; }
 
         /// <summary>
-        /// Returns the value.
+        /// Gets the value.
         /// </summary>
         string Value { get; }
     }

@@ -32,7 +32,7 @@ namespace WebExpress.WebCore.WebEvent
         public event EventHandler<IEventHandlerContext> RemoveEventHandler;
 
         /// <summary>
-        /// Returns the collection of events.
+        /// Gets the collection of events.
         /// </summary>
         public IEnumerable<IEventHandlerContext> EventHandlers => _dictionary.Values
             .SelectMany(x => x.Values)
@@ -50,14 +50,14 @@ namespace WebExpress.WebCore.WebEvent
         {
             _componentHub = componentHub;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             _httpServerContext = httpServerContext;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate
                 (
@@ -120,7 +120,7 @@ namespace WebExpress.WebCore.WebEvent
                 return;
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace WebExpress.WebCore.WebEvent
         /// <param name="applicationContext">The context of the application whose jobs are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 if (_dictionary.TryGetValue(pluginContext, out var appDict) && appDict.ContainsKey(applicationContext))
                 {
@@ -174,7 +174,7 @@ namespace WebExpress.WebCore.WebEvent
 
                 if (eventType == default)
                 {
-                    _httpServerContext.Log.Debug
+                    _httpServerContext?.Log?.Debug
                     (
                         I18N.Translate
                         (
@@ -206,7 +206,7 @@ namespace WebExpress.WebCore.WebEvent
                     {
                         OnAddEventHandler(eventHandlerContext);
 
-                        _httpServerContext.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -218,7 +218,7 @@ namespace WebExpress.WebCore.WebEvent
                     }
                     else
                     {
-                        _httpServerContext.Log.Debug
+                        _httpServerContext?.Log?.Debug
                         (
                             I18N.Translate
                             (
@@ -348,7 +348,7 @@ namespace WebExpress.WebCore.WebEvent
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate("webexpress.webcore:eventmanager.titel")
@@ -362,7 +362,7 @@ namespace WebExpress.WebCore.WebEvent
                 );
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>
@@ -370,10 +370,10 @@ namespace WebExpress.WebCore.WebEvent
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

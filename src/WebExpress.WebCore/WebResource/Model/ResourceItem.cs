@@ -15,47 +15,47 @@ namespace WebExpress.WebCore.WebResource.Model
     internal class ResourceItem : IDisposable
     {
         /// <summary>
-        /// Returns the endpoint id.
+        /// Gets the endpoint id.
         /// </summary>
         public IComponentId EndpointId { get; internal set; }
 
         /// <summary>
-        /// Returns the context of the associated plugin.
+        /// Gets the context of the associated plugin.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the application context.
+        /// Gets the application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the type of resource.
+        /// Gets the type of resource.
         /// </summary>
         public Type ResourceClass { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the instance of the resource, if the resource is cached, otherwise null.
+        /// Gets the instance of the resource, if the resource is cached, otherwise null.
         /// </summary>
         public IEndpoint Instance { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the paths of the resource.
+        /// Gets the paths of the resource.
         /// </summary>
         public UriEndpoint ContextPath { get; internal set; }
 
         /// <summary>
-        /// Returns or sets the path segment.
+        /// Gets the path segment.
         /// </summary>
         public IUriPathSegment PathSegment { get; internal set; }
 
         /// <summary>
-        /// Returns or sets whether all subpaths should be taken into sitemap.
+        /// Gets whether all subpaths should be taken into sitemap.
         /// </summary>
         public bool IncludeSubPaths { get; internal set; }
 
         /// <summary>
-        /// Returns the conditions that must be met for the resource to be active.
+        /// Gets the conditions that must be met for the resource to be active.
         /// </summary>
         public IEnumerable<ICondition> Conditions { get; internal set; }
 
@@ -65,12 +65,12 @@ namespace WebExpress.WebCore.WebResource.Model
         public bool Cache { get; internal set; }
 
         /// <summary>
-        /// Returns the attributes associated with the page.
+        /// Gets the attributes associated with the page.
         /// </summary>
         public IEnumerable<Type> Attributes { get; internal set; }
 
         /// <summary>
-        /// Returns the resource context.
+        /// Gets the resource context.
         /// </summary>
         public IResourceContext ResourceContext { get; internal set; }
 

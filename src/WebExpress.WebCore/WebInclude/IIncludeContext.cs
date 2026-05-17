@@ -12,32 +12,32 @@ namespace WebExpress.WebCore.WebInclude
     public interface IIncludeContext : IContext
     {
         /// <summary>
-        /// Returns the identifier of the included component.
+        /// Gets the identifier of the included component.
         /// </summary>
         ComponentId IncludeId { get; }
 
         /// <summary>
-        /// Returns the context for the plugin, providing access to shared resources and services.
+        /// Gets the context for the plugin, providing access to shared resources and services.
         /// </summary>
         IPluginContext PluginContext { get; }
 
         /// <summary>
-        /// Returns the application context that provides configuration and services for the application.
+        /// Gets the application context that provides configuration and services for the application.
         /// </summary>
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Returns a value indicating whether caching is enabled.
+        /// Gets a value indicating whether caching is enabled.
         /// </summary>
         bool Cache { get; }
 
         /// <summary>
-        /// Returns the collection of files to be included.
+        /// Gets the collection of files to be included.
         /// </summary>
         IEnumerable<IncludeFile> Files { get; }
 
         /// <summary>
-        /// Returns the collection of scopes associated with the current context.
+        /// Gets the collection of scopes associated with the current context.
         /// </summary>
         /// <remarks>
         /// The collection can be empty if no scopes are defined. Callers can set this property

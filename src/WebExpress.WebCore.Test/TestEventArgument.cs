@@ -8,7 +8,7 @@ namespace WebExpress.WebCore.Test
     public class TestEventArgument : IEventArgument
     {
         /// <summary>
-        /// Returns or sets a boolean value for testing purposes.
+        /// Gets or sets a boolean value for testing purposes.
         /// </summary>
         public bool TestProperty { get; set; }
     }

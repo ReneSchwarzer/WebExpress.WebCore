@@ -16,7 +16,6 @@ namespace WebExpress.WebCore.WebAttribute
         /// </summary>
         public WebIconAttribute()
         {
-
         }
     }
 }

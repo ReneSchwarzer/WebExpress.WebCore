@@ -8,17 +8,17 @@ namespace WebExpress.WebCore.WebTask
     public class TaskEventArgs : EventArgs
     {
         /// <summary>
-        /// Returns the related task.
+        /// Gets the related task.
         /// </summary>
         public ITask Task { get; }
 
         /// <summary>
-        /// Returns the current progress (if relevant).
+        /// Gets the current progress (if relevant).
         /// </summary>
         public int Progress { get; }
 
         /// <summary>
-        /// Returns the current or new message (if relevant).
+        /// Gets the current or new message (if relevant).
         /// </summary>
         public string Message { get; }
 

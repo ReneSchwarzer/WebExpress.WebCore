@@ -16,22 +16,22 @@ namespace WebExpress.WebCore.WebEvent.Model
         private readonly IComponent _instance;
 
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; private set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; private set; }
 
         /// <summary>
-        /// Returns or sets the event handler context.
+        /// Gets the event handler context.
         /// </summary>
         public IEventHandlerContext EventHandlerContext { get; private set; }
 
         /// <summary>
-        /// Returns or sets the event class.
+        /// Gets event class.
         /// </summary>
         public Type EventClass { get; private set; }
 

@@ -9,17 +9,17 @@ namespace WebExpress.WebCore.WebPage
     public class VisualTreeContext : IVisualTreeContext
     {
         /// <summary>
-        /// Returns the request.
+        /// Gets the request.
         /// </summary>
         public IRequest Request => RenderContext?.Request;
 
         /// <summary>
-        /// The uri of the request.
+        /// Gets the uri of the request.
         /// </summary>
         public IUri Uri => RenderContext?.Request?.Uri;
 
         /// <summary>
-        /// Return or sets the render context.
+        /// Gets or sets the render context.
         /// </summary>
         public IRenderContext RenderContext { get; protected set; }
 

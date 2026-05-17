@@ -9,6 +9,7 @@ using WebExpress.WebCore.WebAttribute;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebResource.Model;
@@ -42,7 +43,7 @@ namespace WebExpress.WebCore.WebResource
         public event EventHandler<IResourceContext> RemoveResource;
 
         /// <summary>
-        /// Returns all resource contexts.
+        /// Gets all resource contexts.
         /// </summary>
         public IEnumerable<IResourceContext> Resources
         {
@@ -71,10 +72,10 @@ namespace WebExpress.WebCore.WebResource
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -116,9 +117,9 @@ namespace WebExpress.WebCore.WebResource
                 endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
             };
 
-            _componentHub.EndpointManager.Register<ResourceContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<ResourceContext>(endpointtRegistration);
 
-            _httpServerContext.Log.Debug(
+            _httpServerContext?.Log?.Debug(
                 I18N.Translate("webexpress.webcore:resourcemanager.initialization")
             );
         }
@@ -137,7 +138,7 @@ namespace WebExpress.WebCore.WebResource
                 }
             }
 
-            Register(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            Register(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -146,7 +147,7 @@ namespace WebExpress.WebCore.WebResource
         /// <param name="applicationContext">The context of the application whose resources are to be associated.</param>
         private void Register(IApplicationContext applicationContext)
         {
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 bool shouldContinue = false;
 
@@ -188,6 +189,7 @@ namespace WebExpress.WebCore.WebResource
                 var includeSubPaths = false;
                 var conditions = new List<ICondition>();
                 var cache = false;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = resourceType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -221,9 +223,22 @@ namespace WebExpress.WebCore.WebResource
                         && attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (conditionType != null)
+                        if (conditionType is not null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
+                    }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType is not null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
                         }
                         continue;
                     }
@@ -255,10 +270,11 @@ namespace WebExpress.WebCore.WebResource
                         Cache = cache,
                         Conditions = conditions,
                         IncludeSubPaths = includeSubPaths,
+                        Policies = policies,
                         Attributes = EndpointManager.GetAttributeInstances(attributes)
                     };
 
-                    var resourceItem = new ResourceItem(_componentHub.ResourceManager)
+                    var resourceItem = new ResourceItem(_componentHub?.ResourceManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -282,7 +298,7 @@ namespace WebExpress.WebCore.WebResource
                     {
                         OnAddResource(resourceItem.ResourceContext);
 
-                        _httpServerContext?.Log.Debug(
+                        _httpServerContext?.Log?.Debug(
                             I18N.Translate(
                                 "webexpress.webcore:resourcemanager.addresource",
                                 id,
@@ -604,10 +620,10 @@ namespace WebExpress.WebCore.WebResource
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

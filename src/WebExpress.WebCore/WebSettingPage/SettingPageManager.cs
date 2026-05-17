@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebCondition;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIcon;
+using WebExpress.WebCore.WebIdentity;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
@@ -65,17 +66,17 @@ namespace WebExpress.WebCore.WebSettingPage
         public event EventHandler<ISettingGroupContext> RemoveSettingGroup;
 
         /// <summary>
-        /// Returns the collection of setting categories.
+        /// Gets the collection of setting categories.
         /// </summary>
         public IEnumerable<ISettingCategoryContext> SettingCategories => _categoryDictionary.All;
 
         /// <summary>
-        /// Returns the collection of setting groups.
+        /// Gets the collection of setting groups.
         /// </summary>
         public IEnumerable<ISettingGroupContext> SettingGroups => _groupDictionary.All;
 
         /// <summary>
-        /// Returns the collection of setting pages.
+        /// Gets the collection of setting pages.
         /// </summary>
         public IEnumerable<ISettingPageContext> SettingPages => _pageDictionary.All;
 
@@ -90,10 +91,10 @@ namespace WebExpress.WebCore.WebSettingPage
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication += OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication += OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication += OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication += OnRemoveApplication;
 
             var endpointtRegistration = new EndpointRegistration()
             {
@@ -155,7 +156,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         {
                             // injection
                             var parameters = constructor.GetParameters();
-                            var hubProperties = _componentHub.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                            var hubProperties = _componentHub?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
                             var contextIdProperty = pageContext?.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 .Where(x => x.PropertyType == typeof(IComponentId))
                                 .FirstOrDefault();
@@ -202,9 +203,9 @@ namespace WebExpress.WebCore.WebSettingPage
             AddSettingPage += (sender, e) => endpointtRegistration.AddEndpoint?.Invoke(sender, e);
             RemoveSettingPage += (sender, e) => endpointtRegistration.RemoveEndpoint?.Invoke(sender, e);
 
-            _componentHub.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
+            _componentHub?.EndpointManager.Register<SettingPageContext>(endpointtRegistration);
 
-            _httpServerContext.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
+            _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.initialization"));
         }
 
         /// <summary>
@@ -228,9 +229,9 @@ namespace WebExpress.WebCore.WebSettingPage
                 return;
             }
 
-            RegisterCategory(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
-            RegisterGroup(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
-            RegisterPage(pluginContext, _componentHub.ApplicationManager.GetApplications(pluginContext));
+            RegisterCategory(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
+            RegisterGroup(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
+            RegisterPage(pluginContext, _componentHub?.ApplicationManager.GetApplications(pluginContext));
         }
 
         /// <summary>
@@ -244,7 +245,7 @@ namespace WebExpress.WebCore.WebSettingPage
                 return;
             }
 
-            foreach (var pluginContext in _componentHub.PluginManager.GetPlugins(applicationContext))
+            foreach (var pluginContext in _componentHub?.PluginManager?.GetPlugins(applicationContext))
             {
                 RegisterCategory(pluginContext, new[] { applicationContext });
                 RegisterGroup(pluginContext, new[] { applicationContext });
@@ -325,7 +326,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingCategory(settingCategoryContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.category", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.category", id, applicationContext.ApplicationId));
                     }
                 }
             }
@@ -380,7 +381,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
                 if (category == default)
                 {
-                    _httpServerContext?.Log.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nocategory", id));
+                    _httpServerContext?.Log?.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nocategory", id));
                 }
 
                 // assign the group to existing applications
@@ -416,7 +417,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingGroup(settingGroupContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.group", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.group", id, applicationContext.ApplicationId));
                     }
                 }
             }
@@ -446,8 +447,9 @@ namespace WebExpress.WebCore.WebSettingPage
                 var section = SettingSection.Primary;
                 var includeSubPaths = false;
                 var hide = false;
-                var icon = default(IIcon);
+                var icon = default(Type);
                 var cache = false;
+                var policies = new List<IIdentityPolicy>();
                 var attributes = settingPageType.CustomAttributes
                     .Where(x => !x.AttributeType.GetInterfaces().Contains(typeof(IEndpointAttribute)) &&
                                 !x.AttributeType.GetInterfaces().Contains(typeof(IPageAttribute)));
@@ -495,11 +497,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     if (attributeType.IsGenericType &&
                         attributeType.GetGenericTypeDefinition() == typeof(WebIconAttribute<>))
                     {
-                        var iconType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (iconType != null)
-                        {
-                            icon ??= Activator.CreateInstance(iconType) as IIcon;
-                        }
+                        icon = attributeType.GetGenericArguments().FirstOrDefault();
                         continue;
                     }
 
@@ -523,9 +521,22 @@ namespace WebExpress.WebCore.WebSettingPage
                         attributeType.Namespace == typeof(ConditionAttribute<>).Namespace)
                     {
                         var conditionType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (conditionType != null)
+                        if (conditionType is not null)
                         {
                             conditions.Add(Activator.CreateInstance(conditionType) as ICondition);
+                        }
+                        continue;
+                    }
+
+                    // policy attribute (generic)
+                    if (attributeType.IsGenericType
+                        && attributeType.GetGenericTypeDefinition().Name == typeof(PolicyAttribute<>).Name
+                        && attributeType.Namespace == typeof(PolicyAttribute<>).Namespace)
+                    {
+                        var policyType = attributeType.GetGenericArguments().FirstOrDefault();
+                        if (policyType is not null)
+                        {
+                            policies.Add(Activator.CreateInstance(policyType) as IIdentityPolicy);
                         }
                         continue;
                     }
@@ -533,7 +544,7 @@ namespace WebExpress.WebCore.WebSettingPage
 
                 if (group == default)
                 {
-                    _httpServerContext?.Log.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nogroup", id));
+                    _httpServerContext?.Log?.Warning(I18N.Translate("webexpress.webcore:settingpagemanager.register.nogroup", id));
                 }
 
                 foreach
@@ -558,7 +569,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         attributeType.Namespace == typeof(ScopeAttribute<>).Namespace)
                     {
                         var scopeType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (scopeType != null)
+                        if (scopeType is not null)
                         {
                             scopes.Add(scopeType);
                         }
@@ -571,7 +582,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         attributeType.Namespace == typeof(DomainAttribute<>).Namespace)
                     {
                         var domainType = attributeType.GetGenericArguments().FirstOrDefault();
-                        if (domainType != null)
+                        if (domainType is not null)
                         {
                             domains.Add(domainType);
                         }
@@ -602,16 +613,17 @@ namespace WebExpress.WebCore.WebSettingPage
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes),
                         PageTitle = title,
-                        PageIcon = icon,
+                        PageIcon = GetIcon(icon, applicationContext, _componentHub),
                         Scopes = scopes,
                         Domains = domains,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
                         Section = section,
+                        Policies = policies,
                         Hide = hide
                     };
 
                     // create meta information of the setting page
-                    var settingPageItem = new SettingPageItem(_componentHub.EndpointManager)
+                    var settingPageItem = new SettingPageItem(_componentHub?.EndpointManager)
                     {
                         EndpointId = new ComponentId(id),
                         PluginContext = pluginContext,
@@ -629,7 +641,7 @@ namespace WebExpress.WebCore.WebSettingPage
                     {
                         OnAddSettingPage(settingPageItem.SettingPageContext);
 
-                        _httpServerContext?.Log.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.page", id, applicationContext.ApplicationId));
+                        _httpServerContext?.Log?.Debug(I18N.Translate("webexpress.webcore:settingpagemanager.register.page", id, applicationContext.ApplicationId));
                     }
                 }
             }
@@ -847,14 +859,57 @@ namespace WebExpress.WebCore.WebSettingPage
         }
 
         /// <summary>
+        /// Creates an instance of an icon of the specified type, optionally using theme information if available.
+        /// </summary>
+        /// <param name="iconType">
+        /// The type of the icon to instantiate. Must implement the IIcon interface.
+        /// </param>
+        /// <param name="applicationContext">
+        /// The application context used for resolving dependencies or additional information required for
+        /// icon creation.
+        /// </param>
+        /// <param name="componentHub">
+        /// The component hub used to discover the active theme so the icon
+        /// is constructed with the matching <c>TypeIconTheme</c> when the
+        /// icon type ships theme-specific variants.
+        /// </param>
+        /// <returns>
+        /// An instance of IIcon created from the specified type. Returns null if the icon cannot be instantiated.
+        /// </returns>
+        private static IIcon GetIcon(Type iconType, IApplicationContext applicationContext, IComponentHub componentHub)
+        {
+            if (iconType is not null)
+            {
+                // resolve theme from the first theme registered for this application -
+                // falls back to TypeIconTheme.Default when no theme is registered.
+                var themeValue = componentHub?.ThemeManager?.Themes
+                    ?.FirstOrDefault(t => t.ApplicationContext == applicationContext)?.IconTheme
+                    ?? TypeIconTheme.Default;
+                var themeType = themeValue.GetType();
+
+                // look for a constructor on the icon type that accepts the theme type
+                var ctorWithTheme = iconType.GetConstructor([themeType]);
+                if (ctorWithTheme is not null)
+                {
+                    return ctorWithTheme.Invoke([themeValue]) as IIcon;
+                }
+
+                // fallback: parameterless constructor
+                return Activator.CreateInstance(iconType) as IIcon;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Release of unmanaged resources reserved during use.
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
-            _componentHub.ApplicationManager.AddApplication -= OnAddApplication;
-            _componentHub.ApplicationManager.RemoveApplication -= OnRemoveApplication;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.ApplicationManager.AddApplication -= OnAddApplication;
+            _componentHub?.ApplicationManager.RemoveApplication -= OnRemoveApplication;
 
             GC.SuppressFinalize(this);
         }

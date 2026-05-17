@@ -18,7 +18,7 @@ namespace WebExpress.WebCore.WebAsset
         private byte[] _data;
 
         /// <summary>
-        /// Returns the root directory.
+        /// Gets the root directory.
         /// </summary>
         public string AssetDirectory { get; protected set; }
 
@@ -122,7 +122,7 @@ namespace WebExpress.WebCore.WebAsset
                     break;
             }
 
-            _httpServerContext.Log.Debug(I18N.Translate
+            _httpServerContext?.Log?.Debug(I18N.Translate
             (
                 "webexpress.webcore:asset.file",
                 request.RemoteEndPoint, request.Uri

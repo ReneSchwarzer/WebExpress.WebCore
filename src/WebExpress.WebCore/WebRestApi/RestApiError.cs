@@ -8,19 +8,19 @@ namespace WebExpress.WebCore.WebRestApi
     public class RestApiError
     {
         /// <summary>
-        /// Returns or sets the error code (e.g. "VALIDATION_FAILED").
+        /// Gets the error code (e.g. "VALIDATION_FAILED").
         /// </summary>
         [JsonPropertyName("code")]
         public string Code { get; init; }
 
         /// <summary>
-        /// Returns a human-readable message.
+        /// Gets a human-readable message.
         /// </summary>
         [JsonPropertyName("message")]
         public string Message { get; init; }
 
         /// <summary>
-        /// Returns the name of the field or parameter affected by the operation.
+        /// Gets the name of the field or parameter affected by the operation.
         /// </summary>
         [JsonPropertyName("field")]
         public string Field { get; init; }

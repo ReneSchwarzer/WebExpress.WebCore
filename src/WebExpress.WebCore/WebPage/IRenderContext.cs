@@ -10,22 +10,22 @@ namespace WebExpress.WebCore.WebPage
     public interface IRenderContext
     {
         /// <summary>
-        /// Returns the endpoint associated with the rendering context.
+        /// Gets the endpoint associated with the rendering context.
         /// </summary>
         IEndpoint Endpoint { get; }
 
         /// <summary>
-        /// Returns the page context.
+        /// Gets the page context.
         /// </summary>
         IPageContext PageContext { get; }
 
         /// <summary>
-        /// The uri of the request.
+        /// Gets the uri of the request.
         /// </summary>
         public IUri Uri => Request?.Uri;
 
         /// <summary>
-        /// Returns the request.
+        /// Gets the request.
         /// </summary>
         IRequest Request { get; }
     }

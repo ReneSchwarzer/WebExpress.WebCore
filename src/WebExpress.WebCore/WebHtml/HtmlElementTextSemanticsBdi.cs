@@ -10,7 +10,7 @@ namespace WebExpress.WebCore.WebHtml
     public class HtmlElementTextSemanticsBdi : HtmlElement, IHtmlElementTextSemantics
     {
         /// <summary>
-        /// Returns or sets the text.
+        /// Gets or sets the text.
         /// </summary>
         public string Text
         {
@@ -19,7 +19,7 @@ namespace WebExpress.WebCore.WebHtml
         }
 
         /// <summary>
-        /// Returns or sets the writing direction. 
+        /// Gets or sets the writing direction. 
         /// </summary>
         public string Dir
         {

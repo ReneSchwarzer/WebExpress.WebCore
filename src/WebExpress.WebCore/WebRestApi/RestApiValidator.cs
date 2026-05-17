@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.WebRestApi
         private bool _currentCondition = true;
 
         /// <summary>
-        /// Returns the result of the REST API validation.
+        /// Gets the result of the REST API validation.
         /// </summary>
         public RestApiValidationResult Result => _result;
 
         /// <summary>
-        /// Returns a value indicating whether the current result is valid.
+        /// Gets a value indicating whether the current result is valid.
         /// </summary>
         public bool IsValid => _result.IsValid;
 

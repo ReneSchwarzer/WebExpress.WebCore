@@ -12,32 +12,32 @@ namespace WebExpress.WebCore.WebJob.Model
     internal class ScheduleItem : IDisposable
     {
         /// <summary>
-        /// Returns the associated plugin context.
+        /// Gets the associated plugin context.
         /// </summary>
         public IPluginContext PluginContext { get; internal set; }
 
         /// <summary>
-        /// Returns the corresponding application context.
+        /// Gets the corresponding application context.
         /// </summary>
         public IApplicationContext ApplicationContext { get; internal set; }
 
         /// <summary>
-        /// The context associated with the job.
+        /// Gets the context associated with the job.
         /// </summary>
         public IJobContext JobContext { get; internal set; }
 
         /// <summary>
-        /// Returns the job class.
+        /// Gets the job class.
         /// </summary>
         public Type JobClass { get; internal set; }
 
         /// <summary>
-        /// Returns the job instance.
+        /// Gets the job instance.
         /// </summary>
         public IJob Instance { get; internal set; }
 
         /// <summary>
-        /// Returns the cancel token or null if not already created.
+        /// Gets the cancel token or null if not already created.
         /// </summary>
         public CancellationTokenSource TokenSource { get; } = new CancellationTokenSource();
 

@@ -24,7 +24,7 @@ namespace WebExpress.WebCore.WebSitemap
         private readonly IUri _serverUri;
 
         /// <summary>
-        /// Returns the side map.
+        /// Gets the side map.
         /// </summary>
         public IEnumerable<IEndpointContext> SiteMap => _root.GetPreOrder()
             .Where(x => x is not null)
@@ -40,10 +40,10 @@ namespace WebExpress.WebCore.WebSitemap
         {
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
-            _serverUri = new UriEndpoint(_httpServerContext.Endpoints.FirstOrDefault(e => e.Uri.StartsWith("https"))?.ToString()
-                ?? _httpServerContext.Endpoints.FirstOrDefault()?.ToString() ?? "");
+            _serverUri = new UriEndpoint(_httpServerContext?.Endpoints.FirstOrDefault(e => e.Uri.StartsWith("https"))?.ToString()
+                ?? _httpServerContext?.Endpoints.FirstOrDefault()?.ToString() ?? "");
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:sitemapmanager.initialization")
             );
@@ -56,13 +56,13 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var newSiteMapNode = new SitemapNode() { PathSegment = new UriPathSegmentRoot() };
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:sitemapmanager.refresh")
             );
 
             // applications
-            var applications = _componentHub.ApplicationManager.Applications
+            var applications = _componentHub?.ApplicationManager.Applications
                 .Select(x => new
                 {
                     ApplicationContext = x,
@@ -80,7 +80,7 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             // endpoints
-            var endpoints = _componentHub.EndpointManager.Endpoints
+            var endpoints = _componentHub?.EndpointManager.Endpoints
                 .Where(x => x.Route is not null)
                 .Select(x => new
                 {
@@ -164,7 +164,7 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>Returns the URI taking into account the context, or null if no valid URI is found.</returns>
         public IUri GetUri(Type endpointType, IApplicationContext applicationContext, params IParameter[] parameters)
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(endpointType, applicationContext);
+            var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
             var node = _root.GetPreOrder()
                 .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
@@ -189,7 +189,7 @@ namespace WebExpress.WebCore.WebSitemap
         public IUri GetUri<TEnpoint>(IEndpointContext endpointContext)
             where TEnpoint : IEndpoint
         {
-            var endpointContexts = _componentHub.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
+            var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
             var node = _root.GetPreOrder()
@@ -506,7 +506,7 @@ namespace WebExpress.WebCore.WebSitemap
                 return;
             }
 
-            using var frame = new LogFrameSimple(_httpServerContext.Log);
+            using var frame = new LogFrameSimple(_httpServerContext?.Log);
             var list = new List<string>
             {
                 I18N.Translate
@@ -529,7 +529,7 @@ namespace WebExpress.WebCore.WebSitemap
                 list.Add(node);
             }
 
-            _httpServerContext.Log.Info(string.Join(Environment.NewLine, list));
+            _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, list));
         }
 
         /// <summary>

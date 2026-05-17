@@ -27,7 +27,7 @@ namespace WebExpress.WebCore.WebSession
         {
             _httpServerContext = context;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:sessionmanager.initialization")
             );
@@ -123,7 +123,7 @@ namespace WebExpress.WebCore.WebSession
             // log removals outside the lock
             foreach (var id in expiredIds)
             {
-                _httpServerContext.Log.Info
+                _httpServerContext?.Log?.Info
                 (
                     I18N.Translate("webexpress.webcore:sessionmanager.cleanup.removed", id)
                 );

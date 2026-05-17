@@ -26,9 +26,9 @@ namespace WebExpress.WebCore.WebLog
         public event EventHandler<IPluginContext> RemoveLog;
 
         /// <summary>
-        /// Returns the default log.
+        /// Gets the default log.
         /// </summary>
-        public ILog DefaultLog => _httpServerContext.Log;
+        public ILog DefaultLog => _httpServerContext?.Log;
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -41,10 +41,10 @@ namespace WebExpress.WebCore.WebLog
             _componentHub = componentHub;
             _httpServerContext = httpServerContext;
 
-            _componentHub.PluginManager.AddPlugin += OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin += OnRemovePlugin;
+            _componentHub?.PluginManager?.AddPlugin += OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin += OnRemovePlugin;
 
-            _httpServerContext.Log.Debug
+            _httpServerContext?.Log?.Debug
             (
                 I18N.Translate("webexpress.webcore:logmanager.initialization")
             );
@@ -110,8 +110,8 @@ namespace WebExpress.WebCore.WebLog
         /// </summary>
         public void Dispose()
         {
-            _componentHub.PluginManager.AddPlugin -= OnAddPlugin;
-            _componentHub.PluginManager.RemovePlugin -= OnRemovePlugin;
+            _componentHub?.PluginManager?.AddPlugin -= OnAddPlugin;
+            _componentHub?.PluginManager?.RemovePlugin -= OnRemovePlugin;
 
             GC.SuppressFinalize(this);
         }
