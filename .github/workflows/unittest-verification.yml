@@ -31,12 +31,71 @@ jobs:
       - name: Run xUnit tests
         id: tests
         continue-on-error: true
-        run: dotnet test ./WebExpress.WebCore.Test/WebExpress.WebCore.Test.csproj --no-build --configuration Release
+        run: dotnet test ./WebExpress.WebCore.Test/WebExpress.WebCore.Test.csproj --no-build --configuration Release -- --report-trx --results-directory ./TestResults
 
-      - name: Print test logs on failure
+      - name: Print failing tests on failure
         if: steps.tests.outcome == 'failure'
+        shell: bash
         run: |
-          find ./WebExpress.WebCore.Test/bin/Release -type f -path "*/TestResults/*.log" -print -exec tail -n 200 {} \;
+          python3 - <<'PY'
+          import glob
+          import sys
+          import xml.etree.ElementTree as ET
+
+          ns = '{http://microsoft.com/schemas/VisualStudio/TeamTest/2010}'
+          files = sorted(glob.glob('./TestResults/**/*.trx', recursive=True))
+          if not files:
+              print('No TRX report produced - cannot extract failure details.')
+              sys.exit(0)
+
+          total_failed = 0
+          for path in files:
+              print(f'::group::Report {path}')
+              try:
+                  root = ET.parse(path).getroot()
+              except ET.ParseError as exc:
+                  print(f'Failed to parse {path}: {exc}')
+                  print('::endgroup::')
+                  continue
+
+              report_failed = 0
+              for result in root.iter(f'{ns}UnitTestResult'):
+                  if result.get('outcome') != 'Failed':
+                      continue
+                  report_failed += 1
+                  total_failed += 1
+                  print(f'\n--- FAILED: {result.get("testName")} ---')
+
+                  err = result.find(f'.//{ns}ErrorInfo')
+                  if err is not None:
+                      message = err.find(f'{ns}Message')
+                      stack = err.find(f'{ns}StackTrace')
+                      if message is not None and message.text:
+                          print('Message:')
+                          print(message.text.rstrip())
+                      if stack is not None and stack.text:
+                          print('StackTrace:')
+                          print(stack.text.rstrip())
+
+                  stdout = result.find(f'.//{ns}Output/{ns}StdOut')
+                  if stdout is not None and stdout.text:
+                      print('StdOut:')
+                      print(stdout.text.rstrip())
+
+              if report_failed == 0:
+                  print('(no failed tests in this report)')
+              print('::endgroup::')
+
+          print(f'\nTotal failed tests: {total_failed}')
+          PY
+
+      - name: Upload TRX report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trx-results
+          path: src/TestResults/**/*.trx
+          if-no-files-found: ignore
 
       - name: Fail workflow when tests failed
         if: steps.tests.outcome == 'failure'
