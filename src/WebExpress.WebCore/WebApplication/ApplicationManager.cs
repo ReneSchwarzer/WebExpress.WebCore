@@ -90,6 +90,7 @@ namespace WebExpress.WebCore.WebApplication
                 var contextPath = string.Empty;
                 var assetPath = "./";
                 var dataPath = "./";
+                Type defaultThemeType = null;
 
                 // determining attributes
                 foreach (var customAttribute in type.CustomAttributes
@@ -119,6 +120,12 @@ namespace WebExpress.WebCore.WebApplication
                     {
                         dataPath = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
                     }
+                    else if (customAttribute.AttributeType.IsGenericType &&
+                        customAttribute.AttributeType.GetGenericTypeDefinition() == typeof(ThemeAttribute<>))
+                    {
+                        // [Theme<TTheme>] declares the application's default theme.
+                        defaultThemeType ??= customAttribute.AttributeType.GenericTypeArguments.FirstOrDefault();
+                    }
                 }
 
                 // creating application context
@@ -131,7 +138,8 @@ namespace WebExpress.WebCore.WebApplication
                     AssetPath = Path.Combine(_httpServerContext?.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext?.DataPath, dataPath),
                     Icon = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath, icon),
-                    Route = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath)
+                    Route = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath),
+                    DefaultThemeType = defaultThemeType
                 };
 
                 // create application

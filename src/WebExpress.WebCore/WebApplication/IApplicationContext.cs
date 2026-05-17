@@ -1,6 +1,7 @@
 ﻿using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebTheme;
 
 namespace WebExpress.WebCore.WebApplication
 {
@@ -48,5 +49,16 @@ namespace WebExpress.WebCore.WebApplication
         /// Gets the icon uri.
         /// </summary>
         IRoute Icon { get; }
+
+        /// <summary>
+        /// Gets the default theme declared by the application via
+        /// <c>[Theme&lt;TTheme&gt;]</c>. Resolves the matching
+        /// <see cref="IThemeContext"/> through the active
+        /// <c>ThemeManager</c> at read time, so the property reflects the
+        /// current registration state. Returns <see langword="null"/> when
+        /// the application did not declare a default theme or the declared
+        /// theme has not (yet) been registered for this application.
+        /// </summary>
+        IThemeContext DefaultTheme { get; }
     }
 }

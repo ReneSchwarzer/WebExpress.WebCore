@@ -1,5 +1,8 @@
-﻿using WebExpress.WebCore.WebEndpoint;
+﻿using System;
+using System.Linq;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebPlugin;
+using WebExpress.WebCore.WebTheme;
 
 namespace WebExpress.WebCore.WebApplication
 {
@@ -47,6 +50,35 @@ namespace WebExpress.WebCore.WebApplication
         /// Gets the icon uri.
         /// </summary>
         public IRoute Icon { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the type of the theme declared via
+        /// <c>[Theme&lt;TTheme&gt;]</c> on the application class. Internal
+        /// because the public surface is the resolved
+        /// <see cref="DefaultTheme"/>.
+        /// </summary>
+        internal Type DefaultThemeType { get; set; }
+
+        /// <summary>
+        /// Returns the theme context that corresponds to the type set via
+        /// <c>[Theme&lt;TTheme&gt;]</c>. Resolved lazily through the active
+        /// <see cref="WebTheme.IThemeManager"/> so the property reflects the
+        /// current registration state. Returns <see langword="null"/> when
+        /// the application did not declare a default theme or the declared
+        /// theme has not (yet) been registered for this application.
+        /// </summary>
+        public IThemeContext DefaultTheme
+        {
+            get
+            {
+                if (DefaultThemeType is null)
+                {
+                    return null;
+                }
+
+                return WebEx.ComponentHub?.ThemeManager?.GetThemes(this, DefaultThemeType)?.FirstOrDefault();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.

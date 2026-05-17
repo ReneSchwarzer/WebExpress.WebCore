@@ -13,6 +13,7 @@ namespace WebExpress.WebCore.Test
     [AssetPath("/asseta")]
     [DataPath("/dataa")]
     [Dependency("webexpress.webui")]
+    [Theme<TestThemeA>]
     public sealed class TestApplicationA : IApplication
     {
         /// <summary>
