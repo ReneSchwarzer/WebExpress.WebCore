@@ -420,12 +420,19 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void Debug(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
-            var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
-            var className = methodInfo?.ReflectedType.Name;
-
-            if (DebugMode)
+            try
             {
-                Add(LogLevel.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
+                var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
+                var className = methodInfo?.ReflectedType.Name;
+
+                if (DebugMode)
+                {
+                    Add(LogLevel.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Debug-Logging failed: {ex.Message}");
             }
         }
 
