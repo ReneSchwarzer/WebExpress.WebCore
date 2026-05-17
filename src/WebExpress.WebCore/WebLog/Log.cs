@@ -180,30 +180,38 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         protected virtual void Add(LogLevel level, string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
-            foreach (var l in message?.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            try
             {
-                lock (_queue)
+                foreach (var l in message?.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var item = new LogItem(level, instance, l, TimePattern);
-                    switch (level)
+                    lock (_queue)
                     {
-                        case LogLevel.Error:
-                        case LogLevel.FatalError:
-                        case LogLevel.Exception:
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            break;
-                        case LogLevel.Warning:
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            break;
-                        default:
-                            break;
+                        var item = new LogItem(level, instance, l, TimePattern);
+                        var text = item.ToString() ?? string.Empty;
+                        switch (level)
+                        {
+                            case LogLevel.Error:
+                            case LogLevel.FatalError:
+                            case LogLevel.Exception:
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                break;
+                            case LogLevel.Warning:
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        Console.WriteLine(text.Length > _separatorWidth ? string.Concat(text.AsSpan(0, _separatorWidth - 3), "...") : text.PadRight(_width, ' '));
+                        Console.ResetColor();
+
+                        _queue.Enqueue(item);
                     }
-
-                    Console.WriteLine(item.ToString().Length > _separatorWidth ? string.Concat(item.ToString().AsSpan(0, _separatorWidth - 3), "...") : item.ToString().PadRight(_width, ' '));
-                    Console.ResetColor();
-
-                    _queue.Enqueue(item);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logging failed: {ex.Message}");
             }
         }
 
