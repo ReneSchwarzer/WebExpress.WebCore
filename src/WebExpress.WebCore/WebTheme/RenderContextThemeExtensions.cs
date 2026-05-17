@@ -9,18 +9,31 @@ namespace WebExpress.WebCore.WebTheme
     /// application carried in the render context.
     /// </summary>
     /// <remarks>
-    /// Themes were moved out of <c>IApplicationContext</c> with the icon-theme
-    /// migration: the active theme is now the first theme registered for an
-    /// application via the <c>ThemeManager</c>. These helpers keep call sites
-    /// short for code that has a render context but no access to the visual
-    /// tree (e.g. <c>Icon</c> Funcs on form buttons).
+    /// The resolution order mirrors <c>VisualTreeControl</c> so server-side
+    /// icon factories and the visual tree end up with the same theme:
+    /// <list type="number">
+    ///   <item><description>
+    ///     The application's declared default theme (<c>[Theme&lt;T&gt;]</c> →
+    ///     <c>IApplicationContext.DefaultTheme</c>).
+    ///   </description></item>
+    ///   <item><description>
+    ///     The first theme registered for the application (legacy fallback).
+    ///   </description></item>
+    ///   <item><description>
+    ///     <see langword="null"/>; downstream <see cref="TypeIconTheme"/>
+    ///     callers fall back to <see cref="TypeIconTheme.Default"/>.
+    ///   </description></item>
+    /// </list>
+    /// Per-user overrides are wired by application code: the page's
+    /// <c>Process</c> hook calls <c>visualTree.UseTheme&lt;TTheme&gt;()</c>
+    /// based on whatever store the application keeps; the framework itself
+    /// does not consult cookies, sessions, or identities.
     /// </remarks>
     public static class RenderContextThemeExtensions
     {
         /// <summary>
-        /// Returns the first theme registered for the render context's
-        /// application, or <see langword="null"/> when no theme has been
-        /// registered.
+        /// Returns the active theme for the render context using the
+        /// resolution order documented on the class.
         /// </summary>
         /// <param name="renderContext">The current render context.</param>
         /// <returns>The active theme context or <see langword="null"/>.</returns>
@@ -32,6 +45,13 @@ namespace WebExpress.WebCore.WebTheme
                 return null;
             }
 
+            // 1. application's declared default
+            if (applicationContext.DefaultTheme is { } declared)
+            {
+                return declared;
+            }
+
+            // 2. first registered theme for the application
             return WebEx.ComponentHub?.ThemeManager?.Themes
                 ?.FirstOrDefault(t => t.ApplicationContext == applicationContext);
         }
@@ -46,6 +66,62 @@ namespace WebExpress.WebCore.WebTheme
         public static TypeIconTheme GetIconTheme(this IRenderContext renderContext)
         {
             return renderContext.GetActiveTheme()?.IconTheme ?? TypeIconTheme.Default;
+        }
+
+        /// <summary>
+        /// Re-themes an existing <see cref="WebIcon.IIcon"/> for the active
+        /// icon theme of <paramref name="renderContext"/>. Convenience over
+        /// <see cref="ApplyIconTheme(WebIcon.IIcon, TypeIconTheme)"/> for
+        /// callers that only have a render context in hand.
+        /// </summary>
+        /// <param name="icon">The icon to re-theme; may be <see langword="null"/>.</param>
+        /// <param name="renderContext">The current render context.</param>
+        /// <returns>The re-themed icon or the original instance.</returns>
+        public static WebIcon.IIcon ApplyIconTheme(this WebIcon.IIcon icon, IRenderContext renderContext)
+        {
+            return icon.ApplyIconTheme(renderContext.GetIconTheme());
+        }
+
+        /// <summary>
+        /// Re-themes an existing <see cref="WebIcon.IIcon"/> for the given
+        /// <paramref name="theme"/>. Icons created at registration time
+        /// (e.g. <c>PageContext.PageIcon</c>) carry the theme that was
+        /// active when the page was discovered; this helper rebuilds them
+        /// so the breadcrumb, sidebars, etc. swap glyphs at runtime when
+        /// the application code activates a different theme via
+        /// <c>visualTree.UseTheme&lt;TTheme&gt;()</c>. Controls that have
+        /// a visual tree in hand should pass
+        /// <c>visualTree.IconTheme</c> here.
+        /// <para>
+        /// Falls back to <paramref name="icon"/> when its concrete type does
+        /// not expose a <c>(TypeIconTheme)</c> constructor.
+        /// </para>
+        /// </summary>
+        /// <param name="icon">The icon to re-theme; may be <see langword="null"/>.</param>
+        /// <param name="theme">The icon theme to apply.</param>
+        /// <returns>The re-themed icon or the original instance.</returns>
+        public static WebIcon.IIcon ApplyIconTheme(this WebIcon.IIcon icon, TypeIconTheme theme)
+        {
+            if (icon is null)
+            {
+                return null;
+            }
+
+            var iconType = icon.GetType();
+            var ctor = iconType.GetConstructor(new[] { typeof(TypeIconTheme) });
+            if (ctor is null)
+            {
+                return icon;
+            }
+
+            try
+            {
+                return ctor.Invoke(new object[] { theme }) as WebIcon.IIcon ?? icon;
+            }
+            catch
+            {
+                return icon;
+            }
         }
     }
 }
