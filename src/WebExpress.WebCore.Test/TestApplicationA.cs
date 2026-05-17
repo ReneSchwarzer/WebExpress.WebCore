@@ -1,6 +1,5 @@
-﻿using WebExpress.WebCore.WebApplication;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebAttribute;
-using WebExpress.WebCore.WebIcon;
 
 namespace WebExpress.WebCore.Test
 {
@@ -14,7 +13,6 @@ namespace WebExpress.WebCore.Test
     [AssetPath("/asseta")]
     [DataPath("/dataa")]
     [Dependency("webexpress.webui")]
-    [IconTheme(TypeIconTheme.Light)]
     public sealed class TestApplicationA : IApplication
     {
         /// <summary>

@@ -613,7 +613,7 @@ namespace WebExpress.WebCore.WebSettingPage
                         IncludeSubPaths = includeSubPaths,
                         Attributes = EndpointManager.GetAttributeInstances(attributes),
                         PageTitle = title,
-                        PageIcon = GetIcon(icon, applicationContext),
+                        PageIcon = GetIcon(icon, applicationContext, _componentHub),
                         Scopes = scopes,
                         Domains = domains,
                         SettingGroup = _groupDictionary.GetSettingGroup(applicationContext, group),
@@ -868,16 +868,24 @@ namespace WebExpress.WebCore.WebSettingPage
         /// The application context used for resolving dependencies or additional information required for
         /// icon creation.
         /// </param>
+        /// <param name="componentHub">
+        /// The component hub used to discover the active theme so the icon
+        /// is constructed with the matching <c>TypeIconTheme</c> when the
+        /// icon type ships theme-specific variants.
+        /// </param>
         /// <returns>
         /// An instance of IIcon created from the specified type. Returns null if the icon cannot be instantiated.
         /// </returns>
-        private static IIcon GetIcon(Type iconType, IApplicationContext applicationContext)
+        private static IIcon GetIcon(Type iconType, IApplicationContext applicationContext, IComponentHub componentHub)
         {
             if (iconType is not null)
             {
-                // read Theme property directly from the attribute instance
-                var themeValue = applicationContext.IconTheme;
-                var themeType = (Type)themeValue.GetType();
+                // resolve theme from the first theme registered for this application -
+                // falls back to TypeIconTheme.Default when no theme is registered.
+                var themeValue = componentHub?.ThemeManager?.Themes
+                    ?.FirstOrDefault(t => t.ApplicationContext == applicationContext)?.IconTheme
+                    ?? TypeIconTheme.Default;
+                var themeType = themeValue.GetType();
 
                 // look for a constructor on the icon type that accepts the theme type
                 var ctorWithTheme = iconType.GetConstructor([themeType]);

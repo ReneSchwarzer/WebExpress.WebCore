@@ -4,10 +4,13 @@ using WebExpress.WebCore.WebIcon;
 namespace WebExpress.WebCore.WebAttribute
 {
     /// <summary>
-    /// Specifies the icon theme to use for displaying type icons on a application.
+    /// Specifies the icon theme to use for rendering icons within a theme.
+    /// Apply this attribute to a class implementing <c>ITheme</c>; the value is
+    /// surfaced through <c>IThemeContext.IconTheme</c> and emitted on the root
+    /// <c>&lt;html data-icon-theme&gt;</c> attribute when the theme is active.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class IconThemeAttribute : Attribute, IApplicationAttribute
+    public class IconThemeAttribute : Attribute, IThemeAttribute
     {
         /// <summary>
         /// Gets the icon theme used to display type icons.

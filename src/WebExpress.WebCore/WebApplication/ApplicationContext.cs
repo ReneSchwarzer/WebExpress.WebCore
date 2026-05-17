@@ -1,5 +1,4 @@
 ﻿using WebExpress.WebCore.WebEndpoint;
-using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebApplication
@@ -48,11 +47,6 @@ namespace WebExpress.WebCore.WebApplication
         /// Gets the icon uri.
         /// </summary>
         public IRoute Icon { get; internal set; }
-
-        /// <summary>
-        /// Gets the icon theme used for in the user interface.
-        /// </summary>
-        public TypeIconTheme IconTheme { get; internal set; }
 
         /// <summary>
         /// Initializes a new instance of the class.
