@@ -167,6 +167,9 @@ namespace WebExpress.WebCore
             serverOptions.Value.Limits.MaxRequestBodySize = Config?.Limit?.UploadLimit > 0
                 ? Config?.Limit?.UploadLimit
                 : serverOptions.Value.Limits.MaxRequestBodySize;
+            serverOptions.Value.Limits.MaxRequestHeadersTotalSize = Config?.Limit?.MaxRequestHeadersTotalSize > 0
+                ? Config.Limit.MaxRequestHeadersTotalSize
+                : serverOptions.Value.Limits.MaxRequestHeadersTotalSize;
 
             foreach (var endpoint in Config.Endpoints)
             {

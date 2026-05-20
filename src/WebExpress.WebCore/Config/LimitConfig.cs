@@ -21,6 +21,13 @@ namespace WebExpress.WebCore.Config
         public long UploadLimit { get; set; }
 
         /// <summary>
+        /// The maximum allowed size of the combined request headers, in bytes.
+        /// A value of <c>0</c> means the Kestrel default (32 KiB) is used.
+        /// </summary>
+        [XmlElement("maxrequestheaderstotalsize", DataType = "int")]
+        public int MaxRequestHeadersTotalSize { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the class.
         /// </summary>
         public LimitConfig()
