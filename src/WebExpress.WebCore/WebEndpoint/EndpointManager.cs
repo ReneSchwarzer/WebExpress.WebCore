@@ -234,17 +234,15 @@ namespace WebExpress.WebCore.WebEndpoint
                 };
             });
 
-            segmentAttributesMapping = segmentAttributesMapping.Any() && _namespacePrefixes
-                .Contains(segmentAttributesMapping
-                .First().Segment
-                .ToString())
+            var firstMapping = segmentAttributesMapping.FirstOrDefault();
+            segmentAttributesMapping = firstMapping is not null && _namespacePrefixes
+                .Contains(firstMapping.Segment?.ToString())
                 ? segmentAttributesMapping.Skip(1)
                 : segmentAttributesMapping;
 
-            segmentAttributesMapping = segmentAttributesMapping.Any() && (namespacePrefixes ?? [])
-                .Contains(segmentAttributesMapping
-                .First().Segment
-                .ToString())
+            firstMapping = segmentAttributesMapping.FirstOrDefault();
+            segmentAttributesMapping = firstMapping is not null && (namespacePrefixes ?? [])
+                .Contains(firstMapping.Segment?.ToString())
                 ? segmentAttributesMapping.Skip(1)
                 : segmentAttributesMapping;
 

@@ -11,7 +11,7 @@ namespace WebExpress.WebCore.WebResource
         /// <summary>
         /// Gets the protection in case of concurrency.
         /// </summary>
-        private object Gard { get; set; }
+        private object Guard { get; set; }
 
         /// <summary>
         /// Gets the root directory.
@@ -25,7 +25,7 @@ namespace WebExpress.WebCore.WebResource
         public ResourceFile(IResourceContext resourceContext)
             : base(resourceContext)
         {
-            Gard = new object();
+            Guard = new object();
         }
 
         /// <summary>
@@ -35,9 +35,22 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>The response.</returns>
         public override IResponse Process(IRequest request)
         {
-            lock (Gard)
+            lock (Guard)
             {
-                var url = request.Uri.ToString()[ResourceContext.Route.ToString().Length..];
+                var requestUri = request.Uri.ToString();
+                var routePrefix = ResourceContext.Route.ToString();
+
+                if (string.IsNullOrEmpty(requestUri) ||
+                    routePrefix is null ||
+                    !requestUri.StartsWith(routePrefix) ||
+                    requestUri.Length < routePrefix.Length)
+                {
+                    return new ResponseNotFound();
+                }
+
+                var url = requestUri.Length == routePrefix.Length
+                    ? string.Empty
+                    : requestUri[routePrefix.Length..];
 
                 var path = System.IO.Path.GetFullPath(RootDirectory + url);
 

@@ -93,6 +93,7 @@ namespace WebExpress.WebCore
         private static DateTime _lastCpuTime = DateTime.UtcNow;
         private static TimeSpan _lastProcessorTime = Process.GetCurrentProcess().TotalProcessorTime;
         private static readonly Process _currentProcess = Process.GetCurrentProcess();
+        private static readonly Lock _cpuStatLock = new();
 
         /// <summary>
         /// Initializes a new instance of the class.
@@ -421,21 +422,25 @@ namespace WebExpress.WebCore
             // calculate memory usage in MB
             var memUsage = _currentProcess.WorkingSet64 / (1024.0 * 1024.0);
 
-            // calculate cpu usage
+            // calculate cpu usage (read & update protected by _cpuStatLock)
             var currentCpuTime = _currentProcess.TotalProcessorTime;
             var currentWallTime = DateTime.UtcNow;
-            var cpuUsedMs = (currentCpuTime - _lastProcessorTime).TotalMilliseconds;
-            var totalMsPassed = (currentWallTime - _lastCpuTime).TotalMilliseconds;
             var cpuUsage = 0.0;
 
-            if (totalMsPassed > 0)
+            lock (_cpuStatLock)
             {
-                cpuUsage = (cpuUsedMs / (totalMsPassed * Environment.ProcessorCount)) * 100.0;
-            }
+                var cpuUsedMs = (currentCpuTime - _lastProcessorTime).TotalMilliseconds;
+                var totalMsPassed = (currentWallTime - _lastCpuTime).TotalMilliseconds;
 
-            // update pointers for next calculation
-            _lastProcessorTime = currentCpuTime;
-            _lastCpuTime = currentWallTime;
+                if (totalMsPassed > 0)
+                {
+                    cpuUsage = (cpuUsedMs / (totalMsPassed * Environment.ProcessorCount)) * 100.0;
+                }
+
+                // update pointers for next calculation
+                _lastProcessorTime = currentCpuTime;
+                _lastCpuTime = currentWallTime;
+            }
 
             lock (_statLock)
             {
@@ -501,8 +506,10 @@ namespace WebExpress.WebCore
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
             var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
-            var applicationContext = applicationManager.Applications
-                .FirstOrDefault(x => route.StartsWith(x.Route.ToString()));
+            var applicationContext = string.IsNullOrEmpty(route)
+                ? null
+                : applicationManager.Applications
+                    .FirstOrDefault(x => route.StartsWith(x.Route.ToString()));
 
             if (searchResult is not null)
             {
