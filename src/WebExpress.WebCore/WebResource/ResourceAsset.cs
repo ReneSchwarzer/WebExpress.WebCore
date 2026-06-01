@@ -73,8 +73,39 @@ namespace WebExpress.WebCore.WebResource
                     case ".css":
                         response.Header.ContentType = "text/css";
                         break;
+                    case ".js":
+                    case ".mjs":
+                        response.Header.ContentType = "application/javascript";
+                        break;
+                    case ".json":
+                        response.Header.ContentType = "application/json";
+                        break;
+                    case ".map":
+                        response.Header.ContentType = "application/json";
+                        break;
                     case ".xml":
                         response.Header.ContentType = "text/xml";
+                        break;
+                    case ".woff":
+                        response.Header.ContentType = "font/woff";
+                        break;
+                    case ".woff2":
+                        response.Header.ContentType = "font/woff2";
+                        break;
+                    case ".ttf":
+                        response.Header.ContentType = "font/ttf";
+                        break;
+                    case ".eot":
+                        response.Header.ContentType = "application/vnd.ms-fontobject";
+                        break;
+                    case ".webp":
+                        response.Header.ContentType = "image/webp";
+                        break;
+                    case ".mp3":
+                        response.Header.ContentType = "audio/mpeg";
+                        break;
+                    case ".mp4":
+                        response.Header.ContentType = "video/mp4";
                         break;
                     case ".html":
                     case ".htm":

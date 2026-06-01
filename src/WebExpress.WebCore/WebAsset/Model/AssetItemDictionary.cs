@@ -22,6 +22,47 @@ namespace WebExpress.WebCore.WebAsset.Model
             .SelectMany(x => x);
 
         /// <summary>
+        /// Returns the asset item that matches the given asset context (by endpoint id).
+        /// Callers must synchronize access to this collection.
+        /// </summary>
+        /// <param name="assetContext">The asset context resolved by the sitemap.</param>
+        /// <returns>The matching asset item, or null when none matches.</returns>
+        public AssetItem GetByContext(IAssetContext assetContext)
+        {
+            if (assetContext is null)
+            {
+                return null;
+            }
+
+            return _dictionary.Values
+                .SelectMany(x => x.Values)
+                .SelectMany(x => x)
+                .FirstOrDefault(x => x.AssetContext?.EndpointId == assetContext.EndpointId);
+        }
+
+        /// <summary>
+        /// Returns the asset item whose route matches the end of the given request uri.
+        /// This is a fallback for the rare case that the resolved endpoint context is
+        /// not an asset context. Callers must synchronize access to this collection.
+        /// </summary>
+        /// <param name="requestUri">The request uri.</param>
+        /// <returns>The matching asset item, or null when none matches.</returns>
+        public AssetItem FindByRoute(string requestUri)
+        {
+            if (string.IsNullOrEmpty(requestUri))
+            {
+                return null;
+            }
+
+            var normalized = requestUri.ToLower().Replace("/", ".");
+
+            return _dictionary.Values
+                .SelectMany(x => x.Values)
+                .SelectMany(x => x)
+                .FirstOrDefault(x => normalized.EndsWith(x.AssetContext.Route.ToString().Replace("/", ".")));
+        }
+
+        /// <summary>
         /// Adds an asset item to the dictionary.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
