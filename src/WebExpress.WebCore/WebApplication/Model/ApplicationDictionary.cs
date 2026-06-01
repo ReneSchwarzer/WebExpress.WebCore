@@ -20,11 +20,11 @@ namespace WebExpress.WebCore.WebApplication.Model
             .Select(x => x.ApplicationContext);
 
         /// <summary>
-        /// Adds a application item to the dictionary.
+        /// Adds an application item to the dictionary.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationItem">The application item.</param>
-        /// <returns>True if the application item was added successfully, false if an element with the same status code already exists.</returns>
+        /// <returns>True if the application item was added successfully, false if an element with the same key already exists.</returns>
         public bool AddApplication(IPluginContext pluginContext, ApplicationItem applicationItem)
         {
             if (!_dict.TryGetValue(pluginContext, out var applicationDict))

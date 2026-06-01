@@ -22,12 +22,12 @@ namespace WebExpress.WebCore.WebAsset.Model
             .SelectMany(x => x);
 
         /// <summary>
-        /// Adds a asset item to the dictionary.
+        /// Adds an asset item to the dictionary.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="assetItem">The resource item.</param>
-        /// <returns>True if the resource item was added successfully, false if an element with the same status code already exists.</returns>
+        /// <returns>True if the resource item was added successfully, false if an element with the same key already exists.</returns>
         public bool AddAssetItem(IPluginContext pluginContext, IApplicationContext applicationContext, AssetItem assetItem)
         {
             var type = assetItem.AssetClass;

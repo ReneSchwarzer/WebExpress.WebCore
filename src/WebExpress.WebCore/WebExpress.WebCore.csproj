@@ -3,8 +3,8 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<Title>WebExpress.WebCore</Title>
-		<Version>0.0.11.0</Version>
-		<AssemblyVersion>0.0.11.0</AssemblyVersion>
+		<Version>2.0.0.0</Version>
+		<AssemblyVersion>2.0.0.0</AssemblyVersion>
 		<TargetFramework>net10.0</TargetFramework>
 		<RuntimeIdentifiers>any</RuntimeIdentifiers>
 		<RepositoryUrl>https://github.com/webexpress-framework/WebExpress.git</RepositoryUrl>

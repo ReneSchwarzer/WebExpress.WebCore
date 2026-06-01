@@ -15,12 +15,12 @@ namespace WebExpress.WebCore.WebJob.Model
     internal class ScheduleDictionary : Dictionary<IPluginContext, Dictionary<IApplicationContext, Dictionary<Type, IList<ScheduleItem>>>>
     {
         /// <summary>
-        /// Adds a event item to the dictionary.
+        /// Adds a schedule item to the dictionary.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
         /// <param name="applicationContext">The application context.</param>
         /// <param name="scheduleItem">The schedule item.</param>
-        /// <returns>True if the schedule item was added successfully, false if an element with the same status code already exists.</returns>
+        /// <returns>True if the schedule item was added successfully, false if an element with the same key already exists.</returns>
         public bool AddScheduleItem(IPluginContext pluginContext, IApplicationContext applicationContext, ScheduleItem scheduleItem)
         {
             var type = scheduleItem.JobClass;
