@@ -51,7 +51,7 @@ namespace WebExpress.WebCore.WebJob.Model
 
             var scheduleList = scheduleDict[type];
 
-            if (scheduleList.Where(x => x.JobClass == type).Any())
+            if (scheduleList.Any(x => x.JobClass == type))
             {
                 return false; // item with the same event handler already exists
             }

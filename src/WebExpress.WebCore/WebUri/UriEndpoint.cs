@@ -141,7 +141,7 @@ namespace WebExpress.WebCore.WebUri
                 return;
             }
 
-            if (Enum.GetNames<UriScheme>().Where(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)).Any())
+            if (Enum.GetNames<UriScheme>().Any(x => uri.StartsWith(x, StringComparison.OrdinalIgnoreCase)))
             {
                 var match = UriRegex().Match(uri);
 
@@ -291,14 +291,15 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>A new IUri instance representing the URI after concatenation.</returns>
         public virtual IUri Concat(params IUriPathSegment[] segments)
         {
-            if (segments.Length == 0)
+            if (segments is null || segments.Length == 0)
             {
                 return this;
             }
 
             var copy = new UriEndpoint((IUri)this);
             copy.PathSegments = copy.PathSegments
-                .Select(x => x.Copy());
+                .Select(x => x.Copy())
+                .Concat(segments.Where(x => x is not null).Where(x => !x.IsEmpty));
 
             return copy;
         }
@@ -429,7 +430,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>true if successful, false otherwise.</returns>
         public virtual bool Contains(string segment)
         {
-            return PathSegments.Where(x => x.Value.Equals(segment, StringComparison.OrdinalIgnoreCase)).Any();
+            return PathSegments.Any(x => x.Value.Equals(segment, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -439,24 +440,24 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>true if part of the uri, false otherwise.</returns>
         public bool StartsWith(IUri uri)
         {
-            var a = uri.PathSegments;
-            var b = PathSegments;
+            // materialize once to avoid repeated enumeration (Count/ElementAt would be O(n²))
+            var a = uri.PathSegments as IReadOnlyList<IUriPathSegment> ?? uri.PathSegments.ToList();
+            var b = PathSegments as IReadOnlyList<IUriPathSegment> ?? PathSegments.ToList();
 
-            if (a.Count() > b.Count())
+            if (a.Count > b.Count)
             {
                 return false;
             }
 
-            for (int i = 0; i < a.Count(); i++)
+            for (int i = 0; i < a.Count; i++)
             {
-                if (!a.ElementAt(i).Value.Equals(b.ElementAt(i).Value, StringComparison.OrdinalIgnoreCase))
+                if (!a[i].Value.Equals(b[i].Value, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
             }
 
             return true;
-
         }
 
         /// <summary>

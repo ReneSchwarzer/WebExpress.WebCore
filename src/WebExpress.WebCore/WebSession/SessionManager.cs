@@ -40,38 +40,26 @@ namespace WebExpress.WebCore.WebSession
         /// <returns>The session.</returns>
         public Session GetSession(IRequest request)
         {
-            var session = default(Session);
-
             // determine session
             var sessionCookie = request?.Header
-                .Cookies?.Where(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault();
+                .Cookies?.FirstOrDefault(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase));
 
-            var guid = Guid.NewGuid();
-
-            try
-            {
-                guid = Guid.Parse(sessionCookie?.Value);
-            }
-            catch
-            {
-
-            }
+            // reuse the client-provided session id when it is a valid guid; otherwise allocate a new one
+            var guid = Guid.TryParse(sessionCookie?.Value, out var parsed) ? parsed : Guid.NewGuid();
 
             if (sessionCookie is not null && _dictionary.TryGetValue(guid, out Session value))
             {
-                session = value;
-                session.Updated = DateTime.Now;
-            }
-            else
-            {
-                // no or invalid session => assign new session
-                session = new Session(guid);
+                value.Updated = DateTime.Now;
 
-                lock (_dictionary)
-                {
-                    _dictionary[guid] = session;
-                }
+                return value;
+            }
+
+            // no or invalid session => assign new session
+            var session = new Session(guid);
+
+            lock (_dictionary)
+            {
+                _dictionary[guid] = session;
             }
 
             return session;
@@ -105,13 +93,17 @@ namespace WebExpress.WebCore.WebSession
 
             var now = DateTime.Now;
 
-            // collect expired ids under lock to avoid concurrent modifications during enumeration
-            IEnumerable<Guid> expiredIds;
+            // collect expired ids under lock to avoid concurrent modifications during enumeration.
+            // the query must be materialized (ToList) before removing - otherwise the deferred
+            // enumeration would mutate _dictionary.Values while iterating it (InvalidOperationException)
+            // and the subsequent logging loop would re-evaluate to an empty result.
+            List<Guid> expiredIds;
             lock (_dictionary)
             {
                 expiredIds = _dictionary.Values
                     .Where(s => (now - s.Updated).TotalMinutes > timeoutMinutes)
-                    .Select(s => s.Id);
+                    .Select(s => s.Id)
+                    .ToList();
 
                 // remove expired sessions under the same lock
                 foreach (var id in expiredIds)

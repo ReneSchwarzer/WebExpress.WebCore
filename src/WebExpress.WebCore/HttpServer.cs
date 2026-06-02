@@ -90,9 +90,9 @@ namespace WebExpress.WebCore
         private static readonly Lock _statLock = new();
 
         // Variables for CPU usage calculation
-        private static DateTime _lastCpuTime = DateTime.UtcNow;
-        private static TimeSpan _lastProcessorTime = Process.GetCurrentProcess().TotalProcessorTime;
         private static readonly Process _currentProcess = Process.GetCurrentProcess();
+        private static DateTime _lastCpuTime = DateTime.UtcNow;
+        private static TimeSpan _lastProcessorTime = _currentProcess.TotalProcessorTime;
         private static readonly Lock _cpuStatLock = new();
 
         /// <summary>
@@ -322,8 +322,8 @@ namespace WebExpress.WebCore
 
                     if
                     (
-                        !response.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
-                        !request.Header.Cookies.Where(x => x.Name.Equals("session")).Any() &&
+                        !response.Header.Cookies.Any(x => x.Name.Equals("session")) &&
+                        !request.Header.Cookies.Any(x => x.Name.Equals("session")) &&
                         request.Session is not null
                     )
                     {
@@ -640,8 +640,8 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            // no policies
-            if (!searchResult.EndpointContext.Policies?.Any() ?? false)
+            // no policies (null or empty) -> serve directly without an access check
+            if (!(searchResult.EndpointContext.Policies?.Any() ?? false))
             {
                 var response = HandleClient(httpContext, searchResult);
                 await responseSender.SendAsync(httpContext, response);
@@ -660,8 +660,7 @@ namespace WebExpress.WebCore
                 return;
             }
 
-            // check again
-            if (!_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
+            // access is denied (the grant case returned above) - determine the appropriate response
             {
                 // if the user is authenticated but lacks the required permissions, show the forbidden page
                 if (identity is not null && searchResult.EndpointContext is IPageContext)
@@ -723,7 +722,7 @@ namespace WebExpress.WebCore
                 }
             }
 
-            // access is granted
+            // fallback: no specific denied-response (login prompt / forbidden) could be created
             {
                 var response = HandleClient(httpContext, searchResult);
                 await responseSender.SendAsync(httpContext, response);

@@ -111,7 +111,6 @@ namespace WebExpress.WebCore.WebSitemap
         /// <returns>The search result with the found resource or null</returns>
         public SearchResult SearchResource(Uri requestUri, SearchContext searchContext)
         {
-            var variables = new Dictionary<string, string>();
             var result = SearchNode
             (
                 _root,
@@ -120,16 +119,15 @@ namespace WebExpress.WebCore.WebSitemap
                 searchContext
             );
 
-            if (result is not null && result.EndpointContext is not null)
+            if (result?.EndpointContext is not null &&
+                (!result.EndpointContext.Conditions.Any() ||
+                 result.EndpointContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request))))
             {
-                if (!result.EndpointContext.Conditions.Any() || result.EndpointContext.Conditions.All(x => x.Fulfillment(searchContext.HttpContext?.Request)))
-                {
-                    return result;
-                }
+                return result;
             }
 
-            // 404
-            return result;
+            // 404 - not found or the endpoint's conditions are not fulfilled
+            return null;
         }
 
         /// <summary>
@@ -216,7 +214,6 @@ namespace WebExpress.WebCore.WebSitemap
                 return null;
             }
 
-            var variables = new Dictionary<string, string>();
             var result = SearchNode
             (
                 _root,
@@ -424,8 +421,6 @@ namespace WebExpress.WebCore.WebSitemap
                 {
                     outPathSegments.Enqueue(node.PathSegment.Copy());
                 }
-
-                var type = node.EndpointContext?.GetType();
 
                 if (nextPathSegment is null)
                 {

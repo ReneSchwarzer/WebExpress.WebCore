@@ -276,11 +276,11 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The value of the attribute.</returns>
         protected string GetAttribute(string name)
         {
-            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.FirstOrDefault(x => x.Name == name);
 
             if (a is not null)
             {
-                return a is HtmlAttribute ? (a as HtmlAttribute).Value : string.Empty;
+                return a is HtmlAttribute attribute ? attribute.Value : string.Empty;
             }
 
             return string.Empty;
@@ -293,7 +293,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>True if attribute exists, false otherwise.</returns>
         protected bool HasAttribute(string name)
         {
-            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.FirstOrDefault(x => x.Name == name);
 
             return (a is not null);
         }
@@ -305,7 +305,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="value">The value of the attribute.</param>
         protected void SetAttribute(string name, string value)
         {
-            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.FirstOrDefault(x => x.Name == name);
 
             if (a is not null)
             {
@@ -313,9 +313,9 @@ namespace WebExpress.WebCore.WebHtml
                 {
                     _attributes.Remove(a);
                 }
-                else if (a is HtmlAttribute)
+                else if (a is HtmlAttribute attribute)
                 {
-                    (a as HtmlAttribute).Value = value;
+                    attribute.Value = value;
                 }
             }
             else
@@ -338,7 +338,7 @@ namespace WebExpress.WebCore.WebHtml
                 return;
             }
 
-            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.FirstOrDefault(x => x.Name == name);
 
             if (a is null)
             {
@@ -352,7 +352,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <param name="name">The attribute name.</param>
         protected void RemoveAttribute(string name)
         {
-            var a = _attributes.Where(x => x.Name == name).FirstOrDefault();
+            var a = _attributes.FirstOrDefault(x => x.Name == name);
 
             if (a is not null)
             {
@@ -367,7 +367,7 @@ namespace WebExpress.WebCore.WebHtml
         /// <returns>The element.</returns>
         protected HtmlElement GetElement(string name)
         {
-            var a = _elements.Where(x => x is HtmlElement && (x as HtmlElement).ElementName == name).FirstOrDefault();
+            var a = _elements.FirstOrDefault(x => x is HtmlElement element && element.ElementName == name);
 
             return a as HtmlElement;
         }

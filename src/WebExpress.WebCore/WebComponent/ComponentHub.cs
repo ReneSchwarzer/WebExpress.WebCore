@@ -312,7 +312,7 @@ namespace WebExpress.WebCore.WebComponent
             {
                 return null;
             }
-            else if (!componentType.GetInterfaces().Where(x => x == typeof(IComponentManager)).Any())
+            else if (!componentType.GetInterfaces().Any(x => x == typeof(IComponentManager)))
             {
                 _httpServerContext?.Log?.Warning
                 (
@@ -439,8 +439,9 @@ namespace WebExpress.WebCore.WebComponent
             _applicationManager.Boot(pluginContext);
 
             foreach (var component in _dictionary.Values
-                .Where(x => x is IExecutableElements)
-                .Select(x => x as IExecutableElements))
+                .SelectMany(x => x)
+                .Select(x => x.ComponentInstance)
+                .OfType<IExecutableElements>())
             {
                 component.Boot(pluginContext);
             }
@@ -493,8 +494,9 @@ namespace WebExpress.WebCore.WebComponent
             _applicationManager.ShutDown(pluginContext);
 
             foreach (var component in _dictionary.Values
-                .Where(x => x is IExecutableElements)
-                .Select(x => x as IExecutableElements))
+                .SelectMany(x => x)
+                .Select(x => x.ComponentInstance)
+                .OfType<IExecutableElements>())
             {
                 component.ShutDown(pluginContext);
             }
@@ -559,7 +561,10 @@ namespace WebExpress.WebCore.WebComponent
         /// </summary>
         private void Log()
         {
-            if (_lastCounter == Managers.Count())
+            // materialize the (relatively expensive) managers enumeration once
+            var managers = Managers.ToList();
+
+            if (_lastCounter == managers.Count)
             {
                 return;
             }
@@ -570,7 +575,7 @@ namespace WebExpress.WebCore.WebComponent
                 _internationalizationManager.Translate("webexpress.webcore:componentmanager.component")
             };
 
-            foreach (var manager in Managers)
+            foreach (var manager in managers)
             {
                 output.Add
                 (
@@ -580,7 +585,7 @@ namespace WebExpress.WebCore.WebComponent
             }
 
             _httpServerContext?.Log?.Info(string.Join(Environment.NewLine, output));
-            _lastCounter = Managers.Count();
+            _lastCounter = managers.Count;
         }
 
         /// <summary>
