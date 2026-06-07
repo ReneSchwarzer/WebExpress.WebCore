@@ -44,6 +44,11 @@ namespace WebExpress.WebCore.WebApplication
         /// <summary>
         /// Gets the context path. This is mounted in the route of the server.
         /// </summary>
+        public string ContextPath { get; internal set; }
+
+        /// <summary>
+        /// Gets the context path. This is mounted in the route of the server.
+        /// </summary>
         public IRoute Route { get; internal set; }
 
         /// <summary>

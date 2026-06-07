@@ -135,6 +135,7 @@ namespace WebExpress.WebCore.WebApplication
                     ApplicationId = id,
                     ApplicationName = name,
                     Description = description,
+                    ContextPath = contextPath,
                     AssetPath = Path.Combine(_httpServerContext?.AssetPath, assetPath),
                     DataPath = Path.Combine(_httpServerContext?.DataPath, dataPath),
                     Icon = RouteEndpoint.Combine(_httpServerContext?.Route, contextPath, icon),
