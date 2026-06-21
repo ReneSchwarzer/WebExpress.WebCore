@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -154,23 +154,55 @@ namespace WebExpress.WebCore
                 }
             );
 
+            // the <kestrel> configuration block is optional; a missing block or property keeps the built-in defaults
+            var kestrel = Config?.Kestrel;
+
             var serverOptions = new OptionsWrapper<KestrelServerOptions>(new KestrelServerOptions()
             {
-                AllowSynchronousIO = true,
-                AllowResponseHeaderCompression = true,
-                AddServerHeader = true,
+                AllowSynchronousIO = kestrel?.AllowSynchronousIO ?? true,
+                AllowResponseHeaderCompression = kestrel?.AllowResponseHeaderCompression ?? true,
+                AddServerHeader = kestrel?.AddServerHeader ?? true,
                 ApplicationServices = serviceCollection.BuildServiceProvider()
             });
 
-            serverOptions.Value.Limits.MaxConcurrentConnections = Config?.Limit?.ConnectionLimit > 0
-                ? Config?.Limit?.ConnectionLimit
-                : serverOptions.Value.Limits.MaxConcurrentConnections;
-            serverOptions.Value.Limits.MaxRequestBodySize = Config?.Limit?.UploadLimit > 0
-                ? Config?.Limit?.UploadLimit
-                : serverOptions.Value.Limits.MaxRequestBodySize;
-            serverOptions.Value.Limits.MaxRequestHeadersTotalSize = Config?.Limit?.MaxRequestHeadersTotalSize > 0
-                ? Config.Limit.MaxRequestHeadersTotalSize
-                : serverOptions.Value.Limits.MaxRequestHeadersTotalSize;
+            var limits = serverOptions.Value.Limits;
+
+            if (kestrel?.MaxConcurrentConnections is not null)
+            {
+                limits.MaxConcurrentConnections = kestrel.MaxConcurrentConnections;
+            }
+            if (kestrel?.MaxRequestBodySize is not null)
+            {
+                limits.MaxRequestBodySize = kestrel.MaxRequestBodySize;
+            }
+            if (kestrel?.MaxRequestHeadersTotalSize is not null)
+            {
+                limits.MaxRequestHeadersTotalSize = kestrel.MaxRequestHeadersTotalSize.Value;
+            }
+            if (kestrel?.MaxConcurrentUpgradedConnections is not null)
+            {
+                limits.MaxConcurrentUpgradedConnections = kestrel.MaxConcurrentUpgradedConnections;
+            }
+            if (kestrel?.MaxRequestBufferSize is not null)
+            {
+                limits.MaxRequestBufferSize = kestrel.MaxRequestBufferSize;
+            }
+            if (kestrel?.MaxResponseBufferSize is not null)
+            {
+                limits.MaxResponseBufferSize = kestrel.MaxResponseBufferSize;
+            }
+            if (kestrel?.MaxRequestLineSize is not null)
+            {
+                limits.MaxRequestLineSize = kestrel.MaxRequestLineSize.Value;
+            }
+            if (kestrel?.KeepAliveTimeout is not null)
+            {
+                limits.KeepAliveTimeout = TimeSpan.FromSeconds(kestrel.KeepAliveTimeout.Value);
+            }
+            if (kestrel?.RequestHeadersTimeout is not null)
+            {
+                limits.RequestHeadersTimeout = TimeSpan.FromSeconds(kestrel.RequestHeadersTimeout.Value);
+            }
 
             foreach (var endpoint in Config.Endpoints)
             {

@@ -29,10 +29,12 @@ namespace WebExpress.WebCore.Config
         public string Route { get; set; }
 
         /// <summary>
-        /// The limitations.
+        /// Optional fine-tuning of the underlying Kestrel server, including all request limits. When
+        /// the element is omitted the web server keeps its built-in defaults, so this block only ever
+        /// applies values that are explicitly opted into.
         /// </summary>
-        [XmlElement("limit")]
-        public LimitConfig Limit { get; set; }
+        [XmlElement("kestrel")]
+        public KestrelConfig Kestrel { get; set; }
 
         /// <summary>
         /// Root directory of packages.
