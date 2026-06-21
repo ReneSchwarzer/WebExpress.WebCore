@@ -204,7 +204,17 @@
         /// <summary>
         /// 7-Zip compressed archive (.7z).
         /// </summary>
-        SevenZip
+        SevenZip,
+
+        /// <summary>
+        /// Embedded OpenType font (.eot).
+        /// </summary>
+        Eot,
+
+        /// <summary>
+        /// Executable file (.exe). Served as a generic binary download.
+        /// </summary>
+        Exe
     }
 
     /// <summary>
@@ -239,6 +249,8 @@
                 ".txt" => ContentType.Txt,
                 ".css" => ContentType.Css,
                 ".js" => ContentType.Js,
+                ".mjs" => ContentType.Js,
+                ".map" => ContentType.Json,
                 ".xml" => ContentType.Xml,
                 ".html" => ContentType.Html,
                 ".htm" => ContentType.Htm,
@@ -271,9 +283,11 @@
                 ".woff2" => ContentType.Woff2,
                 ".ttf" => ContentType.Ttf,
                 ".otf" => ContentType.Otf,
+                ".eot" => ContentType.Eot,
                 ".gz" => ContentType.Gz,
                 ".tar" => ContentType.Tar,
                 ".7z" => ContentType.SevenZip,
+                ".exe" => ContentType.Exe,
                 _ => ContentType.Unknown,
             };
         }
@@ -328,6 +342,7 @@
                 "font/woff2" => ContentType.Woff2,
                 "font/ttf" => ContentType.Ttf,
                 "font/otf" => ContentType.Otf,
+                "application/vnd.ms-fontobject" => ContentType.Eot,
                 "application/gzip" => ContentType.Gz,
                 "application/x-tar" => ContentType.Tar,
                 "application/x-7z-compressed" => ContentType.SevenZip,
@@ -383,9 +398,11 @@
                 ContentType.Woff2 => "font/woff2",
                 ContentType.Ttf => "font/ttf",
                 ContentType.Otf => "font/otf",
+                ContentType.Eot => "application/vnd.ms-fontobject",
                 ContentType.Gz => "application/gzip",
                 ContentType.Tar => "application/x-tar",
                 ContentType.SevenZip => "application/x-7z-compressed",
+                ContentType.Exe => "application/octet-stream",
                 _ => "application/octet-stream",
             };
         }
@@ -439,9 +456,11 @@
                 ContentType.Woff2 => "*.woff2",
                 ContentType.Ttf => "*.ttf",
                 ContentType.Otf => "*.otf",
+                ContentType.Eot => "*.eot",
                 ContentType.Gz => "*.gz",
                 ContentType.Tar => "*.tar",
                 ContentType.SevenZip => "*.7z",
+                ContentType.Exe => "*.exe",
                 _ => "*.*",
             };
         }

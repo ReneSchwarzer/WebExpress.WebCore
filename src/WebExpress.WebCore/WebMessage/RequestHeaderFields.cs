@@ -73,11 +73,17 @@ namespace WebExpress.WebCore.WebMessage
         public IEnumerable<Cookie> Cookies { get; } = [];
 
         /// <summary>
-        /// Gets the referer. The referer header echoes the absolute or partial address from 
-        /// which a resource was requested. The Referer header allows a server to identify referring 
+        /// Gets the referer. The referer header echoes the absolute or partial address from
+        /// which a resource was requested. The Referer header allows a server to identify referring
         /// pages from which people visit or where requested resources are used.
         /// </summary>
         public string Referer { get; private set; }
+
+        /// <summary>
+        /// Gets the If-None-Match header value. It carries the entity tag (ETag) the client already
+        /// holds and is used for conditional requests so unchanged resources can be answered with 304.
+        /// </summary>
+        public string IfNoneMatch { get; private set; }
 
         /// <summary>
         /// Gets the upgrade header (e.g. "websocket" for WebSocket upgrades).
@@ -118,6 +124,7 @@ namespace WebExpress.WebCore.WebMessage
             AcceptLanguage = requestFeature.Headers.AcceptLanguage.SelectMany(x => x.Split(';', StringSplitOptions.RemoveEmptyEntries));
             UserAgent = requestFeature.Headers.UserAgent;
             Referer = requestFeature.Headers.Referer;
+            IfNoneMatch = requestFeature.Headers.IfNoneMatch;
             Upgrade = requestFeature.Headers.Upgrade;
             SecWebSocketKey = requestFeature.Headers.SecWebSocketKey;
             SecWebSocketProtocol = requestFeature.Headers.SecWebSocketProtocol;

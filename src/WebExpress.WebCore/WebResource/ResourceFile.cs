@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.Internationalization;
+using System.IO;
+using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebMessage;
 
 namespace WebExpress.WebCore.WebResource
@@ -52,74 +53,32 @@ namespace WebExpress.WebCore.WebResource
                     ? string.Empty
                     : requestUri[routePrefix.Length..];
 
-                var path = System.IO.Path.GetFullPath(RootDirectory + url);
+                var path = Path.GetFullPath(RootDirectory + url);
 
-                if (!System.IO.File.Exists(path))
+                if (!File.Exists(path))
                 {
                     return new ResponseNotFound();
                 }
 
-                Data = System.IO.File.ReadAllBytes(path);
+                // derive the ETag from file metadata so an unchanged file can be answered with 304
+                // without reading its content from disk.
+                var eTag = ComputeETag(new FileInfo(path));
+                if (IsNotModified(request, eTag))
+                {
+                    return CreateNotModifiedResponse(eTag);
+                }
+
+                Data = File.ReadAllBytes(path);
 
                 var response = base.Process(request);
                 response.Header.CacheControl = "public, max-age=31536000";
 
-                var extension = System.IO.Path.GetExtension(path);
-                extension = !string.IsNullOrWhiteSpace(extension) ? extension.ToLower() : "";
+                // content type and download handling are resolved through the shared logic
+                ApplyContentType(response, path);
 
-                switch (extension)
+                if (!string.IsNullOrEmpty(eTag))
                 {
-                    case ".pdf":
-                        response.Header.ContentType = "application/pdf";
-                        break;
-                    case ".txt":
-                        response.Header.ContentType = "text/plain";
-                        break;
-                    case ".css":
-                        response.Header.ContentType = "text/css";
-                        break;
-                    case ".xml":
-                        response.Header.ContentType = "text/xml";
-                        break;
-                    case ".html":
-                    case ".htm":
-                        response.Header.ContentType = "text/html";
-                        break;
-                    case ".exe":
-                        response.Header.ContentDisposition = "attatchment; filename=" + System.IO.Path.GetFileName(path) + "; size=" + Data.LongLength;
-                        response.Header.ContentType = "application/octet-stream";
-                        break;
-                    case ".zip":
-                        response.Header.ContentDisposition = "attatchment; filename=" + System.IO.Path.GetFileName(path) + "; size=" + Data.LongLength;
-                        response.Header.ContentType = "application/zip";
-                        break;
-                    case ".doc":
-                    case ".docx":
-                        response.Header.ContentType = "application/msword";
-                        break;
-                    case ".xls":
-                    case ".xlx":
-                        response.Header.ContentType = "application/vnd.ms-excel";
-                        break;
-                    case ".ppt":
-                        response.Header.ContentType = "application/vnd.ms-powerpoint";
-                        break;
-                    case ".gif":
-                        response.Header.ContentType = "image/gif";
-                        break;
-                    case ".png":
-                        response.Header.ContentType = "image/png";
-                        break;
-                    case ".svg":
-                        response.Header.ContentType = "image/svg+xml";
-                        break;
-                    case ".jpeg":
-                    case ".jpg":
-                        response.Header.ContentType = "image/jpg";
-                        break;
-                    case ".ico":
-                        response.Header.ContentType = "image/x-icon";
-                        break;
+                    response.Header.AddCustomHeader("ETag", eTag);
                 }
 
                 request.HttpServerContext.Log?.Debug(I18N.Translate("webexpress.webcore:resource.file", request.RemoteEndPoint, request.Uri));

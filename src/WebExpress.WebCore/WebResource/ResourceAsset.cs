@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -43,8 +44,7 @@ namespace WebExpress.WebCore.WebResource
             lock (Gard)
             {
                 var assembly = ResourceContext.PluginContext.Assembly;
-                var buf = assembly.GetManifestResourceNames().ToList();
-                var resources = assembly.GetManifestResourceNames().Where(x => x.StartsWith(AssetDirectory, System.StringComparison.OrdinalIgnoreCase));
+                var resources = assembly.GetManifestResourceNames().Where(x => x.StartsWith(AssetDirectory, StringComparison.OrdinalIgnoreCase));
                 var url = request.Uri.ToString();
                 var fileName = Path.GetFileName(url);
                 var file = string.Join('.', AssetDirectory.Trim('.'), "assets", url.Replace("/", ".").Trim('.'));
@@ -56,96 +56,22 @@ namespace WebExpress.WebCore.WebResource
                     return new ResponseNotFound();
                 }
 
+                // conditional request: serve 304 when the client already holds the current version
+                var eTag = ComputeETag(Data);
+                if (IsNotModified(request, eTag))
+                {
+                    return CreateNotModifiedResponse(eTag);
+                }
+
                 var response = base.Process(request);
                 response.Header.CacheControl = "public, max-age=31536000";
 
-                var extension = Path.GetExtension(fileName);
-                extension = !string.IsNullOrWhiteSpace(extension) ? extension.ToLower() : "";
+                // content type and download handling are resolved through the shared logic
+                ApplyContentType(response, fileName);
 
-                switch (extension)
+                if (!string.IsNullOrEmpty(eTag))
                 {
-                    case ".pdf":
-                        response.Header.ContentType = "application/pdf";
-                        break;
-                    case ".txt":
-                        response.Header.ContentType = "text/plain";
-                        break;
-                    case ".css":
-                        response.Header.ContentType = "text/css";
-                        break;
-                    case ".js":
-                    case ".mjs":
-                        response.Header.ContentType = "application/javascript";
-                        break;
-                    case ".json":
-                        response.Header.ContentType = "application/json";
-                        break;
-                    case ".map":
-                        response.Header.ContentType = "application/json";
-                        break;
-                    case ".xml":
-                        response.Header.ContentType = "text/xml";
-                        break;
-                    case ".woff":
-                        response.Header.ContentType = "font/woff";
-                        break;
-                    case ".woff2":
-                        response.Header.ContentType = "font/woff2";
-                        break;
-                    case ".ttf":
-                        response.Header.ContentType = "font/ttf";
-                        break;
-                    case ".eot":
-                        response.Header.ContentType = "application/vnd.ms-fontobject";
-                        break;
-                    case ".webp":
-                        response.Header.ContentType = "image/webp";
-                        break;
-                    case ".mp3":
-                        response.Header.ContentType = "audio/mpeg";
-                        break;
-                    case ".mp4":
-                        response.Header.ContentType = "video/mp4";
-                        break;
-                    case ".html":
-                    case ".htm":
-                        response.Header.ContentType = "text/html";
-                        break;
-                    case ".exe":
-                        response.Header.ContentDisposition = "attatchment; filename=" + fileName + "; size=" + Data.LongLength;
-                        response.Header.ContentType = "application/octet-stream";
-                        break;
-                    case ".zip":
-                        response.Header.ContentDisposition = "attatchment; filename=" + fileName + "; size=" + Data.LongLength;
-                        response.Header.ContentType = "application/zip";
-                        break;
-                    case ".doc":
-                    case ".docx":
-                        response.Header.ContentType = "application/msword";
-                        break;
-                    case ".xls":
-                    case ".xlx":
-                        response.Header.ContentType = "application/vnd.ms-excel";
-                        break;
-                    case ".ppt":
-                        response.Header.ContentType = "application/vnd.ms-powerpoint";
-                        break;
-                    case ".gif":
-                        response.Header.ContentType = "image/gif";
-                        break;
-                    case ".png":
-                        response.Header.ContentType = "image/png";
-                        break;
-                    case ".svg":
-                        response.Header.ContentType = "image/svg+xml";
-                        break;
-                    case ".jpeg":
-                    case ".jpg":
-                        response.Header.ContentType = "image/jpg";
-                        break;
-                    case ".ico":
-                        response.Header.ContentType = "image/x-icon";
-                        break;
+                    response.Header.AddCustomHeader("ETag", eTag);
                 }
 
                 request.HttpServerContext.Log?.Debug(I18N.Translate
@@ -167,7 +93,7 @@ namespace WebExpress.WebCore.WebResource
         /// <returns>A byte array containing the resource data, or null if the resource is not found.</returns>
         private static byte[] GetData(string file, Assembly assembly, IEnumerable<string> resources)
         {
-            var item = resources.Where(x => x.Equals(file, System.StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            var item = resources.Where(x => x.Equals(file, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             if (item is null)
             {
                 return null;

@@ -135,6 +135,104 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Tests that the asset response carries the content type derived from the file extension.
+        /// </summary>
+        [Theory]
+        [InlineData("http://localhost:8080/server/appa/assets/css/mycss.css", "text/css")]
+        [InlineData("http://localhost:8080/server/appa/assets/js/myjavascript.js", "text/javascript")]
+        public void ContentType(string uri, string expectedContentType)
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var context = UnitTestFixture.CreateHttpContextMock();
+            componentHub.SitemapManager.Refresh();
+
+            var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
+            {
+                HttpServerContext = httpServerContext,
+                Culture = httpServerContext.Culture,
+                HttpContext = context
+            });
+
+            // act
+            var response = componentHub
+                .EndpointManager
+                .HandleRequest(UnitTestFixture.CreateRequestMock("", uri), searchResult.EndpointContext);
+
+            // validation
+            Assert.Equal(expectedContentType, response.Header.ContentType);
+        }
+
+        /// <summary>
+        /// Tests that the asset response exposes a non-empty ETag for cache validation.
+        /// </summary>
+        [Fact]
+        public void ETagIsSet()
+        {
+            // arrange
+            var uri = "http://localhost:8080/server/appa/assets/css/mycss.css";
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var context = UnitTestFixture.CreateHttpContextMock();
+            componentHub.SitemapManager.Refresh();
+
+            var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
+            {
+                HttpServerContext = httpServerContext,
+                Culture = httpServerContext.Culture,
+                HttpContext = context
+            });
+
+            // act
+            var response = componentHub
+                .EndpointManager
+                .HandleRequest(UnitTestFixture.CreateRequestMock("", uri), searchResult.EndpointContext);
+
+            // validation
+            Assert.True(response.Header.CustomHeader.ContainsKey("ETag"));
+            Assert.False(string.IsNullOrEmpty(response.Header.CustomHeader["ETag"]));
+        }
+
+        /// <summary>
+        /// Tests that a request whose If-None-Match matches the current ETag is answered with
+        /// 304 Not Modified instead of resending the payload.
+        /// </summary>
+        [Fact]
+        public void ConditionalRequestReturnsNotModified()
+        {
+            // arrange
+            var uri = "http://localhost:8080/server/appa/assets/css/mycss.css";
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var context = UnitTestFixture.CreateHttpContextMock();
+            componentHub.SitemapManager.Refresh();
+
+            var searchResult = componentHub.SitemapManager.SearchResource(new System.Uri(uri), new SearchContext()
+            {
+                HttpServerContext = httpServerContext,
+                Culture = httpServerContext.Culture,
+                HttpContext = context
+            });
+
+            // act - first request returns the payload together with its ETag
+            var first = componentHub
+                .EndpointManager
+                .HandleRequest(UnitTestFixture.CreateRequestMock("", uri), searchResult.EndpointContext);
+            var eTag = first.Header.CustomHeader["ETag"];
+
+            // act - second request presents the ETag via If-None-Match
+            var conditional = $"GET {uri} HTTP/1.1\nIf-None-Match: {eTag}\n\n";
+            var second = componentHub
+                .EndpointManager
+                .HandleRequest(UnitTestFixture.CreateRequestMock(conditional, uri), searchResult.EndpointContext);
+
+            // validation
+            Assert.IsType<ResponseOK>(first);
+            Assert.IsType<ResponseNotModified>(second);
+        }
+
+        /// <summary>
         /// Tests whether the asset manager implements interface IComponentManager.
         /// </summary>
         [Fact]
