@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using WebExpress.WebCore.Setting;
@@ -83,6 +84,25 @@ namespace WebExpress.WebCore.WebLog
         /// Gets or sets the time patternsspecifying log entries.
         /// </summary>
         public string TimePattern { set; get; }
+
+        /// <summary>
+        /// Gets or sets the maximum number of recent log entries retained in memory for live
+        /// inspection. The retained entries are independent of whether a log file is written.
+        /// </summary>
+        public int RecentCapacity { get; set; }
+
+        /// <summary>
+        /// Occurs immediately after a log entry has been recorded. Handlers run on the calling
+        /// (logging) thread and must therefore be fast and must not throw; a faulty handler is
+        /// isolated so it cannot break logging.
+        /// </summary>
+        public event EventHandler<LogEntry> EntryLogged;
+
+        /// <summary>
+        /// Returns a snapshot of the most recent log entries currently retained in memory, oldest first.
+        /// </summary>
+        /// <returns>A point-in-time copy that is safe to enumerate without further locking.</returns>
+        public IReadOnlyList<LogEntry> GetRecentEntries();
 
         /// <summary>
         /// Starts logging

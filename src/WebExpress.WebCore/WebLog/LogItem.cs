@@ -49,7 +49,7 @@ namespace WebExpress.WebCore.WebLog
         /// <returns>The log entry as a string</returns>
         public override string ToString()
         {
-            if (m_level != LogLevel.Seperartor)
+            if (m_level != LogLevel.Separator)
             {
                 return m_timestamp.ToString(TimePattern) + " " + m_level.ToString().PadRight(9, ' ') + " " + m_instance.PadRight(19, ' ')[..19] + " " + m_message;
             }
