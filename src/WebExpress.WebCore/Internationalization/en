@@ -21,9 +21,9 @@ httpserver.notsupported=The operating system on which WebExpress is to be run is
 httpserver.start=The HttpServer was started on {0} at {1} o'clock.
 httpserver.connected={0}: Client has been connected.
 httpserver.rejected={0}: Client rejected.
-httpserver.request={0}: Request '{1}'
-httpserver.unexpected.request={0}: Unexpected request '{1}'
-httpserver.request.done={0}: Request has been processed in {1} ms. Status = {2}
+httpserver.request={0}: Request #{1} '{2}'
+httpserver.request.unexpected={0}: Unexpected request '{1}'
+httpserver.request.done={0}: Request #{1} has been processed in {2} ms. Status = {3}
 httpserver.connectionlimit=The limit for concurrent requests has been exceeded.
 httpserver.endpoint=Endpoint '{0}' is registered.
 httpserver.listen=The web server listens for the endpoint {0}.

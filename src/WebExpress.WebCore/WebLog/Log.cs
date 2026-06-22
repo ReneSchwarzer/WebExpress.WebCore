@@ -569,15 +569,19 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="file">The source file.</param>
         public void Debug(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null)
         {
+            // capturing the call stack to derive the class name is expensive; skip it entirely when
+            // debug output is disabled, which is the common case outside of troubleshooting.
+            if (!DebugMode)
+            {
+                return;
+            }
+
             try
             {
                 var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
                 var className = methodInfo?.ReflectedType.Name;
 
-                if (DebugMode)
-                {
-                    Add(LogLevel.Debug, message, $"{className}.{instance}", line, file);
-                }
+                Add(LogLevel.Debug, message, $"{className}.{instance}", line, file);
             }
             catch (Exception ex)
             {
@@ -595,15 +599,18 @@ namespace WebExpress.WebCore.WebLog
         /// <param name="args">Parameter für die Formatierung der Nachricht</param>
         public void Debug(string message, [CallerMemberName] string instance = null, [CallerLineNumber] int? line = null, [CallerFilePath] string file = null, params object[] args)
         {
+            // see the parameterless-args overload: avoid the stack walk unless debug output is on.
+            if (!DebugMode)
+            {
+                return;
+            }
+
             try
             {
                 var methodInfo = new StackTrace().GetFrame(1)?.GetMethod();
                 var className = methodInfo?.ReflectedType.Name;
 
-                if (DebugMode)
-                {
-                    Add(LogLevel.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
-                }
+                Add(LogLevel.Debug, string.Format(message, args), $"{className}.{instance}", line, file);
             }
             catch (Exception ex)
             {

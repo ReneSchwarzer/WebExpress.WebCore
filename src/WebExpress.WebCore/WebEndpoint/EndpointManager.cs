@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -23,6 +24,12 @@ namespace WebExpress.WebCore.WebEndpoint
         private static readonly string[] _classSuffixes = ["page"];
         private readonly IHttpServerContext _httpServerContext;
         private readonly Dictionary<Type, EndpointRegistration> _registrations = [];
+
+        // an assembly's type set is immutable at runtime, so it is memoized here. CreateEndpointRoute
+        // would otherwise call Assembly.GetTypes() (a full type enumeration) for every route segment
+        // of every endpoint during registration - repeatedly, because the segment query is enumerated
+        // more than once.
+        private static readonly ConcurrentDictionary<Assembly, Type[]> _assemblyTypes = new();
 
         /// <summary>
         /// An event that fires when an endpoint is added.
@@ -144,6 +151,18 @@ namespace WebExpress.WebCore.WebEndpoint
         }
 
         /// <summary>
+        /// Returns the types declared in the given assembly, memoized for the lifetime of the
+        /// process. The type set of a loaded assembly does not change, so caching it avoids the
+        /// repeated full enumeration that route creation would otherwise trigger per segment.
+        /// </summary>
+        /// <param name="assembly">The assembly whose types are requested.</param>
+        /// <returns>The assembly's declared types.</returns>
+        private static Type[] GetAssemblyTypes(Assembly assembly)
+        {
+            return _assemblyTypes.GetOrAdd(assembly, a => a.GetTypes());
+        }
+
+        /// <summary>
         /// Returns the route of an endpoint based on the class type, application context and segment attributes.
         /// </summary>
         /// <param name="classType">The type of the class.</param>
@@ -184,8 +203,7 @@ namespace WebExpress.WebCore.WebEndpoint
                 var icon = default(IIcon);
                 var hidden = false;
 
-                var segmentInfoType = classType.Assembly
-                    .GetTypes()
+                var segmentInfoType = GetAssemblyTypes(classType.Assembly)
                     .Where(t => t.IsClass)
                     .Where(t => t.Namespace?.ToLowerInvariant() == s.FullNamespace.ToLowerInvariant())
                     .FirstOrDefault(t => t.Name.StartsWith("Index", StringComparison.OrdinalIgnoreCase));
@@ -232,22 +250,26 @@ namespace WebExpress.WebCore.WebEndpoint
                     Icon = icon,
                     Hidden = segmentResult is null || hidden
                 };
-            });
+            }).ToList();
 
+            // materialized once so the reflection-heavy projection runs a single time per segment;
+            // leading namespace-prefix segments are then dropped via a computed skip count instead of
+            // re-enumerating (and thus re-projecting) the sequence multiple times.
+            var skip = 0;
             var firstMapping = segmentAttributesMapping.FirstOrDefault();
-            segmentAttributesMapping = firstMapping is not null && _namespacePrefixes
-                .Contains(firstMapping.Segment?.ToString())
-                ? segmentAttributesMapping.Skip(1)
-                : segmentAttributesMapping;
+            if (firstMapping is not null && _namespacePrefixes.Contains(firstMapping.Segment?.ToString()))
+            {
+                skip = 1;
+            }
 
-            firstMapping = segmentAttributesMapping.FirstOrDefault();
-            segmentAttributesMapping = firstMapping is not null && (namespacePrefixes ?? [])
-                .Contains(firstMapping.Segment?.ToString())
-                ? segmentAttributesMapping.Skip(1)
-                : segmentAttributesMapping;
+            firstMapping = segmentAttributesMapping.Skip(skip).FirstOrDefault();
+            if (firstMapping is not null && (namespacePrefixes ?? []).Contains(firstMapping.Segment?.ToString()))
+            {
+                skip++;
+            }
 
             var endpointRoute = (intermediateSegments ?? [])
-                .Concat(segmentAttributesMapping.Where(x => !x.Segment.IsEmpty).Select(x => x.Segment));
+                .Concat(segmentAttributesMapping.Skip(skip).Where(x => !x.Segment.IsEmpty).Select(x => x.Segment));
 
             var classSegment = !className.StartsWith(_indexPrefix)
                            ? segment?.ToPathSegment() ?? new UriPathSegmentConstant(className)

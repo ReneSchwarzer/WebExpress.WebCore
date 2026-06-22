@@ -19,6 +19,11 @@ namespace WebExpress.WebCore.WebSitemap
     public sealed class SitemapManager : ISitemapManager, ISystemComponent
     {
         private SitemapNode _root = new();
+
+        // maps an endpoint context to its sitemap node so GetUri resolves a route in O(1) instead of
+        // rebuilding and linearly scanning the whole sitemap tree on every call. rebuilt by Refresh
+        // alongside _root; the stored order preserves the previous pre-order "first match" tiebreak.
+        private Dictionary<IEndpointContext, (SitemapNode Node, int Order)> _endpointIndex = new();
         private readonly IComponentHub _componentHub;
         private readonly IHttpServerContext _httpServerContext;
         private readonly IUri _serverUri;
@@ -98,7 +103,21 @@ namespace WebExpress.WebCore.WebSitemap
                 ));
             }
 
+            var index = new Dictionary<IEndpointContext, (SitemapNode Node, int Order)>();
+            var order = 0;
+            foreach (var node in newSiteMapNode.GetPreOrder())
+            {
+                // first pre-order occurrence wins, mirroring the previous FirstOrDefault over GetPreOrder
+                if (node.EndpointContext is not null)
+                {
+                    index.TryAdd(node.EndpointContext, (node, order));
+                }
+
+                order++;
+            }
+
             _root = newSiteMapNode;
+            _endpointIndex = index;
 
             Log();
         }
@@ -164,8 +183,7 @@ namespace WebExpress.WebCore.WebSitemap
         {
             var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(endpointType, applicationContext);
 
-            var node = _root.GetPreOrder()
-                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
+            var node = ResolveNode(endpointContexts);
 
             return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null).BindParameters(parameters);
         }
@@ -190,8 +208,7 @@ namespace WebExpress.WebCore.WebSitemap
             var endpointContexts = _componentHub?.EndpointManager.GetEndpoints(typeof(TEnpoint), endpointContext.ApplicationContext)
                 .Where(x => x.EndpointId.Equals(endpointContext.EndpointId));
 
-            var node = _root.GetPreOrder()
-                .FirstOrDefault(x => endpointContexts.Contains(x.EndpointContext));
+            var node = ResolveNode(endpointContexts);
 
             if (node is null)
             {
@@ -200,6 +217,37 @@ namespace WebExpress.WebCore.WebSitemap
             }
 
             return new UriEndpoint(_serverUri, node?.EndpointContext?.Route.PathSegments, null);
+        }
+
+        /// <summary>
+        /// Resolves the sitemap node whose endpoint context appears first in pre-order among the
+        /// given candidates. The lookup uses the precomputed endpoint index, replacing a full
+        /// rebuild and linear scan of the sitemap tree (previously the dominant render-time cost) with
+        /// an O(1) lookup per candidate.
+        /// </summary>
+        /// <param name="endpointContexts">The candidate endpoint contexts, or null.</param>
+        /// <returns>The matching node, or null when no candidate is part of the sitemap.</returns>
+        private SitemapNode ResolveNode(IEnumerable<IEndpointContext> endpointContexts)
+        {
+            if (endpointContexts is null)
+            {
+                return null;
+            }
+
+            var index = _endpointIndex;
+            SitemapNode best = null;
+            var bestOrder = int.MaxValue;
+
+            foreach (var ctx in endpointContexts)
+            {
+                if (ctx is not null && index.TryGetValue(ctx, out var hit) && hit.Order < bestOrder)
+                {
+                    best = hit.Node;
+                    bestOrder = hit.Order;
+                }
+            }
+
+            return best;
         }
 
         /// <summary>
