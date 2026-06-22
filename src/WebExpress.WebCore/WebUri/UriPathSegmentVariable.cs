@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.WebIcon;
@@ -7,6 +8,26 @@ using WebExpress.WebCore.WebParameter;
 
 namespace WebExpress.WebCore.WebUri
 {
+    /// <summary>
+    /// Caches compiled regular expressions keyed by their pattern so that route matching does not
+    /// recompile the same expression on every request. Compilation is comparatively expensive, while
+    /// matching against an already compiled instance is fast, which matters on the request hot path.
+    /// </summary>
+    internal static class UriPathSegmentRegexCache
+    {
+        private static readonly ConcurrentDictionary<string, Regex> _cache = new();
+
+        /// <summary>
+        /// Returns a compiled regular expression for the given pattern, reusing a cached instance when available.
+        /// </summary>
+        /// <param name="pattern">The regular expression pattern.</param>
+        /// <returns>A compiled, case-insensitive regular expression.</returns>
+        public static Regex Get(string pattern)
+        {
+            return _cache.GetOrAdd(pattern, p => new Regex(p, RegexOptions.IgnoreCase | RegexOptions.Compiled));
+        }
+    }
+
     /// <summary>
     /// Variable path segment.
     /// </summary>
@@ -86,16 +107,14 @@ namespace WebExpress.WebCore.WebUri
             {
                 return false;
             }
-            else if (string.IsNullOrWhiteSpace(Expression) && Value.Equals(value, StringComparison.OrdinalIgnoreCase))
+
+            // without a constraint expression the segment can only be matched by a literal value
+            if (string.IsNullOrEmpty(Expression))
             {
-                return true;
-            }
-            else if (Regex.IsMatch(value, Expression, RegexOptions.IgnoreCase))
-            {
-                return true;
+                return Value is not null && Value.Equals(value, StringComparison.OrdinalIgnoreCase);
             }
 
-            return false;
+            return UriPathSegmentRegexCache.Get(Expression).IsMatch(value);
         }
 
         /// <summary>

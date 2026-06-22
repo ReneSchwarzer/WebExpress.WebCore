@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebParameter;
@@ -62,7 +61,7 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>The variable value pair.</returns>
         public override IDictionary<string, string> GetVariable(string value)
         {
-            var match = Regex.Match(value, Expression, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            var match = UriPathSegmentRegexCache.Get(Expression).Match(value);
 
             if (match.Success)
             {
@@ -107,7 +106,7 @@ namespace WebExpress.WebCore.WebUri
                 return base.GetDisplayText(renderContext);
             }
 
-            var match = Regex.Match(Value, Expression, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            var match = UriPathSegmentRegexCache.Get(Expression).Match(Value);
             var guid = DisplayFormat == Format.Simple ? match.Groups[7].ToString() : match.Groups[2].ToString();
 
             if (string.IsNullOrWhiteSpace(Value) || !Value.Contains("{0}"))

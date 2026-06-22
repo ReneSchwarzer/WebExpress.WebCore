@@ -58,11 +58,16 @@ namespace WebExpress.WebCore.WebUri
     public static class UriSchemeExtension
     {
         /// <summary>
-        /// Converts the <see cref="UriScheme"/> to its string representation.
+        /// Converts the <see cref="UriScheme"/> to its canonical lowercase string representation.
         /// </summary>
+        /// <remarks>
+        /// This is intentionally not named <c>ToString</c>: an extension method cannot override the
+        /// enum's built-in <see cref="object.ToString"/>, so such a method would never be invoked
+        /// through normal call syntax and would silently be dead code.
+        /// </remarks>
         /// <param name="scheme">The URI scheme to convert.</param>
-        /// <returns>The string representation of the URI scheme.</returns>
-        public static string ToString(this UriScheme scheme)
+        /// <returns>The canonical scheme token (e.g. "https").</returns>
+        public static string ToSchemeString(this UriScheme scheme)
         {
             return scheme switch
             {
@@ -76,6 +81,28 @@ namespace WebExpress.WebCore.WebUri
                 UriScheme.Ws => "ws",
                 UriScheme.Wss => "wss",
                 _ => "http"
+            };
+        }
+
+        /// <summary>
+        /// Returns the well-known default port for the scheme.
+        /// The default port is omitted from the rendered authority so that, for example,
+        /// "https://example.com:443" collapses to "https://example.com".
+        /// </summary>
+        /// <param name="scheme">The URI scheme.</param>
+        /// <returns>The default port, or <c>-1</c> for schemes that do not carry a port.</returns>
+        public static int DefaultPort(this UriScheme scheme)
+        {
+            return scheme switch
+            {
+                UriScheme.FTP => 21,
+                UriScheme.Http => 80,
+                UriScheme.Https => 443,
+                UriScheme.Ldap => 389,
+                UriScheme.Ldaps => 636,
+                UriScheme.Ws => 80,
+                UriScheme.Wss => 443,
+                _ => -1
             };
         }
     }

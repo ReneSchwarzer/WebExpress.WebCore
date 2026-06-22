@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebUri
         public UriPathSegmentVariableDouble(object tag = null)
             : base(tag)
         {
-            Expression = @"^[+-]?(\d*,\d+|\d+(,\d*)?)( +[eE][+-]?\d+)?$";
+            Expression = @"^[+-]?(\d*,\d+|\d+(,\d*)?)([eE][+-]?\d+)?$";
             Tag = tag;
         }
 

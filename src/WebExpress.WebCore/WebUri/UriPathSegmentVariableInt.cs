@@ -17,7 +17,7 @@ namespace WebExpress.WebCore.WebUri
         public UriPathSegmentVariableInt(object tag = null)
             : base(tag)
         {
-            Expression = @"^[+-]*\d$";
+            Expression = @"^[+-]?\d+$";
             Tag = tag;
         }
 
