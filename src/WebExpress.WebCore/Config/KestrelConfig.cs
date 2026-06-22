@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace WebExpress.WebCore.Config
 {
@@ -30,6 +32,16 @@ namespace WebExpress.WebCore.Config
         /// </summary>
         [XmlElement("addserverheader")]
         public bool? AddServerHeader { get; set; }
+
+        /// <summary>
+        /// The HTTP protocols enabled on every listening endpoint, given as the name of a Kestrel
+        /// <see cref="HttpProtocols"/> value (e.g. <c>Http1</c>, <c>Http2</c> or <c>Http1AndHttp2</c>).
+        /// When not specified the Kestrel default (<c>Http1AndHttp2</c>) is kept, which negotiates
+        /// HTTP/2 over TLS via ALPN and serves plain HTTP as HTTP/1.1. Set <c>Http2</c> on a plain
+        /// (non-TLS) endpoint to enable cleartext HTTP/2 (h2c), which has no automatic upgrade path.
+        /// </summary>
+        [XmlElement("protocols")]
+        public string Protocols { get; set; }
 
         /// <summary>
         /// The maximum number of concurrent client connections. When not specified the Kestrel
@@ -92,6 +104,28 @@ namespace WebExpress.WebCore.Config
         /// </summary>
         [XmlElement("requestheaderstimeout")]
         public int? RequestHeadersTimeout { get; set; }
+
+        /// <summary>
+        /// Resolves the configured <see cref="Protocols"/> name to the corresponding Kestrel
+        /// <see cref="HttpProtocols"/> value. Returns <c>null</c> when nothing was configured or the
+        /// value is not a recognised protocol name, so the caller keeps the Kestrel default instead
+        /// of silently applying an unintended restriction from a typo.
+        /// </summary>
+        /// <returns>The parsed protocols, or <c>null</c> to keep the Kestrel default.</returns>
+        public HttpProtocols? ResolveProtocols()
+        {
+            if (string.IsNullOrWhiteSpace(Protocols))
+            {
+                return null;
+            }
+
+            // Enum.TryParse alone would accept arbitrary numbers for a flags enum, so the result is
+            // additionally constrained to a named value to reject unknown or nonsensical combinations
+            return Enum.TryParse<HttpProtocols>(Protocols, ignoreCase: true, out var result)
+                && Enum.IsDefined(typeof(HttpProtocols), result)
+                ? result
+                : null;
+        }
 
         /// <summary>
         /// Initializes a new instance of the class.

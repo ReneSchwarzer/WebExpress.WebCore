@@ -204,9 +204,11 @@ namespace WebExpress.WebCore
                 limits.RequestHeadersTimeout = TimeSpan.FromSeconds(kestrel.RequestHeadersTimeout.Value);
             }
 
+            var protocols = kestrel?.ResolveProtocols();
+
             foreach (var endpoint in Config.Endpoints)
             {
-                AddEndpoint(serverOptions, endpoint);
+                AddEndpoint(serverOptions, endpoint, protocols);
             }
 
             Kestrel = new KestrelServer(serverOptions, transport, logger);
@@ -226,7 +228,8 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="serverOptions">The server options.</param>
         /// <param name="endPoint">The endpoint.</param>
-        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, EndpointConfig endPoint)
+        /// <param name="protocols">The HTTP protocols to enable on the endpoint, or null to keep the Kestrel default.</param>
+        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, EndpointConfig endPoint, HttpProtocols? protocols)
         {
             try
             {
@@ -249,12 +252,12 @@ namespace WebExpress.WebCore
                     {
                         case "HTTPS":
                             {
-                                AddEndpoint(serverOptions, ep, endPoint.PfxFile, endPoint.Password);
+                                AddEndpoint(serverOptions, ep, endPoint.PfxFile, endPoint.Password, protocols);
                                 break;
                             }
                         default:
                             {
-                                AddEndpoint(serverOptions, ep);
+                                AddEndpoint(serverOptions, ep, protocols);
                                 break;
                             }
                     }
@@ -272,9 +275,16 @@ namespace WebExpress.WebCore
         /// </summary>
         /// <param name="serverOptions">The server options.</param>
         /// <param name="endPoint">The endpoint.</param>
-        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint)
+        /// <param name="protocols">The HTTP protocols to enable on the endpoint, or null to keep the Kestrel default.</param>
+        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint, HttpProtocols? protocols)
         {
-            serverOptions.Value.Listen(endPoint);
+            serverOptions.Value.Listen(endPoint, configure =>
+            {
+                if (protocols is not null)
+                {
+                    configure.Protocols = protocols.Value;
+                }
+            });
             HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());
         }
 
@@ -285,12 +295,18 @@ namespace WebExpress.WebCore
         /// <param name="endPoint">The endpoint.</param>
         /// <param name="pfxFile">The path to the PFX file containing the certificate.</param>
         /// <param name="password">The password for the PFX file.</param>
-        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint, string pfxFile, string password)
+        /// <param name="protocols">The HTTP protocols to enable on the endpoint, or null to keep the Kestrel default.</param>
+        private void AddEndpoint(OptionsWrapper<KestrelServerOptions> serverOptions, IPEndPoint endPoint, string pfxFile, string password, HttpProtocols? protocols)
         {
             serverOptions.Value.Listen(endPoint, configure =>
             {
                 var cert = X509CertificateLoader.LoadPkcs12FromFile(pfxFile, password, X509KeyStorageFlags.DefaultKeySet);
                 configure.UseHttps(cert);
+
+                if (protocols is not null)
+                {
+                    configure.Protocols = protocols.Value;
+                }
             });
 
             HttpServerContext.Log?.Info(message: I18N.Translate("webexpress.webcore:httpserver.listen"), args: endPoint.ToString());

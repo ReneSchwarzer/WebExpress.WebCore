@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Xml.Serialization;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using WebExpress.WebCore.Config;
 
 namespace WebExpress.WebCore.Test.Config
@@ -146,6 +147,73 @@ namespace WebExpress.WebCore.Test.Config
             Assert.Equal(300, kestrel.MaxConcurrentConnections);
             Assert.Equal(3000000000, kestrel.MaxRequestBodySize);
             Assert.Equal(65536, kestrel.MaxRequestHeadersTotalSize);
+        }
+
+        /// <summary>
+        /// Tests that the protocols element is read and resolved to the matching Kestrel value,
+        /// including case-insensitive parsing.
+        /// </summary>
+        [Theory]
+        [InlineData("Http1", HttpProtocols.Http1)]
+        [InlineData("Http2", HttpProtocols.Http2)]
+        [InlineData("Http1AndHttp2", HttpProtocols.Http1AndHttp2)]
+        [InlineData("http2", HttpProtocols.Http2)]
+        public void ProtocolsAreResolved(string value, HttpProtocols expected)
+        {
+            // arrange
+            var xml =
+                "<config version=\"1\">" +
+                "  <endpoint uri=\"http://localhost/\" />" +
+                $"  <kestrel><protocols>{value}</protocols></kestrel>" +
+                "</config>";
+
+            // act
+            var kestrel = Deserialize(xml).Kestrel;
+
+            // validation
+            Assert.Equal(value, kestrel.Protocols);
+            Assert.Equal(expected, kestrel.ResolveProtocols());
+        }
+
+        /// <summary>
+        /// Tests that a missing protocols element resolves to null so the Kestrel default is kept.
+        /// </summary>
+        [Fact]
+        public void ProtocolsDefaultToNull()
+        {
+            // arrange
+            var xml = "<config version=\"1\"><endpoint uri=\"http://localhost/\" /><kestrel /></config>";
+
+            // act
+            var kestrel = Deserialize(xml).Kestrel;
+
+            // validation
+            Assert.Null(kestrel.Protocols);
+            Assert.Null(kestrel.ResolveProtocols());
+        }
+
+        /// <summary>
+        /// Tests that an unrecognised protocols value resolves to null instead of applying an
+        /// unintended restriction, so a typo cannot silently disable HTTP/2.
+        /// </summary>
+        [Theory]
+        [InlineData("Http9")]
+        [InlineData("999")]
+        [InlineData("nonsense")]
+        public void UnknownProtocolsResolveToNull(string value)
+        {
+            // arrange
+            var xml =
+                "<config version=\"1\">" +
+                "  <endpoint uri=\"http://localhost/\" />" +
+                $"  <kestrel><protocols>{value}</protocols></kestrel>" +
+                "</config>";
+
+            // act
+            var kestrel = Deserialize(xml).Kestrel;
+
+            // validation
+            Assert.Null(kestrel.ResolveProtocols());
         }
     }
 }

@@ -40,7 +40,11 @@ namespace WebExpress.WebCore.WebMessage
 
                 responseFeature.StatusCode = response.Status;
                 responseFeature.ReasonPhrase = response.Reason;
-                responseFeature.Headers.KeepAlive = "true";
+
+                // Connection and Upgrade are connection-specific headers: they drive the HTTP/1.x
+                // websocket handshake but are forbidden on HTTP/2+ (RFC 9113 §8.2.2), where Kestrel
+                // rejects them. Only emit them while the connection still speaks HTTP/1.x.
+                var allowConnectionSpecificHeaders = !IsHttp2OrHigher(context);
 
                 if (response.Header.Location is not null)
                 {
@@ -80,12 +84,12 @@ namespace WebExpress.WebCore.WebMessage
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(response.Header.Upgrade))
+                if (allowConnectionSpecificHeaders && !string.IsNullOrWhiteSpace(response.Header.Upgrade))
                 {
                     responseFeature.Headers.Upgrade = response.Header.Upgrade;
                 }
 
-                if (!string.IsNullOrWhiteSpace(response.Header.Connection))
+                if (allowConnectionSpecificHeaders && !string.IsNullOrWhiteSpace(response.Header.Connection))
                 {
                     responseFeature.Headers.Connection = response.Header.Connection;
                 }
@@ -129,6 +133,25 @@ namespace WebExpress.WebCore.WebMessage
                 var log = WebEx.ComponentHub.LogManager.DefaultLog;
                 log.Error(context.RemoteEndPoint + ": " + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Determines whether the negotiated protocol is HTTP/2 or higher, where connection-specific
+        /// headers such as Connection and Upgrade are forbidden (RFC 9113 §8.2.2) and would be
+        /// rejected by Kestrel. On HTTP/1.x these headers remain valid and carry the websocket
+        /// handshake semantics.
+        /// </summary>
+        /// <param name="context">The request context whose negotiated protocol is inspected.</param>
+        /// <returns>True when the protocol is HTTP/2 or higher; otherwise false.</returns>
+        private static bool IsHttp2OrHigher(IHttpContext context)
+        {
+            // read straight from the request feature so the check does not depend on a fully
+            // materialised request object (e.g. on the websocket or exception context paths)
+            var protocol = context?.Features?.Get<IHttpRequestFeature>()?.Protocol;
+
+            return protocol is not null
+                && (protocol.StartsWith("HTTP/2", StringComparison.OrdinalIgnoreCase)
+                    || protocol.StartsWith("HTTP/3", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
