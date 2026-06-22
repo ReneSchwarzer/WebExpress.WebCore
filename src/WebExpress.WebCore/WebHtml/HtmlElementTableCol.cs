@@ -1,7 +1,8 @@
 ﻿namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a table column.
+    /// Renders an HTML <c>&lt;col&gt;</c> element, used inside a table's column group to apply shared
+    /// attributes (such as styling) to one or more table columns at once.
     /// </summary>
     public class HtmlElementTableCol : HtmlElement, IHtmlElementTable
     {

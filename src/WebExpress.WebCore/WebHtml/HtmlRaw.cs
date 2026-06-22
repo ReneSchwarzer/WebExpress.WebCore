@@ -3,11 +3,10 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents a raw HTML node.
+    /// A node that holds ready-made HTML markup and writes it to the output verbatim, without any
+    /// escaping. Only use it with trusted markup; for untrusted text use <see cref="HtmlText"/> so
+    /// special characters cannot be interpreted as markup.
     /// </summary>
-    /// <remarks>
-    /// This class is used to encapsulate raw HTML content.
-    /// </remarks>
     public class HtmlRaw : IHtmlNode
     {
         /// <summary>

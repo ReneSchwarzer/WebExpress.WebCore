@@ -6,7 +6,8 @@ using WebExpress.WebCore.WebParameter;
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// Represents a URI path segment variable for GUIDs.
+    /// A placeholder path segment that only matches when the value at that position is a GUID
+    /// (for example <c>67d35a0f-7e94-4bfd-a309-36e9162a67ff</c>). Use it for routes keyed by a unique identifier.
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     public class UriPathSegmentVariableGuid<TParameter> : UriPathSegmentVariable<TParameter>

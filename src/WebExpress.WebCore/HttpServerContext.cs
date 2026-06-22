@@ -8,7 +8,9 @@ using WebExpress.WebCore.WebLog;
 namespace WebExpress.WebCore
 {
     /// <summary>
-    /// The context of the http server.
+    /// Default implementation of <see cref="IHttpServerContext"/>. It bundles the server-wide
+    /// information (routing, endpoints, version, directories, culture, log) that is created once
+    /// at start-up and handed to plugins and components throughout the server's lifetime.
     /// </summary>
     public class HttpServerContext : IHttpServerContext
     {

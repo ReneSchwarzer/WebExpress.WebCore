@@ -6,7 +6,8 @@ using WebExpress.WebCore.WebMessage;
 namespace WebExpress.WebCore.WebResource
 {
     /// <summary>
-    /// A binary resource.
+    /// Base class for a resource that returns raw bytes (such as an image or download) rather than a
+    /// rendered page. Subclasses supply the <see cref="Data"/> to send to the client.
     /// </summary>
     public abstract class ResourceBinary : Resource
     {

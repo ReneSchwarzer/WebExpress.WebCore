@@ -6,7 +6,8 @@ using System.Xml.Serialization;
 namespace WebExpress.WebCore.WebPackage.Model
 {
     /// <summary>
-    /// Represents a catalog of packages.
+    /// The list of packages known to WebExpress, serialized to and from an XML catalog file. Each
+    /// entry (<see cref="PackageCatalogItem"/>) describes one installable package and its state.
     /// </summary>
     [XmlRoot("catalog")]
     public class PackageCatalog

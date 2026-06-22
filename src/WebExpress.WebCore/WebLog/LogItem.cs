@@ -3,7 +3,8 @@
 namespace WebExpress.WebCore.WebLog
 {
     /// <summary>
-    /// Log entry
+    /// A single entry in the server log. It captures one logged message together with its severity
+    /// level, the source location that produced it, and the time it occurred.
     /// </summary>
     internal class LogItem
     {

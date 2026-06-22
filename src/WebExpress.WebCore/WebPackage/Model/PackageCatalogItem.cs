@@ -5,7 +5,8 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebPackage.Model
 {
     /// <summary>
-    /// Represents an item in the package catalog.
+    /// One package entry in the <see cref="PackageCatalog"/>. It records a package's identity and
+    /// metadata together with its current state (available, active, or disabled).
     /// </summary>
     [XmlRoot("package")]
     public class PackageCatalogItem

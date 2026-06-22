@@ -5,7 +5,9 @@ using System.Text;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// Represents the response header fields as per RFC 2616.
+    /// Holds the header fields that are sent back to the client with a response (see RFC 2616),
+    /// such as content length, content type, caching directives, and cookies. These describe the
+    /// response body and control how the browser handles it.
     /// </summary>
     public class ResponseHeaderFields
     {

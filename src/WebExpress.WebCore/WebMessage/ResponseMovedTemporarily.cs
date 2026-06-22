@@ -4,7 +4,8 @@ using WebExpress.WebCore.WebUri;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// Represents a response according to RFC 2616 Section 6.
+    /// HTTP 302 (Found / Moved Temporarily): redirects the client to a different URL for this
+    /// request only; the original URL stays valid for future requests (see RFC 2616 Section 6).
     /// </summary>
     [StatusCode(302)]
     public class ResponseMovedTemporarily : Response

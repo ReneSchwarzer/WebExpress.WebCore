@@ -5,7 +5,9 @@ using WebExpress.WebCore.WebEndpoint;
 namespace WebExpress.WebCore.WebPlugin
 {
     /// <summary>
-    /// The context of a plugin.
+    /// Read-only descriptor of a loaded plugin that the framework passes around so components can
+    /// learn which plugin they came from and read its metadata — id, name, manufacturer, version,
+    /// description, copyright, license, icon, and the .NET assembly it lives in.
     /// </summary>
     public interface IPluginContext : IContext
     {

@@ -1,7 +1,8 @@
 namespace WebExpress.WebCore.WebUri
 {
     /// <summary>
-    /// The type of the URI.
+    /// The scheme (protocol) at the start of a URI — the part before the colon, such as
+    /// <c>http</c> in <c>http://example.com</c>. It tells the client how to reach the resource.
     /// </summary>
     public enum UriScheme
     {

@@ -5,7 +5,8 @@ using WebExpress.WebCore.WebMessage;
 namespace WebExpress.WebCore.WebResource
 {
     /// <summary>
-    /// A file resource.
+    /// A binary resource that serves a file read from disk, delivering its bytes to the client.
+    /// Access is guarded so concurrent requests can read the same file safely.
     /// </summary>
     public class ResourceFile : ResourceBinary
     {

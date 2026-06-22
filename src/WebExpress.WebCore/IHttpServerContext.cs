@@ -7,7 +7,10 @@ using WebExpress.WebCore.WebLog;
 namespace WebExpress.WebCore
 {
     /// <summary>
-    /// The context interface of the http server.
+    /// Provides the server-wide information that plugins and components need to do their work:
+    /// the routing entry point, the configured endpoints, the server version, the well-known
+    /// directories (packages, assets, data, configuration), the culture, and the central log.
+    /// A single instance is shared for the lifetime of the running server.
     /// </summary>
     public interface IHttpServerContext
     {

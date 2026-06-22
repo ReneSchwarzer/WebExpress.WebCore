@@ -5,7 +5,9 @@ using WebExpress.WebCore.WebUri;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// Represents a response for a resource moved permanently (301) according to RFC 2616 Section 6.
+    /// HTTP 301 (Moved Permanently): redirects the client to a new URL and signals that the
+    /// resource has moved for good, so clients should use the new location from now on
+    /// (see RFC 2616 Section 6).
     /// </summary>
     [StatusCode(301)]
     public class ResponseMovedPermanently : Response

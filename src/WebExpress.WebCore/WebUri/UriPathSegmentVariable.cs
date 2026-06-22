@@ -29,7 +29,11 @@ namespace WebExpress.WebCore.WebUri
     }
 
     /// <summary>
-    /// Variable path segment.
+    /// Base class for placeholder path segments such as <c>:id</c> in <c>/user/:id</c>. It captures
+    /// the value found at that position under a variable name and matches it against an optional
+    /// constraint expression. Concrete subclasses (int, double, GUID, string, regex, …) supply the
+    /// constraint for a particular value type; <typeparamref name="TParameter"/> ties the captured
+    /// value to the strongly typed request parameter it represents.
     /// </summary>
     /// <typeparam name="TParameter">The parameter type.</typeparam>
     public abstract class UriPathSegmentVariable<TParameter> : IUriPathSegmentVariable

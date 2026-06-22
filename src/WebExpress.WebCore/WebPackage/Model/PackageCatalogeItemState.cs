@@ -1,7 +1,8 @@
 ﻿namespace WebExpress.WebCore.WebPackage.Model
 {
     /// <summary>
-    /// Represents the state of a package in the catalog.
+    /// Lifecycle state of a package listed in the catalog: present but not yet loaded
+    /// (<c>Available</c>), loaded and usable (<c>Active</c>), or switched off (<c>Disable</c>).
     /// </summary>
     public enum PackageCatalogeItemState
     {

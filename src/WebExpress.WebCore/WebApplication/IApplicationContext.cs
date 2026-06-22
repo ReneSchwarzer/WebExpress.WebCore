@@ -6,7 +6,10 @@ using WebExpress.WebCore.WebTheme;
 namespace WebExpress.WebCore.WebApplication
 {
     /// <summary>
-    /// The application context.
+    /// Read-only descriptor of a registered application that the framework hands to components so
+    /// they can learn about the application they belong to — its id, name, description, asset/data
+    /// paths, route, icon, owning plugin, and default theme — without referencing the application
+    /// object itself.
     /// </summary>
     public interface IApplicationContext : IContext
     {

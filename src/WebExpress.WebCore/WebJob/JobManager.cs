@@ -13,6 +13,11 @@ using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.WebJob
 {
+    /// <summary>
+    /// Central registry and scheduler for jobs — recurring background tasks that run on a schedule
+    /// (similar to cron). It discovers the jobs a plugin provides, keeps track of them, and runs
+    /// them at their due times.
+    /// </summary>
     /// <remarks>
     /// This class manages the processing of cyclic jobs. It provides methods to register, remove, and execute jobs.
     /// </remarks>

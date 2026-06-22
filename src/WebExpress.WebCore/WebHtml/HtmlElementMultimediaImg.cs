@@ -3,7 +3,9 @@
 namespace WebExpress.WebCore.WebHtml
 {
     /// <summary>
-    /// Represents an image.
+    /// Renders an HTML <c>&lt;img&gt;</c> element, which embeds an image in the page. The image source
+    /// and presentation are set through properties such as <see cref="Src"/>, <see cref="Alt"/>,
+    /// <see cref="Width"/>, and <see cref="Height"/>.
     /// </summary>
     public class HtmlElementMultimediaImg : HtmlElement, IHtmlElementMultimedia
     {

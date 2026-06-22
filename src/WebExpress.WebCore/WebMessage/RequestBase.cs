@@ -14,8 +14,10 @@ using WebExpress.WebCore.WebUri;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// See RFC 2616, The Request class encapsulates and extends the 
-    /// original request of the HttpListener call.
+    /// Common base class for incoming requests (see RFC 2616). It extracts and exposes the
+    /// information shared by every request type — HTTP method, URI, header fields, client and
+    /// server endpoints, session, culture, and the query and session parameters. Concrete
+    /// requests such as <see cref="Request"/> and <see cref="RequestWebSocket"/> build on it.
     /// </summary>
     public abstract class RequestBase : IRequest
     {

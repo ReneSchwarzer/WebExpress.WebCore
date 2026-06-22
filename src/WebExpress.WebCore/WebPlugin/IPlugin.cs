@@ -3,7 +3,9 @@
 namespace WebExpress.WebCore.WebPlugin
 {
     /// <summary>
-    /// This interface represents a plugin.
+    /// A plugin — the deployable unit that extends WebExpress. A plugin packages applications and
+    /// other components; the framework loads it, calls <see cref="Run"/> once at start-up, and can
+    /// unload it again later.
     /// </summary>
     public interface IPlugin : IComponent
     {

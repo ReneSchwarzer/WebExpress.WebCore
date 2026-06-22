@@ -10,8 +10,11 @@ using WebExpress.WebCore.WebParameter;
 namespace WebExpress.WebCore.WebMessage
 {
     /// <summary>
-    /// See RFC 2616, The Request class encapsulates and extends the 
-    /// original request of the HttpListener call.
+    /// Represents a single incoming HTTP request (see RFC 2616). It wraps the raw request data
+    /// provided by ASP.NET Core and makes it easy to consume: besides the common request
+    /// information from <see cref="RequestBase"/> (method, URI, headers, session), it reads the
+    /// request body and turns it into parameters, supporting URL-encoded forms, plain text, and
+    /// multipart form data including file uploads.
     /// </summary>
     public partial class Request : RequestBase
     {

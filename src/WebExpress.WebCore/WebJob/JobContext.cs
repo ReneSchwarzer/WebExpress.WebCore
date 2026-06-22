@@ -5,7 +5,8 @@ using WebExpress.WebCore.WebPlugin;
 namespace WebExpress.WebCore.WebJob
 {
     /// <summary>
-    /// Represents the job context.
+    /// Default implementation of <see cref="IJobContext"/>: the read-only descriptor that identifies
+    /// a scheduled job and the application and plugin it belongs to.
     /// </summary>
     public class JobContext : IJobContext
     {

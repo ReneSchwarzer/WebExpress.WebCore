@@ -16,7 +16,9 @@ using WebExpress.WebCore.WebPlugin.Model;
 namespace WebExpress.WebCore.WebPlugin
 {
     /// <summary>
-    /// The plugin manager manages the WebExpress plugins.
+    /// Central registry for plugins. It loads plugin assemblies, resolves the dependencies between
+    /// them, activates them in the right order, tracks their runtime state, and unloads them again.
+    /// This is the backbone of WebExpress's plugin system.
     /// </summary>
     public sealed class PluginManager : IPluginManager, IExecutableElements, ISystemComponent
     {
