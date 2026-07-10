@@ -4,6 +4,7 @@ using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebSession.Model;
 
 namespace WebExpress.WebCore.WebIdentity
@@ -38,9 +39,10 @@ namespace WebExpress.WebCore.WebIdentity
         /// </param>
         /// <returns>
         /// An object that represents the response to the login dialog, including authentication results and any
-        /// relevant status information.
+        /// relevant status information. Returns <c>null</c> when no registered identity provider can handle the
+        /// scenario; the server then falls back to the status page.
         /// </returns>
-        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null);
+        IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity = null);
 
         /// <summary>
         /// Creates a forbidden response page for the specified request when the authenticated
@@ -57,10 +59,10 @@ namespace WebExpress.WebCore.WebIdentity
         /// The authenticated identity that lacks sufficient permissions. Cannot be null.
         /// </param>
         /// <returns>
-        /// A response representing the forbidden page if a registered identity provider can handle the 
-        /// forbidden scenario; otherwise, <c>null</c>.
+        /// A response representing the forbidden page if a registered identity provider can handle the
+        /// forbidden scenario; otherwise, <c>null</c>. The server then falls back to the status page.
         /// </returns>
-        IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity);
 
         /// <summary>
         /// Login an identity.

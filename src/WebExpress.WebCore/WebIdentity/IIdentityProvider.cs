@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -35,9 +35,10 @@ namespace WebExpress.WebCore.WebIdentity
         /// </param>
         /// <returns>
         /// An object that represents the response to the login dialog, including authentication results and any
-        /// relevant status information.
+        /// relevant status information. A provider that cannot handle the scenario returns <c>null</c>; the
+        /// identity manager then asks the next provider, and the server falls back to the status page.
         /// </returns>
-        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity);
 
         /// <summary>
         /// Creates a forbidden response page for the specified request when the authenticated
@@ -55,8 +56,9 @@ namespace WebExpress.WebCore.WebIdentity
         /// </param>
         /// <returns>
         /// A response representing the forbidden page if this provider can handle the forbidden
-        /// scenario; otherwise, <c>null</c>.
+        /// scenario; otherwise, <c>null</c>. When every provider returns <c>null</c>, the identity
+        /// manager reports no response and the server falls back to the status page.
         /// </returns>
-        IResponse CreateForbiddenPage(IRequest request, IEndpointContext initiator, IIdentity identity);
+        IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity);
     }
 }

@@ -12,6 +12,7 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIdentity.Model;
 using WebExpress.WebCore.WebMessage;
+using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSession.Model;
 
@@ -385,7 +386,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results 
         /// and any relevant status information.
         /// </returns>
-        public IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null)
+        public IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity = null)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
@@ -415,13 +416,13 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if a registered identity provider can handle the 
         /// forbidden scenario; otherwise, <c>null</c>.
         /// </returns>
-        public IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity)
+        public IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
                 foreach (var provider in list)
                 {
-                    var response = provider.CreateForbiddenPage(request, initiator, identity);
+                    var response = provider.CreateForbiddenResponse(request, initiator, identity);
 
                     if (response is not null)
                     {
