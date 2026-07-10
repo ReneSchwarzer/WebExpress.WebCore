@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPage;
 
 namespace WebExpress.WebCore.WebIdentity
 {
@@ -37,7 +37,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results and any
         /// relevant status information.
         /// </returns>
-        IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity);
+        IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity);
 
         /// <summary>
         /// Creates a forbidden response page for the specified request when the authenticated
@@ -57,6 +57,6 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if this provider can handle the forbidden
         /// scenario; otherwise, <c>null</c>.
         /// </returns>
-        IResponse CreateForbiddenPage(IRequest request, IPageContext initiator, IIdentity identity);
+        IResponse CreateForbiddenPage(IRequest request, IEndpointContext initiator, IIdentity identity);
     }
 }

@@ -12,7 +12,6 @@ using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebIdentity.Model;
 using WebExpress.WebCore.WebMessage;
-using WebExpress.WebCore.WebPage;
 using WebExpress.WebCore.WebPlugin;
 using WebExpress.WebCore.WebSession.Model;
 
@@ -386,7 +385,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// An object that represents the response to the login dialog, including authentication results 
         /// and any relevant status information.
         /// </returns>
-        public IResponse CreateAuthenticationPrompt(IRequest request, IPageContext initiator, IIdentity identity = null)
+        public IResponse CreateAuthenticationPrompt(IRequest request, IEndpointContext initiator, IIdentity identity = null)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
@@ -416,7 +415,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// A response representing the forbidden page if a registered identity provider can handle the 
         /// forbidden scenario; otherwise, <c>null</c>.
         /// </returns>
-        public IResponse CreateForbiddenResponse(IRequest request, IPageContext initiator, IIdentity identity)
+        public IResponse CreateForbiddenResponse(IRequest request, IEndpointContext initiator, IIdentity identity)
         {
             if (_identityProviders.TryGetValue(initiator?.ApplicationContext, out var list))
             {
@@ -526,8 +525,8 @@ namespace WebExpress.WebCore.WebIdentity
                 return false;
             }
 
-            // check if any string policy matches the full name of the required policy
-            return group.Policies?.Any(currentPolicy => string.Equals(currentPolicy, policy.GetType().FullName, StringComparison.OrdinalIgnoreCase)) ?? false;
+            // a group carries policy instances; the required policy matches by type
+            return group.Policies?.Any(currentPolicy => currentPolicy?.GetType() == policy.GetType()) ?? false;
         }
 
         /// <summary>
@@ -580,7 +579,7 @@ namespace WebExpress.WebCore.WebIdentity
         /// <returns>True if the identity group has the permission, false otherwise.</returns>
         public bool CheckAccess(IApplicationContext applicationContext, IIdentityGroup group, Type permission)
         {
-            return (group?.Policies ?? []).Any(policy => CheckAccess(applicationContext, policy, permission));
+            return (group?.Policies ?? []).Any(policy => CheckAccess(applicationContext, policy.GetType(), permission));
         }
 
         /// <summary>

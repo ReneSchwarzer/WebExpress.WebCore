@@ -22,6 +22,6 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Gets the policies associated with the group.
         /// </summary>
-        IEnumerable<string> Policies { get; }
+        IEnumerable<IIdentityPolicy> Policies { get; }
     }
 }
