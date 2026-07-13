@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using WebExpress.WebCore.WebIcon;
 using WebExpress.WebCore.WebMessage;
@@ -673,30 +674,69 @@ namespace WebExpress.WebCore.WebUri
         /// <returns>A string that represents the current uri.</returns>
         public override string ToString()
         {
-            var scheme = Scheme.ToSchemeString() + ":";
-            var authority = Authority?.ToString(Scheme.DefaultPort());
-            var uri = "/" + string.Join
-            (
-                "/",
-                PathSegments.Where(x => x is not UriPathSegmentRoot)
-                    .Select(x => x.ToString().TrimStart('/'))
-            ).TrimEnd('/');
+            var builder = new StringBuilder();
 
-            if (Query.Any())
+            if (Scheme != UriScheme.Mailto && !IsRelative)
             {
-                uri += "?" + string.Join("&", Query.Select(x => x.ToString()));
+                builder.Append(Scheme.ToSchemeString());
+                builder.Append(':');
+                Authority?.AppendTo(builder, Scheme.DefaultPort());
+            }
+            else if (Scheme == UriScheme.Mailto)
+            {
+                builder.Append(Scheme.ToSchemeString());
+                builder.Append(':');
+                Authority?.AppendTo(builder, Scheme.DefaultPort());
+                return builder.ToString();
+            }
+
+            var hasPathSegment = false;
+            foreach (var segment in PathSegments)
+            {
+                if (segment is UriPathSegmentRoot)
+                {
+                    continue;
+                }
+
+                builder.Append('/');
+                var value = segment?.ToString();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    builder.Append(value.TrimStart('/'));
+                }
+
+                hasPathSegment = true;
+            }
+
+            if (hasPathSegment)
+            {
+                while (builder.Length > 1 && builder[builder.Length - 1] == '/')
+                {
+                    builder.Length--;
+                }
+            }
+            else
+            {
+                builder.Append('/');
+            }
+
+            var hasQuery = false;
+            foreach (var query in Query)
+            {
+                builder.Append(hasQuery ? '&' : '?');
+                hasQuery = true;
+                builder.Append(query.Key);
+                builder.Append('=');
+                builder.Append(query.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(Fragment))
             {
-                uri += "#" + Fragment;
+                builder.Append('#');
+                builder.Append(Fragment);
             }
 
-            return Scheme switch
-            {
-                UriScheme.Mailto => string.Format("{0}{1}", scheme, authority),
-                _ => IsRelative ? uri : string.Format("{0}{1}{2}", scheme, authority, uri),
-            };
+            return builder.ToString();
         }
     }
 }
