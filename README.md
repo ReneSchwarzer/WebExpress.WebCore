@@ -40,5 +40,9 @@ The following tutorials illustrate the essential techniques of `WebExpress`. The
 - [WebApp](https://github.com/webexpress-framework/WebExpress.Tutorial.WebApp#readme)
 - [WebIndex](https://github.com/webexpress-framework/WebExpress.Tutorial.WebIndex#readme)
 
+## AI transparency notice
+
+Parts of this software, its documentation, and its assets were created with the assistance of AI-based tools, including large language models. AI-assisted contributions are reviewed by the project maintainer before they are included.
+
 # Tags
 #WebCore #WebExpress #DotNet #NETCore
