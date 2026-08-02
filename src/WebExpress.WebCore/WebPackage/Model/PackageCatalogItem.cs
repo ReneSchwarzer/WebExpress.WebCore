@@ -30,6 +30,20 @@ namespace WebExpress.WebCore.WebPackage.Model
         public PackageCatalogeItemState State { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether the entry stands for a plugin that ships with the
+        /// application rather than for an installed package.
+        /// </summary>
+        /// <remarks>
+        /// A built-in entry is synthesized on read from the plugins the
+        /// <see cref="WebPlugin.IPluginManager"/> registered from the application directory, so
+        /// the management surface can list them next to the installed packages. It has no package
+        /// file behind it, is never written to the catalog, and none of the package operations
+        /// apply to it - an assembly in the application directory cannot be uninstalled at runtime.
+        /// </remarks>
+        [XmlIgnore]
+        public bool BuiltIn { get; internal set; }
+
+        /// <summary>
         /// Gets the plugins belonging to the package.
         /// </summary>
         [XmlIgnore]

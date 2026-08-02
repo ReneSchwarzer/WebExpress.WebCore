@@ -293,19 +293,33 @@ namespace WebExpress.WebCore.WebPackage
         }
 
         /// <summary>
-        /// Returns all package entries from the package catalog.
+        /// Returns all package entries, the installed ones and the plugins that ship with the
+        /// application.
         /// </summary>
+        /// <remarks>
+        /// The catalog only ever knows what was installed from a *.wxp file. In a plain build
+        /// deployment every plugin is referenced statically, the catalog is empty, and a management
+        /// surface reading it alone shows nothing while the server logs four running plugins. The
+        /// union is formed here rather than in the pages so that a third consumer cannot inherit
+        /// the blind spot; it is a read-only view and never touches
+        /// <see cref="PackageCatalog.Packages"/>, which is what keeps the synthesized entries out
+        /// of the persisted catalog.
+        /// </remarks>
         /// <returns>An enumerable collection with all package entries.</returns>
         public IEnumerable<PackageCatalogItem> GetPackages()
         {
             lock (_scanLock)
             {
-                return [.. Catalog.Packages.Where(x => x is not null)];
+                var packages = Catalog.Packages.Where(x => x is not null).ToList();
+
+                packages.AddRange(GetBuiltInPackages(packages));
+
+                return packages;
             }
         }
 
         /// <summary>
-        /// Returns a package by id.
+        /// Returns a package by id, the installed ones as well as the built-in plugins.
         /// </summary>
         /// <param name="packageId">The package id.</param>
         /// <returns>The package or null.</returns>
@@ -318,9 +332,97 @@ namespace WebExpress.WebCore.WebPackage
 
             lock (_scanLock)
             {
-                return Catalog.Packages
-                    .FirstOrDefault(x => x is not null && x.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase));
+                return GetPackages()
+                    .FirstOrDefault(x => x.Id is not null && x.Id.Equals(packageId, StringComparison.OrdinalIgnoreCase));
             }
+        }
+
+        /// <summary>
+        /// Builds a catalog entry for every registered plugin that no catalog entry accounts for.
+        /// </summary>
+        /// <remarks>
+        /// A plugin is covered when a catalog entry lists it among its own plugins, or when a
+        /// catalog entry carries its id - so a plugin that is present statically and as a package
+        /// is reported once, by the package, which is the entry the operations can act on.
+        /// </remarks>
+        /// <param name="packages">The installed packages the plugins are matched against.</param>
+        /// <returns>The synthesized entries, ordered by id.</returns>
+        private IEnumerable<PackageCatalogItem> GetBuiltInPackages(IEnumerable<PackageCatalogItem> packages)
+        {
+            var covered = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var package in packages)
+            {
+                if (!string.IsNullOrWhiteSpace(package.Id))
+                {
+                    covered.Add(package.Id);
+                }
+
+                foreach (var plugin in package.Plugins.Where(x => x?.PluginId is not null))
+                {
+                    covered.Add(plugin.PluginId.ToString());
+                }
+            }
+
+            return (_pluginManager?.Plugins ?? [])
+                .Where(x => x?.PluginId is not null && !covered.Contains(x.PluginId.ToString()))
+                .Select(CreateBuiltInItem)
+                .OrderBy(x => x.Id, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Creates the catalog entry that stands for a plugin loaded from the application directory.
+        /// </summary>
+        /// <param name="plugin">The plugin context.</param>
+        /// <returns>The synthesized catalog entry.</returns>
+        private static PackageCatalogItem CreateBuiltInItem(IPluginContext plugin)
+        {
+            var id = plugin.PluginId.ToString();
+
+            return new PackageCatalogItem()
+            {
+                Id = id,
+                // there is no package file behind a built-in plugin. the empty name is deliberate:
+                // every path built from it fails to resolve, which is the second line of defence
+                // behind the guards on the operations
+                File = string.Empty,
+                State = PackageCatalogeItemState.Active,
+                BuiltIn = true,
+                Plugins = [plugin],
+                Metadata = new PackageItem()
+                {
+                    FileName = string.Empty,
+                    Id = id,
+                    Version = plugin.Version,
+                    Title = plugin.PluginName,
+                    Authors = plugin.Manufacturer,
+                    License = plugin.License,
+                    Icon = plugin.Icon?.Display,
+                    Description = plugin.Description,
+                    PluginSources = [],
+                    Dependencies = []
+                }
+            };
+        }
+
+        /// <summary>
+        /// Rejects an operation that was asked to modify a plugin shipping with the application.
+        /// </summary>
+        /// <remarks>
+        /// None of the package operations can be carried out on such a plugin: its assembly lives
+        /// in the application directory, is loaded into the default context and cannot be replaced
+        /// or removed while the process runs. Failing up front is what keeps a request from leaving
+        /// the plugin half unregistered.
+        /// </remarks>
+        /// <param name="package">The package the operation was addressed to.</param>
+        /// <param name="operation">The name of the operation, used in the message.</param>
+        /// <returns>The failure result, or null when the package may be operated on.</returns>
+        private static PackageOperationResult RejectBuiltIn(PackageCatalogItem package, string operation)
+        {
+            return package is not null && package.BuiltIn
+                ? PackageOperationResult.Failed($"Package '{package.Id}' ships with the application and cannot be {operation}.", package)
+                : null;
         }
 
         /// <summary>
@@ -571,6 +673,12 @@ namespace WebExpress.WebCore.WebPackage
                     return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
                 }
 
+                var builtIn = RejectBuiltIn(package, "activated");
+                if (builtIn is not null)
+                {
+                    return builtIn;
+                }
+
                 if (package.State == PackageCatalogeItemState.Active)
                 {
                     return PackageOperationResult.Ok($"Package '{packageId}' is already active.", package);
@@ -614,6 +722,12 @@ namespace WebExpress.WebCore.WebPackage
                     return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
                 }
 
+                var builtIn = RejectBuiltIn(package, "deactivated");
+                if (builtIn is not null)
+                {
+                    return builtIn;
+                }
+
                 DeactivateAndUnregisterPackage(package);
                 RemoveExtractedDirectory(package);
                 package.State = PackageCatalogeItemState.Disable;
@@ -636,6 +750,12 @@ namespace WebExpress.WebCore.WebPackage
         /// <returns>The operation result.</returns>
         public PackageOperationResult UpdatePackage(string packageId, string packageFile, bool activate = true, long maxPackageBytes = 0, string expectedSha256 = null)
         {
+            var builtIn = RejectBuiltIn(GetPackage(packageId), "updated");
+            if (builtIn is not null)
+            {
+                return builtIn;
+            }
+
             var validation = ValidatePackage(packageFile, maxPackageBytes, expectedSha256);
             if (!validation.IsValid)
             {
@@ -663,6 +783,12 @@ namespace WebExpress.WebCore.WebPackage
                 if (package is null)
                 {
                     return PackageOperationResult.Failed($"Package '{packageId}' was not found.");
+                }
+
+                var builtIn = RejectBuiltIn(package, "uninstalled");
+                if (builtIn is not null)
+                {
+                    return builtIn;
                 }
 
                 DeactivateAndUnregisterPackage(package);
@@ -1151,8 +1277,10 @@ namespace WebExpress.WebCore.WebPackage
                     continue;
                 }
 
-                var dependencyPackage = Catalog.Packages
-                    .FirstOrDefault(x => x is not null && x.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+                // built-in plugins count as fulfilled dependencies: a package that depends on
+                // webexpress.webui must install against a build deployment, where that plugin is
+                // referenced statically and therefore never appears in the catalog
+                var dependencyPackage = GetPackage(id);
 
                 if (dependencyPackage is null || dependencyPackage.State == PackageCatalogeItemState.Disable)
                 {

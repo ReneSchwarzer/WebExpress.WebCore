@@ -15,14 +15,14 @@ namespace WebExpress.WebCore.WebPackage.Model
         /// <summary>
         /// Gets the package entries in the catalog.
         /// </summary>
+        /// <remarks>
+        /// This is the persisted collection and holds installed packages only. The plugins that
+        /// ship with the application are not packages and never enter it; they are synthesized on
+        /// read by <see cref="IPackageManager.GetPackages"/> and marked
+        /// <see cref="PackageCatalogItem.BuiltIn"/>.
+        /// </remarks>
         [XmlElement("package")]
         public List<PackageCatalogItem> Packages { get; } = [];
-
-        /// <summary>
-        /// Gets the system package entries in the catalog.
-        /// </summary>
-        [XmlIgnore]
-        public List<PackageCatalogItem> SystemPackages { get; } = [];
 
         /// <summary>
         /// Locates a specific catalog item.

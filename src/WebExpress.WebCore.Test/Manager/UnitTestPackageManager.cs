@@ -5,6 +5,7 @@ using WebExpress.WebCore.Test.Fixture;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebPackage;
 using WebExpress.WebCore.WebPackage.Model;
+using WebExpress.WebCore.WebPlugin;
 
 namespace WebExpress.WebCore.Test.Manager
 {
@@ -402,6 +403,199 @@ namespace WebExpress.WebCore.Test.Manager
                     Directory.Delete(packagePath, true);
                 }
             }
+        }
+
+        /// <summary>
+        /// Tests that the plugins loaded from the application directory are reported by the read
+        /// side even though they are not packages.
+        /// </summary>
+        /// <remarks>
+        /// This is the defect the built-in entries exist for: in a plain build deployment every
+        /// plugin is referenced statically, the catalog is empty, and a management surface reading
+        /// the catalog alone stays blank while the server logs the plugins as running.
+        /// </remarks>
+        [Fact]
+        public void GetPackagesReportsStaticallyLoadedPluginsAsBuiltIn()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var pluginIds = componentHub.PluginManager.Plugins.Select(x => x.PluginId.ToString()).ToList();
+
+            // act
+            var packages = packageManager.GetPackages().ToList();
+
+            // validation
+            Assert.NotEmpty(pluginIds);
+            Assert.Empty(packageManager.Catalog.Packages);
+
+            foreach (var pluginId in pluginIds)
+            {
+                var package = Assert.Single(packages, x => x.Id == pluginId);
+
+                Assert.True(package.BuiltIn);
+                Assert.Equal(string.Empty, package.File);
+                Assert.Equal(PackageCatalogeItemState.Active, package.State);
+                Assert.Contains(package.Plugins, x => x.PluginId.ToString() == pluginId);
+                Assert.Equal(pluginId, package.Metadata?.Id);
+            }
+        }
+
+        /// <summary>
+        /// Tests that a plugin present both statically and as an installed package is reported
+        /// once, by the package - which is the entry the lifecycle operations can act on.
+        /// </summary>
+        [Fact]
+        public void GetPackagesReportsAPluginOnceWhenItIsAlsoInstalled()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            (componentHub.PluginManager as PluginManager).Register();
+
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var pluginId = componentHub.PluginManager.Plugins.First().PluginId.ToString();
+            var packagePath = httpServerContext.PackagePath;
+            var packageFile = Path.Combine(packagePath, $"{pluginId}.1.0.0.wxp");
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                CreatePackageArchive(packageFile, pluginId, "1.0.0");
+
+                // act
+                var install = packageManager.InstallPackage(packageFile, true);
+                var packages = packageManager.GetPackages().Where(x => x.Id == pluginId).ToList();
+
+                // validation
+                Assert.True(install.Success);
+                Assert.False(Assert.Single(packages).BuiltIn);
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests that the built-in entries never reach the persisted catalog.
+        /// </summary>
+        /// <remarks>
+        /// Persisting them would be worse than the original defect: on the next start LoadCatalog
+        /// would read them back as installed packages, every path built from their empty file name
+        /// would fail to resolve, and Scan would count them as no longer present and drop them.
+        /// </remarks>
+        [Fact]
+        public void SaveCatalogLeavesBuiltInEntriesOutOfTheCatalogFile()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            (componentHub.PluginManager as PluginManager).Register();
+
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+            var catalogFile = Path.Combine(packagePath, "catalog.xml");
+            var save = typeof(PackageManager).GetMethod("SaveCatalog", BindingFlags.NonPublic | BindingFlags.Instance);
+            var load = typeof(PackageManager).GetMethod("LoadCatalog", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+                Assert.NotEmpty(packageManager.GetPackages());
+
+                // act - two start cycles worth of save/load must not adopt the built-ins
+                save.Invoke(packageManager, null);
+                load.Invoke(packageManager, null);
+                save.Invoke(packageManager, null);
+
+                // validation
+                Assert.Empty(packageManager.Catalog.Packages);
+                Assert.DoesNotContain("<package", File.ReadAllText(catalogFile), StringComparison.Ordinal);
+                Assert.NotEmpty(packageManager.GetPackages());
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests that the directory scan neither adopts nor removes the built-in entries, which
+        /// only exist in the read path.
+        /// </summary>
+        [Fact]
+        public void ScanKeepsBuiltInEntriesOutOfTheCatalog()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            (componentHub.PluginManager as PluginManager).Register();
+
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var packagePath = httpServerContext.PackagePath;
+
+            try
+            {
+                Directory.CreateDirectory(packagePath);
+
+                // act
+                packageManager.Scan();
+                packageManager.Scan();
+
+                // validation
+                Assert.Empty(packageManager.Catalog.Packages);
+                Assert.All(packageManager.GetPackages(), x => Assert.True(x.BuiltIn));
+            }
+            finally
+            {
+                if (Directory.Exists(packagePath))
+                {
+                    Directory.Delete(packagePath, true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests that every lifecycle operation refuses a built-in plugin with a defined failure
+        /// rather than running half of its steps.
+        /// </summary>
+        [Fact]
+        public void BuiltInPackageRefusesEveryLifecycleOperation()
+        {
+            // arrange
+            var httpServerContext = UnitTestFixture.CreateHttpServerContextMock();
+            var componentHub = UnitTestFixture.CreateComponentHubMock(httpServerContext);
+            (componentHub.PluginManager as PluginManager).Register();
+
+            var packageManager = componentHub.PackageManager as PackageManager;
+            var pluginId = componentHub.PluginManager.Plugins.First().PluginId.ToString();
+
+            // act
+            var results = new[]
+            {
+                packageManager.ActivatePackage(pluginId),
+                packageManager.DeactivatePackage(pluginId),
+                packageManager.UpdatePackage(pluginId, Path.Combine(httpServerContext.PackagePath, "missing.wxp")),
+                packageManager.UninstallPackage(pluginId)
+            };
+
+            // validation
+            Assert.All(results, x =>
+            {
+                Assert.False(x.Success);
+                Assert.Contains("ships with the application", x.Message, StringComparison.OrdinalIgnoreCase);
+            });
+
+            // the refusal has to leave the plugin exactly as it was
+            Assert.Contains(componentHub.PluginManager.Plugins, x => x.PluginId.ToString() == pluginId);
+            Assert.Equal(PackageCatalogeItemState.Active, packageManager.GetPackage(pluginId)?.State);
         }
 
         /// <summary>

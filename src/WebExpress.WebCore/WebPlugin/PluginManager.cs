@@ -66,7 +66,10 @@ namespace WebExpress.WebCore.WebPlugin
         /// <returns>A list of plugins created.</returns>
         internal void Register()
         {
-            var path = Environment.CurrentDirectory;
+            // the statically deployed plugins sit next to the host assembly. the working
+            // directory is whatever the process happened to be started from - a service
+            // launched from the system directory would find no plugin at all
+            var path = AppContext.BaseDirectory;
             var assemblies = new List<Assembly>();
 
             // create plugins
