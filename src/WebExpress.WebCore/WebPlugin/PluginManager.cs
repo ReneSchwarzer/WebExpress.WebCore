@@ -309,7 +309,12 @@ namespace WebExpress.WebCore.WebPlugin
                         PluginName = name,
                         Manufacturer = type.Assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company,
                         Copyright = type.Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
-                        Icon = RouteEndpoint.Combine(_httpServerContext?.Route, icon),
+                        // a plugin without an icon attribute has no icon: combining the empty
+                        // value would yield the server route, which callers cannot tell apart
+                        // from a real icon and would render as a broken image
+                        Icon = !string.IsNullOrWhiteSpace(icon)
+                            ? RouteEndpoint.Combine(_httpServerContext?.Route, icon)
+                            : null,
                         Description = description,
                         Version = type.Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
                     };
