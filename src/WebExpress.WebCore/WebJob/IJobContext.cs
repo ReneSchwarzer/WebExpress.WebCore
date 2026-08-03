@@ -22,9 +22,21 @@ namespace WebExpress.WebCore.WebJob
         IApplicationContext ApplicationContext { get; }
 
         /// <summary>
-        /// Gets the job id. 
+        /// Gets the job id.
         /// </summary>
         IComponentId JobId { get; }
+
+        /// <summary>
+        /// Gets the name of the job, which may be an internationalization key. Null when the
+        /// job declares none, in which case only the id identifies it.
+        /// </summary>
+        string JobName { get; }
+
+        /// <summary>
+        /// Gets the description of the job, which may be an internationalization key. It states
+        /// what the job does, because a schedule alone does not say why it runs.
+        /// </summary>
+        string Description { get; }
 
         /// <summary>
         /// Gets the cron-object.

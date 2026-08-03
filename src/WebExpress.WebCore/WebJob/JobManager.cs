@@ -130,14 +130,28 @@ namespace WebExpress.WebCore.WebJob
                 var day = "*";
                 var month = "*";
                 var weekday = "*";
+                var name = default(string);
+                var description = default(string);
 
-                foreach (var customAttribute in job.CustomAttributes.Where(x => x.AttributeType == typeof(JobAttribute)))
+                foreach (var customAttribute in job.CustomAttributes
+                    .Where(x => x.AttributeType.GetInterfaces().Contains(typeof(IJobAttribute))))
                 {
-                    minute = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
-                    hour = customAttribute.ConstructorArguments.Skip(1).FirstOrDefault().Value?.ToString();
-                    day = customAttribute.ConstructorArguments.Skip(2).FirstOrDefault().Value?.ToString();
-                    month = customAttribute.ConstructorArguments.Skip(3).FirstOrDefault().Value?.ToString();
-                    weekday = customAttribute.ConstructorArguments.Skip(4).FirstOrDefault().Value?.ToString();
+                    if (customAttribute.AttributeType == typeof(JobAttribute))
+                    {
+                        minute = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                        hour = customAttribute.ConstructorArguments.Skip(1).FirstOrDefault().Value?.ToString();
+                        day = customAttribute.ConstructorArguments.Skip(2).FirstOrDefault().Value?.ToString();
+                        month = customAttribute.ConstructorArguments.Skip(3).FirstOrDefault().Value?.ToString();
+                        weekday = customAttribute.ConstructorArguments.Skip(4).FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType == typeof(NameAttribute))
+                    {
+                        name = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
+                    else if (customAttribute.AttributeType == typeof(DescriptionAttribute))
+                    {
+                        description = customAttribute.ConstructorArguments.FirstOrDefault().Value?.ToString();
+                    }
                 }
 
                 // assign the job to existing applications
@@ -146,6 +160,8 @@ namespace WebExpress.WebCore.WebJob
                     var jobContext = new JobContext()
                     {
                         JobId = new ComponentId(job.FullName),
+                        JobName = name,
+                        Description = description,
                         PluginContext = pluginContext,
                         ApplicationContext = applicationContext,
                         Cron = new Cron(_httpServerContext, minute, hour, day, month, weekday),
