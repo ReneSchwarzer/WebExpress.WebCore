@@ -442,8 +442,6 @@ namespace WebExpress.WebCore
 
             stopwatch.Stop();
 
-            UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
-
             HttpServerContext.Log?.Info(I18N.Translate
             (
                 "webexpress.webcore:httpserver.request.done",
@@ -631,7 +629,20 @@ namespace WebExpress.WebCore
         /// <returns>Provides an asynchronous operation that handles the http context.</returns>
         public async Task ProcessRequestAsync(IHttpContext httpContext)
         {
-            var responseSender = new ResponseSender();
+            var sender = new ResponseSender();
+            var stopwatch = Stopwatch.StartNew();
+
+            // every response leaves through this local send, so the statistics are recorded
+            // here rather than inside the handler: a request that never reaches a handler -
+            // an unknown route, a denied or an unauthenticated one - produces a status code
+            // the monitor has to account for just the same. Recording precedes the send, so
+            // a slow client does not end up counted as a slow server.
+            async Task SendAsync(IHttpContext context, IResponse response)
+            {
+                UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
+
+                await sender.SendAsync(context, response);
+            }
 
             if (httpContext is HttpExceptionContext exceptionContext)
             {
@@ -644,7 +655,7 @@ namespace WebExpress.WebCore
 
                 var response500 = CreateStatusPage<ResponseInternalServerError>(message, httpContext?.Request);
 
-                await responseSender.SendAsync(exceptionContext, response500);
+                await SendAsync(exceptionContext, response500);
 
                 return;
             }
@@ -665,7 +676,7 @@ namespace WebExpress.WebCore
                     httpContext.Request
                 );
 
-                await responseSender.SendAsync(httpContext, notFoundResponse);
+                await SendAsync(httpContext, notFoundResponse);
 
                 return;
             }
@@ -692,7 +703,7 @@ namespace WebExpress.WebCore
             if (!(searchResult.EndpointContext.Policies?.Any() ?? false))
             {
                 var response = HandleClient(httpContext, searchResult);
-                await responseSender.SendAsync(httpContext, response);
+                await SendAsync(httpContext, response);
 
                 return;
             }
@@ -703,7 +714,7 @@ namespace WebExpress.WebCore
             if (_componentHub.IdentityManager.CheckAccess(identity, searchResult.EndpointContext))
             {
                 var response = HandleClient(httpContext, searchResult);
-                await responseSender.SendAsync(httpContext, response);
+                await SendAsync(httpContext, response);
 
                 return;
             }
@@ -722,7 +733,7 @@ namespace WebExpress.WebCore
 
                     if (forbiddenResponse is not null)
                     {
-                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        await SendAsync(httpContext, forbiddenResponse);
                         return;
                     }
                     else
@@ -734,7 +745,7 @@ namespace WebExpress.WebCore
                             searchResult
                         );
 
-                        await responseSender.SendAsync(httpContext, forbiddenResponse);
+                        await SendAsync(httpContext, forbiddenResponse);
                         return;
                     }
                 }
@@ -742,7 +753,7 @@ namespace WebExpress.WebCore
                 {
                     var forbiddenResponse = new ResponseForbidden(new StatusMessage("You do not have permission to access this resource."));
 
-                    await responseSender.SendAsync(httpContext, forbiddenResponse);
+                    await SendAsync(httpContext, forbiddenResponse);
                     return;
                 }
                 else if (searchResult.EndpointContext is IPageContext pageContext)
@@ -757,7 +768,7 @@ namespace WebExpress.WebCore
 
                     if (loginResponse is not null)
                     {
-                        await responseSender.SendAsync(httpContext, loginResponse);
+                        await SendAsync(httpContext, loginResponse);
                         return;
                     }
                 }
@@ -765,7 +776,7 @@ namespace WebExpress.WebCore
                 {
                     var unauthorizedResponse = new ResponseUnauthorized(new StatusMessage("Authentication required. Provide a valid access token."));
 
-                    await responseSender.SendAsync(httpContext, unauthorizedResponse);
+                    await SendAsync(httpContext, unauthorizedResponse);
                     return;
                 }
             }
@@ -773,7 +784,7 @@ namespace WebExpress.WebCore
             // fallback: no specific denied-response (login prompt / forbidden) could be created
             {
                 var response = HandleClient(httpContext, searchResult);
-                await responseSender.SendAsync(httpContext, response);
+                await SendAsync(httpContext, response);
             }
         }
 
