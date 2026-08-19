@@ -513,9 +513,32 @@ namespace WebExpress.WebCore.WebSitemap
                     };
                 }
 
-                foreach (var child in node.Children.Where(x => IsMatched(x, nextPathSegment)))
+                // a constant segment is the more specific match, so it is tried before a
+                // variable one. without the ordering the winner is whichever endpoint happened
+                // to register first, which lets a route like /assets/${workspacekey} swallow
+                // /assets/css/theme.css and answer 404 from a page that was never meant to
+                // serve it.
+                //
+                // a candidate that leads nowhere is no longer the end of the search either:
+                // each branch is walked on copies of the queues, so an exhausted branch leaves
+                // the state untouched for the next candidate instead of taking the whole
+                // request down with it.
+                foreach (var child in node.Children
+                    .Where(x => IsMatched(x, nextPathSegment))
+                    .OrderBy(x => x.PathSegment is IUriPathSegmentVariable ? 1 : 0))
                 {
-                    return SearchNode(child, inPathSegments, outPathSegments, searchContext);
+                    var result = SearchNode
+                    (
+                        child,
+                        new Queue<string>(inPathSegments),
+                        new Queue<IUriPathSegment>(outPathSegments),
+                        searchContext
+                    );
+
+                    if (result is not null)
+                    {
+                        return result;
+                    }
                 }
             }
 
