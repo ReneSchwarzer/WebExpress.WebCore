@@ -36,6 +36,11 @@ namespace WebExpress.WebCore.WebApplication
         public event EventHandler<IApplicationContext> RemoveApplication;
 
         /// <summary>
+        /// An event that fires when the name or the icon of a registered application changed.
+        /// </summary>
+        public event EventHandler<IApplicationContext> UpdateApplication;
+
+        /// <summary>
         /// Gets the stored applications.
         /// </summary>
         public IEnumerable<IApplicationContext> Applications => _dictionary.All;
@@ -156,7 +161,9 @@ namespace WebExpress.WebCore.WebApplication
                 {
                     ApplicationClass = type,
                     ApplicationContext = applicationContext,
-                    Application = applicationInstance
+                    Application = applicationInstance,
+                    DeclaredApplicationName = name,
+                    DeclaredIcon = icon
                 }))
                 {
                     _httpServerContext?.Log?.Debug
@@ -268,6 +275,79 @@ namespace WebExpress.WebCore.WebApplication
         public IEnumerable<IApplicationContext> GetApplications(Type application)
         {
             return _dictionary.GetApplications(application);
+        }
+
+        /// <summary>
+        /// Replaces the display name of a registered application.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application to rename.</param>
+        /// <param name="applicationName">The new name. A blank value restores the declared one.</param>
+        public void SetApplicationName(IApplicationContext applicationContext, string applicationName)
+        {
+            var item = _dictionary.GetApplicationItem(applicationContext);
+
+            if (item?.ApplicationContext is not ApplicationContext context)
+            {
+                return;
+            }
+
+            var name = string.IsNullOrWhiteSpace(applicationName)
+                ? item.DeclaredApplicationName
+                : applicationName;
+
+            if (context.ApplicationName == name)
+            {
+                return;
+            }
+
+            context.ApplicationName = name;
+
+            OnUpdateApplication(context);
+        }
+
+        /// <summary>
+        /// Replaces the icon of a registered application.
+        /// </summary>
+        /// <param name="applicationContext">The context of the application.</param>
+        /// <param name="icon">The new icon path, relative to the application. A blank value
+        /// restores the declared one.</param>
+        public void SetApplicationIcon(IApplicationContext applicationContext, string icon)
+        {
+            var item = _dictionary.GetApplicationItem(applicationContext);
+
+            if (item?.ApplicationContext is not ApplicationContext context)
+            {
+                return;
+            }
+
+            var path = string.IsNullOrWhiteSpace(icon) ? item.DeclaredIcon : icon;
+
+            // combined exactly as at registration, so a caller hands over the same relative path
+            // the [Icon] attribute would have carried and never has to assemble a route
+            var route = RouteEndpoint.Combine(_httpServerContext?.Route, context.ContextPath, path);
+
+            if (context.Icon?.ToString() == route?.ToString())
+            {
+                return;
+            }
+
+            context.Icon = route;
+
+            OnUpdateApplication(context);
+        }
+
+        /// <summary>
+        /// Raises the update event and logs the change.
+        /// </summary>
+        /// <param name="applicationContext">The context that changed.</param>
+        private void OnUpdateApplication(IApplicationContext applicationContext)
+        {
+            UpdateApplication?.Invoke(this, applicationContext);
+
+            _httpServerContext?.Log?.Debug
+            (
+                I18N.Translate("webexpress.webcore:applicationmanager.update", applicationContext.ApplicationId)
+            );
         }
 
         /// <summary>

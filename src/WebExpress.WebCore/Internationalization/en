@@ -78,6 +78,7 @@ pluginmanager.applicationless=The plugin '{0}' does not have any information abo
 applicationmanager.titel=Application manager:
 applicationmanager.initialization=The application manager has been initialized.
 applicationmanager.registerapplication=The application '{0}' has been created and registered in the application manager.
+applicationmanager.update=The name or the icon of the application '{0}' was changed at runtime.
 applicationmanager.duplicateapplication=The application '{0}' has already been registered in the application manager.
 applicationmanager.application=Application: '{0}'
 applicationmanager.application.initialization=The application'{0}' has been initialized.

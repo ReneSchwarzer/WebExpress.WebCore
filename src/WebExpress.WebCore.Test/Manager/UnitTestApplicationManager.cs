@@ -118,6 +118,109 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Test that the name of a registered application can be replaced at runtime, and that a
+        /// blank value puts the declared name back.
+        /// </summary>
+        [Fact]
+        public void SetApplicationName()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var applicationManager = componentHub.ApplicationManager;
+            var application = applicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
+            var declared = application.ApplicationName;
+            var updated = new List<IApplicationContext>();
+
+            applicationManager.UpdateApplication += (_, context) => updated.Add(context);
+
+            // act
+            applicationManager.SetApplicationName(application, "Renamed");
+
+            // validation
+            Assert.Equal("Renamed", application.ApplicationName);
+            Assert.Equal("webexpress.webcore.test.testapplicationa", application.ApplicationId);
+            Assert.Single(updated);
+
+            // a blank value restores what the application declared
+            applicationManager.SetApplicationName(application, " ");
+
+            Assert.Equal(declared, application.ApplicationName);
+            Assert.Equal(2, updated.Count);
+        }
+
+        /// <summary>
+        /// Test that renaming an application to the name it already carries changes nothing and
+        /// raises no event.
+        /// </summary>
+        [Fact]
+        public void SetApplicationNameUnchanged()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var applicationManager = componentHub.ApplicationManager;
+            var application = applicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
+            var updated = 0;
+
+            applicationManager.UpdateApplication += (_, _) => updated++;
+
+            // act
+            applicationManager.SetApplicationName(application, application.ApplicationName);
+
+            // validation
+            Assert.Equal(0, updated);
+        }
+
+        /// <summary>
+        /// Test that the icon of a registered application can be replaced at runtime. The value is
+        /// a path relative to the application, which the manager combines into a route the same
+        /// way it does at registration.
+        /// </summary>
+        [Fact]
+        public void SetApplicationIcon()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var applicationManager = componentHub.ApplicationManager;
+            var application = applicationManager.GetApplications(typeof(TestApplicationA)).FirstOrDefault();
+            var updated = new List<IApplicationContext>();
+
+            applicationManager.UpdateApplication += (_, context) => updated.Add(context);
+
+            // act
+            applicationManager.SetApplicationIcon(application, "/assets/img/Custom.svg");
+
+            // validation
+            Assert.Equal("/server/appa/assets/img/Custom.svg", application.Icon.ToString());
+            Assert.Single(updated);
+
+            // a blank value restores what the application declared
+            applicationManager.SetApplicationIcon(application, null);
+
+            Assert.Equal("/server/appa/assets/img/Logo.png", application.Icon.ToString());
+            Assert.Equal(2, updated.Count);
+        }
+
+        /// <summary>
+        /// Test that an unknown application context is ignored rather than throwing.
+        /// </summary>
+        [Fact]
+        public void SetApplicationNameOfUnknownApplication()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var applicationManager = componentHub.ApplicationManager;
+            var updated = 0;
+
+            applicationManager.UpdateApplication += (_, _) => updated++;
+
+            // act
+            applicationManager.SetApplicationName(null, "Renamed");
+
+            // validation
+            Assert.Equal(0, updated);
+        }
+
+        /// <summary>
         /// Test the context path property of the application.
         /// </summary>
         [Theory]

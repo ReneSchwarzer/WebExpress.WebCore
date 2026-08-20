@@ -56,6 +56,23 @@ namespace WebExpress.WebCore.WebApplication.Model
         }
 
         /// <summary>
+        /// Returns the item carrying a given application context.
+        /// </summary>
+        /// <param name="applicationContext">The application context.</param>
+        /// <returns>The item, or null when the context belongs to no registered application.</returns>
+        public ApplicationItem GetApplicationItem(IApplicationContext applicationContext)
+        {
+            if (applicationContext is null)
+            {
+                return null;
+            }
+
+            return _dict
+                .Values.SelectMany(x => x.Values)
+                .FirstOrDefault(x => x.ApplicationContext == applicationContext);
+        }
+
+        /// <summary>
         /// Returns the application contexts for a given plugin context.
         /// </summary>
         /// <param name="pluginContext">The plugin context.</param>
