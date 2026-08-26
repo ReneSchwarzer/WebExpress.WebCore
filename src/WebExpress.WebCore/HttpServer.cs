@@ -426,10 +426,7 @@ namespace WebExpress.WebCore
                 {
                     HttpServerContext.Log?.Exception(ex);
 
-                    var message = $"<h4>Message</h4>{ex.Message}<br/><br/>" +
-                            $"<h5>Source</h5>{ex.Source}<br/><br/>" +
-                            $"<h5>StackTrace</h5>{ex.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
-                            $"<h5>InnerException</h5>{ex.InnerException?.ToString().Replace("\n", "<br/>\n")}";
+                    var message = Describe(ex);
 
                     response = CreateStatusPage<ResponseInternalServerError>
                     (
@@ -557,7 +554,14 @@ namespace WebExpress.WebCore
 
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
-            var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
+
+            // a request that failed before its context could be built has none, and the status
+            // page still has to be produced - it is the only place the original failure is
+            // reported. Without the guard the report itself fails and the caller receives an
+            // empty answer naming nothing.
+            var route = request?.Uri?.PathSegments is null
+                ? null
+                : new RouteEndpoint(request.Uri.PathSegments)?.ToString();
             var applicationContext = string.IsNullOrEmpty(route)
                 ? null
                 : applicationManager.Applications
@@ -663,14 +667,65 @@ namespace WebExpress.WebCore
         }
 
         /// <summary>
+        /// Processes an http context asynchronously and answers a failure the pipeline itself
+        /// could not handle.
+        /// </summary>
+        /// <remarks>
+        /// Kestrel treats an exception escaping here as a transport failure: it logs the bare
+        /// message without a stack trace and closes the connection with an empty body. Every
+        /// request then looks identically broken and nothing says where. Catching it means the
+        /// cause is written to the server log once and the caller receives a status page it can
+        /// read - which is what makes a fault in the shell diagnosable at all.
+        /// </remarks>
+        /// <param name="httpContext">The http context that the operation processes.</param>
+        /// <returns>Provides an asynchronous operation that handles the http context.</returns>
+        public async Task ProcessRequestAsync(IHttpContext httpContext)
+        {
+            try
+            {
+                await ProcessRequestCoreAsync(httpContext);
+            }
+            catch (Exception ex)
+            {
+                HttpServerContext.Log?.Exception(ex);
+
+                var response = CreateStatusPage<ResponseInternalServerError>
+                (
+                    Describe(ex),
+                    httpContext?.Request
+                );
+
+                await new ResponseSender().SendAsync(httpContext, response);
+            }
+        }
+
+        /// <summary>
+        /// Renders an exception as the html fragment a status page shows.
+        /// </summary>
+        /// <remarks>
+        /// The stack trace is read defensively: an exception that was constructed but never
+        /// thrown carries none, and reading it unguarded fails inside the very code that
+        /// exists to report the first failure.
+        /// </remarks>
+        /// <param name="ex">The exception to describe.</param>
+        /// <returns>The html fragment.</returns>
+        private static string Describe(Exception ex)
+        {
+            return $"<h4>Message</h4>{ex.Message}<br/><br/>" +
+                $"<h5>Source</h5>{ex.Source}<br/><br/>" +
+                $"<h5>StackTrace</h5>{ex.StackTrace?.Replace("\n", "<br/>\n")}<br/><br/>" +
+                $"<h5>InnerException</h5>{ex.InnerException?.ToString().Replace("\n", "<br/>\n")}";
+        }
+
+        /// <summary>
         /// Processes an http context asynchronously.
-        /// If the request is a websocket upgrade to a configured endpoint, handle 
+        /// If the request is a websocket upgrade to a configured endpoint, handle
         /// websocket lifecycle instead of request/response.
         /// Handles missing sitemap endpoints directly here.
         /// </summary>
         /// <param name="httpContext">The http context that the operation processes.</param>
         /// <returns>Provides an asynchronous operation that handles the http context.</returns>
-        public async Task ProcessRequestAsync(IHttpContext httpContext)
+        private async Task ProcessRequestCoreAsync(IHttpContext httpContext)
         {
             var sender = new ResponseSender();
             var stopwatch = Stopwatch.StartNew();
@@ -690,10 +745,7 @@ namespace WebExpress.WebCore
             if (httpContext is HttpExceptionContext exceptionContext)
             {
                 var message = "<html><head><title>404</title></head><body>" +
-                    $"<h4>Message</h4>{exceptionContext.Exception.Message}<br/><br/>" +
-                    $"<h5>Source</h5>{exceptionContext.Exception.Source}<br/><br/>" +
-                    $"<h5>StackTrace</h5>{exceptionContext.Exception.StackTrace.Replace("\n", "<br/>\n")}<br/><br/>" +
-                    $"<h5>InnerException</h5>{exceptionContext.Exception.InnerException?.ToString().Replace("\n", "<br/>\n")}" +
+                    Describe(exceptionContext.Exception) +
                     "</body></html>";
 
                 var response500 = CreateStatusPage<ResponseInternalServerError>(message, httpContext?.Request);
