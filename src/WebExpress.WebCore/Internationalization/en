@@ -176,6 +176,7 @@ identitymanager.policy.systemaccess.description=Policy for system-level operatio
 includemanager.initialization=The include manager has been initialized.
 includemanager.addinclude=The client resource '{0}' has been registered in the application '{1}'.
 includemanager.removeinclude=The client resource '{0}' has been removed from the application '{1}'.
+includemanager.unresolvedfile=The file '{1}' of the client resource '{0}' points to the route '{2}', where no asset is served in the application '{3}'.
 
 socketmanager.initialization=The WebSocket manager has been initialized.
 socketmanager.addsocket=The WebSocket '{0}' has been registered in the application '{1}'.

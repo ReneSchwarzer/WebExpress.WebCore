@@ -549,6 +549,12 @@ namespace WebExpress.WebCore
             where TResponse : Response, new()
         {
             var response = new TResponse() as Response;
+
+            if (IsNonHtmlFileRequest(request))
+            {
+                return CreatePlainStatusResponse(response);
+            }
+
             var statusPageManager = WebEx.ComponentHub.StatusPageManager;
             var applicationManager = WebEx.ComponentHub.ApplicationManager;
             var route = new RouteEndpoint(request.Uri.PathSegments)?.ToString();
@@ -586,6 +592,43 @@ namespace WebExpress.WebCore
             response.Content = message;
             response.Header.ContentLength = message.Length;
             response.Header.ContentType = "text/html; charset=utf-8";
+
+            return response;
+        }
+
+        /// <summary>
+        /// Determines whether the request names a file whose type is not html. A browser
+        /// loading a stylesheet, script or image does not surface the status of the answer,
+        /// it only reads the body, so an html status page is taken as the file itself: a
+        /// missing stylesheet presents as a valid one with no rules and a missing script as
+        /// one that defines nothing.
+        /// </summary>
+        /// <param name="request">The request whose target is examined.</param>
+        /// <returns>True when the requested file is of a known, non-html type.</returns>
+        private static bool IsNonHtmlFileRequest(IRequest request)
+        {
+            var file = request?.Uri?.PathSegments?.LastOrDefault()?.ToString();
+            var contentType = ContentTypeExtensions.ToContentType(System.IO.Path.GetExtension(file));
+
+            return contentType != ContentType.Unknown
+                && contentType != ContentType.Html
+                && contentType != ContentType.Htm;
+        }
+
+        /// <summary>
+        /// Answers a status for a non-html file with a plain text body, so a browser rejects
+        /// it instead of accepting the status page as the file it asked for. The status
+        /// itself is untouched; only the body a client would otherwise misread is replaced.
+        /// </summary>
+        /// <param name="response">The status response to complete.</param>
+        /// <returns>The response carrying a plain text body.</returns>
+        private static IResponse CreatePlainStatusResponse(Response response)
+        {
+            var content = $"{response.Status} - {response.Reason}";
+
+            response.Content = content;
+            response.Header.ContentLength = content.Length;
+            response.Header.ContentType = "text/plain; charset=utf-8";
 
             return response;
         }
