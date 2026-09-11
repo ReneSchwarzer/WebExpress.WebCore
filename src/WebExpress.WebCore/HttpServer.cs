@@ -349,6 +349,12 @@ namespace WebExpress.WebCore
             };
             request.Uri = resourceUri;
 
+            // the request is made ambient for as long as it is being answered, so a layer that
+            // is several calls away from the endpoint - a manager, a store - can still ask what
+            // it is being asked on behalf of. It is closed with the response, so nothing reads
+            // it afterwards
+            using var current = WebEx.BeginRequest(request);
+
             try
             {
                 // execute resource
@@ -375,7 +381,18 @@ namespace WebExpress.WebCore
                         request.Session is not null
                     )
                     {
-                        var cookie = new Cookie("session", request.Session.Id.ToString()) { Expires = DateTime.MaxValue };
+                        // the path is named rather than left to the browser, which would default
+                        // it to the directory of the request the cookie was handed out on: a
+                        // visitor would then collect one session per directory they touch, the
+                        // sign-in would bind the identity to whichever of them the login request
+                        // happened to carry, and every page under a different directory would be
+                        // served to a session that never signed in
+                        var cookie = new Cookie("session", request.Session.Id.ToString())
+                        {
+                            Expires = DateTime.MaxValue,
+                            Path = "/"
+                        };
+
                         response.Header.Cookies.Add(cookie);
                     }
                 }

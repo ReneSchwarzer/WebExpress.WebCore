@@ -10,6 +10,7 @@ using WebExpress.WebCore.Internationalization;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebEndpoint;
 using WebExpress.WebCore.WebLog;
+using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebPackage;
 
 [assembly: InternalsVisibleTo("WebExpress.WebCore.Test")]
@@ -64,6 +65,76 @@ namespace WebExpress.WebCore
         /// Gets the component hub.
         /// </summary>
         public static IComponentHub ComponentHub => _componentHub;
+
+        /// <summary>
+        /// Gets the request currently being served on this call chain, or <see langword="null"/>
+        /// outside a request.
+        /// </summary>
+        /// <remarks>
+        /// The request is handed to endpoints, pages, controls and fragments, and passing it on
+        /// from there is the right way to reach it - a method that needs the request should say
+        /// so in its signature. This exists for the layers where that is not possible: a
+        /// manager, a component or a store several calls deep that has to answer a question
+        /// about the caller - who is signed in, which language they read, where they are
+        /// connecting from - and whose signature is shared with callers that have no request at
+        /// all. Threading a request through every one of them would mean changing every
+        /// implementation of an interface for the sake of one of them.
+        /// <para>
+        /// It is an async local set for the duration of one request, so a call chain sees the
+        /// request it belongs to and two requests served at once never see each other's. It is
+        /// null outside a request - during startup, on a background worker, in a test - and
+        /// callers have to answer that case rather than assume a request.
+        /// </para>
+        /// </remarks>
+        public static IRequest CurrentRequest => _currentRequest.Value;
+
+        /// <summary>
+        /// The backing store of <see cref="CurrentRequest"/>.
+        /// </summary>
+        private static readonly AsyncLocal<IRequest> _currentRequest = new();
+
+        /// <summary>
+        /// Makes the supplied request the current one until the returned scope is closed.
+        /// </summary>
+        /// <remarks>
+        /// Called by the server around the handling of one request. It is internal because the
+        /// span of a request is the server's to decide: a host that could open the scope itself
+        /// could also leave it open, and every layer reading <see cref="CurrentRequest"/> would
+        /// then be told about a request that had long been answered.
+        /// </remarks>
+        /// <param name="request">The request being served.</param>
+        /// <returns>The scope. Closing it restores what was current before.</returns>
+        internal static IDisposable BeginRequest(IRequest request)
+        {
+            var previous = _currentRequest.Value;
+
+            _currentRequest.Value = request;
+
+            return new RequestScope(previous);
+        }
+
+        /// <summary>
+        /// The scope handed out by <see cref="BeginRequest"/>.
+        /// </summary>
+        /// <param name="previous">The request that was current when the scope was opened.</param>
+        private sealed class RequestScope(IRequest previous) : IDisposable
+        {
+            private bool _closed;
+
+            /// <summary>
+            /// Restores the request of the enclosing scope.
+            /// </summary>
+            public void Dispose()
+            {
+                if (_closed)
+                {
+                    return;
+                }
+
+                _closed = true;
+                _currentRequest.Value = previous;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the path to the favicon image used by the application.
