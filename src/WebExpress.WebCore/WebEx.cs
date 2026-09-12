@@ -303,6 +303,13 @@ namespace WebExpress.WebCore
 
             _componentHub = ComponentActivator.CreateInstance<ComponentHub>(_httpServer.HttpServerContext);
 
+            // apply the configured session lifetime once the manager exists; left unset, its
+            // built-in bounded default stands
+            if (config.Session?.TimeoutMinutes is int timeoutMinutes && _componentHub.SessionManager is not null)
+            {
+                _componentHub.SessionManager.Timeout = TimeSpan.FromMinutes(timeoutMinutes);
+            }
+
             // start logging
             _httpServer.HttpServerContext.Log?.Begin(config.Log);
 

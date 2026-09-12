@@ -207,6 +207,92 @@ namespace WebExpress.WebCore.Test.Manager
         }
 
         /// <summary>
+        /// Signing in must move the session to an id the client did not hold before: the
+        /// request keeps its session and identity, the new id resolves to the signed-in
+        /// session, and the id in use before the sign-in resolves to nothing.
+        /// </summary>
+        [Fact]
+        public void Login_ReplacesSessionId()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var request = UnitTestFixture.CreateRequestMock();
+            var identity = MockIdentityFactory.GetIdentity("Alice");
+            var idBefore = request.Session.Id;
+
+            // act
+            var session = identityManager.Login(identity, request);
+
+            // validation
+            Assert.NotEqual(idBefore, session.Id);
+            Assert.Same(request.Session, session);
+            Assert.Equal(identity, identityManager.GetCurrentIdentity(request));
+
+            var withOldId = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={idBefore}\n\n");
+            Assert.Null(identityManager.GetCurrentIdentity(withOldId));
+
+            var withNewId = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={session.Id}\n\n");
+            Assert.Equal(identity, identityManager.GetCurrentIdentity(withNewId));
+        }
+
+        /// <summary>
+        /// The fixation scenario end to end: an attacker plants a session id in the victim's
+        /// browser, the victim signs in with it, and the attacker's requests carrying that id
+        /// must still see nobody signed in.
+        /// </summary>
+        [Fact]
+        public void Login_PlantedSessionId_DoesNotReachTheAttacker()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var planted = Guid.NewGuid();
+            var victim = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={planted}\n\n");
+            var identity = MockIdentityFactory.GetIdentity("Alice");
+
+            // act
+            var session = identityManager.Login(identity, victim);
+
+            // validation
+            Assert.NotNull(session);
+            Assert.NotEqual(planted, session.Id);
+
+            var attacker = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={planted}\n\n");
+            Assert.Null(identityManager.GetCurrentIdentity(attacker));
+        }
+
+        /// <summary>
+        /// Signing out retires the id the session was signed in under: the request keeps its
+        /// (now anonymous) session, while a copy of the signed-in id resolves to nothing.
+        /// </summary>
+        [Fact]
+        public void Logout_ReplacesSessionId()
+        {
+            // arrange
+            var componentHub = UnitTestFixture.CreateAndRegisterComponentHubMock();
+            var identityManager = componentHub.IdentityManager as IdentityManager;
+            var request = UnitTestFixture.CreateRequestMock();
+            var identity = MockIdentityFactory.GetIdentity("Alice");
+            var session = identityManager.Login(identity, request);
+            var signedInId = session.Id;
+
+            // act
+            identityManager.Logout(request);
+
+            // validation
+            Assert.NotEqual(signedInId, session.Id);
+            Assert.Same(request.Session, session);
+            Assert.Null(identityManager.GetCurrentIdentity(request));
+
+            var withSignedInId = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={signedInId}\n\n");
+            Assert.NotSame(session, componentHub.SessionManager.GetSession(withSignedInId));
+
+            var withNewId = UnitTestFixture.CreateRequestMock($"GET / HTTP/1.1\nCookie: session={session.Id}\n\n");
+            Assert.Same(session, componentHub.SessionManager.GetSession(withNewId));
+        }
+
+        /// <summary>
         /// Test that the IIdentityGroup interface has the Id and Name properties.
         /// </summary>
         [Fact]

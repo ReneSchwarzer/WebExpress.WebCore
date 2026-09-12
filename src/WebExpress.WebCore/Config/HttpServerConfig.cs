@@ -37,6 +37,13 @@ namespace WebExpress.WebCore.Config
         public KestrelConfig Kestrel { get; set; }
 
         /// <summary>
+        /// Optional configuration of the session and its cookie. When the element is omitted the
+        /// built-in defaults apply, so this block only ever changes values explicitly opted into.
+        /// </summary>
+        [XmlElement("session")]
+        public SessionConfig Session { get; set; }
+
+        /// <summary>
         /// Root directory of packages.
         /// </summary>
         [XmlElement("packages")]

@@ -67,6 +67,11 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Login an identity.
         /// </summary>
+        /// <remarks>
+        /// The session keeps its state but gets a new id, so an id the client held before the
+        /// sign-in never names the signed-in session (session fixation). The client learns the
+        /// new id from the cookie sent with the response; a caller must not hand it out itself.
+        /// </remarks>
         /// <param name="identity">The identity.</param>
         /// <param name="request">The request.</param>
         /// <returns>The session of the logged-in identity, or null if the login process failed.</returns>
@@ -75,6 +80,10 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Logout an identity.
         /// </summary>
+        /// <remarks>
+        /// The mirror image of the sign-in: the identity is dropped and the session gets a new
+        /// id, so an id captured while it was signed in resolves to nothing afterwards.
+        /// </remarks>
         /// <param name="request">The request.</param>
         void Logout(IRequest request);
 

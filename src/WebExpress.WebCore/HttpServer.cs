@@ -373,28 +373,6 @@ namespace WebExpress.WebCore
                             searchResult
                         );
                     }
-
-                    if
-                    (
-                        !response.Header.Cookies.Any(x => x.Name.Equals("session")) &&
-                        !request.Header.Cookies.Any(x => x.Name.Equals("session")) &&
-                        request.Session is not null
-                    )
-                    {
-                        // the path is named rather than left to the browser, which would default
-                        // it to the directory of the request the cookie was handed out on: a
-                        // visitor would then collect one session per directory they touch, the
-                        // sign-in would bind the identity to whichever of them the login request
-                        // happened to carry, and every page under a different directory would be
-                        // served to a session that never signed in
-                        var cookie = new Cookie("session", request.Session.Id.ToString())
-                        {
-                            Expires = DateTime.MaxValue,
-                            Path = "/"
-                        };
-
-                        response.Header.Cookies.Add(cookie);
-                    }
                 }
                 else
                 {
@@ -466,6 +444,78 @@ namespace WebExpress.WebCore
             ));
 
             return response;
+        }
+
+        /// <summary>
+        /// Hands the client the id of its session whenever the cookie it sent does not name it.
+        /// </summary>
+        /// <remarks>
+        /// That is the case on a first visit, for a stale or forged cookie the session manager
+        /// refused to adopt, and after a sign-in or sign-out replaced the id. It is applied to
+        /// every response - a redirect or a status page included - because a sign-in that ends
+        /// in a redirect would otherwise leave the browser with an id that no longer resolves,
+        /// and the user signed out again.
+        ///
+        /// The cookie carries the security attributes that match what the id is worth. It is
+        /// http-only, because the id is the whole of what authenticates the client and script on
+        /// the page - injected or not - must not be able to read it. It is secure whenever the
+        /// request arrived over https (or the configuration forces it, for a server behind a
+        /// tls-terminating proxy), so the id is never sent back in the clear. Its lifetime is
+        /// bounded by the session timeout rather than set to never expire, so a copy of the
+        /// cookie stops working once the session it names has lapsed. The path is named rather
+        /// than left to the browser, which would default it to the directory of the request the
+        /// cookie was handed out on: a visitor would then collect one session per directory they
+        /// touch, the sign-in would bind the identity to whichever of them the login request
+        /// happened to carry, and every page under a different directory would be served to a
+        /// session that never signed in.
+        /// </remarks>
+        /// <param name="request">The request that was answered.</param>
+        /// <param name="response">The response about to be sent.</param>
+        private void IssueSessionCookie(IRequest request, IResponse response)
+        {
+            var session = request?.Session;
+            var cookies = response?.Header?.Cookies;
+
+            if (session is null || cookies is null)
+            {
+                return;
+            }
+
+            // a handler that set the cookie itself knows better
+            if (cookies.Any(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            var sent = request.Header?.Cookies?
+                .FirstOrDefault(x => x.Name.Equals("session", StringComparison.OrdinalIgnoreCase));
+
+            if (Guid.TryParse(sent?.Value, out var sentId) && sentId == session.Id)
+            {
+                return;
+            }
+
+            // secure tracks the request scheme by default; a deployment behind a tls proxy that
+            // sees plain http can force it on through configuration
+            var secure = Config?.Session?.Secure ?? request.Scheme == UriScheme.Https;
+
+            var cookie = new Cookie("session", session.Id.ToString())
+            {
+                Path = "/",
+                HttpOnly = true,
+                Secure = secure
+            };
+
+            // a positive timeout bounds the cookie to the session's idle window; with expiry
+            // disabled the cookie has no Expires at all and so dies when the browser closes,
+            // which is still bounded, unlike a cookie that never expires
+            var timeout = WebEx.ComponentHub?.SessionManager?.Timeout ?? TimeSpan.Zero;
+            if (timeout > TimeSpan.Zero)
+            {
+                cookie.Expires = DateTime.Now + timeout;
+            }
+
+            cookies.Add(cookie);
         }
 
         /// <summary>
@@ -751,9 +801,12 @@ namespace WebExpress.WebCore
             // here rather than inside the handler: a request that never reaches a handler -
             // an unknown route, a denied or an unauthenticated one - produces a status code
             // the monitor has to account for just the same. Recording precedes the send, so
-            // a slow client does not end up counted as a slow server.
+            // a slow client does not end up counted as a slow server. The session cookie is
+            // issued here for the same reason: the login prompt and a redirect after sign-in
+            // never reach the handler either, yet must carry the session id.
             async Task SendAsync(IHttpContext context, IResponse response)
             {
+                IssueSessionCookie(context?.Request, response);
                 UpdateStatistics(response, stopwatch.ElapsedMilliseconds);
 
                 await sender.SendAsync(context, response);

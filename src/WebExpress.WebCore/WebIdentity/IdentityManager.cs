@@ -438,6 +438,11 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Login an identity.
         /// </summary>
+        /// <remarks>
+        /// The session keeps its state but gets a new id, so the id the client signed in under -
+        /// one an attacker may have planted in the browser or observed on the wire - names
+        /// nothing once the identity is bound (session fixation).
+        /// </remarks>
         /// <param name="identity">The identity.</param>
         /// <param name="request">The request.</param>
         /// <returns>The session of the logged-in identity, or null if the login process failed.</returns>
@@ -449,6 +454,11 @@ namespace WebExpress.WebCore.WebIdentity
             }
 
             var session = _componentHub?.SessionManager.GetSession(request);
+
+            // the id is replaced before the identity is bound, so the identity never lives
+            // under an id the client chose
+            _componentHub?.SessionManager.RegenerateId(session);
+
             var authentification = session.GetOrCreateProperty<SessionPropertyAuthentification>(identity);
 
             // verify that the identity was correctly bound to the session
@@ -463,11 +473,19 @@ namespace WebExpress.WebCore.WebIdentity
         /// <summary>
         /// Logout an identity.
         /// </summary>
+        /// <remarks>
+        /// The session keeps its state but gets a new id, the mirror image of the sign-in: a
+        /// copy of the id taken while the session was signed in - from a log, a leaked header,
+        /// a shared machine - resolves to nothing afterwards, not even to the anonymous
+        /// remainder of the session.
+        /// </remarks>
         /// <param name="request">The request.</param>
         public void Logout(IRequest request)
         {
             var session = _componentHub?.SessionManager.GetSession(request);
             session.RemoveProperty<SessionPropertyAuthentification>();
+
+            _componentHub?.SessionManager.RegenerateId(session);
         }
 
         /// <summary>

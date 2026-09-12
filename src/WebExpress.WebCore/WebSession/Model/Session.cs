@@ -15,7 +15,12 @@ namespace WebExpress.WebCore.WebSession.Model
         /// <summary>
         /// Gets the session id.
         /// </summary>
-        public Guid Id { get; private set; }
+        /// <remarks>
+        /// The id is the only thing the client holds, so it is what an attacker would plant or
+        /// steal. The session manager therefore replaces it when the session changes privilege
+        /// - at sign-in - which is why the id must not be cached across such a change.
+        /// </remarks>
+        public Guid Id { get; internal set; }
 
         /// <summary>
         /// Gets the creation time.

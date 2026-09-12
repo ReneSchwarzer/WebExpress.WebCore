@@ -1,4 +1,5 @@
-﻿using WebExpress.WebCore.WebApplication;
+﻿using System;
+using WebExpress.WebCore.WebApplication;
 using WebExpress.WebCore.WebComponent;
 using WebExpress.WebCore.WebMessage;
 using WebExpress.WebCore.WebSession.Model;
@@ -11,11 +12,34 @@ namespace WebExpress.WebCore.WebSession
     public interface ISessionManager : IComponentManager
     {
         /// <summary>
-        /// Creates a session or returns an existing session based on the provided request.
+        /// Gets or sets how long a session may stay idle before it expires. Applied as a sliding
+        /// window and used both to expire sessions on access and to bound the session cookie's
+        /// lifetime. A non-positive value disables expiry.
         /// </summary>
+        TimeSpan Timeout { get; set; }
+
+        /// <summary>
+        /// Returns the session a request belongs to, creating one when it has none yet.
+        /// </summary>
+        /// <remarks>
+        /// The id in the session cookie is only ever a lookup key; an id the server has not
+        /// issued is never adopted, so a client cannot fix the id of a session in advance.
+        /// </remarks>
         /// <param name="request">The request.</param>
         /// <returns>The session.</returns>
         Session GetSession(IRequest request);
+
+        /// <summary>
+        /// Replaces the id of a session while keeping its state.
+        /// </summary>
+        /// <remarks>
+        /// Meant for the moment a session gains privilege - at sign-in - so that an id the client
+        /// held before no longer names the authenticated session. The client learns the new id
+        /// from the cookie sent with the response.
+        /// </remarks>
+        /// <param name="session">The session whose id is to be replaced.</param>
+        /// <returns>The new session id.</returns>
+        Guid RegenerateId(Session session);
 
         /// <summary>
         /// Cleans up expired sessions from the session manager based on the specified session timeout.
